@@ -1,2 +1,2 @@
-# Music_Player
-Future Project
+# Music / Media Player
+# Work in Progress

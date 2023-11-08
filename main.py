@@ -1,29 +1,19 @@
 
-import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QListWidgetItem
-
-from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl
 
 from pathlib import Path
+import sys
 
-
-
-class Music:
-    def __init__(self):
-        self.player = QMediaPlayer()
-        self.audio_output = QAudioOutput()
-        self.player.setAudioOutput(self.audio_output)
-        self.player.setLoops(-1) # -1=infinite
-        self.audio_output.setVolume(0.6)
+from player import Music
 
 
 music = Music()
-music_list = {
-    'Mr.Kitty - After Dark': 'D:/Music/_DOWNLOADS/Mr.Kitty - After Dark [sVx1mJDeUjY].mp3',
-    'Mood · Jane & The Boy': 'd:\Music\_DOWNLOADS\Mood · Jane & The Boy [mY_POb8U9mA].mp3'
-    }
 
+music_list = {
+    'Mr.Kitty - After Dark': 'D:\Music\_DOWNLOADS\Mr.Kitty - After Dark [sVx1mJDeUjY].mp3',
+    'Mood · Jane & The Boy': 'D:\Music\_DOWNLOADS\Mood · Jane & The Boy [mY_POb8U9mA].mp3'
+    }
 
 app = QApplication(sys.argv)
 window = QWidget()
@@ -36,12 +26,12 @@ for item in music_list:
 
 
 def list_action():
-    music.player
     track_path = music_list[listWidget.currentItem().text()]
     music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    music.audio_output.setVolume(0.5)
     music.player.play()
 
-    
+
 listWidget.itemDoubleClicked.connect(list_action)
 
     
