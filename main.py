@@ -1,6 +1,6 @@
 
-from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QListWidgetItem, QPushButton
-from PyQt6.QtWidgets import QFileDialog 
+from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout 
+from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QMovie, QIcon, QFont
 
@@ -9,58 +9,118 @@ from PyQt6.QtGui import QMovie, QIcon, QFont
 # from PyQt6.QtCore import QSize, QTimer, QTime
 
 import sys
+import sqlite3
 
 from player import Path
 from player import Music
-from player import open_json, save_json
-from player import PATH_JSON_PLAYLIST
+# from player import open_json, save_json
+# from player import PATH_JSON_PLAYLIST
 
 
-playlist = open_json(PATH_JSON_PLAYLIST)
+def add_record_db(path):
+    name = Path(path).stem
+    cur.execute(f"INSERT INTO playlist_table(name, path) VALUES ('{name}', '{path}')")
+    connection.commit()
+
+def remove_record_db(list_row_id):
+    cur.execute(f"DELETE FROM playlist_table WHERE row_id = '{list_row_id}'")
+    cur.execute(f"UPDATE playlist_table SET row_id = row_id - 1 WHERE row_id > '{list_row_id}'")
+    connection.commit()
+
+def get_row_id_db(path): 
+    cur.execute(f"SELECT row_id FROM playlist_table WHERE path = '{path}'")
+    record = cur.fetchall()
+    return record[-1][0]    # adding same track multiple times --> row_id: picked the latest's one
+
+def get_path_db(row_id): 
+    cur.execute(f"SELECT * FROM playlist_table WHERE row_id = '{row_id}'")
+    record = cur.fetchall()
+    print(record[0][2])
+
+''' PLAYLIST DB '''
+connection = sqlite3.connect('playlist.db')
+cur = connection.cursor()
+
+''' PLAYER '''
 music = Music()
 
+
+''' APP '''
 app = QApplication(sys.argv)
 window = QWidget()
+window.resize(500, 300)
+window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 listWidget = QListWidget(window)
 window.setWindowTitle("Media Player")
 
+''' BUTTONS '''
+# BUTTON - ADD TRACK
 def button_add_track_clicked():
     dialog_add_track = QFileDialog()
     dialog_add_track.setWindowTitle("Select an MP3 file")
     dialog_add_track.setNameFilter("MP3 files (*.mp3)")
     dialog_add_track.exec()
-    if dialog_add_track.exec and dialog_add_track.selectedFiles():
+    if dialog_add_track.result():
         track_name = Path(dialog_add_track.selectedFiles()[0]).stem
-        QListWidgetItem(track_name, listWidget)
-        playlist[track_name] = dialog_add_track.selectedFiles()[0]
-        save_json(playlist, PATH_JSON_PLAYLIST)
+        track_path = dialog_add_track.selectedFiles()[0]
+        add_record_db(track_path)
+        row_id = get_row_id_db(track_path)
+        list_name = f'{row_id}. {track_name}'
+        QListWidgetItem(list_name, listWidget)
 
-button_add_track = QPushButton(window, text='Addd track')
-# button_music_add.setGeometry(
-#     SKIN_WIDGET_POS_X,
-#     int(SKIN_WIDEGT_POS_Y + SKIN_WIDEGT_POS_Y_DIFF*3.5),
-#     SKIN_WIDGET_WIDTH,
-#     BUTTON_SKIN_HEIGHT
-#     )
+button_add_track = QPushButton(window, text='Add track')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_track.clicked.connect(button_add_track_clicked)
 button_add_track.setFont(QFont('Times', 10, 600))
 
 
+# BUTTON - REMOVE TRACK
+def button_remove_track_clicked():
+    # DB
+    row_id_db = listWidget.currentRow() + 1
+    remove_record_db(row_id_db)
+    # PLAYLIST
+    listWidget.takeItem(listWidget.currentRow())
+    rename_playlist(row_id_db)
+
+
+def rename_playlist(row_id_db):
+    cur.execute(f"SELECT * FROM playlist_table WHERE row_id >= '{row_id_db}'")
+    playlist = cur.fetchall()
+    for item in playlist:
+        new_list_name = f'{item[0]}. {item[1]}'
+        listWidget.item(row_id_db-1).setText(new_list_name)
+        row_id_db +=1
+
+button_remove_track = QPushButton(window, text='Remove track')
+button_remove_track.setCursor(Qt.CursorShape.PointingHandCursor)
+button_remove_track.clicked.connect(button_remove_track_clicked)
+button_remove_track.setFont(QFont('Times', 10, 600))
+
+
+
+
+''' PLAYLIST DB --> LIST WIDGET '''
+cur.execute(f"SELECT * FROM playlist_table")
+playlist = cur.fetchall()
 for item in playlist:
-    QListWidgetItem(item, listWidget)
+    list_name = f'{item[0]}. {item[1]}' # row_id, name
+    QListWidgetItem(list_name, listWidget)
 
 
-def list_action():
-    track_path = playlist[listWidget.currentItem().text()]
+''' LIST ACTIONS '''
+def play_track():
+    row_id = listWidget.currentRow() + 1
+    track_path = cur.execute(f"SELECT path FROM playlist_table WHERE row_id = {row_id}").fetchall()[0][0]
     music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     music.audio_output.setVolume(0.5)
     music.player.play()
-listWidget.itemDoubleClicked.connect(list_action)
+listWidget.itemDoubleClicked.connect(play_track)
 
     
 window_layout = QVBoxLayout(window)
 window_layout.addWidget(button_add_track)
+window_layout.addWidget(button_remove_track)
 window_layout.addWidget(listWidget)
 window.setLayout(window_layout)
 
