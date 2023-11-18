@@ -49,7 +49,7 @@ def add_record_grouped_actions(track_path, music_duration):
     row_id = get_row_id_db(track_path)
     # PLAYLIST
     list_name = f'{row_id}. {track_name} - {duration_list}'
-    QListWidgetItem(list_name, listWidget)
+    QListWidgetItem(list_name, listWidget).setFont(inactive_track_font_style)
 
 
 ''' PLAYLIST DB '''
@@ -59,15 +59,19 @@ cur = connection.cursor()
 ''' PLAYER '''
 music = Music()
 
+''' STYLE '''
+inactive_track_font_style = QFont('Consolas', 10, 500)
+active_track_font_style = QFont('Consolas', 10, 600)
 
 
 ''' APP '''
 app = QApplication(sys.argv)
 window = QWidget()
-window.resize(600, 500)
+window.resize(650, 550)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 listWidget = QListWidget(window)
 window.setWindowTitle("Media Player")
+
 
 ''' BUTTONS '''
 # BUTTON - ADD TRACK
@@ -165,19 +169,36 @@ cur.execute(f"SELECT * FROM playlist_table")
 playlist = cur.fetchall()
 for item in playlist:
     list_name = generate_track_list_name(item)
-    QListWidgetItem(list_name, listWidget)
+    QListWidgetItem(list_name, listWidget).setFont(inactive_track_font_style)
 
 
 
 ''' LIST ACTIONS '''
 def play_track():
+    # FONT
+    if music.played_row != None:
+        listWidget.item(music.played_row).setFont(inactive_track_font_style)
+    music.played_row = listWidget.currentRow()
+    # PATH
     row_id = listWidget.currentRow() + 1
+    listWidget.currentItem().setFont(active_track_font_style)
     track_path = get_path_db(row_id)
+    # PLAYER
     music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     music.audio_output.setVolume(0.5)
     music.player.play()
 listWidget.itemDoubleClicked.connect(play_track)
 
+
+def play_next_track():
+    if (music.player.mediaStatus() == music.player.MediaStatus.EndOfMedia and 
+        listWidget.count() != listWidget.currentRow() + 1):
+            if music.base_played:
+                listWidget.setCurrentRow(listWidget.currentRow() + 1)
+                play_track()
+            else:
+                music.base_played = True      
+music.player.mediaStatusChanged.connect(play_next_track)
 
 
 ''' LAYOUT '''
