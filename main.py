@@ -56,8 +56,6 @@ def add_record_grouped_actions(track_path, music_duration):
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
 
-''' PLAYER '''
-music = Music()
 
 ''' STYLE '''
 inactive_track_font_style = QFont('Consolas', 10, 500)
@@ -72,12 +70,14 @@ window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.pn
 listWidget = QListWidget(window)
 window.setWindowTitle("Media Player")
 
+''' PLAYER '''
+music = Music()
+music_duration = Music()
+
 
 ''' BUTTONS '''
 # BUTTON - ADD TRACK
 def button_add_track_clicked():
-    music_duration = Music()
-
     dialog_add_track = QFileDialog()
     dialog_add_track.setWindowTitle("Select an MP3 file")
     dialog_add_track.setNameFilter("MP3 files (*.mp3)")
@@ -96,10 +96,8 @@ button_add_track.setFont(QFont('Times', 10, 600))
 
 # BUTTON - ADD DIRECTORY
 def button_add_dir_clicked():
-    music_duration = Music()
     track_path_list = []
     error_path_list = []
-
     dialog_add_dir = QFileDialog()
     dialog_add_dir.setWindowTitle("Select a directory")
     dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
@@ -176,9 +174,8 @@ for item in playlist:
 ''' LIST ACTIONS '''
 def play_track():
     # FONT
-    if music.played_row != None:
+    if music.played_row != None and music.played_row < listWidget.count():
         listWidget.item(music.played_row).setFont(inactive_track_font_style)
-    music.played_row = listWidget.currentRow()
     # PATH
     row_id = listWidget.currentRow() + 1
     listWidget.currentItem().setFont(active_track_font_style)
@@ -187,6 +184,8 @@ def play_track():
     music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     music.audio_output.setVolume(0.5)
     music.player.play()
+    # COUNTER
+    music.played_row = listWidget.currentRow()
 listWidget.itemDoubleClicked.connect(play_track)
 
 
@@ -194,7 +193,7 @@ def play_next_track():
     if (music.player.mediaStatus() == music.player.MediaStatus.EndOfMedia and 
         listWidget.count() != listWidget.currentRow() + 1):
             if music.base_played:
-                listWidget.setCurrentRow(listWidget.currentRow() + 1)
+                listWidget.setCurrentRow(music.played_row + 1)
                 play_track()
             else:
                 music.base_played = True      
