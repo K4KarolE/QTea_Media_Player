@@ -19,28 +19,37 @@ from player import Music
 
 
 def add_record_db(duration, path):
-    cur.execute(f"INSERT INTO playlist_table(duration, path) VALUES ('{duration}', '{path}')")
+    cur.execute("INSERT INTO playlist_table(duration, path) VALUES (?, ?)", (duration, str(path)))
     connection.commit()
 
 def remove_record_db(list_row_id):
-    cur.execute(f"DELETE FROM playlist_table WHERE row_id = '{list_row_id}'")
-    cur.execute(f"UPDATE playlist_table SET row_id = row_id - 1 WHERE row_id > '{list_row_id}'")
+    cur.execute(f"DELETE FROM playlist_table WHERE row_id = ?", (list_row_id,))
+    cur.execute(f"UPDATE playlist_table SET row_id = row_id - 1 WHERE row_id > ?", (list_row_id,) )
     connection.commit()
 
 def get_row_id_db(path): 
-    cur.execute(f"SELECT row_id FROM playlist_table WHERE path = '{path}'")
-    record = cur.fetchall()
-    return record[-1][0]    # adding same track multiple times --> row_id: picked the latest's one
+    return cur.execute(f"SELECT row_id FROM playlist_table WHERE path = ?", (str(path),)).fetchall()[-1][0] 
+    # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
 
 def get_path_db(row_id): 
-    cur.execute(f"SELECT * FROM playlist_table WHERE row_id = '{row_id}'")
-    record = cur.fetchall()
-    print(record[0][2])
+    return cur.execute(f"SELECT * FROM playlist_table WHERE row_id = ?", (row_id,)).fetchall()[0][2]
 
 def generate_track_list_name(item):
     duration_list = f'{int(int(item[1])/60/1000)}:{int(int(item[1])%60)}'
-    list_name = f'{item[0]}. {Path(item[2]).stem} - {duration_list}'
-    return list_name
+    return f'{item[0]}. {Path(item[2]).stem} - {duration_list}'
+
+def add_record_grouped_actions(track_path, music_duration):
+    track_name = Path(track_path).stem
+    # DURATION
+    music_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    duration = music_duration.player.duration()
+    duration_list = f'{int(duration/60/1000)}:{int(duration%60)}'
+    # DB
+    add_record_db(duration, track_path)
+    row_id = get_row_id_db(track_path)
+    # PLAYLIST
+    list_name = f'{row_id}. {track_name} - {duration_list}'
+    QListWidgetItem(list_name, listWidget)
 
 
 ''' PLAYLIST DB '''
@@ -70,18 +79,10 @@ def button_add_track_clicked():
     dialog_add_track.setNameFilter("MP3 files (*.mp3)")
     dialog_add_track.exec()
     if dialog_add_track.result():
-        track_name = Path(dialog_add_track.selectedFiles()[0]).stem
-        track_path = dialog_add_track.selectedFiles()[0]
-        # DURATION
-        music_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        duration = music_duration.player.duration()
-        duration_list = f'{int(duration/60/1000)}:{int(duration%60)}'
-        # DB
-        add_record_db(duration, track_path)
-        row_id = get_row_id_db(track_path)
-        # PLAYLIST
-        list_name = f'{row_id}. {track_name} - {duration_list}'
-        QListWidgetItem(list_name, listWidget)
+        add_record_grouped_actions(
+            dialog_add_track.selectedFiles()[0],
+            music_duration
+            )
 
 button_add_track = QPushButton(window, text='Add track')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -93,6 +94,7 @@ button_add_track.setFont(QFont('Times', 10, 600))
 def button_add_dir_clicked():
     music_duration = Music()
     track_path_list = []
+    error_path_list = []
 
     dialog_add_dir = QFileDialog()
     dialog_add_dir.setWindowTitle("Select a directory")
@@ -105,17 +107,13 @@ def button_add_dir_clicked():
                     track_path_list.append(Path(dir_path, file))
         if len(track_path_list) > 0:
             for track_path in track_path_list:
-                track_name = Path(track_path).stem 
-                # DURATION
-                music_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-                duration = music_duration.player.duration()
-                duration_list = f'{int(duration/60/1000)}:{int(duration%60)}'
-                # DB
-                add_record_db(duration, track_path)
-                row_id = get_row_id_db(track_path)
-                # PLAYLIST
-                list_name = f'{row_id}. {track_name} - {duration_list}'
-                QListWidgetItem(list_name, listWidget)
+                try:
+                    add_record_grouped_actions(track_path, music_duration)
+                except:
+                    error_path_list.append(track_path)
+            if error_path_list:
+                for item in error_path_list:
+                    print(f'ERROR - {item}')
 
 button_add_dir = QPushButton(window, text='Add directory')
 button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -135,7 +133,7 @@ def button_remove_track_clicked():
 
 
 def rename_playlist(row_id_db):
-    cur.execute(f"SELECT * FROM playlist_table WHERE row_id >= '{row_id_db}'")
+    cur.execute(f"SELECT * FROM playlist_table WHERE row_id >= ?", (row_id_db,))
     playlist = cur.fetchall()
     for item in playlist:
         list_name = generate_track_list_name(item)
@@ -174,7 +172,7 @@ for item in playlist:
 ''' LIST ACTIONS '''
 def play_track():
     row_id = listWidget.currentRow() + 1
-    track_path = cur.execute(f"SELECT path FROM playlist_table WHERE row_id = {row_id}").fetchall()[0][0]
+    track_path = get_path_db(row_id)
     music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     music.audio_output.setVolume(0.5)
     music.player.play()
