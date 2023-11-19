@@ -1,5 +1,5 @@
 
-from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout 
+from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QMovie, QIcon, QFont
@@ -65,22 +65,31 @@ active_track_font_style = QFont('Consolas', 10, 600)
 ''' APP '''
 app = QApplication(sys.argv)
 window = QWidget()
-window.resize(650, 550)
+window.resize(1500, 650)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 listWidget = QListWidget(window)
 window.setWindowTitle("Media Player")
 
 ''' PLAYER '''
 music = Music()
-music_duration = Music()
+music_duration = Music(False)
 
 
-''' BUTTONS '''
-# BUTTON - ADD TRACK
+''' 
+#######################
+        BUTTONS              
+#######################
+'''
+MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
+AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
+VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
+FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
+
+''' BUTTON - ADD TRACK '''
 def button_add_track_clicked():
     dialog_add_track = QFileDialog()
-    dialog_add_track.setWindowTitle("Select an MP3 file")
-    dialog_add_track.setNameFilter("MP3 files (*.mp3)")
+    dialog_add_track.setWindowTitle("Select a media file")
+    dialog_add_track.setNameFilters(FILE_TYPES_LIST)
     dialog_add_track.exec()
     if dialog_add_track.result():
         add_record_grouped_actions(
@@ -94,7 +103,7 @@ button_add_track.clicked.connect(button_add_track_clicked)
 button_add_track.setFont(QFont('Times', 10, 600))
 
 
-# BUTTON - ADD DIRECTORY
+''' BUTTON - ADD DIRECTORY '''
 def button_add_dir_clicked():
     track_path_list = []
     error_path_list = []
@@ -105,7 +114,7 @@ def button_add_dir_clicked():
     if dialog_add_dir.result():
         for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
             for file in file_names:
-                if file[-4:] in ['.mp3', '.wav']:
+                if file[-4:] in MEDIA_FILES:
                     track_path_list.append(Path(dir_path, file))
         if len(track_path_list) > 0:
             for track_path in track_path_list:
@@ -124,7 +133,7 @@ button_add_dir.setFont(QFont('Times', 10, 600))
 
 
 
-# BUTTON - REMOVE TRACK
+''' BUTTON - REMOVE TRACK '''
 def button_remove_track_clicked():
     # DB
     row_id_db = listWidget.currentRow() + 1
@@ -148,7 +157,7 @@ button_remove_track.clicked.connect(button_remove_track_clicked)
 button_remove_track.setFont(QFont('Times', 10, 600))
 
 
-# BUTTON - REMOVE ALL TRACK
+''' BUTTON - REMOVE ALL TRACK '''
 def button_remove_all_track_clicked():
     # DB
     cur.execute(f"DELETE FROM playlist_table")
@@ -200,19 +209,37 @@ def play_next_track():
 music.player.mediaStatusChanged.connect(play_next_track)
 
 
-''' LAYOUT '''
+''' 
+######################
+        LAYOUTS                          
+######################
+'''
+layout_hor = QHBoxLayout(window)    
+layout_vert_left = QVBoxLayout()
+layout_vert_middle = QVBoxLayout()
+layout_vert_right = QVBoxLayout()
+
+layout_hor.addLayout(layout_vert_left, 200)
+layout_hor.addLayout(layout_vert_middle, 1)
+layout_hor.addLayout(layout_vert_right, 99)
+
+# LAYOUT LEFT WIDGETS
 widgets_list = [
     button_add_track,
     button_add_dir,
     button_remove_track,
     button_remove_all_track,
-    listWidget
+    music.video_output
     ]
-    
-window_layout = QVBoxLayout(window)
+
 for widget in widgets_list:
-    window_layout.addWidget(widget)
-window.setLayout(window_layout)
+    layout_vert_left.addWidget(widget)
+
+# LAYOUT RIGHT WIDGETS
+layout_vert_right.addWidget(listWidget)
+
+# for later
+# layout_hor.setStretch(0, 10)
 
 window.show()
 
