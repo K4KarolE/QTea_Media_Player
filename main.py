@@ -1,6 +1,6 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
-from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton
+from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtGui import QMovie, QIcon, QFont
 
@@ -65,7 +65,7 @@ active_track_font_style = QFont('Consolas', 10, 600)
 ''' APP '''
 app = QApplication(sys.argv)
 window = QWidget()
-window.resize(1500, 650)
+window.resize(1600, 750)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 listWidget = QListWidget(window)
 window.setWindowTitle("Media Player")
@@ -85,6 +85,14 @@ AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
 VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
 FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
 
+under_playlist_window = QMainWindow()
+
+U_PLIST_BUTTON_WIDTH = 50
+U_PLIST_BUTTON_HEIGHT = 30
+
+def button_x_pos(num):
+    return (U_PLIST_BUTTON_WIDTH + 3) * num
+
 ''' BUTTON - ADD TRACK '''
 def button_add_track_clicked():
     dialog_add_track = QFileDialog()
@@ -97,10 +105,11 @@ def button_add_track_clicked():
             music_duration
             )
 
-button_add_track = QPushButton(window, text='Add track')
+button_add_track = QPushButton(under_playlist_window, text='AT')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_track.clicked.connect(button_add_track_clicked)
 button_add_track.setFont(QFont('Times', 10, 600))
+button_add_track.setGeometry(0, 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
 
 
 ''' BUTTON - ADD DIRECTORY '''
@@ -126,10 +135,11 @@ def button_add_dir_clicked():
                 for item in error_path_list:
                     print(f'ERROR - {item}')
 
-button_add_dir = QPushButton(window, text='Add directory')
+button_add_dir = QPushButton(under_playlist_window, text='AD')
 button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_dir.clicked.connect(button_add_dir_clicked)
 button_add_dir.setFont(QFont('Times', 10, 600))
+button_add_dir.setGeometry(button_x_pos(1), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
 
 
 
@@ -151,11 +161,11 @@ def rename_playlist(row_id_db):
         listWidget.item(row_id_db-1).setText(list_name)
         row_id_db +=1
 
-button_remove_track = QPushButton(window, text='Remove track')
+button_remove_track = QPushButton(under_playlist_window, text='RT')
 button_remove_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_remove_track.clicked.connect(button_remove_track_clicked)
 button_remove_track.setFont(QFont('Times', 10, 600))
-
+button_remove_track.setGeometry(button_x_pos(2), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
 
 ''' BUTTON - REMOVE ALL TRACK '''
 def button_remove_all_track_clicked():
@@ -165,10 +175,21 @@ def button_remove_all_track_clicked():
     # PLAYLIST
     listWidget.clear()
 
-button_remove_all_track = QPushButton(window, text='Remove all tracks')
+button_remove_all_track = QPushButton(under_playlist_window, text='RAL')
 button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 button_remove_all_track.setFont(QFont('Times', 10, 600))
+button_remove_all_track.setGeometry(button_x_pos(3), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+
+
+''' BUTTON - PLAY/STOP '''
+def button_button_play_stop_clicked():
+    pass
+
+button_play_stop = QPushButton(window, text='Play / Stop')
+button_play_stop.setCursor(Qt.CursorShape.PointingHandCursor)
+button_play_stop.clicked.connect(button_button_play_stop_clicked)
+button_play_stop.setFont(QFont('Times', 10, 600))
 
 
 ''' PLAYLIST DB --> LIST WIDGET '''
@@ -214,32 +235,43 @@ music.player.mediaStatusChanged.connect(play_next_track)
         LAYOUTS                          
 ######################
 '''
-layout_hor = QHBoxLayout(window)    
+'''
+
+    -----------------
+    |_______||       |
+    |       || PLIST |
+    |  VID  ||_______|  
+    |       ||       |
+    -----------------
+    |___|____________|
+   
+'''
+
+layout_base = QVBoxLayout(window)
+layout_hor_top = QHBoxLayout()
+layout_hor_bottom = QVBoxLayout()
+
+layout_base.addLayout(layout_hor_top)
+layout_base.addLayout(layout_hor_bottom)
+
 layout_vert_left = QVBoxLayout()
 layout_vert_middle = QVBoxLayout()
 layout_vert_right = QVBoxLayout()
 
-layout_hor.addLayout(layout_vert_left, 200)
-layout_hor.addLayout(layout_vert_middle, 1)
-layout_hor.addLayout(layout_vert_right, 99)
+layout_hor_top.addLayout(layout_vert_left, 200)
+layout_hor_top.addLayout(layout_vert_middle, 1)
+layout_hor_top.addLayout(layout_vert_right, 99)
 
-# LAYOUT LEFT WIDGETS
-widgets_list = [
-    button_add_track,
-    button_add_dir,
-    button_remove_track,
-    button_remove_all_track,
-    music.video_output
-    ]
-
-for widget in widgets_list:
-    layout_vert_left.addWidget(widget)
-
-# LAYOUT RIGHT WIDGETS
-layout_vert_right.addWidget(listWidget)
+# LAYOUT ADD WIDGETS
+layout_vert_left.addWidget(music.video_output)
+layout_vert_right.addWidget(listWidget, 95)
+layout_vert_right.addWidget(under_playlist_window, 5)
+layout_hor_bottom.addWidget(button_play_stop)
 
 # for later
 # layout_hor.setStretch(0, 10)
+
+
 
 window.show()
 
