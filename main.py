@@ -1,8 +1,8 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtCore import QUrl, Qt, QEvent
-from PyQt6.QtGui import QMovie, QIcon, QFont, QMouseEvent
+from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtGui import QMovie, QIcon, QFont
 
 # from PyQt6.QtWidgets import QTabWidget, QLabel
 # from PyQt6.QtWidgets import QLineEdit
@@ -12,8 +12,8 @@ import os
 import sys
 import sqlite3
 
-from player import Path
-from player import MTPlayer
+from mt_player import Path
+from mt_player import MTPlayer
 # from player import open_json, save_json
 # from player import PATH_JSON_PLAYLIST
 
@@ -281,22 +281,6 @@ layout_hor_bottom.addWidget(button_play_stop)
 # for later
 # layout_hor.setStretch(0, 10)
 
-# def test():
-#     print('test')
-
-# tt = QMouseEvent()
-
-# event = QEvent
-
-# mt_player.video_output.event(QEvent.)
-
-# # mt_player.video_output.mouseDoubleClickEvent(QMouseEvent())
-
-# mt_player.video_output.installEventFilter(window)
-# # mt_player.video_output.setFullScreen(1)
-
-# if mt_player.video_output.eve == QEvent.Type.MouseButtonDblClick:
-#     print('test')
 
 window.show()
 

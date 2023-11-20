@@ -5,4 +5,4 @@ from .cons_and_vars import *
 # from .message_boxes import *
 # from .windows_settings import *
 # from .windows_main import *
-from .musix import *
+from .player import *
