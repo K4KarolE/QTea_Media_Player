@@ -10,7 +10,7 @@ PLAY EMPTY SOUND WORKAROUND
 at least one music file need to be played from start to finish
 before be able to switch tracks without crashing
 '''
-class Music:
+class MTPlayer:
 
     def __init__(self, play_base=True):
         self.player = QMediaPlayer()

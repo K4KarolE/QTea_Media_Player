@@ -1,8 +1,8 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtCore import QUrl, Qt
-from PyQt6.QtGui import QMovie, QIcon, QFont
+from PyQt6.QtCore import QUrl, Qt, QEvent
+from PyQt6.QtGui import QMovie, QIcon, QFont, QMouseEvent
 
 # from PyQt6.QtWidgets import QTabWidget, QLabel
 # from PyQt6.QtWidgets import QLineEdit
@@ -13,7 +13,7 @@ import sys
 import sqlite3
 
 from player import Path
-from player import Music
+from player import MTPlayer
 # from player import open_json, save_json
 # from player import PATH_JSON_PLAYLIST
 
@@ -68,11 +68,11 @@ window = QWidget()
 window.resize(1600, 750)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 listWidget = QListWidget(window)
-window.setWindowTitle("Media Player")
+window.setWindowTitle("Mad Tea media player")
 
 ''' PLAYER '''
-music = Music()
-music_duration = Music(False)
+mt_player = MTPlayer()
+mt_player_duration = MTPlayer(False)
 
 
 ''' 
@@ -102,14 +102,16 @@ def button_add_track_clicked():
     if dialog_add_track.result():
         add_record_grouped_actions(
             dialog_add_track.selectedFiles()[0],
-            music_duration
+            mt_player_duration
             )
 
 button_add_track = QPushButton(under_playlist_window, text='AT')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_add_track.clicked.connect(button_add_track_clicked)
+button_add_track.setToolTip('Add track')
+button_add_track.setToolTipDuration(2000)
 button_add_track.setFont(QFont('Times', 10, 600))
 button_add_track.setGeometry(0, 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_add_track.clicked.connect(button_add_track_clicked)
 
 
 ''' BUTTON - ADD DIRECTORY '''
@@ -128,7 +130,7 @@ def button_add_dir_clicked():
         if len(track_path_list) > 0:
             for track_path in track_path_list:
                 try:
-                    add_record_grouped_actions(track_path, music_duration)
+                    add_record_grouped_actions(track_path, mt_player_duration)
                 except:
                     error_path_list.append(track_path)
             if error_path_list:
@@ -137,9 +139,11 @@ def button_add_dir_clicked():
 
 button_add_dir = QPushButton(under_playlist_window, text='AD')
 button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
-button_add_dir.clicked.connect(button_add_dir_clicked)
+button_add_dir.setToolTip('Add directory')
+button_add_dir.setToolTipDuration(2000)
 button_add_dir.setFont(QFont('Times', 10, 600))
 button_add_dir.setGeometry(button_x_pos(1), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_add_dir.clicked.connect(button_add_dir_clicked)
 
 
 
@@ -163,9 +167,11 @@ def rename_playlist(row_id_db):
 
 button_remove_track = QPushButton(under_playlist_window, text='RT')
 button_remove_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_remove_track.clicked.connect(button_remove_track_clicked)
+button_remove_track.setToolTip('Remove track')
+button_remove_track.setToolTipDuration(2000)
 button_remove_track.setFont(QFont('Times', 10, 600))
 button_remove_track.setGeometry(button_x_pos(2), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_remove_track.clicked.connect(button_remove_track_clicked)
 
 ''' BUTTON - REMOVE ALL TRACK '''
 def button_remove_all_track_clicked():
@@ -177,9 +183,11 @@ def button_remove_all_track_clicked():
 
 button_remove_all_track = QPushButton(under_playlist_window, text='RAL')
 button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
+button_remove_all_track.setToolTip('Remove all track')
+button_remove_all_track.setToolTipDuration(2000)
 button_remove_all_track.setFont(QFont('Times', 10, 600))
 button_remove_all_track.setGeometry(button_x_pos(3), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 
 ''' BUTTON - PLAY/STOP '''
@@ -204,30 +212,32 @@ for item in playlist:
 ''' LIST ACTIONS '''
 def play_track():
     # FONT
-    if music.played_row != None and music.played_row < listWidget.count():
-        listWidget.item(music.played_row).setFont(inactive_track_font_style)
+    if mt_player.played_row != None and mt_player.played_row < listWidget.count():
+        listWidget.item(mt_player.played_row).setFont(inactive_track_font_style)
     # PATH
     row_id = listWidget.currentRow() + 1
     listWidget.currentItem().setFont(active_track_font_style)
     track_path = get_path_db(row_id)
     # PLAYER
-    music.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    music.audio_output.setVolume(0.5)
-    music.player.play()
+    mt_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    mt_player.audio_output.setVolume(0.5)
+    mt_player.player.play()
     # COUNTER
-    music.played_row = listWidget.currentRow()
+    mt_player.played_row = listWidget.currentRow()
+    # WINDOW TITLE
+    window.setWindowTitle(f'{Path(track_path).stem} - Mad Tea media player')
 listWidget.itemDoubleClicked.connect(play_track)
 
 
 def play_next_track():
-    if (music.player.mediaStatus() == music.player.MediaStatus.EndOfMedia and 
+    if (mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia and 
         listWidget.count() != listWidget.currentRow() + 1):
-            if music.base_played:
-                listWidget.setCurrentRow(music.played_row + 1)
+            if mt_player.base_played:
+                listWidget.setCurrentRow(mt_player.played_row + 1)
                 play_track()
             else:
-                music.base_played = True      
-music.player.mediaStatusChanged.connect(play_next_track)
+                mt_player.base_played = True      
+mt_player.player.mediaStatusChanged.connect(play_next_track)
 
 
 ''' 
@@ -238,12 +248,12 @@ music.player.mediaStatusChanged.connect(play_next_track)
 '''
 
     -----------------
-    |_______||       |
+    |       ||       |
     |       || PLIST |
     |  VID  ||_______|  
-    |       ||       |
-    -----------------
-    |___|____________|
+    |_______||_______|
+    |________________|
+    |________________|
    
 '''
 
@@ -263,7 +273,7 @@ layout_hor_top.addLayout(layout_vert_middle, 1)
 layout_hor_top.addLayout(layout_vert_right, 99)
 
 # LAYOUT ADD WIDGETS
-layout_vert_left.addWidget(music.video_output)
+layout_vert_left.addWidget(mt_player.video_output)
 layout_vert_right.addWidget(listWidget, 95)
 layout_vert_right.addWidget(under_playlist_window, 5)
 layout_hor_bottom.addWidget(button_play_stop)
@@ -271,7 +281,22 @@ layout_hor_bottom.addWidget(button_play_stop)
 # for later
 # layout_hor.setStretch(0, 10)
 
+# def test():
+#     print('test')
 
+# tt = QMouseEvent()
+
+# event = QEvent
+
+# mt_player.video_output.event(QEvent.)
+
+# # mt_player.video_output.mouseDoubleClickEvent(QMouseEvent())
+
+# mt_player.video_output.installEventFilter(window)
+# # mt_player.video_output.setFullScreen(1)
+
+# if mt_player.video_output.eve == QEvent.Type.MouseButtonDblClick:
+#     print('test')
 
 window.show()
 
