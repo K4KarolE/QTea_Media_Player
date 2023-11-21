@@ -4,12 +4,11 @@ from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
 
-
-'''
+"""
 PLAY EMPTY SOUND WORKAROUND
 at least one music file need to be played from start to finish
 before be able to switch tracks without crashing
-'''
+"""
 class MTPlayer(QWidget):
 
     def __init__(self, play_base=True):
@@ -29,7 +28,7 @@ class MTPlayer(QWidget):
         self.base_played = False
         # SETTINGS
         # self.player.setLoops(1) # -1=infinite
-        # self.audio_output.setVolume(0)
+        self.audio_output.setVolume(1)
     
     
     def eventFilter(self, source, event):
