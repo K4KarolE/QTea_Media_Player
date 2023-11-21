@@ -26,6 +26,7 @@ class MTPlayer(QWidget):
             self.player.play()
         self.played_row = None
         self.base_played = False
+        self.paused = False
         # SETTINGS
         # self.player.setLoops(1) # -1=infinite
         self.audio_output.setVolume(1)

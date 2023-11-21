@@ -122,13 +122,16 @@ AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
 VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
 FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
 
-U_PLIST_BUTTON_WIDTH = 50
-U_PLIST_BUTTON_HEIGHT = 30
+''' 
+    PLAYLIST SECTION
+'''
+PLIST_BUTTONS_WIDTH = 50
+PLIST_BUTTONS_HEIGHT = 30
 
 def button_x_pos(num):
-    return (U_PLIST_BUTTON_WIDTH + 3) * num
+    return (PLIST_BUTTONS_WIDTH + 3) * num
 
-''' BUTTON - ADD TRACK '''
+''' BUTTON PLAYLIST - ADD TRACK '''
 def button_add_track_clicked():
     dialog_add_track = QFileDialog()
     dialog_add_track.setWindowTitle("Select a media file")
@@ -145,11 +148,11 @@ button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_track.setToolTip('Add track')
 button_add_track.setToolTipDuration(2000)
 button_add_track.setFont(QFont('Times', 10, 600))
-button_add_track.setGeometry(0, 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_add_track.setGeometry(0, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_add_track.clicked.connect(button_add_track_clicked)
 
 
-''' BUTTON - ADD DIRECTORY '''
+''' BUTTON PLAYLIST - ADD DIRECTORY '''
 def button_add_dir_clicked():
     track_path_list = []
     error_path_list = []
@@ -177,12 +180,12 @@ button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_dir.setToolTip('Add directory')
 button_add_dir.setToolTipDuration(2000)
 button_add_dir.setFont(QFont('Times', 10, 600))
-button_add_dir.setGeometry(button_x_pos(1), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_add_dir.setGeometry(button_x_pos(1), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_add_dir.clicked.connect(button_add_dir_clicked)
 
 
 
-''' BUTTON - REMOVE TRACK '''
+''' BUTTON PLAYLIST - REMOVE TRACK '''
 def button_remove_track_clicked():
     # DB
     row_id_db = listWidget.currentRow() + 1
@@ -205,10 +208,10 @@ button_remove_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_remove_track.setToolTip('Remove track')
 button_remove_track.setToolTipDuration(2000)
 button_remove_track.setFont(QFont('Times', 10, 600))
-button_remove_track.setGeometry(button_x_pos(2), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_remove_track.setGeometry(button_x_pos(2), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_track.clicked.connect(button_remove_track_clicked)
 
-''' BUTTON - REMOVE ALL TRACK '''
+''' BUTTON PLAYLIST - REMOVE ALL TRACK '''
 def button_remove_all_track_clicked():
     # DB
     cur.execute(f"DELETE FROM playlist_table")
@@ -221,21 +224,83 @@ button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_remove_all_track.setToolTip('Remove all track')
 button_remove_all_track.setToolTipDuration(2000)
 button_remove_all_track.setFont(QFont('Times', 10, 600))
-button_remove_all_track.setGeometry(button_x_pos(3), 0, U_PLIST_BUTTON_WIDTH, U_PLIST_BUTTON_HEIGHT)
+button_remove_all_track.setGeometry(button_x_pos(3), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 
-''' BUTTON - PLAY/STOP '''
-def button_button_play_stop_clicked():
-    if mt_player.player.isPlaying():
-        mt_player.player.stop()
-    else:
+''' 
+    PLAY SECTION
+'''
+PLAY_BUTTONS_WIDTH = 50
+PLAY_BUTTONS_HEIGHT = 30
+
+def play_buttons_x_pos(num):
+    return (PLAY_BUTTONS_WIDTH + 3) * num
+
+
+''' BUTTON PLAY SECTION - PLAY / PAUSE '''
+def button_play_pause_clicked():
+
+    if mt_player.played_row == None:
+        listWidget.setCurrentRow(0)
+        play_track()
+    elif mt_player.player.isPlaying():
+        mt_player.player.pause()
+        mt_player.paused = True
+    elif mt_player.paused:
+        mt_player.player.play()
+        mt_player.paused = False
+    elif not mt_player.player.isPlaying() and not mt_player.paused:
         play_track()
 
-button_play_stop = QPushButton(under_play_slider_window, text='Play / Stop')
-button_play_stop.setCursor(Qt.CursorShape.PointingHandCursor)
-button_play_stop.clicked.connect(button_button_play_stop_clicked)
-button_play_stop.setFont(QFont('Times', 10, 600))
+button_play_pause = QPushButton(under_play_slider_window, text='PLAY/PAUSE')
+button_play_pause.setCursor(Qt.CursorShape.PointingHandCursor)
+button_play_pause.setFont(QFont('Times', 10, 600))
+button_play_pause.clicked.connect(button_play_pause_clicked)
+
+
+''' BUTTON PLAY SECTION - STOP '''
+def button_stop_clicked():
+    mt_player.player.stop()
+    mt_player.paused = False
+ 
+button_stop = QPushButton(under_play_slider_window, text='Stop')
+button_stop.setCursor(Qt.CursorShape.PointingHandCursor)
+button_stop.setFont(QFont('Times', 10, 600))
+button_stop.setGeometry(play_buttons_x_pos(2), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_stop.clicked.connect(button_stop_clicked)
+
+
+''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
+def button_prev_track_clicked():
+    if listWidget.count() > 0 and mt_player.played_row != None:
+        if listWidget.currentRow() != 0:
+            listWidget.setCurrentRow(mt_player.played_row - 1)
+        else:
+            listWidget.setCurrentRow(listWidget.count() - 1)
+        play_track()
+
+button_prev_track = QPushButton(under_play_slider_window, text='Prev')
+button_prev_track.setCursor(Qt.CursorShape.PointingHandCursor)
+button_prev_track.setFont(QFont('Times', 10, 600))
+button_prev_track.setGeometry(play_buttons_x_pos(3), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_prev_track.clicked.connect(button_prev_track_clicked)
+
+
+''' BUTTON PLAY SECTION - NEXT TRACK '''
+def button_next_track_clicked():
+    if listWidget.count() > 0 and mt_player.played_row != None:
+        if listWidget.count() != listWidget.currentRow() + 1:
+            listWidget.setCurrentRow(mt_player.played_row + 1)
+        else:
+            listWidget.setCurrentRow(0)
+        play_track()
+
+button_next_track = QPushButton(under_play_slider_window, text='Next')
+button_next_track.setCursor(Qt.CursorShape.PointingHandCursor)
+button_next_track.setFont(QFont('Times', 10, 600))
+button_next_track.setGeometry(play_buttons_x_pos(4), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_next_track.clicked.connect(button_next_track_clicked)
 
 
 ''' PLAYLIST DB --> LIST WIDGET '''
@@ -274,7 +339,7 @@ def play_track():
         window.setWindowTitle(f'{Path(track_path).stem} - Mad Tea media player')
 
 
-def play_next_track():
+def auto_play_next_track():
     if (mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia and 
         listWidget.count() != listWidget.currentRow() + 1):
             if mt_player.base_played:
@@ -282,7 +347,7 @@ def play_next_track():
                 play_track()
             else:
                 mt_player.base_played = True      
-mt_player.player.mediaStatusChanged.connect(play_next_track)
+mt_player.player.mediaStatusChanged.connect(auto_play_next_track)
 
 
 listWidget.itemDoubleClicked.connect(play_track)
@@ -328,7 +393,7 @@ play_slider.setOrientation(Qt.Orientation.Horizontal)
 play_slider.setCursor(Qt.CursorShape.PointingHandCursor)
 
 def player_set_position():
-    if mt_player.base_played:
+    if mt_player.base_played and mt_player.player.isPlaying():
         mt_player.player.setPosition(play_slider.value())
 
 play_slider.sliderReleased.connect(player_set_position)
