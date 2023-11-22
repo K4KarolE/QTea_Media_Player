@@ -1,11 +1,11 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtWidgets import QSlider
+from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QTabBar
 from PyQt6.QtCore import QUrl, Qt, QEvent
 from PyQt6.QtGui import QMovie, QIcon, QFont
 
-# from PyQt6.QtWidgets import QTabWidget, QLabel
+
 # from PyQt6.QtWidgets import QLineEdit
 # from PyQt6.QtCore import QSize, QTimer, QTime
 
@@ -14,53 +14,79 @@ import sys
 import sqlite3
 
 from mt_player import Path
-from mt_player import MTPlayer
-# from player import open_json, save_json
-# from player import PATH_JSON_PLAYLIST
+from mt_player import MTPlayer, Data
+from mt_player import TrackDuration
+from mt_player import open_json, save_json
+from mt_player import PATH_JSON_PAYLIST, PATH_JSON_SETTINGS, settings
 
+''' DATA '''
+cv = Data()
 
-def add_record_db(duration, path):
-    cur.execute("INSERT INTO playlist_table(duration, path) VALUES (?, ?)", (duration, str(path)))
-    connection.commit()
+''' LOADING SETTINGS '''
+paylist_dic = open_json(PATH_JSON_PAYLIST)
+paylist_list = list(paylist_dic.keys())
 
-def remove_record_db(list_row_id):
-    cur.execute(f"DELETE FROM playlist_table WHERE row_id = ?", (list_row_id,))
-    cur.execute(f"UPDATE playlist_table SET row_id = row_id - 1 WHERE row_id > ?", (list_row_id,) )
-    connection.commit()
-
-def get_row_id_db(path): 
-    return cur.execute(f"SELECT row_id FROM playlist_table WHERE path = ?", (str(path),)).fetchall()[-1][0] 
-    # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
-
-def get_path_db(): 
-    return cur.execute(f"SELECT * FROM playlist_table WHERE row_id = ?",
-                        (listWidget.currentRow() + 1,)).fetchall()[0][2]
-
-def get_duration_db():
-    return int(cur.execute(f"SELECT * FROM playlist_table WHERE row_id = ?",
-                           (listWidget.currentRow() + 1,)).fetchall()[0][1])
-
-def generate_track_list_name(item):
-    duration_list = f'{int(int(item[1])/60/1000)}:{int(int(item[1])%60)}'
-    return f'{item[0]}. {Path(item[2]).stem} - {duration_list}'
-
-def add_record_grouped_actions(track_path, music_duration):
-    track_name = Path(track_path).stem
-    # DURATION
-    music_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    duration = music_duration.player.duration()
-    duration_list = f'{int(duration/60/1000)}:{int(duration%60)}'
-    # DB
-    add_record_db(duration, track_path)
-    row_id = get_row_id_db(track_path)
-    # PLAYLIST
-    list_name = f'{row_id}. {track_name} - {duration_list}'
-    QListWidgetItem(list_name, listWidget).setFont(inactive_track_font_style)
+def active_utility():
+    cv.active_db_table = paylist_list[cv.active_tab]    # playlist_1,..
+    # WIDGETS
+    cv.active_playlist = paylist_dic[cv.active_db_table]['name_list_widget']
+    cv.active_pl_duration = paylist_dic[paylist_list[cv.active_tab]]['duration_list_widget']
+active_utility()
 
 
 ''' PLAYLIST DB '''
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
+
+
+def add_record_db(duration, path):
+    cur.execute("INSERT INTO {0}(duration, path) VALUES (?, ?)".format(cv.active_db_table), (duration, str(path)))
+    connection.commit()
+
+
+def remove_record_db(list_row_id):
+    cur.execute("DELETE FROM {0} WHERE row_id = ?".format(cv.active_db_table), (list_row_id,))
+    cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > ?".format(cv.active_db_table), (list_row_id,) )
+    connection.commit()
+
+
+def get_row_id_db(path):
+    return cur.execute("SELECT row_id FROM {0} WHERE path = ?".format(cv.active_db_table), (str(path),)).fetchall()[-1][0] 
+    # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
+
+
+def get_path_db():
+    # active_playlist = tabs_playlist.currentWidget()
+    name_list_widget = paylist_dic[pl]['name_list_widget'] 
+    return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
+                        (cv.active_playlist.currentRow() + 1,)).fetchall()[0][2]
+
+def get_duration_db():
+    # active_playlist = tabs_playlist.currentWidget()
+    return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
+                           (cv.active_playlist.currentRow() + 1,)).fetchall()[0][1])
+
+def generate_track_list_detail(item):
+    track_name = f'{item[0]}. {Path(item[2]).stem}'
+    duration = f'  {int(int(item[1])/60/1000)}:{int(int(item[1])%60)}'
+    return track_name, duration
+
+
+def add_record_grouped_actions(track_path):
+    # active_playlist = tabs_playlist.currentWidget()
+    track_name = Path(track_path).stem
+    # DURATION
+    mt_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    duration = mt_player_duration.player.duration()
+    duration_to_list = f'{int(duration/60/1000)}:{int(duration%60)}'
+    # DB
+    add_record_db(duration, track_path)
+    row_id = get_row_id_db(track_path)
+    # PLAYLIST
+    track_name = f'{row_id}. {track_name}'
+    QListWidgetItem(track_name, cv.active_playlist).setFont(inactive_track_font_style)
+    QListWidgetItem(duration_to_list, cv.active_pl_duration).setFont(inactive_track_font_style)
+
 
 
 ''' STYLE '''
@@ -69,12 +95,13 @@ active_track_font_style = QFont('Times', 11, 600)
 
 
 ''' APP '''
+WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
+
 app = QApplication(sys.argv)
 window = QWidget()
-window.resize(1600, 750)
+window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("Mad Tea media player")
-
 
 
 ''' PLAYER '''
@@ -86,7 +113,7 @@ mt_player = MTPlayer()
     able to add new track(s) without interrupting 
     the playing (mt_player)
 """
-mt_player_duration = MTPlayer(False)    
+mt_player_duration = TrackDuration()   
 
 
 ''' 
@@ -102,17 +129,6 @@ under_play_slider_window = QMainWindow()
 
 
 ''' 
-########################
-        LISTWIDGET                    
-########################
-'''
-listWidget = QListWidget(window)
-listWidget.setSpacing(3)
-# double click action declared after 'play_track' func
-
-
-
-''' 
 #######################
         BUTTONS              
 #######################
@@ -125,11 +141,12 @@ FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
 ''' 
     PLAYLIST SECTION
 '''
-PLIST_BUTTONS_WIDTH = 50
+PLIST_BUTTONS_WIDTH = 32
 PLIST_BUTTONS_HEIGHT = 30
+PLIST_BUTTONS_X_DIFF = 4    # FOR SELECTING ADD AND REMOVE BUTTONS
 
 def button_x_pos(num):
-    return (PLIST_BUTTONS_WIDTH + 3) * num
+    return (PLIST_BUTTONS_WIDTH + 5) * num
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
 def button_add_track_clicked():
@@ -138,10 +155,7 @@ def button_add_track_clicked():
     dialog_add_track.setNameFilters(FILE_TYPES_LIST)
     dialog_add_track.exec()
     if dialog_add_track.result():
-        add_record_grouped_actions(
-            dialog_add_track.selectedFiles()[0],
-            mt_player_duration
-            )
+        add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
 
 button_add_track = QPushButton(under_playlist_window, text='AT')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -168,7 +182,7 @@ def button_add_dir_clicked():
         if len(track_path_list) > 0:
             for track_path in track_path_list:
                 try:
-                    add_record_grouped_actions(track_path, mt_player_duration)
+                    add_record_grouped_actions(track_path)
                 except:
                     error_path_list.append(track_path)
             if error_path_list:
@@ -180,7 +194,7 @@ button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_dir.setToolTip('Add directory')
 button_add_dir.setToolTipDuration(2000)
 button_add_dir.setFont(QFont('Times', 10, 600))
-button_add_dir.setGeometry(button_x_pos(1), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_add_dir.clicked.connect(button_add_dir_clicked)
 
 
@@ -188,19 +202,19 @@ button_add_dir.clicked.connect(button_add_dir_clicked)
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 def button_remove_track_clicked():
     # DB
-    row_id_db = listWidget.currentRow() + 1
+    row_id_db = cv.active_playlist.currentRow() + 1
     remove_record_db(row_id_db)
     # PLAYLIST
-    listWidget.takeItem(listWidget.currentRow())
+    cv.active_playlist.takeItem(cv.active_playlist.currentRow())
     rename_playlist(row_id_db)
 
 
 def rename_playlist(row_id_db):
-    cur.execute(f"SELECT * FROM playlist_table WHERE row_id >= ?", (row_id_db,))
+    cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
     playlist = cur.fetchall()
     for item in playlist:
-        list_name = generate_track_list_name(item)
-        listWidget.item(row_id_db-1).setText(list_name)
+        list_name, duration = generate_track_list_detail(item)
+        cv.active_playlist.item(row_id_db-1).setText(list_name)
         row_id_db +=1
 
 button_remove_track = QPushButton(under_playlist_window, text='RT')
@@ -211,27 +225,27 @@ button_remove_track.setFont(QFont('Times', 10, 600))
 button_remove_track.setGeometry(button_x_pos(2), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_track.clicked.connect(button_remove_track_clicked)
 
-''' BUTTON PLAYLIST - REMOVE ALL TRACK '''
+''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
 def button_remove_all_track_clicked():
     # DB
-    cur.execute(f"DELETE FROM playlist_table")
+    cur.execute("DELETE FROM {0}".format(cv.active_db_table))
     connection.commit()
     # PLAYLIST
-    listWidget.clear()
+    cv.active_playlist.clear()
 
-button_remove_all_track = QPushButton(under_playlist_window, text='RAL')
+button_remove_all_track = QPushButton(under_playlist_window, text='CP')
 button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_remove_all_track.setToolTip('Remove all track')
+button_remove_all_track.setToolTip('Clear Playlist')
 button_remove_all_track.setToolTipDuration(2000)
 button_remove_all_track.setFont(QFont('Times', 10, 600))
-button_remove_all_track.setGeometry(button_x_pos(3), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 
 ''' 
     PLAY SECTION
 '''
-PLAY_BUTTONS_WIDTH = 50
+PLAY_BUTTONS_WIDTH = 60
 PLAY_BUTTONS_HEIGHT = 30
 
 def play_buttons_x_pos(num):
@@ -242,7 +256,7 @@ def play_buttons_x_pos(num):
 def button_play_pause_clicked():
 
     if mt_player.played_row == None:
-        listWidget.setCurrentRow(0)
+        cv.active_playlist.setCurrentRow(0)
         play_track()
     elif mt_player.player.isPlaying():
         mt_player.player.pause()
@@ -273,11 +287,11 @@ button_stop.clicked.connect(button_stop_clicked)
 
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
 def button_prev_track_clicked():
-    if listWidget.count() > 0 and mt_player.played_row != None:
-        if listWidget.currentRow() != 0:
-            listWidget.setCurrentRow(mt_player.played_row - 1)
+    if cv.active_playlist.count() > 0 and mt_player.played_row != None:
+        if cv.active_playlist.currentRow() != 0:
+            cv.active_playlist.setCurrentRow(mt_player.played_row - 1)
         else:
-            listWidget.setCurrentRow(listWidget.count() - 1)
+            cv.active_playlist.setCurrentRow(cv.active_playlist.count() - 1)
         play_track()
 
 button_prev_track = QPushButton(under_play_slider_window, text='Prev')
@@ -289,11 +303,11 @@ button_prev_track.clicked.connect(button_prev_track_clicked)
 
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
 def button_next_track_clicked():
-    if listWidget.count() > 0 and mt_player.played_row != None:
-        if listWidget.count() != listWidget.currentRow() + 1:
-            listWidget.setCurrentRow(mt_player.played_row + 1)
+    if cv.active_playlist.count() > 0 and mt_player.played_row != None:
+        if cv.active_playlist.count() != cv.active_playlist.currentRow() + 1:
+            cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
         else:
-            listWidget.setCurrentRow(0)
+            cv.active_playlist.setCurrentRow(0)
         play_track()
 
 button_next_track = QPushButton(under_play_slider_window, text='Next')
@@ -303,28 +317,61 @@ button_next_track.setGeometry(play_buttons_x_pos(4), 0, PLAY_BUTTONS_WIDTH, PLAY
 button_next_track.clicked.connect(button_next_track_clicked)
 
 
-''' PLAYLIST DB --> LIST WIDGET '''
-cur.execute(f"SELECT * FROM playlist_table")
-playlist = cur.fetchall()
-for item in playlist:
-    list_name = generate_track_list_name(item)
-    QListWidgetItem(list_name, listWidget).setFont(inactive_track_font_style)
+''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
+def button_toggle_playlist_clicked():
 
+    if mt_player.playlist_visible and mt_player.video_area_visible:
+        layout_vert_right_qframe.hide()
+        layout_vert_middle_qframe.hide()
+        mt_player.playlist_visible = False
+        button_toggle_video.setDisabled(1)
+    else:
+        layout_vert_right_qframe.show()
+        layout_vert_middle_qframe.show()
+        mt_player.playlist_visible = True
+        button_toggle_video.setDisabled(0)    
+    
+button_toggle_playlist = QPushButton(under_play_slider_window, text='Tog PL')
+button_toggle_playlist.setCursor(Qt.CursorShape.PointingHandCursor)
+button_toggle_playlist.setFont(QFont('Times', 10, 600))
+button_toggle_playlist.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
+
+
+''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
+def button_toggle_video_clicked():
+    
+    if mt_player.playlist_visible and mt_player.video_area_visible:
+        layout_vert_left_qframe.hide()
+        mt_player.video_area_visible = False
+        window.resize(int(WINDOW_WIDTH/3), window.geometry().height())
+        button_toggle_playlist.setDisabled(1)
+    else:
+        window.resize(WINDOW_WIDTH, window.geometry().height())
+        layout_vert_left_qframe.show()
+        mt_player.video_area_visible = True
+        button_toggle_playlist.setDisabled(0)
+    
+button_toggle_video = QPushButton(under_play_slider_window, text='Tog Vid')
+button_toggle_video.setCursor(Qt.CursorShape.PointingHandCursor)
+button_toggle_video.setFont(QFont('Times', 10, 600))
+button_toggle_video.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 
 ''' LIST ACTIONS '''
 def play_track():
-    if listWidget.count() > 0:
+    if cv.active_playlist.count() > 0:
         """ 
             If playlist cleared and new track(s) added
             Pressing Play/Stop --> first track played
         """
-        if listWidget.currentRow() < 0:
-            listWidget.setCurrentRow(0)
+        if cv.active_playlist.currentRow() < 0:
+            cv.active_playlist.setCurrentRow(0)
         # FONT
-        if mt_player.played_row != None and mt_player.played_row < listWidget.count():
-            listWidget.item(mt_player.played_row).setFont(inactive_track_font_style)
-        listWidget.currentItem().setFont(active_track_font_style)
+        if mt_player.played_row != None and mt_player.played_row < cv.active_playlist.count():
+            cv.active_playlist.item(mt_player.played_row).setFont(inactive_track_font_style)
+        cv.active_playlist.currentItem().setFont(active_track_font_style)
         # PATH / DURATION / SLIDER
         track_path = get_path_db()
         track_duration = get_duration_db()
@@ -334,23 +381,22 @@ def play_track():
         # mt_player.audio_output.setVolume(0.5)
         mt_player.player.play()
         # COUNTER
-        mt_player.played_row = listWidget.currentRow()
+        mt_player.played_row = cv.active_playlist.currentRow()
         # WINDOW TITLE
         window.setWindowTitle(f'{Path(track_path).stem} - Mad Tea media player')
 
 
 def auto_play_next_track():
     if (mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia and 
-        listWidget.count() != listWidget.currentRow() + 1):
+        cv.active_playlist.count() != cv.active_playlist.currentRow() + 1):
             if mt_player.base_played:
-                listWidget.setCurrentRow(mt_player.played_row + 1)
+                cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
                 play_track()
             else:
                 mt_player.base_played = True      
 mt_player.player.mediaStatusChanged.connect(auto_play_next_track)
 
 
-listWidget.itemDoubleClicked.connect(play_track)
 
 
 ''' 
@@ -385,7 +431,6 @@ play_slider.setStyleSheet(
                             "}"
                         )
                             
-# setParent(window_type)
 play_slider.setOrientation(Qt.Orientation.Horizontal)
 # play_slider.setMinimum(0)
 # play_slider.setMaximum(100)
@@ -410,38 +455,115 @@ mt_player.player.positionChanged.connect(play_slider_set_value)
 ######################
         LAYOUTS                          
 ######################
-'''
-'''
-    
+
+LEARNED:
+1,              
+do not mix widgets and layouts in a layout
+hiding the widget --> layout disapears too
+2,
+layout add to QFrame --> hiding QFrame hides the layout
+
+
+GUIDE:
+
+  BASE
+    LEFT      RIGHT  
     -----------------
     |       ||       |
-    |       || PLIST |
+    |       || PLIST |  TOP
     |  VID  ||_______|  
     |_______||_______|
-    |________________|
-    |________________|
-   
+    |________________|  BOTTOM
+    |________________|  
 '''
 
 layout_base = QVBoxLayout(window)
+layout_base.setContentsMargins(0, 0, 0, 0)
+
 layout_hor_top = QHBoxLayout()
+layout_hor_top.setSpacing(0)
 layout_ver_bottom = QVBoxLayout()
+layout_ver_bottom.setContentsMargins(10, 0, 10, 0)
 
 layout_base.addLayout(layout_hor_top, 90)
 layout_base.addLayout(layout_ver_bottom, 10)
-# layout_base.addLayout(layout_bottom_buttons)
 
-layout_vert_left = QVBoxLayout()
-layout_vert_middle = QVBoxLayout()
+
+''' TABS - PLAYLIST '''
+def active_tab():
+    cv.active_tab = tabs_playlist.currentIndex()
+    active_utility()
+    settings['last_used_tab'] = cv.active_tab
+    save_json(settings, PATH_JSON_SETTINGS)
+
+tabs_playlist = QTabWidget()
+tabs_playlist.setFont(QFont('Times', 10, 500))
+tabs_playlist.currentChanged.connect(active_tab)
+
+'''
+    CREATING FRAME, LAYOUT, LIST WIDGETS 
+    LOADING TRACKS
+'''
+for pl in paylist_dic:
+    if paylist_dic[pl]['tab_index'] != None:
+        paylist_dic[pl]['name_list_widget'] = QListWidget()
+        paylist_dic[pl]['duration_list_widget'] = QListWidget()
+        name_list_widget = paylist_dic[pl]['name_list_widget']
+        name_list_widget.itemDoubleClicked.connect(play_track)
+        duration_list_widget = paylist_dic[pl]['duration_list_widget']
+        tab_title = paylist_dic[pl]['tab_title']
+
+        layout = QHBoxLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(name_list_widget, 90)
+        layout.addWidget(duration_list_widget, 10)
+
+        frame = QFrame()
+        frame.setStyleSheet(
+                        "QFrame"
+                            "{"
+                            "border: 0px;"
+                            "}"
+                        )
+        frame.setLayout(layout)
+    
+        tabs_playlist.addTab(frame, tab_title)
+
+        ''' PLAYLIST DB --> LIST WIDGET '''
+        cur.execute("SELECT * FROM {0}".format(pl))
+        playlist = cur.fetchall()
+        for item in playlist:
+            track_name, duration = generate_track_list_detail(item)
+            QListWidgetItem(track_name, name_list_widget).setFont(inactive_track_font_style)
+            QListWidgetItem(duration, duration_list_widget).setFont(inactive_track_font_style)
+
+
+
+''' TOP RIGHT '''
 layout_vert_right = QVBoxLayout()
+layout_vert_right.setContentsMargins(5, 0, 0, 0)
+layout_vert_right_qframe = QFrame()
+layout_vert_right_qframe.setLayout(layout_vert_right)
 
-layout_hor_top.addLayout(layout_vert_left, 200)
-layout_hor_top.addLayout(layout_vert_middle, 1)
-layout_hor_top.addLayout(layout_vert_right, 99)
+''' TOP LEFT '''
+layout_vert_left = QVBoxLayout()
+layout_vert_left.setContentsMargins(0, 0, 0, 0)
+layout_vert_left_qframe = QFrame()
+layout_vert_left_qframe.setLayout(layout_vert_left)
 
-# LAYOUT ADD WIDGETS
+''' TOP MIDDLE '''
+layout_vert_middle_qframe = QFrame()
+
+
+layout_hor_top.addWidget(layout_vert_left_qframe, 65)
+layout_hor_top.addWidget(layout_vert_middle_qframe, 0)
+layout_hor_top.addWidget(layout_vert_right_qframe, 35)
+
+
+''' ADDING WIDGETS TO LAYOUTS '''
 layout_vert_left.addWidget(mt_player.video_output)
-layout_vert_right.addWidget(listWidget, 95)
+layout_vert_right.addWidget(tabs_playlist, 95)
 layout_vert_right.addWidget(under_playlist_window, 5)
 layout_ver_bottom.addWidget(play_slider)
 layout_ver_bottom.addWidget(under_play_slider_window)

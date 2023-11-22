@@ -27,6 +27,8 @@ class MTPlayer(QWidget):
         self.played_row = None
         self.base_played = False
         self.paused = False
+        self.playlist_visible = True
+        self.video_area_visible = True
         # SETTINGS
         # self.player.setLoops(1) # -1=infinite
         self.audio_output.setVolume(1)
@@ -37,6 +39,7 @@ class MTPlayer(QWidget):
             self.vid_full_screen()
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonPress:
             self.pause_play_track()
+        # TODO    
         # if source == self.video_output and event.type() == QEvent.Type.KeyPress and event.key() == Qt.Key.Key_Space:
             # self.pause_play_track()
         return super().eventFilter(source, event)
@@ -55,3 +58,15 @@ class MTPlayer(QWidget):
         else:
             if self.played_row:
                 self.player.play()
+
+
+""" 
+    only used for duration calculation -->
+    able to add new track(s) without interrupting 
+    the current playing
+"""
+class TrackDuration(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.player = QMediaPlayer()

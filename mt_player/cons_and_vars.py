@@ -1,5 +1,5 @@
 
-# from dataclasses import dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from json import load, dump
 # import shutil
@@ -16,5 +16,14 @@ def save_json(json_dic, path_json):
     return
 
 WORKING_DIRECTORY = Path().resolve()
-PATH_JSON_PLAYLIST = Path(WORKING_DIRECTORY, 'track_list.json')
+PATH_JSON_PAYLIST = Path(WORKING_DIRECTORY, 'paylist_dic.json')
+PATH_JSON_SETTINGS = Path(WORKING_DIRECTORY, 'settings.json')
 
+settings = open_json(PATH_JSON_SETTINGS)
+
+@dataclass
+class Data:
+    active_tab = settings['last_used_tab']
+    active_db_table = None
+    active_playlist = None
+    active_pl_duration = None
