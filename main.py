@@ -1,37 +1,41 @@
 
-from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout 
+from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QTabBar
+from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QScrollBar
 from PyQt6.QtCore import QUrl, Qt, QEvent
 from PyQt6.QtGui import QMovie, QIcon, QFont
-
 
 # from PyQt6.QtWidgets import QLineEdit
 # from PyQt6.QtCore import QSize, QTimer, QTime
 
 import os
 import sys
+import random
 import sqlite3
 
 from mt_player import Path
 from mt_player import MTPlayer, Data
 from mt_player import TrackDuration
-from mt_player import open_json, save_json
-from mt_player import PATH_JSON_PAYLIST, PATH_JSON_SETTINGS, settings
+from mt_player import save_json
+from mt_player import PATH_JSON_SETTINGS, settings
 
 ''' DATA '''
 cv = Data()
 
-''' LOADING SETTINGS '''
-paylist_dic = open_json(PATH_JSON_PAYLIST)
-paylist_list = list(paylist_dic.keys())
 
 def active_utility():
-    cv.active_db_table = paylist_list[cv.active_tab]    # playlist_1,..
+    # playlist_1, playlist_2, ..
+    cv.active_db_table = cv.paylist_list[cv.active_tab]
     # WIDGETS
-    cv.active_playlist = paylist_dic[cv.active_db_table]['name_list_widget']
-    cv.active_pl_duration = paylist_dic[paylist_list[cv.active_tab]]['duration_list_widget']
-active_utility()
+    cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
+    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
+    # LAST TRACK INDEX
+    cv.last_track_index = settings[cv.active_db_table]['last_track_index']
+
+def save_last_track_index():
+    cv.last_track_index = cv.active_playlist.currentRow()
+    settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
+    save_json(settings, PATH_JSON_SETTINGS)
 
 
 ''' PLAYLIST DB '''
@@ -56,8 +60,6 @@ def get_row_id_db(path):
 
 
 def get_path_db():
-    # active_playlist = tabs_playlist.currentWidget()
-    name_list_widget = paylist_dic[pl]['name_list_widget'] 
     return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
                         (cv.active_playlist.currentRow() + 1,)).fetchall()[0][2]
 
@@ -73,7 +75,7 @@ def generate_track_list_detail(item):
 
 
 def add_record_grouped_actions(track_path):
-    # active_playlist = tabs_playlist.currentWidget()
+
     track_name = Path(track_path).stem
     # DURATION
     mt_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
@@ -201,12 +203,19 @@ button_add_dir.clicked.connect(button_add_dir_clicked)
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 def button_remove_track_clicked():
+    # LAST TRACK INDEX
+    if  cv.active_playlist.currentRow() < cv.last_track_index:
+        cv.last_track_index = cv.last_track_index - 1
+        settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
+        save_json(settings, PATH_JSON_SETTINGS)
     # DB
     row_id_db = cv.active_playlist.currentRow() + 1
     remove_record_db(row_id_db)
     # PLAYLIST
     cv.active_playlist.takeItem(cv.active_playlist.currentRow())
+    cv.active_pl_duration.takeItem(cv.active_playlist.currentRow())
     rename_playlist(row_id_db)
+
 
 
 def rename_playlist(row_id_db):
@@ -232,6 +241,7 @@ def button_remove_all_track_clicked():
     connection.commit()
     # PLAYLIST
     cv.active_playlist.clear()
+    cv.active_pl_duration.clear()
 
 button_remove_all_track = QPushButton(under_playlist_window, text='CP')
 button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -288,7 +298,10 @@ button_stop.clicked.connect(button_stop_clicked)
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
 def button_prev_track_clicked():
     if cv.active_playlist.count() > 0 and mt_player.played_row != None:
-        if cv.active_playlist.currentRow() != 0:
+
+        if cv.shuffle_playlist_on:
+            cv.active_playlist.setCurrentRow(cv.last_track_index)
+        elif cv.active_playlist.currentRow() != 0:
             cv.active_playlist.setCurrentRow(mt_player.played_row - 1)
         else:
             cv.active_playlist.setCurrentRow(cv.active_playlist.count() - 1)
@@ -304,11 +317,7 @@ button_prev_track.clicked.connect(button_prev_track_clicked)
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
 def button_next_track_clicked():
     if cv.active_playlist.count() > 0 and mt_player.played_row != None:
-        if cv.active_playlist.count() != cv.active_playlist.currentRow() + 1:
-            cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
-        else:
-            cv.active_playlist.setCurrentRow(0)
-        play_track()
+        play_next_track()
 
 button_next_track = QPushButton(under_play_slider_window, text='Next')
 button_next_track.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -359,18 +368,55 @@ button_toggle_video.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PL
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 
+''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
+def button_toggle_repeat_pl_clicked():
+    if cv.repeat_playlist_on:
+        cv.repeat_playlist_on = False
+        button_toggle_repeat_pl.setFlat(0)
+    else:
+        cv.repeat_playlist_on = True
+        button_toggle_repeat_pl.setFlat(1)
+    
+    settings['repeat_playlist_on'] = cv.repeat_playlist_on
+    save_json(settings, PATH_JSON_SETTINGS)
+    
+button_toggle_repeat_pl = QPushButton(under_play_slider_window, text='Tog Rep')
+button_toggle_repeat_pl.setCursor(Qt.CursorShape.PointingHandCursor)
+button_toggle_repeat_pl.setFont(QFont('Times', 10, 600))
+button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl_clicked)
+
+
+''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
+def button_toggle_shuffle_pl_clicked():
+    if cv.shuffle_playlist_on:
+        cv.shuffle_playlist_on = False
+        button_toggle_shuffle_pl.setFlat(0)
+    else:
+        cv.shuffle_playlist_on = True
+        button_toggle_shuffle_pl.setFlat(1)
+    
+    settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
+    save_json(settings, PATH_JSON_SETTINGS)
+    
+button_toggle_shuffle_pl = QPushButton(under_play_slider_window, text='Shu Rep')
+button_toggle_shuffle_pl.setCursor(Qt.CursorShape.PointingHandCursor)
+button_toggle_shuffle_pl.setFont(QFont('Times', 10, 600))
+button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl_clicked)
+
+
 ''' LIST ACTIONS '''
 def play_track():
     if cv.active_playlist.count() > 0:
-        """ 
-            If playlist cleared and new track(s) added
-            Pressing Play/Stop --> first track played
-        """
-        if cv.active_playlist.currentRow() < 0:
-            cv.active_playlist.setCurrentRow(0)
-        # FONT
+      
+        # FONT STYLE - PREV/NEW TRACK
         if mt_player.played_row != None and mt_player.played_row < cv.active_playlist.count():
-            cv.active_playlist.item(mt_player.played_row).setFont(inactive_track_font_style)
+            
+            cv.active_playlist.item(cv.last_track_index).setFont(inactive_track_font_style)
+            
+            cv.last_track_index = mt_player.played_row
+
         cv.active_playlist.currentItem().setFont(active_track_font_style)
         # PATH / DURATION / SLIDER
         track_path = get_path_db()
@@ -382,18 +428,40 @@ def play_track():
         mt_player.player.play()
         # COUNTER
         mt_player.played_row = cv.active_playlist.currentRow()
+
+        save_last_track_index()
         # WINDOW TITLE
         window.setWindowTitle(f'{Path(track_path).stem} - Mad Tea media player')
 
+def play_next_track():
+    # SHUFFLE
+    if cv.shuffle_playlist_on and cv.active_playlist.count() > 1:
+        next_track_index = random.randint(0, cv.active_playlist.count()-1)
+        while next_track_index == cv.active_playlist.currentRow():
+            next_track_index = random.randint(0, cv.active_playlist.count()-1)
+        cv.active_playlist.setCurrentRow(next_track_index)
+        play_track()
+    # MORE TRACKS IN THE PLAYLIST
+    elif cv.active_playlist.count() != cv.active_playlist.currentRow() + 1:
+        cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
+        play_track()
+    # PLAYING THE LAST TRACK    
+    elif (cv.active_playlist.count() == cv.active_playlist.currentRow() + 1 and
+        cv.repeat_playlist_on):
+            cv.active_playlist.setCurrentRow(0)
+            play_track()
+    # CURRENT TRACK BACK TO START         
+    else:
+        mt_player.player.setPosition(0)
+
 
 def auto_play_next_track():
-    if (mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia and 
-        cv.active_playlist.count() != cv.active_playlist.currentRow() + 1):
-            if mt_player.base_played:
-                cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
-                play_track()
-            else:
-                mt_player.base_played = True      
+    if mt_player.base_played:   # avoiding the dummy song played when the class created
+        if mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia:
+
+            play_next_track()
+    else:
+        mt_player.base_played = True    
 mt_player.player.mediaStatusChanged.connect(auto_play_next_track)
 
 
@@ -432,9 +500,7 @@ play_slider.setStyleSheet(
                         )
                             
 play_slider.setOrientation(Qt.Orientation.Horizontal)
-# play_slider.setMinimum(0)
-# play_slider.setMaximum(100)
-# play_slider.setValue(0)
+
 play_slider.setCursor(Qt.CursorShape.PointingHandCursor)
 
 def player_set_position():
@@ -483,18 +549,23 @@ layout_base.setContentsMargins(0, 0, 0, 0)
 layout_hor_top = QHBoxLayout()
 layout_hor_top.setSpacing(0)
 layout_ver_bottom = QVBoxLayout()
-layout_ver_bottom.setContentsMargins(10, 0, 10, 0)
+layout_ver_bottom.setContentsMargins(15, 0, 15, 0)
 
 layout_base.addLayout(layout_hor_top, 90)
 layout_base.addLayout(layout_ver_bottom, 10)
 
 
 ''' TABS - PLAYLIST '''
+# AVOIDING THE tabs_playlist.currentChanged.connect(active_tab) SIGNAL
+# TRIGGERED WHEN TAB ADDED TO tabs_playlist
+tabs_created_at_first_run = False
+
 def active_tab():
-    cv.active_tab = tabs_playlist.currentIndex()
-    active_utility()
-    settings['last_used_tab'] = cv.active_tab
-    save_json(settings, PATH_JSON_SETTINGS)
+    if tabs_created_at_first_run:
+        cv.active_tab = tabs_playlist.currentIndex()
+        settings['last_used_tab'] = cv.active_tab
+        save_json(settings, PATH_JSON_SETTINGS)
+        active_utility()    # set the current lists(name, duration)
 
 tabs_playlist = QTabWidget()
 tabs_playlist.setFont(QFont('Times', 10, 500))
@@ -504,15 +575,66 @@ tabs_playlist.currentChanged.connect(active_tab)
     CREATING FRAME, LAYOUT, LIST WIDGETS 
     LOADING TRACKS
 '''
-for pl in paylist_dic:
-    if paylist_dic[pl]['tab_index'] != None:
-        paylist_dic[pl]['name_list_widget'] = QListWidget()
-        paylist_dic[pl]['duration_list_widget'] = QListWidget()
-        name_list_widget = paylist_dic[pl]['name_list_widget']
-        name_list_widget.itemDoubleClicked.connect(play_track)
-        duration_list_widget = paylist_dic[pl]['duration_list_widget']
-        tab_title = paylist_dic[pl]['tab_title']
+def sync_name_and_duration_list_selection():
+    cv.active_pl_duration.setCurrentRow(cv.active_playlist.currentRow())
 
+for pl in cv.paylist_widget_dic:
+    if settings[pl]['tab_index'] != None:
+        
+        scroll_bar_name_ver = QScrollBar()
+        scroll_bar_name_hor = QScrollBar()
+        scroll_bar_duration_ver = QScrollBar()
+        scroll_bar_duration_hor = QScrollBar()
+
+        scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
+        scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
+
+        scroll_bar_name_ver.setStyleSheet(
+                        "QScrollBar::vertical"
+                            "{"
+                            "width: 0px;"
+                            "}"
+                        )
+        scroll_bar_name_hor.setStyleSheet(
+                        "QScrollBar::horizontal"
+                            "{"
+                            "height: 0px;"
+                            "}"
+                        )
+        
+        scroll_bar_duration_ver.setStyleSheet(
+                        "QScrollBar::vertical"
+                            "{"
+                            "width: 10px;"
+                            "}"               
+                        )
+        
+        scroll_bar_duration_hor.setStyleSheet(
+                        "QScrollBar::horizontal"
+                            "{"
+                            "height: 0px;"
+                            "}"
+                        )
+
+        # test = QListWidget().setItemAlignment(Qt.AlignmentFlag.AlignRight)       
+        
+        cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
+        cv.paylist_widget_dic[pl]['name_list_widget'].setVerticalScrollBar(scroll_bar_name_ver)
+        cv.paylist_widget_dic[pl]['name_list_widget'].setHorizontalScrollBar(scroll_bar_name_hor)
+        cv.paylist_widget_dic[pl]['name_list_widget'].currentItemChanged.connect(sync_name_and_duration_list_selection)
+        # cv.paylist_widget_dic[pl]['name_list_widget'].setItemAlignment(Qt.AlignmentFlag.AlignRight)
+
+        cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
+        cv.paylist_widget_dic[pl]['duration_list_widget'].setVerticalScrollBar(scroll_bar_duration_ver)
+        cv.paylist_widget_dic[pl]['duration_list_widget'].setHorizontalScrollBar(scroll_bar_duration_hor)
+        cv.paylist_widget_dic[pl]['duration_list_widget'].setFixedWidth(70)
+        # cv.paylist_widget_dic[pl]['duration_list_widget'].setItemAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
+        name_list_widget.itemDoubleClicked.connect(play_track)
+        duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
+        tab_title = settings[pl]['tab_title']
+        
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -527,7 +649,7 @@ for pl in paylist_dic:
                             "}"
                         )
         frame.setLayout(layout)
-    
+
         tabs_playlist.addTab(frame, tab_title)
 
         ''' PLAYLIST DB --> LIST WIDGET '''
@@ -537,12 +659,21 @@ for pl in paylist_dic:
             track_name, duration = generate_track_list_detail(item)
             QListWidgetItem(track_name, name_list_widget).setFont(inactive_track_font_style)
             QListWidgetItem(duration, duration_list_widget).setFont(inactive_track_font_style)
+    
+    tabs_created_at_first_run = True 
 
+
+# LOAD ACTIVE NAME and DURATION LIST WIDGETS
+active_utility()
+# SET THE LAST USED TAB ACTIVE
+tabs_playlist.setCurrentIndex(cv.active_tab)
+# SET LAST PLAYED TRACK
+cv.active_playlist.setCurrentRow(cv.last_track_index)
 
 
 ''' TOP RIGHT '''
 layout_vert_right = QVBoxLayout()
-layout_vert_right.setContentsMargins(5, 0, 0, 0)
+layout_vert_right.setContentsMargins(5, 0, 4, 0)
 layout_vert_right_qframe = QFrame()
 layout_vert_right_qframe.setLayout(layout_vert_right)
 

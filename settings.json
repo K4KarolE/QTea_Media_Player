@@ -1,3 +1,20 @@
 {
-  "last_used_tab": 0
+  "last_used_tab": 0,
+  "repeat_playlist_on": false,
+  "shuffle_playlist_on": false,
+  "paylist_0": {
+    "tab_index": 0,
+    "tab_title": "Movies",
+    "last_track_index": 12
+  },
+  "paylist_1": {
+    "tab_index": 1,
+    "tab_title": "Music",
+    "last_track_index": 20
+  },
+  "paylist_2": {
+    "tab_index": 2,
+    "tab_title": "Temp",
+    "last_track_index": 12
+  }
 }
