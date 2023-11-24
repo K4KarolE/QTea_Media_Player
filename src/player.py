@@ -9,7 +9,7 @@ PLAY EMPTY SOUND WORKAROUND
 at least one music file need to be played from start to finish
 before be able to switch tracks without crashing
 """
-class MTPlayer(QWidget):
+class AVPlayer(QWidget):
 
     def __init__(self, play_base=True):
         super().__init__()
@@ -24,14 +24,14 @@ class MTPlayer(QWidget):
         if play_base:
             self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
             self.player.play()
-        self.played_row = None
-        self.base_played = False
-        self.paused = False
-        self.playlist_visible = True
-        self.video_area_visible = True
         # SETTINGS
         # self.player.setLoops(1) # -1=infinite
         self.audio_output.setVolume(1)
+        self.base_played = False
+        self.played_row = None
+        self.paused = False
+        self.playlist_visible = True
+        self.video_area_visible = True
     
     
     def eventFilter(self, source, event):

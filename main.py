@@ -13,34 +13,25 @@ import sys
 import random
 import sqlite3
 
-from mt_player import Path
-from mt_player import MTPlayer, Data
-from mt_player import TrackDuration
-from mt_player import save_json
-from mt_player import PATH_JSON_SETTINGS, settings
+from src import Path
+from src import AVPlayer, Data
+from src import TrackDuration
+from src import save_json
+from src import PATH_JSON_SETTINGS, settings
 
-''' DATA '''
-cv = Data()
 
 
 def active_utility():
-    # playlist_1, playlist_2, ..
-    cv.active_db_table = cv.paylist_list[cv.active_tab]
-    # WIDGETS
-    cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
-    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
-    # LAST TRACK INDEX
+    cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
+    cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
+    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']   # widget
+
 
 def save_last_track_index():
     cv.last_track_index = cv.active_playlist.currentRow()
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
-
-
-''' PLAYLIST DB '''
-connection = sqlite3.connect('playlist.db')
-cur = connection.cursor()
 
 
 def add_record_db(duration, path):
@@ -68,9 +59,45 @@ def get_duration_db():
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
                            (cv.active_playlist.currentRow() + 1,)).fetchall()[0][1])
 
-def generate_track_list_detail(item):
-    track_name = f'{item[0]}. {Path(item[2]).stem}'
-    duration = f'  {int(int(item[1])/60/1000)}:{int(int(item[1])%60)}'
+def generate_duration_to_display(raw_duration):
+
+    try:
+        # SECONDS
+        str_seconds = str(int(int(raw_duration)/1000%60))
+        if str_seconds == '0':
+            seconds = '00'
+        elif len(str_seconds) == 1:
+            seconds = f'0{str_seconds}'
+        else:
+            seconds = str_seconds[0:2]
+        
+        # MINUTES
+        int_minutes = int(int(raw_duration)/60/1000)
+        if int_minutes == 60:
+            minutes = '01'
+        elif int_minutes in range(10,60):
+            minutes = str(int_minutes)
+        elif int_minutes in range(0,10):
+            minutes = f'0{str(int_minutes)}'
+        else:
+            minutes = str(int_minutes%60)
+
+        # HOURS
+        if int_minutes > 60:
+            str_hours = str(int((int_minutes - int_minutes%60)/60))
+            duration = f'{str_hours}:{minutes}:{seconds}'
+        else:
+            duration = f'{minutes}:{seconds}'
+    except:
+        duration = 'ERROR'
+
+    return duration
+
+
+def generate_track_list_detail(db_track_record):
+    # [0]:row, [1]:duration, [2]:path
+    track_name = f'{db_track_record[0]}. {Path(db_track_record[2]).stem}'
+    duration = generate_duration_to_display(db_track_record[1])
     return track_name, duration
 
 
@@ -79,16 +106,36 @@ def add_record_grouped_actions(track_path):
     track_name = Path(track_path).stem
     # DURATION
     mt_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    duration = mt_player_duration.player.duration()
-    duration_to_list = f'{int(duration/60/1000)}:{int(duration%60)}'
+    raw_duration = mt_player_duration.player.duration()
+    duration = generate_duration_to_display(raw_duration)
     # DB
-    add_record_db(duration, track_path)
+    add_record_db(raw_duration, track_path)
+    # TRACK NAME
     row_id = get_row_id_db(track_path)
-    # PLAYLIST
     track_name = f'{row_id}. {track_name}'
-    QListWidgetItem(track_name, cv.active_playlist).setFont(inactive_track_font_style)
-    QListWidgetItem(duration_to_list, cv.active_pl_duration).setFont(inactive_track_font_style)
+    
+    add_new_list_item(track_name, cv.active_playlist, 'left')
+    add_new_list_item(duration, cv.active_pl_duration, 'right')
 
+
+def add_new_list_item(new_item, list_widget, alignment):
+    
+    list_item = QListWidgetItem(new_item, list_widget)
+    list_item.setFont(inactive_track_font_style)
+
+    if alignment == 'left':
+        list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
+    else:
+        list_item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+
+
+''' DATA '''
+cv = Data()
+
+
+''' PLAYLIST DB '''
+connection = sqlite3.connect('playlist.db')
+cur = connection.cursor()
 
 
 ''' STYLE '''
@@ -102,12 +149,13 @@ WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
 app = QApplication(sys.argv)
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+window.setMinimumSize(400, 400)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
-window.setWindowTitle("Mad Tea media player")
+window.setWindowTitle("QTea media player")
 
 
 ''' PLAYER '''
-mt_player = MTPlayer()
+mt_player = AVPlayer()
 """ 
     mt_player_duration
     -------------------
@@ -125,9 +173,12 @@ mt_player_duration = TrackDuration()
 '''
 # FOR BUTTONS: ADD TRACK, REMOVE TRACK, ..
 under_playlist_window = QMainWindow()
+under_playlist_window.setMinimumSize(400, 30)
 
 # FOR BUTTONS: PLAY/STOP, PAUSE, ..
 under_play_slider_window = QMainWindow()
+under_play_slider_window.setFixedHeight(50)
+under_play_slider_window.setMinimumSize(400, 50)
 
 
 ''' 
@@ -164,7 +215,7 @@ button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
 button_add_track.setToolTip('Add track')
 button_add_track.setToolTipDuration(2000)
 button_add_track.setFont(QFont('Times', 10, 600))
-button_add_track.setGeometry(0, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_track.setGeometry(5, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_add_track.clicked.connect(button_add_track_clicked)
 
 
@@ -408,30 +459,36 @@ button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl_clicked)
 
 ''' LIST ACTIONS '''
 def play_track():
-    if cv.active_playlist.count() > 0:
-      
+    
+    try:  
         # FONT STYLE - PREV/NEW TRACK
         if mt_player.played_row != None and mt_player.played_row < cv.active_playlist.count():
-            
-            cv.active_playlist.item(cv.last_track_index).setFont(inactive_track_font_style)
-            
+
+            try:
+                cv.active_playlist.item(cv.last_track_index).setFont(inactive_track_font_style)
+            except:
+                print(f'ERROR in row: {cv.last_track_index}\n\n')
+
             cv.last_track_index = mt_player.played_row
 
         cv.active_playlist.currentItem().setFont(active_track_font_style)
+        save_last_track_index()
         # PATH / DURATION / SLIDER
         track_path = get_path_db()
         track_duration = get_duration_db()
         play_slider.setMaximum(track_duration)
         # PLAYER
         mt_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        # mt_player.audio_output.setVolume(0.5)
+        # TODO mt_player.audio_output.setVolume(0.5)
         mt_player.player.play()
         # COUNTER
         mt_player.played_row = cv.active_playlist.currentRow()
-
-        save_last_track_index()
         # WINDOW TITLE
-        window.setWindowTitle(f'{Path(track_path).stem} - Mad Tea media player')
+        window.setWindowTitle(f'{Path(track_path).stem} - QTea media player')
+
+    except:
+        play_next_track()
+
 
 def play_next_track():
     # SHUFFLE
@@ -543,20 +600,21 @@ GUIDE:
     |________________|  
 '''
 
+
 layout_base = QVBoxLayout(window)
 layout_base.setContentsMargins(0, 0, 0, 0)
 
 layout_hor_top = QHBoxLayout()
 layout_hor_top.setSpacing(0)
 layout_ver_bottom = QVBoxLayout()
-layout_ver_bottom.setContentsMargins(15, 0, 15, 0)
+layout_ver_bottom.setContentsMargins(10, 0, 10, 0)
 
 layout_base.addLayout(layout_hor_top, 90)
 layout_base.addLayout(layout_ver_bottom, 10)
 
 
 ''' TABS - PLAYLIST '''
-# AVOIDING THE tabs_playlist.currentChanged.connect(active_tab) SIGNAL
+# TO AVOID THE tabs_playlist.currentChanged.connect(active_tab) SIGNAL
 # TRIGGERED WHEN TAB ADDED TO tabs_playlist
 tabs_created_at_first_run = False
 
@@ -575,8 +633,23 @@ tabs_playlist.currentChanged.connect(active_tab)
     CREATING FRAME, LAYOUT, LIST WIDGETS 
     LOADING TRACKS
 '''
-def sync_name_and_duration_list_selection():
+def name_list_to_duration_row_selection():
     cv.active_pl_duration.setCurrentRow(cv.active_playlist.currentRow())
+    cv.active_pl_duration.setStyleSheet(
+                        "QListWidget::item:selected"
+                            "{"
+                            "background: #CCE8FF;"
+                            "}"
+                        )
+
+def duration_list_to_name_row_selection():
+    cv.active_playlist.setCurrentRow(cv.active_pl_duration.currentRow())
+    cv.active_playlist.setStyleSheet(
+                        "QListWidget::item:selected"
+                            "{"
+                            "background: #CCE8FF;"
+                            "}"
+                        )
 
 for pl in cv.paylist_widget_dic:
     if settings[pl]['tab_index'] != None:
@@ -615,26 +688,26 @@ for pl in cv.paylist_widget_dic:
                             "height: 0px;"
                             "}"
                         )
-
-        # test = QListWidget().setItemAlignment(Qt.AlignmentFlag.AlignRight)       
-        
+    
         cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
         cv.paylist_widget_dic[pl]['name_list_widget'].setVerticalScrollBar(scroll_bar_name_ver)
         cv.paylist_widget_dic[pl]['name_list_widget'].setHorizontalScrollBar(scroll_bar_name_hor)
-        cv.paylist_widget_dic[pl]['name_list_widget'].currentItemChanged.connect(sync_name_and_duration_list_selection)
-        # cv.paylist_widget_dic[pl]['name_list_widget'].setItemAlignment(Qt.AlignmentFlag.AlignRight)
+        # cv.paylist_widget_dic[pl]['name_list_widget'].setAlternatingRowColors(True)
+        cv.paylist_widget_dic[pl]['name_list_widget'].currentItemChanged.connect(name_list_to_duration_row_selection)
 
         cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
         cv.paylist_widget_dic[pl]['duration_list_widget'].setVerticalScrollBar(scroll_bar_duration_ver)
         cv.paylist_widget_dic[pl]['duration_list_widget'].setHorizontalScrollBar(scroll_bar_duration_hor)
+        # cv.paylist_widget_dic[pl]['duration_list_widget'].setAlternatingRowColors(True)
         cv.paylist_widget_dic[pl]['duration_list_widget'].setFixedWidth(70)
-        # cv.paylist_widget_dic[pl]['duration_list_widget'].setItemAlignment(Qt.AlignmentFlag.AlignLeft)
+        cv.paylist_widget_dic[pl]['duration_list_widget'].currentItemChanged.connect(duration_list_to_name_row_selection)
 
         name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
         name_list_widget.itemDoubleClicked.connect(play_track)
         duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
         tab_title = settings[pl]['tab_title']
         
+
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -657,9 +730,9 @@ for pl in cv.paylist_widget_dic:
         playlist = cur.fetchall()
         for item in playlist:
             track_name, duration = generate_track_list_detail(item)
-            QListWidgetItem(track_name, name_list_widget).setFont(inactive_track_font_style)
-            QListWidgetItem(duration, duration_list_widget).setFont(inactive_track_font_style)
-    
+            add_new_list_item(track_name, name_list_widget, 'left')
+            add_new_list_item(duration, duration_list_widget, 'right')
+
     tabs_created_at_first_run = True 
 
 
