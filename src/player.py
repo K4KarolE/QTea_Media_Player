@@ -1,6 +1,6 @@
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
-from PyQt6.QtCore import QUrl, QEvent, Qt
+from PyQt6.QtCore import QUrl, QEvent
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
 
@@ -39,9 +39,6 @@ class AVPlayer(QWidget):
             self.vid_full_screen()
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonPress:
             self.pause_play_track()
-        # TODO    
-        # if source == self.video_output and event.type() == QEvent.Type.KeyPress and event.key() == Qt.Key.Key_Space:
-            # self.pause_play_track()
         return super().eventFilter(source, event)
 
 

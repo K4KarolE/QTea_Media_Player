@@ -1,9 +1,9 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout
 from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QScrollBar
+from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QScrollBar, QStyle
 from PyQt6.QtCore import QUrl, Qt, QEvent
-from PyQt6.QtGui import QMovie, QIcon, QFont
+from PyQt6.QtGui import QIcon, QFont
 
 # from PyQt6.QtWidgets import QLineEdit
 # from PyQt6.QtCore import QSize, QTimer, QTime
@@ -14,8 +14,8 @@ import random
 import sqlite3
 
 from src import Path
-from src import AVPlayer, Data
-from src import TrackDuration
+
+from src import AVPlayer, TrackDuration, Data
 from src import save_json
 from src import PATH_JSON_SETTINGS, settings
 
@@ -105,13 +105,13 @@ def add_record_grouped_actions(track_path):
 
     track_name = Path(track_path).stem
     # DURATION
-    mt_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    raw_duration = mt_player_duration.player.duration()
+    av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    raw_duration = av_player_duration.player.duration()
     duration = generate_duration_to_display(raw_duration)
     # DB
     add_record_db(raw_duration, track_path)
     # TRACK NAME
-    row_id = get_row_id_db(track_path)
+    row_id = cv.active_playlist.count() + 1
     track_name = f'{row_id}. {track_name}'
     
     add_new_list_item(track_name, cv.active_playlist, 'left')
@@ -144,9 +144,24 @@ active_track_font_style = QFont('Times', 11, 600)
 
 
 ''' APP '''
-WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
+class MyApp(QApplication):
 
-app = QApplication(sys.argv)
+    def __init__(self):
+        super().__init__(sys.argv)
+        self.installEventFilter(self) 
+
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Space:
+            self.pause_play_track()
+        return super().eventFilter(source, event)
+    
+    def pause_play_track(self):
+        button_play_pause_clicked()
+
+app = MyApp()
+
+''' WINDOW '''
+WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(400, 400)
@@ -155,15 +170,16 @@ window.setWindowTitle("QTea media player")
 
 
 ''' PLAYER '''
-mt_player = AVPlayer()
+av_player = AVPlayer()
+# window = MyWindow(av_player)
 """ 
-    mt_player_duration
+    av_player_duration
     -------------------
     only used for duration calculation -->
     able to add new track(s) without interrupting 
-    the playing (mt_player)
+    the playing (av_player)
 """
-mt_player_duration = TrackDuration()   
+av_player_duration = TrackDuration()   
 
 
 ''' 
@@ -316,16 +332,15 @@ def play_buttons_x_pos(num):
 ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
 def button_play_pause_clicked():
 
-    if mt_player.played_row == None:
-        cv.active_playlist.setCurrentRow(0)
+    if av_player.played_row == None:
         play_track()
-    elif mt_player.player.isPlaying():
-        mt_player.player.pause()
-        mt_player.paused = True
-    elif mt_player.paused:
-        mt_player.player.play()
-        mt_player.paused = False
-    elif not mt_player.player.isPlaying() and not mt_player.paused:
+    elif av_player.player.isPlaying():
+        av_player.player.pause()
+        av_player.paused = True
+    elif av_player.paused:
+        av_player.player.play()
+        av_player.paused = False
+    elif not av_player.player.isPlaying() and not av_player.paused:
         play_track()
 
 button_play_pause = QPushButton(under_play_slider_window, text='PLAY/PAUSE')
@@ -336,8 +351,8 @@ button_play_pause.clicked.connect(button_play_pause_clicked)
 
 ''' BUTTON PLAY SECTION - STOP '''
 def button_stop_clicked():
-    mt_player.player.stop()
-    mt_player.paused = False
+    av_player.player.stop()
+    av_player.paused = False
  
 button_stop = QPushButton(under_play_slider_window, text='Stop')
 button_stop.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -348,12 +363,12 @@ button_stop.clicked.connect(button_stop_clicked)
 
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
 def button_prev_track_clicked():
-    if cv.active_playlist.count() > 0 and mt_player.played_row != None:
+    if cv.active_playlist.count() > 0 and av_player.played_row != None:
 
         if cv.shuffle_playlist_on:
             cv.active_playlist.setCurrentRow(cv.last_track_index)
         elif cv.active_playlist.currentRow() != 0:
-            cv.active_playlist.setCurrentRow(mt_player.played_row - 1)
+            cv.active_playlist.setCurrentRow(av_player.played_row - 1)
         else:
             cv.active_playlist.setCurrentRow(cv.active_playlist.count() - 1)
         play_track()
@@ -367,7 +382,7 @@ button_prev_track.clicked.connect(button_prev_track_clicked)
 
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
 def button_next_track_clicked():
-    if cv.active_playlist.count() > 0 and mt_player.played_row != None:
+    if cv.active_playlist.count() > 0 and av_player.played_row != None:
         play_next_track()
 
 button_next_track = QPushButton(under_play_slider_window, text='Next')
@@ -380,15 +395,15 @@ button_next_track.clicked.connect(button_next_track_clicked)
 ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
 def button_toggle_playlist_clicked():
 
-    if mt_player.playlist_visible and mt_player.video_area_visible:
+    if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_right_qframe.hide()
         layout_vert_middle_qframe.hide()
-        mt_player.playlist_visible = False
+        av_player.playlist_visible = False
         button_toggle_video.setDisabled(1)
     else:
         layout_vert_right_qframe.show()
         layout_vert_middle_qframe.show()
-        mt_player.playlist_visible = True
+        av_player.playlist_visible = True
         button_toggle_video.setDisabled(0)    
     
 button_toggle_playlist = QPushButton(under_play_slider_window, text='Tog PL')
@@ -401,15 +416,15 @@ button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
 ''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
 def button_toggle_video_clicked():
     
-    if mt_player.playlist_visible and mt_player.video_area_visible:
+    if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_left_qframe.hide()
-        mt_player.video_area_visible = False
+        av_player.video_area_visible = False
         window.resize(int(WINDOW_WIDTH/3), window.geometry().height())
         button_toggle_playlist.setDisabled(1)
     else:
         window.resize(WINDOW_WIDTH, window.geometry().height())
         layout_vert_left_qframe.show()
-        mt_player.video_area_visible = True
+        av_player.video_area_visible = True
         button_toggle_playlist.setDisabled(0)
     
 button_toggle_video = QPushButton(under_play_slider_window, text='Tog Vid')
@@ -462,14 +477,14 @@ def play_track():
     
     try:  
         # FONT STYLE - PREV/NEW TRACK
-        if mt_player.played_row != None and mt_player.played_row < cv.active_playlist.count():
+        if av_player.played_row != None and av_player.played_row < cv.active_playlist.count():
 
             try:
                 cv.active_playlist.item(cv.last_track_index).setFont(inactive_track_font_style)
             except:
                 print(f'ERROR in row: {cv.last_track_index}\n\n')
 
-            cv.last_track_index = mt_player.played_row
+            cv.last_track_index = av_player.played_row
 
         cv.active_playlist.currentItem().setFont(active_track_font_style)
         save_last_track_index()
@@ -478,11 +493,11 @@ def play_track():
         track_duration = get_duration_db()
         play_slider.setMaximum(track_duration)
         # PLAYER
-        mt_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        # TODO mt_player.audio_output.setVolume(0.5)
-        mt_player.player.play()
+        av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+        # TODO av_player.audio_output.setVolume(0.5)
+        av_player.player.play()
         # COUNTER
-        mt_player.played_row = cv.active_playlist.currentRow()
+        av_player.played_row = cv.active_playlist.currentRow()
         # WINDOW TITLE
         window.setWindowTitle(f'{Path(track_path).stem} - QTea media player')
 
@@ -500,7 +515,7 @@ def play_next_track():
         play_track()
     # MORE TRACKS IN THE PLAYLIST
     elif cv.active_playlist.count() != cv.active_playlist.currentRow() + 1:
-        cv.active_playlist.setCurrentRow(mt_player.played_row + 1)
+        cv.active_playlist.setCurrentRow(av_player.played_row + 1)
         play_track()
     # PLAYING THE LAST TRACK    
     elif (cv.active_playlist.count() == cv.active_playlist.currentRow() + 1 and
@@ -509,17 +524,17 @@ def play_next_track():
             play_track()
     # CURRENT TRACK BACK TO START         
     else:
-        mt_player.player.setPosition(0)
+        av_player.player.setPosition(0)
 
 
 def auto_play_next_track():
-    if mt_player.base_played:   # avoiding the dummy song played when the class created
-        if mt_player.player.mediaStatus() == mt_player.player.MediaStatus.EndOfMedia:
+    if av_player.base_played:   # avoiding the dummy song played when the class created
+        if av_player.player.mediaStatus() == av_player.player.MediaStatus.EndOfMedia:
 
             play_next_track()
     else:
-        mt_player.base_played = True    
-mt_player.player.mediaStatusChanged.connect(auto_play_next_track)
+        av_player.base_played = True    
+av_player.player.mediaStatusChanged.connect(auto_play_next_track)
 
 
 
@@ -529,11 +544,13 @@ mt_player.player.mediaStatusChanged.connect(auto_play_next_track)
         SLIDER                          
 ######################
 '''
-
-play_slider = QSlider()
-# wihout the groove's bg color --> 
-# not able to change the handle's size
-play_slider.setStyleSheet(
+class MySlider(QSlider):
+    def __init__(self):
+        super().__init__()
+    
+        self.setOrientation(Qt.Orientation.Horizontal)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setStyleSheet(
                         "QSlider::groove"
                             "{"
                             "background: #C2C2C2;"
@@ -555,23 +572,26 @@ play_slider.setStyleSheet(
                             "background: #287DCC;"
                             "}"
                         )
-                            
-play_slider.setOrientation(Qt.Orientation.Horizontal)
+        
+    def mousePressEvent(self, event):
+        # JUMP TO CLICK POSITION
+        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+        av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+     
+    def mouseMoveEvent(self, event):
+        # JUMP TO POINTER POSITION WHILE MOVING
+        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+        av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
 
-play_slider.setCursor(Qt.CursorShape.PointingHandCursor)
 
-def player_set_position():
-    if mt_player.base_played and mt_player.player.isPlaying():
-        mt_player.player.setPosition(play_slider.value())
-
-play_slider.sliderReleased.connect(player_set_position)
+play_slider = MySlider()
 
 
 def play_slider_set_value():
-    if mt_player.base_played and not play_slider.isSliderDown():
-        play_slider.setValue(mt_player.player.position())
+    if av_player.base_played and not play_slider.isSliderDown():
+        play_slider.setValue(av_player.player.position())
 
-mt_player.player.positionChanged.connect(play_slider_set_value)
+av_player.player.positionChanged.connect(play_slider_set_value)
 
 
 ''' 
@@ -629,6 +649,8 @@ tabs_playlist = QTabWidget()
 tabs_playlist.setFont(QFont('Times', 10, 500))
 tabs_playlist.currentChanged.connect(active_tab)
 
+
+
 '''
     CREATING FRAME, LAYOUT, LIST WIDGETS 
     LOADING TRACKS
@@ -639,6 +661,7 @@ def name_list_to_duration_row_selection():
                         "QListWidget::item:selected"
                             "{"
                             "background: #CCE8FF;"
+                            "color: red;"   # font
                             "}"
                         )
 
@@ -648,6 +671,7 @@ def duration_list_to_name_row_selection():
                         "QListWidget::item:selected"
                             "{"
                             "background: #CCE8FF;"
+                            "color: red;"   # font
                             "}"
                         )
 
@@ -766,14 +790,14 @@ layout_hor_top.addWidget(layout_vert_right_qframe, 35)
 
 
 ''' ADDING WIDGETS TO LAYOUTS '''
-layout_vert_left.addWidget(mt_player.video_output)
+layout_vert_left.addWidget(av_player.video_output)
 layout_vert_right.addWidget(tabs_playlist, 95)
 layout_vert_right.addWidget(under_playlist_window, 5)
 layout_ver_bottom.addWidget(play_slider)
 layout_ver_bottom.addWidget(under_play_slider_window)
 
-# TODO: layout_hor.setStretch(0, 10)
-
+# TODO: if music playing pic displayed? / av_player.video_output.hide()
+# TODO: add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 
 window.show()
 
