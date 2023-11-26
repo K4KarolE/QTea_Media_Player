@@ -2,19 +2,33 @@
   "last_used_tab": 0,
   "repeat_playlist_on": true,
   "shuffle_playlist_on": false,
+  "volume": 0.86,
+  "skin_selected": "default",
+  "skins": {
+    "default": {
+      "selected_row": {
+        "bg_color": "#CCE8FF",
+        "font_color:": "black"
+      },
+      "un_selected_row": {
+        "bg_color": "#CCE8FF",
+        "font_color:": "black"
+      }
+    }
+  },
   "paylist_0": {
     "tab_index": 0,
     "tab_title": "Movies",
-    "last_track_index": 20
+    "last_track_index": 8
   },
   "paylist_1": {
     "tab_index": 1,
     "tab_title": "Music",
-    "last_track_index": 8
+    "last_track_index": 2
   },
   "paylist_2": {
     "tab_index": 2,
     "tab_title": "Temp",
-    "last_track_index": 7
+    "last_track_index": 9
   }
 }

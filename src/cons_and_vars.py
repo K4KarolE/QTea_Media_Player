@@ -24,6 +24,7 @@ class Data:
     active_tab = settings['last_used_tab']
     repeat_playlist_on = settings['repeat_playlist_on']
     shuffle_playlist_on = settings['shuffle_playlist_on']
+    volume = settings['volume']
     
     active_db_table = None  # widget
     active_playlist = None  # widget

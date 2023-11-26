@@ -22,6 +22,7 @@ from src import PATH_JSON_SETTINGS, settings
 
 
 def active_utility():
+
     cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
     cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
@@ -151,12 +152,33 @@ class MyApp(QApplication):
         self.installEventFilter(self) 
 
     def eventFilter(self, source, event):
-        if event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Space:
-            self.pause_play_track()
+        to_save_settings = False
+        # PAUSE/PLAY - IF PLAYER IS NOT FULL SCREEN
+        # IF FULL SCREEN: SET UP IN 'AVPlayer class'
+        if event.type() == QEvent.Type.KeyRelease:
+            # PAUSE
+            if event.key() == Qt.Key.Key_Space:
+                button_play_pause_clicked()
+            # VOLUME
+            elif event.key() == Qt.Key.Key_Plus:
+                new_volume = round(av_player.audio_output.volume() + 0.01, 4)
+                av_player.audio_output.setVolume(new_volume)
+                to_save_settings = True
+            elif event.key() == Qt.Key.Key_Minus:
+                new_volume = round(av_player.audio_output.volume() - 0.01, 4)
+                av_player.audio_output.setVolume(new_volume)
+                to_save_settings = True
+            # JUMP - SMALL
+            elif event.key() == Qt.Key.Key_Left:
+                av_player.player.setPosition(av_player.player.position() - 600)
+            elif event.key() == Qt.Key.Key_Right:
+                av_player.player.setPosition(av_player.player.position() + 600)
+        if to_save_settings:
+            settings['volume'] = new_volume
+            save_json(settings, PATH_JSON_SETTINGS)
         return super().eventFilter(source, event)
     
-    def pause_play_track(self):
-        button_play_pause_clicked()
+
 
 app = MyApp()
 
@@ -170,7 +192,7 @@ window.setWindowTitle("QTea media player")
 
 
 ''' PLAYER '''
-av_player = AVPlayer()
+av_player = AVPlayer(volume=cv.volume)
 # window = MyWindow(av_player)
 """ 
     av_player_duration
@@ -477,7 +499,7 @@ def play_track():
     
     try:  
         # FONT STYLE - PREV/NEW TRACK
-        if av_player.played_row != None and av_player.played_row < cv.active_playlist.count():
+        if av_player.played_row != None:
 
             try:
                 cv.active_playlist.item(cv.last_track_index).setFont(inactive_track_font_style)
@@ -494,7 +516,6 @@ def play_track():
         play_slider.setMaximum(track_duration)
         # PLAYER
         av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        # TODO av_player.audio_output.setVolume(0.5)
         av_player.player.play()
         # COUNTER
         av_player.played_row = cv.active_playlist.currentRow()
@@ -547,7 +568,6 @@ av_player.player.mediaStatusChanged.connect(auto_play_next_track)
 class MySlider(QSlider):
     def __init__(self):
         super().__init__()
-    
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(
@@ -570,6 +590,7 @@ class MySlider(QSlider):
                         "QSlider::sub-page"
                             "{"
                             "background: #287DCC;"
+                            "border-radius: 4px;"
                             "}"
                         )
         
@@ -586,6 +607,13 @@ class MySlider(QSlider):
 
 play_slider = MySlider()
 
+# TODO: volume slider
+# volume_slider = MySlider()
+# volume_slider.setMinimum(0)
+# volume_slider.setMaximum(100)
+# volume_slider.resize(100, 20)
+# # volume_slider.setParent(under_playlist_window)
+# volume_slider.setGeometry(under_play_slider_window.width()-150, 0, 100, 20)
 
 def play_slider_set_value():
     if av_player.base_played and not play_slider.isSliderDown():

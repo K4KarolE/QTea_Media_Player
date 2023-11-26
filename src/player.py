@@ -1,8 +1,9 @@
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
-from PyQt6.QtCore import QUrl, QEvent
+from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
+# TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
 
 """
 PLAY EMPTY SOUND WORKAROUND
@@ -11,7 +12,7 @@ before be able to switch tracks without crashing
 """
 class AVPlayer(QWidget):
 
-    def __init__(self, play_base=True):
+    def __init__(self, play_base=True, volume=0):
         super().__init__()
         self.player = QMediaPlayer()
         # VIDEO
@@ -26,7 +27,7 @@ class AVPlayer(QWidget):
             self.player.play()
         # SETTINGS
         # self.player.setLoops(1) # -1=infinite
-        self.audio_output.setVolume(1)
+        self.audio_output.setVolume(volume)
         self.base_played = False
         self.played_row = None
         self.paused = False
@@ -37,8 +38,17 @@ class AVPlayer(QWidget):
     def eventFilter(self, source, event):
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
             self.vid_full_screen()
-        if source == self.video_output and event.type() == QEvent.Type.MouseButtonPress:
+        # PAUSE/PLAY - IF PLAYER IS FULL SCREEN
+        # IF NOT FULL SCREEN: SET UP IN 'MyApp class'
+        elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Space:
             self.pause_play_track()
+        elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Escape:
+            self.video_output.setFullScreen(0)
+        
+        # TODO elif source == self.video_output and event.type() == QEvent.Type.Wheel:
+        #     # print(QEvent.Type.GraphicsSceneWheel)
+        #     pass
+        
         return super().eventFilter(source, event)
 
 
@@ -50,16 +60,19 @@ class AVPlayer(QWidget):
     
     
     def pause_play_track(self):
+        # print(55)
         if self.player.isPlaying():
             self.player.pause()
+            self.paused = True
         else:
             if self.played_row:
                 self.player.play()
+                self.paused = False
 
 
 """ 
-    only used for duration calculation -->
-    able to add new track(s) without interrupting 
+    Only used for duration calculation -->
+    Able to add new track(s) without interrupting 
     the current playing
 """
 class TrackDuration(QWidget):
