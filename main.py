@@ -1,147 +1,38 @@
 
 from PyQt6.QtWidgets import QApplication, QWidget, QListWidget, QVBoxLayout, QHBoxLayout
-from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QPushButton, QMainWindow
-from PyQt6.QtWidgets import QSlider, QFrame, QTabWidget, QLabel, QScrollBar, QStyle
+from PyQt6.QtWidgets import QFileDialog, QPushButton, QMainWindow
+from PyQt6.QtWidgets import QFrame, QTabWidget, QScrollBar
 from PyQt6.QtCore import QUrl, Qt, QEvent
 from PyQt6.QtGui import QIcon, QFont
 
-# from PyQt6.QtWidgets import QLineEdit
+# from PyQt6.QtWidgets import QLineEdit, QLabel
 # from PyQt6.QtCore import QSize, QTimer, QTime
-
 import os
 import sys
 import random
-import sqlite3
 
+
+from src import (
+    active_utility,
+    save_last_track_index,
+    remove_record_db,
+    get_path_db,
+    get_duration_db,
+    generate_track_list_detail,
+    add_record_grouped_actions,
+    add_new_list_item,
+    cv, # data
+    cur, # db
+    connection, # db
+    settings,   # json dic
+    PATH_JSON_SETTINGS,
+    inactive_track_font_style,  
+    active_track_font_style,
+    )
 from src import Path
-
-from src import AVPlayer, TrackDuration, Data
+from src import AVPlayer, TrackDuration, MySlider
 from src import save_json
-from src import PATH_JSON_SETTINGS, settings
 
-
-
-def active_utility():
-
-    cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
-    cv.last_track_index = settings[cv.active_db_table]['last_track_index']
-    cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
-    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']   # widget
-
-
-def save_last_track_index():
-    cv.last_track_index = cv.active_playlist.currentRow()
-    settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
-    save_json(settings, PATH_JSON_SETTINGS)
-
-
-def add_record_db(duration, path):
-    cur.execute("INSERT INTO {0}(duration, path) VALUES (?, ?)".format(cv.active_db_table), (duration, str(path)))
-    connection.commit()
-
-
-def remove_record_db(list_row_id):
-    cur.execute("DELETE FROM {0} WHERE row_id = ?".format(cv.active_db_table), (list_row_id,))
-    cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > ?".format(cv.active_db_table), (list_row_id,) )
-    connection.commit()
-
-
-def get_row_id_db(path):
-    return cur.execute("SELECT row_id FROM {0} WHERE path = ?".format(cv.active_db_table), (str(path),)).fetchall()[-1][0] 
-    # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
-
-
-def get_path_db():
-    return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                        (cv.active_playlist.currentRow() + 1,)).fetchall()[0][2]
-
-def get_duration_db():
-    # active_playlist = tabs_playlist.currentWidget()
-    return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                           (cv.active_playlist.currentRow() + 1,)).fetchall()[0][1])
-
-def generate_duration_to_display(raw_duration):
-
-    try:
-        # SECONDS
-        str_seconds = str(int(int(raw_duration)/1000%60))
-        if str_seconds == '0':
-            seconds = '00'
-        elif len(str_seconds) == 1:
-            seconds = f'0{str_seconds}'
-        else:
-            seconds = str_seconds[0:2]
-        
-        # MINUTES
-        int_minutes = int(int(raw_duration)/60/1000)
-        if int_minutes == 60:
-            minutes = '01'
-        elif int_minutes in range(10,60):
-            minutes = str(int_minutes)
-        elif int_minutes in range(0,10):
-            minutes = f'0{str(int_minutes)}'
-        else:
-            minutes = str(int_minutes%60)
-
-        # HOURS
-        if int_minutes > 60:
-            str_hours = str(int((int_minutes - int_minutes%60)/60))
-            duration = f'{str_hours}:{minutes}:{seconds}'
-        else:
-            duration = f'{minutes}:{seconds}'
-    except:
-        duration = 'ERROR'
-
-    return duration
-
-
-def generate_track_list_detail(db_track_record):
-    # [0]:row, [1]:duration, [2]:path
-    track_name = f'{db_track_record[0]}. {Path(db_track_record[2]).stem}'
-    duration = generate_duration_to_display(db_track_record[1])
-    return track_name, duration
-
-
-def add_record_grouped_actions(track_path):
-
-    track_name = Path(track_path).stem
-    # DURATION
-    av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    raw_duration = av_player_duration.player.duration()
-    duration = generate_duration_to_display(raw_duration)
-    # DB
-    add_record_db(raw_duration, track_path)
-    # TRACK NAME
-    row_id = cv.active_playlist.count() + 1
-    track_name = f'{row_id}. {track_name}'
-    
-    add_new_list_item(track_name, cv.active_playlist, 'left')
-    add_new_list_item(duration, cv.active_pl_duration, 'right')
-
-
-def add_new_list_item(new_item, list_widget, alignment):
-    
-    list_item = QListWidgetItem(new_item, list_widget)
-    list_item.setFont(inactive_track_font_style)
-
-    if alignment == 'left':
-        list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
-    else:
-        list_item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-
-
-''' DATA '''
-cv = Data()
-
-
-''' PLAYLIST DB '''
-connection = sqlite3.connect('playlist.db')
-cur = connection.cursor()
-
-
-''' STYLE '''
-inactive_track_font_style = QFont('Times', 11, 500)
-active_track_font_style = QFont('Times', 11, 600)
 
 
 ''' APP '''
@@ -179,7 +70,7 @@ class MyApp(QApplication):
         return super().eventFilter(source, event)
     
 
-
+''' APP '''
 app = MyApp()
 
 ''' WINDOW '''
@@ -193,7 +84,7 @@ window.setWindowTitle("QTea media player")
 
 ''' PLAYER '''
 av_player = AVPlayer(volume=cv.volume)
-# window = MyWindow(av_player)
+
 """ 
     av_player_duration
     -------------------
@@ -246,7 +137,7 @@ def button_add_track_clicked():
     dialog_add_track.setNameFilters(FILE_TYPES_LIST)
     dialog_add_track.exec()
     if dialog_add_track.result():
-        add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
+        add_record_grouped_actions(dialog_add_track.selectedFiles()[0], av_player_duration)
 
 button_add_track = QPushButton(under_playlist_window, text='AT')
 button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -273,7 +164,7 @@ def button_add_dir_clicked():
         if len(track_path_list) > 0:
             for track_path in track_path_list:
                 try:
-                    add_record_grouped_actions(track_path)
+                    add_record_grouped_actions(track_path, av_player_duration)
                 except:
                     error_path_list.append(track_path)
             if error_path_list:
@@ -565,61 +456,8 @@ av_player.player.mediaStatusChanged.connect(auto_play_next_track)
         SLIDER                          
 ######################
 '''
-class MySlider(QSlider):
-    def __init__(self):
-        super().__init__()
-        self.setOrientation(Qt.Orientation.Horizontal)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setStyleSheet(
-                        "QSlider::groove"
-                            "{"
-                            "background: #C2C2C2;"
-                            "height: 10px;"
-                            "border-radius: 4px;"
-                            "}"
+play_slider = MySlider(av_player)
 
-                        "QSlider::handle"
-                            "{"
-                            "border: 1px solid grey;"
-                            "border-radius: 8px;"
-                            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
-                            "width: 15px;"
-                            "margin: -3 px;  /* expand outside the groove */"
-                            "}"
-
-                        "QSlider::sub-page"
-                            "{"
-                            "background: #287DCC;"
-                            "border-radius: 4px;"
-                            "}"
-                        )
-        
-    def mousePressEvent(self, event):
-        # JUMP TO CLICK POSITION
-        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-     
-    def mouseMoveEvent(self, event):
-        # JUMP TO POINTER POSITION WHILE MOVING
-        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-
-
-play_slider = MySlider()
-
-# TODO: volume slider
-# volume_slider = MySlider()
-# volume_slider.setMinimum(0)
-# volume_slider.setMaximum(100)
-# volume_slider.resize(100, 20)
-# # volume_slider.setParent(under_playlist_window)
-# volume_slider.setGeometry(under_play_slider_window.width()-150, 0, 100, 20)
-
-def play_slider_set_value():
-    if av_player.base_played and not play_slider.isSliderDown():
-        play_slider.setValue(av_player.player.position())
-
-av_player.player.positionChanged.connect(play_slider_set_value)
 
 
 ''' 

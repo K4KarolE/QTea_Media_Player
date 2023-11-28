@@ -60,7 +60,6 @@ class AVPlayer(QWidget):
     
     
     def pause_play_track(self):
-        # print(55)
         if self.player.isPlaying():
             self.player.pause()
             self.paused = True
