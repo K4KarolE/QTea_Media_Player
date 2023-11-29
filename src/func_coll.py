@@ -17,12 +17,12 @@ active_track_font_style = QFont('Times', 11, 600)
 def active_utility():
     cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
-    cv.active_playlist = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
+    cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']   # widget
 
 
 def save_last_track_index():
-    cv.last_track_index = cv.active_playlist.currentRow()
+    cv.last_track_index = cv.active_pl_name.currentRow()
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
@@ -45,13 +45,13 @@ def get_row_id_db(path):
 
 def get_path_db():
     return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                        (cv.active_playlist.currentRow() + 1,)).fetchall()[0][2]
+                        (cv.active_pl_name.currentRow() + 1,)).fetchall()[0][2]
 
 
 def get_duration_db():
     # active_playlist = tabs_playlist.currentWidget()
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                           (cv.active_playlist.currentRow() + 1,)).fetchall()[0][1])
+                           (cv.active_pl_name.currentRow() + 1,)).fetchall()[0][1])
 
 
 def generate_duration_to_display(raw_duration):
@@ -104,10 +104,10 @@ def add_record_grouped_actions(track_path, av_player_duration):
     duration = generate_duration_to_display(raw_duration)
     add_record_db(raw_duration, track_path)
 
-    row_id = cv.active_playlist.count() + 1
+    row_id = cv.active_pl_name.count() + 1
     track_name = f'{row_id}. {track_name}'
     
-    add_new_list_item(track_name, cv.active_playlist, 'left')
+    add_new_list_item(track_name, cv.active_pl_name, 'left')
     add_new_list_item(duration, cv.active_pl_duration, 'right')
 
 
