@@ -15,7 +15,6 @@ from .func_coll import (
     )
 
 
-
 class MyTabs(QTabWidget):
 
     def __init__(self, play_track):
@@ -150,12 +149,3 @@ class MyTabs(QTabWidget):
                     track_name, duration = generate_track_list_detail(item)
                     add_new_list_item(track_name, name_list_widget, 'left')
                     add_new_list_item(duration, duration_list_widget, 'right')
-
-        
-        
-        
-        
-        
-       
- 
-       

@@ -49,7 +49,6 @@ def get_path_db():
 
 
 def get_duration_db():
-    # active_playlist = tabs_playlist.currentWidget()
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
                            (cv.active_pl_name.currentRow() + 1,)).fetchall()[0][1])
 

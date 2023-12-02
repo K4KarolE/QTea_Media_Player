@@ -4,7 +4,6 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QFileDialog,
     QPushButton,
     QMainWindow,
     QFrame
@@ -12,27 +11,22 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QUrl, Qt, QEvent
 from PyQt6.QtGui import QIcon, QFont
 
-import os
 import sys
 import random
 
 from src import (
     save_last_track_index,
-    remove_record_db,
     get_path_db,
     get_duration_db,
-    generate_track_list_detail,
-    add_record_grouped_actions,
     cv, # data
-    cur, # db
-    connection, # db
     settings,   # json dic
     PATH_JSON_SETTINGS,
     inactive_track_font_style,  
-    active_track_font_style,
+    active_track_font_style
     )
 from src import Path
 from src import AVPlayer, TrackDuration, MySlider, MyTabs
+from src import MyButtons, MyButtonsFunc
 from src import save_json
 
 
@@ -103,11 +97,11 @@ av_player_duration = TrackDuration()
 #######################
 '''
 # FOR BUTTONS: ADD TRACK, REMOVE TRACK, ..
-under_playlist_window = QMainWindow()
+under_playlist_window = QFrame()
 under_playlist_window.setMinimumSize(400, 30)
 
 # FOR BUTTONS: PLAY/STOP, PAUSE, ..
-under_play_slider_window = QMainWindow()
+under_play_slider_window = QFrame()
 under_play_slider_window.setFixedHeight(50)
 under_play_slider_window.setMinimumSize(400, 50)
 
@@ -117,10 +111,7 @@ under_play_slider_window.setMinimumSize(400, 50)
         BUTTONS              
 #######################
 '''
-MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
-VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
+but_func = MyButtonsFunc(av_player, av_player_duration)
 
 ''' 
     PLAYLIST SECTION
@@ -132,106 +123,46 @@ PLIST_BUTTONS_X_DIFF = 4    # FOR SELECTING ADD AND REMOVE BUTTONS
 def button_x_pos(num):
     return (PLIST_BUTTONS_WIDTH + 5) * num
 
-''' BUTTON PLAYLIST - ADD TRACK '''
-def button_add_track_clicked():
-    dialog_add_track = QFileDialog()
-    dialog_add_track.setWindowTitle("Select a media file")
-    dialog_add_track.setNameFilters(FILE_TYPES_LIST)
-    dialog_add_track.exec()
-    if dialog_add_track.result():
-        add_record_grouped_actions(dialog_add_track.selectedFiles()[0], av_player_duration)
 
-button_add_track = QPushButton(under_playlist_window, text='AT')
-button_add_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_add_track.setToolTip('Add track')
-button_add_track.setToolTipDuration(2000)
-button_add_track.setFont(QFont('Times', 10, 600))
+''' BUTTON PLAYLIST - ADD TRACK '''
+button_add_track = MyButtons(
+    under_playlist_window,
+    'AT',
+    'Add Track',
+    but_func.button_add_track_clicked
+    )
 button_add_track.setGeometry(5, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_track.clicked.connect(button_add_track_clicked)
 
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
-def button_add_dir_clicked():
-    track_path_list = []
-    error_path_list = []
-    dialog_add_dir = QFileDialog()
-    dialog_add_dir.setWindowTitle("Select a directory")
-    dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
-    dialog_add_dir.exec()
-    if dialog_add_dir.result():
-        for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
-            for file in file_names:
-                if file[-4:] in MEDIA_FILES:
-                    track_path_list.append(Path(dir_path, file))
-        if len(track_path_list) > 0:
-            for track_path in track_path_list:
-                try:
-                    add_record_grouped_actions(track_path, av_player_duration)
-                except:
-                    error_path_list.append(track_path)
-            if error_path_list:
-                for item in error_path_list:
-                    print(f'ERROR - {item}')
-
-button_add_dir = QPushButton(under_playlist_window, text='AD')
-button_add_dir.setCursor(Qt.CursorShape.PointingHandCursor)
-button_add_dir.setToolTip('Add directory')
-button_add_dir.setToolTipDuration(2000)
-button_add_dir.setFont(QFont('Times', 10, 600))
+button_add_dir = MyButtons(
+    under_playlist_window,
+    'AD',
+    'Add Directory',
+    but_func.button_add_dir_clicked
+    )
 button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_dir.clicked.connect(button_add_dir_clicked)
-
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
-def button_remove_track_clicked():
-    # LAST TRACK INDEX
-    if  cv.active_pl_name.currentRow() < cv.last_track_index:
-        cv.last_track_index = cv.last_track_index - 1
-        settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
-        save_json(settings, PATH_JSON_SETTINGS)
-    # DB
-    row_id_db = cv.active_pl_name.currentRow() + 1
-    remove_record_db(row_id_db)
-    # PLAYLIST
-    cv.active_pl_name.takeItem(cv.active_pl_name.currentRow())
-    cv.active_pl_duration.takeItem(cv.active_pl_name.currentRow())
-    rename_playlist(row_id_db)
-
-
-
-def rename_playlist(row_id_db):
-    cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
-    playlist = cur.fetchall()
-    for item in playlist:
-        list_name, duration = generate_track_list_detail(item)
-        cv.active_pl_name.item(row_id_db-1).setText(list_name)
-        row_id_db +=1
-
-button_remove_track = QPushButton(under_playlist_window, text='RT')
-button_remove_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_remove_track.setToolTip('Remove track')
-button_remove_track.setToolTipDuration(2000)
-button_remove_track.setFont(QFont('Times', 10, 600))
+button_remove_track = MyButtons(
+    under_playlist_window,
+    'RT',
+    'Remove track',
+    but_func.button_remove_track_clicked
+    )
 button_remove_track.setGeometry(button_x_pos(2), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_track.clicked.connect(button_remove_track_clicked)
+
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
-def button_remove_all_track_clicked():
-    # DB
-    cur.execute("DELETE FROM {0}".format(cv.active_db_table))
-    connection.commit()
-    # PLAYLIST
-    cv.active_pl_name.clear()
-    cv.active_pl_duration.clear()
-
-button_remove_all_track = QPushButton(under_playlist_window, text='CP')
-button_remove_all_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_remove_all_track.setToolTip('Clear Playlist')
-button_remove_all_track.setToolTipDuration(2000)
-button_remove_all_track.setFont(QFont('Times', 10, 600))
+button_remove_all_track = MyButtons(
+    under_playlist_window,
+    'CP',
+    'Clear Playlist',
+    but_func.button_remove_all_track_clicked
+    )
 button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
+
 
 
 ''' 
