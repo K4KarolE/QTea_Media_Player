@@ -1,11 +1,5 @@
-from PyQt6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QFileDialog,
-    QPushButton,
-
-    )
-from PyQt6.QtCore import QUrl, Qt, QEvent
+from PyQt6.QtWidgets import QFileDialog, QPushButton
+from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
 from PyQt6.QtGui import QIcon, QFont
 
 from .cons_and_vars import Path, save_json, settings, PATH_JSON_SETTINGS
@@ -25,6 +19,9 @@ from .func_coll import (
 
 import os
 
+ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
+
+
 
 
 MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
@@ -35,28 +32,42 @@ FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
 
 class MyButtons(QPushButton):
 
-    def __init__(self, parent, title, tooltip, clicked_action):
+    
+
+
+
+    def __init__(
+            self,
+            parent,
+            title,
+            tooltip,
+            av_player=None,
+            av_player_duration=None,
+            play_funcs=None,
+            icon = None):
         super().__init__()
+
         self.setParent(parent)
         self.setText(title)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setToolTip(tooltip)
         self.setToolTipDuration(2000)
         self.setFont(QFont('Times', 10, 600))
-        self.clicked.connect(clicked_action)
+        if icon:
+            self.setIcon(icon)
+            self.setText(None)
+            self.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
-
-
-class MyButtonsFunc():
-    def __init__(self, av_player, av_player_duration):
         self.av_player = av_player
         self.av_player_duration = av_player_duration
+        self.play_funcs = play_funcs
 
     ''' 
     PLAYLIST SECTION
     '''
     ''' BUTTON PLAYLIST - ADD TRACK '''
     def button_add_track_clicked(self):
+        ''' BUTTON - MUSIC '''
         dialog_add_track = QFileDialog()
         dialog_add_track.setWindowTitle("Select a media file")
         dialog_add_track.setNameFilters(FILE_TYPES_LIST)
@@ -125,4 +136,76 @@ class MyButtonsFunc():
     PLAY SECTION
     '''
     ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
-    # TODO                 
+    def button_play_pause_clicked(self):
+        button_image_start = QIcon('skins/default/start.png')
+        button_image_pause = QIcon('skins/default/pause.png')
+
+        if self.av_player.played_row == None:
+            self.play_funcs.play_track()
+            self.setIcon(button_image_pause)
+        elif self.av_player.player.isPlaying():
+            self.av_player.player.pause()
+            self.av_player.paused = True
+            self.setIcon(button_image_start)
+        elif self.av_player.paused:
+            self.av_player.player.play()
+            self.av_player.paused = False
+            self.setIcon(button_image_pause)
+        elif not self.av_player.player.isPlaying() and not self.av_player.paused:
+            self.play_funcs.play_track()
+    
+
+    ''' BUTTON PLAY SECTION - STOP '''
+    def button_stop_clicked(self):
+        self.av_player.player.stop()
+        self.av_player.paused = False
+    
+
+    ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
+    def button_prev_track_clicked(self):
+        if cv.active_pl_name.count() > 0 and self.av_player.played_row != None:
+
+            if cv.shuffle_playlist_on:
+                cv.active_pl_name.setCurrentRow(cv.last_track_index)
+            elif cv.active_pl_name.currentRow() != 0:
+                cv.active_pl_name.setCurrentRow(self.av_player.played_row - 1)
+            else:
+                cv.active_pl_name.setCurrentRow(cv.active_pl_name.count() - 1)
+            self.play_funcs.play_track()
+    
+
+    ''' BUTTON PLAY SECTION - NEXT TRACK '''
+    def button_next_track_clicked(self):
+        if cv.active_pl_name.count() > 0 and self.av_player.played_row != None:
+            self.play_funcs.play_next_track()
+    
+
+    ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
+    def button_toggle_repeat_pl_clicked(self):
+        button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
+        button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
+        cv.repeat_playlist =  (cv.repeat_playlist + 1) % 3
+        
+        if cv.repeat_playlist == 1:
+            self.setFlat(0)
+            self.setIcon(button_image_repeat)
+        elif cv.repeat_playlist == 2:
+            self.setFlat(1)
+        else:
+            self.setIcon(button_image_repeat_single)
+        
+        settings['repeat_playlist'] = cv.repeat_playlist
+        save_json(settings, PATH_JSON_SETTINGS)
+    
+
+    ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
+    def button_toggle_shuffle_pl_clicked(self):
+        if cv.shuffle_playlist_on:
+            cv.shuffle_playlist_on = False
+            self.setFlat(0)
+        else:
+            cv.shuffle_playlist_on = True
+            self.setFlat(1)
+        
+        settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
+        save_json(settings, PATH_JSON_SETTINGS)

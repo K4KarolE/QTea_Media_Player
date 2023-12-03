@@ -1,8 +1,8 @@
 {
-  "last_used_tab": 2,
-  "repeat_playlist_on": true,
+  "last_used_tab": 1,
+  "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.3,
+  "volume": 0.58,
   "skin_selected": "default",
   "skins": {
     "default": {
@@ -19,16 +19,16 @@
   "paylist_0": {
     "tab_index": 0,
     "tab_title": "Movies",
-    "last_track_index": 9
+    "last_track_index": 14
   },
   "paylist_1": {
     "tab_index": 1,
     "tab_title": "Music",
-    "last_track_index": 9
+    "last_track_index": 0
   },
   "paylist_2": {
     "tab_index": 2,
     "tab_title": "Temp",
-    "last_track_index": 5
+    "last_track_index": 4
   }
 }

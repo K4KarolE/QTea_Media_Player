@@ -21,8 +21,12 @@ settings = open_json(PATH_JSON_SETTINGS)
 
 @dataclass
 class Data:
+    skin_selected = settings['skin_selected']
+
+    icon_size = 20
+
     active_tab = settings['last_used_tab']
-    repeat_playlist_on = settings['repeat_playlist_on']
+    repeat_playlist = settings['repeat_playlist']
     shuffle_playlist_on = settings['shuffle_playlist_on']
     volume = settings['volume']
     

@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QFrame
     )
-from PyQt6.QtCore import QUrl, Qt, QEvent
+from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
 from PyQt6.QtGui import QIcon, QFont
 
 import sys
@@ -26,7 +26,7 @@ from src import (
     )
 from src import Path
 from src import AVPlayer, TrackDuration, MySlider, MyTabs
-from src import MyButtons, MyButtonsFunc
+from src import MyButtons, PlaysFunc
 from src import save_json
 
 
@@ -45,7 +45,8 @@ class MyApp(QApplication):
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
             if event.key() == Qt.Key.Key_Space:
-                button_play_pause_clicked()
+                pass
+                # TODO button_play_pause_clicked()
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
                 new_volume = round(av_player.audio_output.volume() + 0.01, 4)
@@ -105,13 +106,23 @@ under_play_slider_window = QFrame()
 under_play_slider_window.setFixedHeight(50)
 under_play_slider_window.setMinimumSize(400, 50)
 
+''' 
+######################
+        SLIDER                          
+######################
+'''
+play_slider = MySlider(av_player)
+
+
+''' LIST ACTIONS '''
+play_funcs = PlaysFunc(window, av_player, play_slider)
 
 ''' 
 #######################
         BUTTONS              
 #######################
 '''
-but_func = MyButtonsFunc(av_player, av_player_duration)
+# but_func = ButtonsFunc(av_player, av_player_duration, play_funcs)
 
 ''' 
     PLAYLIST SECTION
@@ -129,9 +140,11 @@ button_add_track = MyButtons(
     under_playlist_window,
     'AT',
     'Add Track',
-    but_func.button_add_track_clicked
+    av_player,
+    av_player_duration,
     )
-button_add_track.setGeometry(5, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_track.setGeometry(0, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
 
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
@@ -139,103 +152,143 @@ button_add_dir = MyButtons(
     under_playlist_window,
     'AD',
     'Add Directory',
-    but_func.button_add_dir_clicked
+    av_player,
+    av_player_duration,
     )
 button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_dir.clicked.connect(button_add_dir.button_add_dir_clicked)
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 button_remove_track = MyButtons(
     under_playlist_window,
     'RT',
-    'Remove track',
-    but_func.button_remove_track_clicked
+    'Remove track'
     )
 button_remove_track.setGeometry(button_x_pos(2), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_remove_track.clicked.connect(button_remove_track.button_remove_track_clicked)
 
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
 button_remove_all_track = MyButtons(
     under_playlist_window,
     'CP',
-    'Clear Playlist',
-    but_func.button_remove_all_track_clicked
+    'Clear Playlist'
     )
 button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-
+button_remove_all_track.clicked.connect(button_remove_all_track.button_remove_all_track_clicked)
 
 
 ''' 
     PLAY SECTION
 '''
-PLAY_BUTTONS_WIDTH = 60
-PLAY_BUTTONS_HEIGHT = 30
+PLAY_BUTTONS_WIDTH = 32
+PLAY_BUTTONS_HEIGHT = 32
 
 def play_buttons_x_pos(num):
-    return (PLAY_BUTTONS_WIDTH + 3) * num
+    return int((PLAY_BUTTONS_WIDTH) * num)
 
 
 ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
-def button_play_pause_clicked():
+''' BUTTON - MUSIC '''
+button_image_start = QIcon(f'skins/{cv.skin_selected}/start.png')
+button_image_pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
+button_image_stop = QIcon(f'skins/{cv.skin_selected}/stop.png')
+button_image_prev = QIcon(f'skins/{cv.skin_selected}/previous.png')
+button_image_next = QIcon(f'skins/{cv.skin_selected}/next.png')
+button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
+button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
+button_image_shuffle = QIcon(f'skins/{cv.skin_selected}/shuffle.png')
 
-    if av_player.played_row == None:
-        play_track()
-    elif av_player.player.isPlaying():
-        av_player.player.pause()
-        av_player.paused = True
-    elif av_player.paused:
-        av_player.player.play()
-        av_player.paused = False
-    elif not av_player.player.isPlaying() and not av_player.paused:
-        play_track()
 
-button_play_pause = QPushButton(under_play_slider_window, text='PLAY/PAUSE')
-button_play_pause.setCursor(Qt.CursorShape.PointingHandCursor)
-button_play_pause.setFont(QFont('Times', 10, 600))
-button_play_pause.clicked.connect(button_play_pause_clicked)
+button_image_toggle_vid = QIcon(f'skins/{cv.skin_selected}/toggle_vid.png')
+button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.png')
+
+button_play_pause = MyButtons(
+    under_play_slider_window,
+    'PLAY/PAUSE',
+    'Start/stop playing',
+    av_player,
+    av_player_duration,
+    play_funcs,
+    button_image_start,
+    )
+button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
+button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
+button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
 
 ''' BUTTON PLAY SECTION - STOP '''
-def button_stop_clicked():
-    av_player.player.stop()
-    av_player.paused = False
- 
-button_stop = QPushButton(under_play_slider_window, text='Stop')
-button_stop.setCursor(Qt.CursorShape.PointingHandCursor)
-button_stop.setFont(QFont('Times', 10, 600))
-button_stop.setGeometry(play_buttons_x_pos(2), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_stop.clicked.connect(button_stop_clicked)
+button_stop = MyButtons(
+    under_play_slider_window,
+    'Stop',
+    'Stops playing',
+    av_player,
+    av_player_duration,
+    play_funcs,
+    button_image_stop
+    )
+button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_stop.clicked.connect(button_stop.button_stop_clicked)
+button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
-def button_prev_track_clicked():
-    if cv.active_pl_name.count() > 0 and av_player.played_row != None:
-
-        if cv.shuffle_playlist_on:
-            cv.active_pl_name.setCurrentRow(cv.last_track_index)
-        elif cv.active_pl_name.currentRow() != 0:
-            cv.active_pl_name.setCurrentRow(av_player.played_row - 1)
-        else:
-            cv.active_pl_name.setCurrentRow(cv.active_pl_name.count() - 1)
-        play_track()
-
-button_prev_track = QPushButton(under_play_slider_window, text='Prev')
-button_prev_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_prev_track.setFont(QFont('Times', 10, 600))
-button_prev_track.setGeometry(play_buttons_x_pos(3), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_prev_track.clicked.connect(button_prev_track_clicked)
+button_prev_track = MyButtons(
+    under_play_slider_window,
+    'Prev',
+    'Previous track',
+    av_player,
+    av_player_duration,
+    play_funcs,
+    button_image_prev
+    )
+button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_prev_track.clicked.connect(button_prev_track.button_prev_track_clicked)
 
 
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
-def button_next_track_clicked():
-    if cv.active_pl_name.count() > 0 and av_player.played_row != None:
-        play_next_track()
+button_next_track = MyButtons(
+    under_play_slider_window,
+    'Next',
+    'Next track',
+    av_player,
+    av_player_duration,
+    play_funcs,
+    button_image_next
+    )
+button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
 
-button_next_track = QPushButton(under_play_slider_window, text='Next')
-button_next_track.setCursor(Qt.CursorShape.PointingHandCursor)
-button_next_track.setFont(QFont('Times', 10, 600))
-button_next_track.setGeometry(play_buttons_x_pos(4), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_next_track.clicked.connect(button_next_track_clicked)
+
+''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
+button_toggle_repeat_pl = MyButtons(
+    under_play_slider_window,
+    'Tog Rep PL',
+    'Toggle Repeat Playlist',
+    icon = button_image_repeat
+    )
+button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
+
+if cv.repeat_playlist == 2:
+    button_toggle_repeat_pl.setFlat(1)
+elif cv.repeat_playlist == 0:
+    button_toggle_repeat_pl.setFlat(1)
+    button_toggle_repeat_pl.setIcon(button_image_repeat_single)
+
+
+''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
+button_toggle_shuffle_pl = MyButtons(
+    under_play_slider_window,
+    'Shuffle PL',
+    'Toggle Shuffle Playlist',
+    icon = button_image_shuffle
+    )
+button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
+if cv.shuffle_playlist_on:
+    button_toggle_shuffle_pl.setFlat(1)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
@@ -251,11 +304,14 @@ def button_toggle_playlist_clicked():
         layout_vert_middle_qframe.show()
         av_player.playlist_visible = True
         button_toggle_video.setDisabled(0)    
-    
-button_toggle_playlist = QPushButton(under_play_slider_window, text='Tog PL')
-button_toggle_playlist.setCursor(Qt.CursorShape.PointingHandCursor)
-button_toggle_playlist.setFont(QFont('Times', 10, 600))
-button_toggle_playlist.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+
+button_toggle_playlist = MyButtons(
+    under_play_slider_window,
+    'Shuffle PL',
+    'Toggle Shuffle Playlist',
+    icon = button_image_toggle_playlist
+    )
+button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
 
 
@@ -272,124 +328,16 @@ def button_toggle_video_clicked():
         layout_vert_left_qframe.show()
         av_player.video_area_visible = True
         button_toggle_playlist.setDisabled(0)
-    
-button_toggle_video = QPushButton(under_play_slider_window, text='Tog Vid')
-button_toggle_video.setCursor(Qt.CursorShape.PointingHandCursor)
-button_toggle_video.setFont(QFont('Times', 10, 600))
-button_toggle_video.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+
+button_toggle_video = MyButtons(
+    under_play_slider_window,
+    'Shuffle PL',
+    'Toggle Shuffle Playlist',
+    icon = button_image_toggle_vid
+    )
+button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
-
-''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
-def button_toggle_repeat_pl_clicked():
-    if cv.repeat_playlist_on:
-        cv.repeat_playlist_on = False
-        button_toggle_repeat_pl.setFlat(0)
-    else:
-        cv.repeat_playlist_on = True
-        button_toggle_repeat_pl.setFlat(1)
-    
-    settings['repeat_playlist_on'] = cv.repeat_playlist_on
-    save_json(settings, PATH_JSON_SETTINGS)
-    
-button_toggle_repeat_pl = QPushButton(under_play_slider_window, text='Tog Rep')
-button_toggle_repeat_pl.setCursor(Qt.CursorShape.PointingHandCursor)
-button_toggle_repeat_pl.setFont(QFont('Times', 10, 600))
-button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl_clicked)
-
-
-''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
-def button_toggle_shuffle_pl_clicked():
-    if cv.shuffle_playlist_on:
-        cv.shuffle_playlist_on = False
-        button_toggle_shuffle_pl.setFlat(0)
-    else:
-        cv.shuffle_playlist_on = True
-        button_toggle_shuffle_pl.setFlat(1)
-    
-    settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
-    save_json(settings, PATH_JSON_SETTINGS)
-    
-button_toggle_shuffle_pl = QPushButton(under_play_slider_window, text='Shu Rep')
-button_toggle_shuffle_pl.setCursor(Qt.CursorShape.PointingHandCursor)
-button_toggle_shuffle_pl.setFont(QFont('Times', 10, 600))
-button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl_clicked)
-
-
-''' LIST ACTIONS '''
-def play_track():
-    
-    try:  
-        # FONT STYLE - PREV/NEW TRACK
-        if av_player.played_row != None:
-
-            try:
-                cv.active_pl_name.item(cv.last_track_index).setFont(inactive_track_font_style)
-            except:
-                print(f'ERROR in row: {cv.last_track_index}\n\n')
-
-            cv.last_track_index = av_player.played_row
-
-        cv.active_pl_name.currentItem().setFont(active_track_font_style)
-        save_last_track_index()
-        # PATH / DURATION / SLIDER
-        track_path = get_path_db()
-        track_duration = get_duration_db()
-        play_slider.setMaximum(track_duration)
-        # PLAYER
-        av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        av_player.player.play()
-        # COUNTER
-        av_player.played_row = cv.active_pl_name.currentRow()
-        # WINDOW TITLE
-        window.setWindowTitle(f'{Path(track_path).stem} - QTea media player')
-
-    except:
-        play_next_track()
-
-
-def play_next_track():
-    # SHUFFLE
-    if cv.shuffle_playlist_on and cv.active_pl_name.count() > 1:
-        next_track_index = random.randint(0, cv.active_pl_name.count()-1)
-        while next_track_index == cv.active_pl_name.currentRow():
-            next_track_index = random.randint(0, cv.active_pl_name.count()-1)
-        cv.active_pl_name.setCurrentRow(next_track_index)
-        play_track()
-    # MORE TRACKS IN THE PLAYLIST
-    elif cv.active_pl_name.count() != cv.active_pl_name.currentRow() + 1:
-        cv.active_pl_name.setCurrentRow(av_player.played_row + 1)
-        play_track()
-    # PLAYING THE LAST TRACK    
-    elif (cv.active_pl_name.count() == cv.active_pl_name.currentRow() + 1 and
-        cv.repeat_playlist_on):
-            cv.active_pl_name.setCurrentRow(0)
-            play_track()
-    # CURRENT TRACK BACK TO START         
-    else:
-        av_player.player.setPosition(0)
-
-
-def auto_play_next_track():
-    if av_player.base_played:   # avoiding the dummy song played when the class created
-        if av_player.player.mediaStatus() == av_player.player.MediaStatus.EndOfMedia:
-
-            play_next_track()
-    else:
-        av_player.base_played = True    
-av_player.player.mediaStatusChanged.connect(auto_play_next_track)
-
-
-
-
-''' 
-######################
-        SLIDER                          
-######################
-'''
-play_slider = MySlider(av_player)
 
 
 
@@ -433,7 +381,7 @@ layout_base.addLayout(layout_ver_bottom, 10)
 
 
 ''' TABS - PLAYLIST '''
-tabs_playlist = MyTabs(play_track)
+tabs_playlist = MyTabs(play_funcs.play_track)
 
 
 ''' TOP RIGHT '''
