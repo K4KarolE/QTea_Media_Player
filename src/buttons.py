@@ -2,12 +2,11 @@ from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
 from PyQt6.QtGui import QIcon, QFont
 
+import os
+
 from .cons_and_vars import Path, save_json, settings, PATH_JSON_SETTINGS
 from .func_coll import (
-    save_last_track_index,
     remove_record_db,
-    get_path_db,
-    get_duration_db,
     generate_track_list_detail,
     add_record_grouped_actions,
     cv, # data
@@ -17,24 +16,10 @@ from .func_coll import (
     PATH_JSON_SETTINGS,
     )
 
-import os
-
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
 
 
-
-
-MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
-VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
-
-
 class MyButtons(QPushButton):
-
-    
-
-
 
     def __init__(
             self,
@@ -70,7 +55,7 @@ class MyButtons(QPushButton):
         ''' BUTTON - MUSIC '''
         dialog_add_track = QFileDialog()
         dialog_add_track.setWindowTitle("Select a media file")
-        dialog_add_track.setNameFilters(FILE_TYPES_LIST)
+        dialog_add_track.setNameFilters(cv.FILE_TYPES_LIST)
         dialog_add_track.exec()
         if dialog_add_track.result():
             add_record_grouped_actions(dialog_add_track.selectedFiles()[0], self.av_player_duration)
@@ -87,7 +72,7 @@ class MyButtons(QPushButton):
         if dialog_add_dir.result():
             for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
                 for file in file_names:
-                    if file[-4:] in MEDIA_FILES:
+                    if file[-4:] in cv.MEDIA_FILES:
                         track_path_list.append(Path(dir_path, file))
             if len(track_path_list) > 0:
                 for track_path in track_path_list:
@@ -153,13 +138,13 @@ class MyButtons(QPushButton):
             self.setIcon(button_image_pause)
         elif not self.av_player.player.isPlaying() and not self.av_player.paused:
             self.play_funcs.play_track()
+            self.setIcon(button_image_pause)
     
+    def button_play_pause_via_list(self):
+        button_image_pause = QIcon('skins/default/pause.png')
+        self.setIcon(button_image_pause)
+        self.play_funcs.play_track()
 
-    ''' BUTTON PLAY SECTION - STOP '''
-    def button_stop_clicked(self):
-        self.av_player.player.stop()
-        self.av_player.paused = False
-    
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):

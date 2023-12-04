@@ -4,29 +4,17 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QPushButton,
-    QMainWindow,
     QFrame
     )
 from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
 from PyQt6.QtGui import QIcon, QFont
 
 import sys
-import random
 
-from src import (
-    save_last_track_index,
-    get_path_db,
-    get_duration_db,
-    cv, # data
-    settings,   # json dic
-    PATH_JSON_SETTINGS,
-    inactive_track_font_style,  
-    active_track_font_style
-    )
+from src import cv, settings, PATH_JSON_SETTINGS
 from src import Path
 from src import AVPlayer, TrackDuration, MySlider, MyTabs
-from src import MyButtons, PlaysFunc
+from src import MyButtons, PlaysFunc, MyImage
 from src import save_json
 
 
@@ -107,15 +95,15 @@ under_play_slider_window.setFixedHeight(50)
 under_play_slider_window.setMinimumSize(400, 50)
 
 ''' 
-######################
-        SLIDER                          
-######################
+########################################
+        SLIDER / LOGO / PLAY FUNCS                        
+########################################
 '''
 play_slider = MySlider(av_player)
 
+image_logo = MyImage('logo.png', 200)
 
-''' LIST ACTIONS '''
-play_funcs = PlaysFunc(window, av_player, play_slider)
+play_funcs = PlaysFunc(window, av_player, play_slider, image_logo)
 
 ''' 
 #######################
@@ -219,6 +207,11 @@ button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
 
 ''' BUTTON PLAY SECTION - STOP '''
+def button_stop_clicked():
+    av_player.player.stop()
+    av_player.paused = False
+    button_play_pause.setIcon(button_image_start)
+
 button_stop = MyButtons(
     under_play_slider_window,
     'Stop',
@@ -229,7 +222,7 @@ button_stop = MyButtons(
     button_image_stop
     )
 button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_stop.clicked.connect(button_stop.button_stop_clicked)
+button_stop.clicked.connect(button_stop_clicked)
 button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 
@@ -296,12 +289,10 @@ def button_toggle_playlist_clicked():
 
     if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_right_qframe.hide()
-        layout_vert_middle_qframe.hide()
         av_player.playlist_visible = False
         button_toggle_video.setDisabled(1)
     else:
         layout_vert_right_qframe.show()
-        layout_vert_middle_qframe.show()
         av_player.playlist_visible = True
         button_toggle_video.setDisabled(0)    
 
@@ -348,11 +339,14 @@ button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 LEARNED:
 1,              
-do not mix widgets and layouts in a layout
-hiding the widget --> layout disapears too
+    Do not mix widgets and layouts in a layout
+    Hiding the widget --> layout disapears too
 2,
-layout add to QFrame --> hiding QFrame hides the layout
-
+    Layout add to QFrame --> hiding QFrame hides the layout
+3,
+    Alignment should be in the widget
+    Not in the Layout -->
+    Made the av_player.video_output invisible
 
 GUIDE:
 
@@ -381,7 +375,7 @@ layout_base.addLayout(layout_ver_bottom, 10)
 
 
 ''' TABS - PLAYLIST '''
-tabs_playlist = MyTabs(play_funcs.play_track)
+tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list)
 
 
 ''' TOP RIGHT '''
@@ -396,23 +390,23 @@ layout_vert_left.setContentsMargins(0, 0, 0, 0)
 layout_vert_left_qframe = QFrame()
 layout_vert_left_qframe.setLayout(layout_vert_left)
 
-''' TOP MIDDLE '''
-layout_vert_middle_qframe = QFrame()
-
 
 layout_hor_top.addWidget(layout_vert_left_qframe, 65)
-layout_hor_top.addWidget(layout_vert_middle_qframe, 0)
 layout_hor_top.addWidget(layout_vert_right_qframe, 35)
+
 
 
 ''' ADDING WIDGETS TO LAYOUTS '''
 layout_vert_left.addWidget(av_player.video_output)
+layout_vert_left.addWidget(image_logo)
 layout_vert_right.addWidget(tabs_playlist, 95)
 layout_vert_right.addWidget(under_playlist_window, 5)
 layout_ver_bottom.addWidget(play_slider)
 layout_ver_bottom.addWidget(under_play_slider_window)
 
-# TODO: if music playing pic displayed? / av_player.video_output.hide()
+
+av_player.video_output.hide()
+
 # TODO: add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 
 window.show()

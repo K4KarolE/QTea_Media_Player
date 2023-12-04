@@ -14,15 +14,13 @@ from .func_coll import (
     )
 
 
-
-
 class PlaysFunc():
-    def __init__(self, window, av_player, play_slider):
+    def __init__(self, window, av_player, play_slider, image_logo):
         self.window = window
         self.av_player = av_player
         self.av_player.player.mediaStatusChanged.connect(self.auto_play_next_track)
         self.play_slider = play_slider
-
+        self.image_logo = image_logo
 
     def play_track(self):
         try:  
@@ -45,8 +43,26 @@ class PlaysFunc():
             track_duration = get_duration_db()
             self.play_slider.setMaximum(track_duration)
             # PLAYER
+            ''' 
+                Why showing the pre vid last frame
+                in a vid-audio-vid sequence? 
+                
+                Tried:
+                    - stop player before hiding
+                    - hide / show - setSource diff. variation
+                    - no video_output.hide() --> no problem
+            '''
+
+            if track_path[-4:] in cv.AUDIO_FILES:
+                self.image_logo.show()
+                self.av_player.video_output.hide()
+            else:
+                self.image_logo.hide()
+                self.av_player.video_output.show()
+            
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
             self.av_player.player.play()
+            
             # COUNTER
             self.av_player.played_row = cv.active_pl_name.currentRow()
             # WINDOW TITLE
