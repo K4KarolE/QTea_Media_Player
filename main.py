@@ -103,7 +103,7 @@ play_slider = MySlider(av_player)
 
 image_logo = MyImage('logo.png', 200)
 
-play_funcs = PlaysFunc(window, av_player, play_slider, image_logo)
+play_funcs = PlaysFunc(window, av_player, play_slider, image_logo, cv.playing_track_index)
 
 ''' 
 #######################
@@ -406,6 +406,7 @@ layout_ver_bottom.addWidget(under_play_slider_window)
 
 
 av_player.video_output.hide()
+
 
 # TODO: add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 

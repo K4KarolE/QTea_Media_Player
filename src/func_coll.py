@@ -1,7 +1,7 @@
 
 from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QColor
 
 from .cons_and_vars import Data, Path, save_json
 from .cons_and_vars import settings, PATH_JSON_SETTINGS
@@ -10,8 +10,8 @@ import sqlite3
 cv = Data()
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
-inactive_track_font_style = QFont('Times', 11, 500)
-active_track_font_style = QFont('Times', 11, 600)
+inactive_track_font_style = QFont('Arial', 11, 500)
+active_track_font_style = QFont('Arial', 11, 600)
 
 
 def active_utility():
@@ -22,7 +22,6 @@ def active_utility():
 
 
 def save_last_track_index():
-    cv.last_track_index = cv.active_pl_name.currentRow()
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
@@ -43,14 +42,14 @@ def get_row_id_db(path):
     # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
 
 
-def get_path_db():
+def get_path_db(playing_track_index):
     return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                        (cv.active_pl_name.currentRow() + 1,)).fetchall()[0][2]
+                        (playing_track_index + 1,)).fetchall()[0][2]
 
 
-def get_duration_db():
+def get_duration_db(playing_track_index):
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
-                           (cv.active_pl_name.currentRow() + 1,)).fetchall()[0][1])
+                           (playing_track_index + 1,)).fetchall()[0][1])
 
 
 def generate_duration_to_display(raw_duration):
@@ -113,9 +112,19 @@ def add_record_grouped_actions(track_path, av_player_duration):
 def add_new_list_item(new_item, list_widget, alignment):
     
     list_item = QListWidgetItem(new_item, list_widget)
-    list_item.setFont(inactive_track_font_style)
+    list_item_style_update(
+        list_item,
+        inactive_track_font_style,
+        'black',
+        'white')    
 
     if alignment == 'left':
         list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
     else:
         list_item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+
+
+def list_item_style_update(list_item, font_style, font_color, font_bg_color):
+        list_item.setFont(font_style)   #QFont
+        list_item.setForeground(QColor(font_color)) #'blue'
+        list_item.setBackground(QColor(font_bg_color))

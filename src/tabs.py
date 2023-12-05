@@ -15,6 +15,8 @@ from .func_coll import (
     )
 
 
+
+
 class MyTabs(QTabWidget):
 
     def __init__(self, play_track):
@@ -36,7 +38,6 @@ class MyTabs(QTabWidget):
         self.tabs_created_at_first_run = True
         
 
-
     def active_tab(self):
         if self.tabs_created_at_first_run:
             cv.active_tab = self.currentIndex()
@@ -47,24 +48,26 @@ class MyTabs(QTabWidget):
 
     def name_list_to_duration_row_selection(self):
         cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
-        cv.active_pl_duration.setStyleSheet(
-                            "QListWidget::item:selected"
-                                "{"
-                                "background: #CCE8FF;"
-                                "color: red;"   # font
-                                "}"
-                            )
+        if cv.active_pl_name.currentRow() != cv.last_track_index:
+            cv.active_pl_duration.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
 
 
     def duration_list_to_name_row_selection(self):
         cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
-        cv.active_pl_name.setStyleSheet(
-                            "QListWidget::item:selected"
-                                "{"
-                                "background: #CCE8FF;"
-                                "color: red;"   # font
-                                "}"
-                            )
+        if cv.active_pl_duration.currentRow() != cv.last_track_index:
+            cv.active_pl_name.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   
+                                    "}"
+                                )
         
 
     def tabs_creation(self):
@@ -105,23 +108,30 @@ class MyTabs(QTabWidget):
                                     "height: 0px;"
                                     "}"
                                 )
-            
+                
+                '''  LISTS CREATION '''
                 cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
-                cv.paylist_widget_dic[pl]['name_list_widget'].setVerticalScrollBar(scroll_bar_name_ver)
-                cv.paylist_widget_dic[pl]['name_list_widget'].setHorizontalScrollBar(scroll_bar_name_hor)
-                # cv.paylist_widget_dic[pl]['name_list_widget'].setAlternatingRowColors(True)
-                cv.paylist_widget_dic[pl]['name_list_widget'].currentItemChanged.connect(self.name_list_to_duration_row_selection)
+                name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
+                name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
+                name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
+                # name_list_widget.setAlternatingRowColors(True)
+                name_list_widget.setSpacing(0)
+                name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
+                name_list_widget.setSelectionRectVisible(True)
+
 
                 cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
-                cv.paylist_widget_dic[pl]['duration_list_widget'].setVerticalScrollBar(scroll_bar_duration_ver)
-                cv.paylist_widget_dic[pl]['duration_list_widget'].setHorizontalScrollBar(scroll_bar_duration_hor)
-                # cv.paylist_widget_dic[pl]['duration_list_widget'].setAlternatingRowColors(True)
-                cv.paylist_widget_dic[pl]['duration_list_widget'].setFixedWidth(70)
-                cv.paylist_widget_dic[pl]['duration_list_widget'].currentItemChanged.connect(self.duration_list_to_name_row_selection)
-
-                name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
-                name_list_widget.itemDoubleClicked.connect(self.play_track)
                 duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
+                duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
+                duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
+                # duration_list_widget.setAlternatingRowColors(True)
+                duration_list_widget.setFixedWidth(70)
+                duration_list_widget.setSpacing(0)
+                duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
+
+                name_list_widget.itemDoubleClicked.connect(self.play_track)
+                duration_list_widget.itemDoubleClicked.connect(self.play_track)
+                
                 tab_title = settings[pl]['tab_title']
                 
 

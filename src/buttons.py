@@ -90,6 +90,7 @@ class MyButtons(QPushButton):
         # LAST TRACK INDEX
         if  cv.active_pl_name.currentRow() < cv.last_track_index:
             cv.last_track_index = cv.last_track_index - 1
+            cv.playing_track_index -= 1
             settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
             save_json(settings, PATH_JSON_SETTINGS)
         # DB
@@ -149,14 +150,12 @@ class MyButtons(QPushButton):
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
         if cv.active_pl_name.count() > 0 and self.av_player.played_row != None:
-
-            if cv.shuffle_playlist_on:
-                cv.active_pl_name.setCurrentRow(cv.last_track_index)
-            elif cv.active_pl_name.currentRow() != 0:
-                cv.active_pl_name.setCurrentRow(self.av_player.played_row - 1)
+            if cv.playing_track_index != 0:
+                cv.playing_track_index -= 1
+                self.play_funcs.play_track(cv.playing_track_index)
             else:
-                cv.active_pl_name.setCurrentRow(cv.active_pl_name.count() - 1)
-            self.play_funcs.play_track()
+                cv.playing_track_index = cv.active_pl_name.count() - 1
+                self.play_funcs.play_track(cv.playing_track_index)
     
 
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
@@ -171,11 +170,14 @@ class MyButtons(QPushButton):
         button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
         cv.repeat_playlist =  (cv.repeat_playlist + 1) % 3
         
+        # NO REPEAT
         if cv.repeat_playlist == 1:
             self.setFlat(0)
             self.setIcon(button_image_repeat)
+        # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(1)
+        # REPEAT SINGLE TRACK
         else:
             self.setIcon(button_image_repeat_single)
         

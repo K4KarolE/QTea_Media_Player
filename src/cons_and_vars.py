@@ -34,6 +34,7 @@ class Data:
     active_playlist = None  # widget
     active_pl_duration = None
     last_track_index = None
+    playing_track_index = None
 
     # PLAYLIST
     paylist_widget_dic = {
