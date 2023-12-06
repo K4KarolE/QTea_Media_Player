@@ -29,7 +29,6 @@ class AVPlayer(QWidget):
         # self.player.setLoops(1) # -1=infinite
         self.audio_output.setVolume(volume)
         self.base_played = False
-        self.played_row = None
         self.paused = False
         self.playlist_visible = True
         self.video_area_visible = True
@@ -57,16 +56,7 @@ class AVPlayer(QWidget):
             self.video_output.setFullScreen(0)
         else:
             self.video_output.setFullScreen(1)
-    
-    
-    def pause_play_track(self):
-        if self.player.isPlaying():
-            self.player.pause()
-            self.paused = True
-        else:
-            if self.played_row:
-                self.player.play()
-                self.paused = False
+
 
 
 """ 

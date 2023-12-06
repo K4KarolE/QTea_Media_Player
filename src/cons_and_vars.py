@@ -50,7 +50,8 @@ class Data:
             "name_list_widget": "none",
             "duration_list_widget": "none"
             }
-        }       
+        } 
+          
     paylist_list = list(paylist_widget_dic.keys())
 
     MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"

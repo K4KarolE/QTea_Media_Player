@@ -126,7 +126,7 @@ class MyButtons(QPushButton):
         button_image_start = QIcon('skins/default/start.png')
         button_image_pause = QIcon('skins/default/pause.png')
 
-        if self.av_player.played_row == None:
+        if cv.playing_track_index == None:
             self.play_funcs.play_track()
             self.setIcon(button_image_pause)
         elif self.av_player.player.isPlaying():
@@ -149,7 +149,10 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
-        if cv.active_pl_name.count() > 0 and self.av_player.played_row != None:
+
+        if cv.playing_track_index == None:
+            cv.playing_track_index = cv.active_pl_name.currentRow() 
+        if cv.active_pl_name.count() > 0:
             if cv.playing_track_index != 0:
                 cv.playing_track_index -= 1
                 self.play_funcs.play_track(cv.playing_track_index)
@@ -160,7 +163,7 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
     def button_next_track_clicked(self):
-        if cv.active_pl_name.count() > 0 and self.av_player.played_row != None:
+        if cv.active_pl_name.count() > 0:
             self.play_funcs.play_next_track()
     
 

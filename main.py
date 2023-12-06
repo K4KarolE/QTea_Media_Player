@@ -33,8 +33,7 @@ class MyApp(QApplication):
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
             if event.key() == Qt.Key.Key_Space:
-                pass
-                # TODO button_play_pause_clicked()
+                button_play_pause.button_play_pause_clicked()
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
                 new_volume = round(av_player.audio_output.volume() + 0.01, 4)
@@ -118,9 +117,10 @@ play_funcs = PlaysFunc(window, av_player, play_slider, image_logo, cv.playing_tr
 PLIST_BUTTONS_WIDTH = 32
 PLIST_BUTTONS_HEIGHT = 30
 PLIST_BUTTONS_X_DIFF = 4    # FOR SELECTING ADD AND REMOVE BUTTONS
+PLIST_BUTTONS_X_BASE = 4
 
 def button_x_pos(num):
-    return (PLIST_BUTTONS_WIDTH + 5) * num
+    return PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 5) * num
 
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
@@ -131,7 +131,7 @@ button_add_track = MyButtons(
     av_player,
     av_player_duration,
     )
-button_add_track.setGeometry(0, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_track.setGeometry(button_x_pos(0), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
 
 
@@ -368,7 +368,7 @@ layout_base.setContentsMargins(0, 0, 0, 0)
 layout_hor_top = QHBoxLayout()
 layout_hor_top.setSpacing(0)
 layout_ver_bottom = QVBoxLayout()
-layout_ver_bottom.setContentsMargins(10, 0, 10, 0)
+layout_ver_bottom.setContentsMargins(9, 0, 9, 0)
 
 layout_base.addLayout(layout_hor_top, 90)
 layout_base.addLayout(layout_ver_bottom, 10)
@@ -408,7 +408,7 @@ layout_ver_bottom.addWidget(under_play_slider_window)
 av_player.video_output.hide()
 
 
-# TODO: add/edit tabs, tabs_playlist.setTabVisible(2, 0)
+# TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 
 window.show()
 

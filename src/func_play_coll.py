@@ -26,12 +26,12 @@ class PlaysFunc():
 
     def play_track(self, playing_track_index=None):
         if playing_track_index == None:
-            playing_track_index = cv.active_pl_name.currentRow()    # from list doubleclick action
+            playing_track_index = cv.active_pl_name.currentRow()
             cv.playing_track_index = cv.active_pl_name.currentRow()
 
         try:  
            # FONT STYLE - PREV/NEW TRACK
-            if self.av_player.played_row != None:
+            if cv.playing_track_index != None:
 
                 try:
                     ''' PREVIOUS TRACK STYLE'''
@@ -70,8 +70,8 @@ class PlaysFunc():
                 '#287DCC'
                 )
 
-
             save_last_track_index()
+            
             # PATH / DURATION / SLIDER
             track_path = get_path_db(playing_track_index)
             track_duration = get_duration_db(playing_track_index)
@@ -97,10 +97,12 @@ class PlaysFunc():
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
             self.av_player.player.play()
             
-            # COUNTER
-            self.av_player.played_row = cv.active_pl_name.currentRow()
             # WINDOW TITLE
             self.window.setWindowTitle(f'{Path(track_path).stem} - QTea media player')
+
+            # SCROLL TO PLAYING TRACK IF IT WOULD BE
+            # OUT OF THE VISIBLE WINDOW/LIST
+            cv.active_pl_name.scrollToItem(cv.active_pl_name.item(cv.playing_track_index))
 
         except:
             print('ERROR - play_track')
@@ -108,6 +110,9 @@ class PlaysFunc():
 
 
     def play_next_track(self):
+
+        if cv.playing_track_index == None:
+            cv.playing_track_index = cv.active_pl_name.currentRow()
         # SHUFFLE
         if cv.shuffle_playlist_on and cv.active_pl_name.count() > 1:
             next_track_index = list(range(0, cv.active_pl_name.count()))
@@ -138,7 +143,6 @@ class PlaysFunc():
     def auto_play_next_track(self):
         if self.av_player.base_played:   # avoiding the dummy song played when the class created
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
-
                 self.play_next_track()
         else:
             self.av_player.base_played = True    
