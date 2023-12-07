@@ -1,6 +1,6 @@
 
 from PyQt6.QtWidgets import QListWidgetItem
-from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
 from .cons_and_vars import Data, Path, save_json
@@ -15,11 +15,13 @@ active_track_font_style = QFont('Arial', 11, 600)
 
 
 def active_utility():
-    cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
+    # playlist_1, playlist_2, ..
+    cv.active_db_table = cv.paylist_list[cv.active_tab]
+    # LAST TRACK 
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
-    cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']  # widget
-    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']   # widget
-
+    # LIST WIDGETS
+    cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
+    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
 
 def save_last_track_index():
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
@@ -105,23 +107,25 @@ def add_record_grouped_actions(track_path, av_player_duration):
     row_id = cv.active_pl_name.count() + 1
     track_name = f'{row_id}. {track_name}'
     
-    add_new_list_item(track_name, cv.active_pl_name, 'left')
-    add_new_list_item(duration, cv.active_pl_duration, 'right')
+    add_new_list_item(track_name, cv.active_pl_name)
+    add_new_list_item(duration, cv.active_pl_duration)
 
 
-def add_new_list_item(new_item, list_widget, alignment):
+def add_new_list_item(new_item, list_widget):
     
+    list_item_size = QSize()
+    list_item_size.setHeight(25)
+    list_item_size.setWidth(0)
+
     list_item = QListWidgetItem(new_item, list_widget)
+    list_item.setSizeHint(list_item_size)
+    list_item.setTextAlignment(Qt.AlignmentFlag.AlignVertical_Mask)
     list_item_style_update(
         list_item,
         inactive_track_font_style,
         'black',
         'white')    
 
-    if alignment == 'left':
-        list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
-    else:
-        list_item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):

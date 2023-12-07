@@ -16,7 +16,6 @@ from .func_coll import (
 
 
 
-
 class MyTabs(QTabWidget):
 
     def __init__(self, play_track):
@@ -115,10 +114,8 @@ class MyTabs(QTabWidget):
                 name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
                 name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
                 # name_list_widget.setAlternatingRowColors(True)
-                name_list_widget.setSpacing(0)
                 name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
-                name_list_widget.setSelectionRectVisible(True)
-
+               
 
                 cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
                 duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
@@ -126,8 +123,8 @@ class MyTabs(QTabWidget):
                 duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
                 # duration_list_widget.setAlternatingRowColors(True)
                 duration_list_widget.setFixedWidth(70)
-                duration_list_widget.setSpacing(0)
                 duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
+                
 
                 name_list_widget.itemDoubleClicked.connect(self.play_track)
                 duration_list_widget.itemDoubleClicked.connect(self.play_track)
@@ -157,5 +154,5 @@ class MyTabs(QTabWidget):
                 playlist = cur.fetchall()
                 for item in playlist:
                     track_name, duration = generate_track_list_detail(item)
-                    add_new_list_item(track_name, name_list_widget, 'left')
-                    add_new_list_item(duration, duration_list_widget, 'right')
+                    add_new_list_item(track_name, name_list_widget)
+                    add_new_list_item(duration, duration_list_widget)
