@@ -32,7 +32,8 @@ class MyButtons(QPushButton):
             icon = None):
         super().__init__()
 
-        self.setParent(parent)
+        if parent:
+            self.setParent(parent)
         self.setText(title)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setToolTip(tooltip)

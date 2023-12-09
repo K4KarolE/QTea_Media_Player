@@ -58,6 +58,14 @@ class AVPlayer(QWidget):
             self.video_output.setFullScreen(1)
 
 
+    def pause_play_track(self):
+        if self.player.isPlaying():
+            self.player.pause()
+            self.paused = True
+        else:
+            self.player.play()
+            self.paused = False
+
 
 """ 
     Only used for duration calculation -->

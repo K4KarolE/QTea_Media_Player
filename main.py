@@ -4,15 +4,16 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QFrame
+    QFrame,
+    QPushButton
     )
-from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
-from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtCore import Qt, QEvent, QSize
+from PyQt6.QtGui import QIcon
 
 import sys
+from src import Path
 
 from src import cv, settings, PATH_JSON_SETTINGS
-from src import Path
 from src import AVPlayer, TrackDuration, MySlider, MyTabs
 from src import MyButtons, PlaysFunc, MyImage
 from src import save_json
@@ -59,9 +60,10 @@ app = MyApp()
 
 ''' WINDOW '''
 WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
+WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 400
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-window.setMinimumSize(400, 400)
+window.setMinimumSize(500, 400)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
 
@@ -84,9 +86,6 @@ av_player_duration = TrackDuration()
         WINDOWS              
 #######################
 '''
-# FOR BUTTONS: ADD TRACK, REMOVE TRACK, ..
-under_playlist_window = QFrame()
-under_playlist_window.setMinimumSize(400, 30)
 
 # FOR BUTTONS: PLAY/STOP, PAUSE, ..
 under_play_slider_window = QFrame()
@@ -125,7 +124,7 @@ def button_x_pos(num):
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
 button_add_track = MyButtons(
-    under_playlist_window,
+    None,
     'AT',
     'Add Track',
     av_player,
@@ -137,7 +136,7 @@ button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
 button_add_dir = MyButtons(
-    under_playlist_window,
+    None,
     'AD',
     'Add Directory',
     av_player,
@@ -149,7 +148,7 @@ button_add_dir.clicked.connect(button_add_dir.button_add_dir_clicked)
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 button_remove_track = MyButtons(
-    under_playlist_window,
+    None,
     'RT',
     'Remove track'
     )
@@ -159,7 +158,7 @@ button_remove_track.clicked.connect(button_remove_track.button_remove_track_clic
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
 button_remove_all_track = MyButtons(
-    under_playlist_window,
+    None,
     'CP',
     'Clear Playlist'
     )
@@ -330,6 +329,8 @@ button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PL
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 
+''' TABS - PLAYLIST '''
+tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list)
 
 
 ''' 
@@ -343,6 +344,7 @@ LEARNED:
     Hiding the widget --> layout disapears too
 2,
     Layout add to QFrame --> hiding QFrame hides the layout
+    Not able to hide Layout by itself
 3,
     Alignment should be in the widget
     Not in the Layout -->
@@ -356,9 +358,9 @@ GUIDE:
     |       ||       |
     |       || PLIST |  TOP
     |  VID  ||_______|  
-    |_______||_______|
+    |_______||___|___|
     |________________|  BOTTOM
-    |________________|  
+    |________|_______|  
 '''
 
 
@@ -374,38 +376,80 @@ layout_base.addLayout(layout_hor_top, 90)
 layout_base.addLayout(layout_ver_bottom, 10)
 
 
-''' TABS - PLAYLIST '''
-tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list)
-
-
-''' TOP RIGHT '''
-layout_vert_right = QVBoxLayout()
-layout_vert_right.setContentsMargins(5, 0, 4, 0)
-layout_vert_right_qframe = QFrame()
-layout_vert_right_qframe.setLayout(layout_vert_right)
-
-''' TOP LEFT '''
-layout_vert_left = QVBoxLayout()
+''' TOP LEFT - VIDEO / QTEA LOGO '''
+layout_vert_left = QVBoxLayout() # here layout type is not relevant
 layout_vert_left.setContentsMargins(0, 0, 0, 0)
 layout_vert_left_qframe = QFrame()
 layout_vert_left_qframe.setLayout(layout_vert_left)
 
+''' TOP RIGHT - PLAYLIST / BUTTONS / DURATION '''
+layout_vert_right = QVBoxLayout() # here layout type is not relevant
+layout_vert_right.setContentsMargins(5, 0, 4, 0)
+layout_vert_right_qframe = QFrame()
+layout_vert_right_qframe.setLayout(layout_vert_right)
+layout_vert_right_qframe.setMinimumWidth(WINDOW_MIN_WIDTH-200)
 
 layout_hor_top.addWidget(layout_vert_left_qframe, 65)
 layout_hor_top.addWidget(layout_vert_right_qframe, 35)
 
 
+''' TOP RIGHT 
+_____________
+|           |
+|   PLIST   |
+|___________|
+|_BU__|__DU_|
 
-''' ADDING WIDGETS TO LAYOUTS '''
+'''
+
+layout_vert_right_pl = QVBoxLayout()
+layout_vert_right_under_pl = QHBoxLayout()
+
+layout_vert_right_under_pl_buttons = QHBoxLayout()
+layout_vert_right_under_pl_buttons.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+layout_vert_right_under_pl_duration = QVBoxLayout()
+layout_vert_right_under_pl_duration.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+layout_vert_right_under_pl.addLayout(layout_vert_right_under_pl_buttons)
+layout_vert_right_under_pl.addLayout(layout_vert_right_under_pl_duration)
+
+layout_vert_right.addLayout(layout_vert_right_pl)
+layout_vert_right.addLayout(layout_vert_right_under_pl)
+
+
+''' ADDING WIDGETS'''
+''' TOP LEFT '''
 layout_vert_left.addWidget(av_player.video_output)
+av_player.video_output.hide()
 layout_vert_left.addWidget(image_logo)
-layout_vert_right.addWidget(tabs_playlist, 95)
-layout_vert_right.addWidget(under_playlist_window, 5)
+
+
+''' TOP RIGHT '''
+layout_vert_right_pl.addWidget(tabs_playlist)
+
+playlist_buttons = [
+    button_add_track,
+    button_add_dir,
+    button_remove_track,
+    button_remove_all_track
+                    ]
+
+for button in playlist_buttons:
+    layout_vert_right_under_pl_buttons.addWidget(button)
+    button.setFixedSize(35, 30)
+
+
+test_widget = QPushButton('DURATION')
+test_widget.setFixedSize(70, 25)
+layout_vert_right_under_pl_duration.addWidget(test_widget)
+
+
+''' BOTTOM '''
 layout_ver_bottom.addWidget(play_slider)
 layout_ver_bottom.addWidget(under_play_slider_window)
 
 
-av_player.video_output.hide()
 
 
 # TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
