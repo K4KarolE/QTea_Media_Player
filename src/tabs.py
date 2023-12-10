@@ -3,12 +3,13 @@ from PyQt6.QtWidgets import QListWidget, QHBoxLayout
 from PyQt6.QtWidgets import QFrame, QTabWidget, QScrollBar
 from PyQt6.QtGui import QFont
 
+
+from .cons_and_vars import cv
 from .func_coll import (
     save_json,
     active_utility,
     generate_track_list_detail,
     add_new_list_item,
-    cv, # data
     cur, # db
     settings, # json dic
     PATH_JSON_SETTINGS,

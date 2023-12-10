@@ -3,13 +3,14 @@ from PyQt6.QtCore import QUrl
 
 import random
 
+from .cons_and_vars import cv
+
 from .func_coll import (
     save_last_track_index,
     get_path_db,
     get_duration_db,
     list_item_style_update,
     Path,
-    cv, # data
     inactive_track_font_style,  
     active_track_font_style
     )

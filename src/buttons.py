@@ -1,15 +1,14 @@
 from PyQt6.QtWidgets import QFileDialog, QPushButton
-from PyQt6.QtCore import QUrl, Qt, QEvent, QSize
+from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont
 
 import os
 
-from .cons_and_vars import Path, save_json, settings, PATH_JSON_SETTINGS
+from .cons_and_vars import Path, save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     remove_record_db,
     generate_track_list_detail,
     add_record_grouped_actions,
-    cv, # data
     cur, # db
     connection, # db
     settings,   # json dic
@@ -23,7 +22,6 @@ class MyButtons(QPushButton):
 
     def __init__(
             self,
-            parent,
             title,
             tooltip,
             av_player=None,
@@ -32,8 +30,6 @@ class MyButtons(QPushButton):
             icon = None):
         super().__init__()
 
-        if parent:
-            self.setParent(parent)
         self.setText(title)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setToolTip(tooltip)

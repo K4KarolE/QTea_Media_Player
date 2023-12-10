@@ -13,10 +13,10 @@ from PyQt6.QtGui import QIcon
 import sys
 from src import Path
 
-from src import cv, settings, PATH_JSON_SETTINGS
-from src import AVPlayer, TrackDuration, MySlider, MyTabs
-from src import MyButtons, PlaysFunc, MyImage
-from src import save_json
+from src import cv
+from src import AVPlayer, TrackDuration, MySlider, MyVolumeSlider 
+from src import MyButtons, PlaysFunc, MyImage, MyTabs
+from src import save_volume_set_slider
 
 
 
@@ -50,8 +50,7 @@ class MyApp(QApplication):
             elif event.key() == Qt.Key.Key_Right:
                 av_player.player.setPosition(av_player.player.position() + 600)
         if to_save_settings:
-            settings['volume'] = new_volume
-            save_json(settings, PATH_JSON_SETTINGS)
+            save_volume_set_slider(new_volume, volume_slider)
         return super().eventFilter(source, event)
     
 
@@ -81,16 +80,6 @@ av_player = AVPlayer(volume=cv.volume)
 av_player_duration = TrackDuration()   
 
 
-''' 
-#######################
-        WINDOWS              
-#######################
-'''
-
-# FOR BUTTONS: PLAY/STOP, PAUSE, ..
-under_play_slider_window = QFrame()
-under_play_slider_window.setFixedHeight(50)
-under_play_slider_window.setMinimumSize(400, 50)
 
 ''' 
 ########################################
@@ -108,7 +97,6 @@ play_funcs = PlaysFunc(window, av_player, play_slider, image_logo, cv.playing_tr
         BUTTONS              
 #######################
 '''
-# but_func = ButtonsFunc(av_player, av_player_duration, play_funcs)
 
 ''' 
     PLAYLIST SECTION
@@ -124,7 +112,6 @@ def button_x_pos(num):
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
 button_add_track = MyButtons(
-    None,
     'AT',
     'Add Track',
     av_player,
@@ -136,7 +123,6 @@ button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
 button_add_dir = MyButtons(
-    None,
     'AD',
     'Add Directory',
     av_player,
@@ -148,7 +134,6 @@ button_add_dir.clicked.connect(button_add_dir.button_add_dir_clicked)
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 button_remove_track = MyButtons(
-    None,
     'RT',
     'Remove track'
     )
@@ -158,13 +143,18 @@ button_remove_track.clicked.connect(button_remove_track.button_remove_track_clic
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
 button_remove_all_track = MyButtons(
-    None,
     'CP',
     'Clear Playlist'
     )
 button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_all_track.clicked.connect(button_remove_all_track.button_remove_all_track_clicked)
 
+playlist_buttons_list = [
+    button_add_track,
+    button_add_dir,
+    button_remove_track,
+    button_remove_all_track
+                    ]
 
 ''' 
     PLAY SECTION
@@ -192,7 +182,6 @@ button_image_toggle_vid = QIcon(f'skins/{cv.skin_selected}/toggle_vid.png')
 button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.png')
 
 button_play_pause = MyButtons(
-    under_play_slider_window,
     'PLAY/PAUSE',
     'Start/stop playing',
     av_player,
@@ -212,7 +201,6 @@ def button_stop_clicked():
     button_play_pause.setIcon(button_image_start)
 
 button_stop = MyButtons(
-    under_play_slider_window,
     'Stop',
     'Stops playing',
     av_player,
@@ -227,7 +215,6 @@ button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
 button_prev_track = MyButtons(
-    under_play_slider_window,
     'Prev',
     'Previous track',
     av_player,
@@ -241,7 +228,6 @@ button_prev_track.clicked.connect(button_prev_track.button_prev_track_clicked)
 
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
 button_next_track = MyButtons(
-    under_play_slider_window,
     'Next',
     'Next track',
     av_player,
@@ -255,7 +241,6 @@ button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
 
 ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
 button_toggle_repeat_pl = MyButtons(
-    under_play_slider_window,
     'Tog Rep PL',
     'Toggle Repeat Playlist',
     icon = button_image_repeat
@@ -272,7 +257,6 @@ elif cv.repeat_playlist == 0:
 
 ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
 button_toggle_shuffle_pl = MyButtons(
-    under_play_slider_window,
     'Shuffle PL',
     'Toggle Shuffle Playlist',
     icon = button_image_shuffle
@@ -296,7 +280,6 @@ def button_toggle_playlist_clicked():
         button_toggle_video.setDisabled(0)    
 
 button_toggle_playlist = MyButtons(
-    under_play_slider_window,
     'Shuffle PL',
     'Toggle Shuffle Playlist',
     icon = button_image_toggle_playlist
@@ -320,7 +303,6 @@ def button_toggle_video_clicked():
         button_toggle_playlist.setDisabled(0)
 
 button_toggle_video = MyButtons(
-    under_play_slider_window,
     'Shuffle PL',
     'Toggle Shuffle Playlist',
     icon = button_image_toggle_vid
@@ -328,6 +310,16 @@ button_toggle_video = MyButtons(
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
+play_buttons_list = [
+    button_play_pause,
+    button_stop,
+    button_prev_track,
+    button_next_track,
+    button_toggle_repeat_pl,
+    button_toggle_shuffle_pl,
+    button_toggle_playlist,
+    button_toggle_video
+]
 
 ''' TABS - PLAYLIST '''
 tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list)
@@ -369,11 +361,16 @@ layout_base.setContentsMargins(0, 0, 0, 0)
 
 layout_hor_top = QHBoxLayout()
 layout_hor_top.setSpacing(0)
-layout_ver_bottom = QVBoxLayout()
-layout_ver_bottom.setContentsMargins(9, 0, 9, 0)
+
+layout_bottom_slider = QVBoxLayout()
+layout_bottom_slider.setContentsMargins(9, 0, 9, 0)
+
+layout_bottom_wrapper = QHBoxLayout()
+layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)
 
 layout_base.addLayout(layout_hor_top, 90)
-layout_base.addLayout(layout_ver_bottom, 10)
+layout_base.addLayout(layout_bottom_slider, 5)
+layout_base.addLayout(layout_bottom_wrapper, 5)
 
 
 ''' TOP LEFT - VIDEO / QTEA LOGO '''
@@ -402,20 +399,24 @@ _____________
 
 '''
 
-layout_vert_right_pl = QVBoxLayout()
-layout_vert_right_under_pl = QHBoxLayout()
+# PLAYLIST
+layout_playlist = QVBoxLayout()
+layout_vert_right.addLayout(layout_playlist)
 
-layout_vert_right_under_pl_buttons = QHBoxLayout()
-layout_vert_right_under_pl_buttons.setAlignment(Qt.AlignmentFlag.AlignLeft)
+# UNDER PLAYLIST
+layout_under_playlist_wrapper = QHBoxLayout()
+layout_under_playlist_wrapper.setContentsMargins(5, 0, 4, 0)
 
-layout_vert_right_under_pl_duration = QVBoxLayout()
-layout_vert_right_under_pl_duration.setAlignment(Qt.AlignmentFlag.AlignRight)
+layout_under_playlist_buttons = QHBoxLayout()
+layout_under_playlist_buttons.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-layout_vert_right_under_pl.addLayout(layout_vert_right_under_pl_buttons)
-layout_vert_right_under_pl.addLayout(layout_vert_right_under_pl_duration)
+layout_under_playlist_duration = QVBoxLayout()
+layout_under_playlist_duration.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-layout_vert_right.addLayout(layout_vert_right_pl)
-layout_vert_right.addLayout(layout_vert_right_under_pl)
+layout_under_playlist_wrapper.addLayout(layout_under_playlist_buttons)
+layout_under_playlist_wrapper.addLayout(layout_under_playlist_duration)
+
+layout_vert_right.addLayout(layout_under_playlist_wrapper)
 
 
 ''' ADDING WIDGETS'''
@@ -426,31 +427,44 @@ layout_vert_left.addWidget(image_logo)
 
 
 ''' TOP RIGHT '''
-layout_vert_right_pl.addWidget(tabs_playlist)
+layout_playlist.addWidget(tabs_playlist)
 
-playlist_buttons = [
-    button_add_track,
-    button_add_dir,
-    button_remove_track,
-    button_remove_all_track
-                    ]
 
-for button in playlist_buttons:
-    layout_vert_right_under_pl_buttons.addWidget(button)
+
+for button in playlist_buttons_list:
+    layout_under_playlist_buttons.addWidget(button)
     button.setFixedSize(35, 30)
 
 
 test_widget = QPushButton('DURATION')
 test_widget.setFixedSize(70, 25)
-layout_vert_right_under_pl_duration.addWidget(test_widget)
+layout_under_playlist_duration.addWidget(test_widget)
 
 
 ''' BOTTOM '''
-layout_ver_bottom.addWidget(play_slider)
-layout_ver_bottom.addWidget(under_play_slider_window)
+# SLIDER
+layout_bottom_slider.addWidget(play_slider)
+
+# BUTTONS / VOLUME
+layout_bottom_buttons = QVBoxLayout()
+layout_bottom_volume = QVBoxLayout()
+layout_bottom_volume.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+layout_bottom_wrapper.addLayout(layout_bottom_buttons)
+layout_bottom_wrapper.addLayout(layout_bottom_volume)
+
+volume_slider = MyVolumeSlider(av_player)
+volume_slider.setFixedSize(100,30)
+
+# BUTTONS WRAPPER
+layout_bottom_button_wrapper= QFrame()
+layout_bottom_button_wrapper.setFixedHeight(50)
+for button in play_buttons_list:
+    button.setParent(layout_bottom_button_wrapper)
 
 
-
+layout_bottom_buttons.addWidget(layout_bottom_button_wrapper)
+layout_bottom_volume.addWidget(volume_slider)
 
 # TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 

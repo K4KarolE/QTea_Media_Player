@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 from json import load, dump
-# import shutil
 
 
 def open_json(path_json):
@@ -18,6 +17,7 @@ def save_json(json_dic, path_json):
 WORKING_DIRECTORY = Path().resolve()
 PATH_JSON_SETTINGS = Path(WORKING_DIRECTORY, 'settings.json')
 settings = open_json(PATH_JSON_SETTINGS)
+
 
 @dataclass
 class Data:
@@ -58,3 +58,5 @@ class Data:
     AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
     VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
     FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
+
+cv = Data()

@@ -3,11 +3,10 @@ from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
-from .cons_and_vars import Data, Path, save_json
+from .cons_and_vars import Data, Path, save_json, cv
 from .cons_and_vars import settings, PATH_JSON_SETTINGS
 import sqlite3
 
-cv = Data()
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
 inactive_track_font_style = QFont('Arial', 11, 500)
@@ -127,8 +126,14 @@ def add_new_list_item(new_item, list_widget):
         'white')    
 
 
-
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):
         list_item.setFont(font_style)   #QFont
         list_item.setForeground(QColor(font_color)) #'blue'
         list_item.setBackground(QColor(font_bg_color))
+
+
+def save_volume_set_slider(new_value, slider):
+    cv.volum = new_value
+    slider.setValue(int(new_value*100))
+    settings['volume'] = new_value
+    save_json(settings, PATH_JSON_SETTINGS)
