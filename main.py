@@ -13,10 +13,10 @@ from PyQt6.QtGui import QIcon
 import sys
 from src import Path
 
-from src import cv
+from src import cv, inactive_track_font_style
 from src import AVPlayer, TrackDuration, MySlider, MyVolumeSlider 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
-from src import save_volume_set_slider
+from src import save_volume_set_slider, generate_duration_to_display
 
 
 
@@ -59,10 +59,10 @@ app = MyApp()
 
 ''' WINDOW '''
 WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
-WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 400
+WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 250
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-window.setMinimumSize(500, 400)
+window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
 
@@ -104,50 +104,73 @@ play_funcs = PlaysFunc(window, av_player, play_slider, image_logo, cv.playing_tr
 PLIST_BUTTONS_WIDTH = 32
 PLIST_BUTTONS_HEIGHT = 30
 PLIST_BUTTONS_X_DIFF = 4    # FOR SELECTING ADD AND REMOVE BUTTONS
-PLIST_BUTTONS_X_BASE = 4
+PLIST_BUTTONS_X_BASE = 0
+PLIST_BUTTONS_Y = 3
 
 def button_x_pos(num):
-    return PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 5) * num
+    return PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 6) * num
+
+def update_duration_sum_widg():
+    duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
+def button_add_track_clicked():
+    button_add_track.button_add_track_clicked()
+    update_duration_sum_widg()
+
 button_add_track = MyButtons(
     'AT',
     'Add Track',
     av_player,
     av_player_duration,
     )
-button_add_track.setGeometry(button_x_pos(0), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
+button_add_track.setGeometry(button_x_pos(0), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_track.clicked.connect(button_add_track_clicked)
 
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
+def button_add_dir_clicked():
+    button_add_dir.button_add_dir_clicked()
+    update_duration_sum_widg()
+
 button_add_dir = MyButtons(
     'AD',
     'Add Directory',
     av_player,
     av_player_duration,
     )
-button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_dir.clicked.connect(button_add_dir.button_add_dir_clicked)
+button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_add_dir.clicked.connect(button_add_dir_clicked)
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
+def button_remove_track_clicked():
+    if cv.active_pl_name.currentRow() > -1:
+        button_remove_track.button_remove_track_clicked()
+        update_duration_sum_widg()
+
 button_remove_track = MyButtons(
     'RT',
     'Remove track'
     )
-button_remove_track.setGeometry(button_x_pos(2), 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_track.clicked.connect(button_remove_track.button_remove_track_clicked)
+button_remove_track.setGeometry(button_x_pos(2), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_remove_track.clicked.connect(button_remove_track_clicked)
 
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
+def button_remove_all_track_clicked():
+    button_remove_all_track.button_remove_all_track_clicked()
+    cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
+    cv.active_pl_sum_duration = 0
+    update_duration_sum_widg()
+
 button_remove_all_track = MyButtons(
     'CP',
     'Clear Playlist'
     )
-button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, 0, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_all_track.clicked.connect(button_remove_all_track.button_remove_all_track_clicked)
+button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 playlist_buttons_list = [
     button_add_track,
@@ -321,8 +344,7 @@ play_buttons_list = [
     button_toggle_video
 ]
 
-''' TABS - PLAYLIST '''
-tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list)
+
 
 
 ''' 
@@ -405,10 +427,9 @@ layout_vert_right.addLayout(layout_playlist)
 
 # UNDER PLAYLIST
 layout_under_playlist_wrapper = QHBoxLayout()
-layout_under_playlist_wrapper.setContentsMargins(5, 0, 4, 0)
+layout_under_playlist_wrapper.setContentsMargins(5, 0, 18, 0)
 
 layout_under_playlist_buttons = QHBoxLayout()
-layout_under_playlist_buttons.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
 layout_under_playlist_duration = QVBoxLayout()
 layout_under_playlist_duration.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -427,18 +448,26 @@ layout_vert_left.addWidget(image_logo)
 
 
 ''' TOP RIGHT '''
-layout_playlist.addWidget(tabs_playlist)
-
-
+# BUTTONS
+playlist_buttons_list_wrapper = QFrame()
+playlist_buttons_list_wrapper.setFixedSize(160, PLIST_BUTTONS_HEIGHT+5)
 
 for button in playlist_buttons_list:
-    layout_under_playlist_buttons.addWidget(button)
-    button.setFixedSize(35, 30)
+    button.setParent(playlist_buttons_list_wrapper)
+    button.set_style()
 
 
-test_widget = QPushButton('DURATION')
-test_widget.setFixedSize(70, 25)
-layout_under_playlist_duration.addWidget(test_widget)
+layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
+
+# DURATION
+duration_sum_widg = QPushButton('DURATION')
+duration_sum_widg.setDisabled(1)
+duration_sum_widg.setFont(inactive_track_font_style)
+layout_under_playlist_duration.addWidget(duration_sum_widg)
+
+# TABS
+tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list, duration_sum_widg)
+layout_playlist.addWidget(tabs_playlist)
 
 
 ''' BOTTOM '''
@@ -457,13 +486,13 @@ volume_slider = MyVolumeSlider(av_player)
 volume_slider.setFixedSize(100,30)
 
 # BUTTONS WRAPPER
-layout_bottom_button_wrapper= QFrame()
-layout_bottom_button_wrapper.setFixedHeight(50)
+play_buttons_list_wrapper= QFrame()
+play_buttons_list_wrapper.setFixedHeight(50)
 for button in play_buttons_list:
-    button.setParent(layout_bottom_button_wrapper)
+    button.setParent(play_buttons_list_wrapper)
 
 
-layout_bottom_buttons.addWidget(layout_bottom_button_wrapper)
+layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
 layout_bottom_volume.addWidget(volume_slider)
 
 # TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)

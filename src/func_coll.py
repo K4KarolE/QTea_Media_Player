@@ -3,8 +3,8 @@ from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
-from .cons_and_vars import Data, Path, save_json, cv
-from .cons_and_vars import settings, PATH_JSON_SETTINGS
+from .cons_and_vars import Path, save_json
+from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
 import sqlite3
 
 connection = sqlite3.connect('playlist.db')
@@ -21,6 +21,8 @@ def active_utility():
     # LIST WIDGETS
     cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
+    # STR
+    cv.active_pl_sum_duration = cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
 
 def save_last_track_index():
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
@@ -57,24 +59,25 @@ def generate_duration_to_display(raw_duration):
 
     try:
         # SECONDS
-        str_seconds = str(int(int(raw_duration)/1000%60))
-        if str_seconds == '0':
-            seconds = '00'
-        elif len(str_seconds) == 1:
+        float_seconds = float(raw_duration)/1000%60
+
+        if float_seconds < 59:
+            str_seconds = str(int(round(float_seconds, 0)))
+        else:
+            str_seconds = str(int(float_seconds))
+        
+        if len(str_seconds) == 1:
             seconds = f'0{str_seconds}'
         else:
-            seconds = str_seconds[0:2]
+            seconds = str_seconds[0:3]
         
         # MINUTES
-        int_minutes = int(int(raw_duration)/60/1000)
-        if int_minutes == 60:
-            minutes = '01'
-        elif int_minutes in range(10,60):
-            minutes = str(int_minutes)
-        elif int_minutes in range(0,10):
-            minutes = f'0{str(int_minutes)}'
+        int_minutes = int(float(raw_duration)/60/1000)
+        if len(str(int_minutes % 60)) == 1:
+            minutes = f'0{str(int_minutes % 60)}'
         else:
-            minutes = str(int_minutes%60)
+            minutes = str(int_minutes % 60)
+
 
         # HOURS
         if int_minutes > 60:
@@ -100,6 +103,10 @@ def add_record_grouped_actions(track_path, av_player_duration):
     track_name = Path(track_path).stem
     av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     raw_duration = av_player_duration.player.duration()
+
+    cv.active_pl_sum_duration += raw_duration
+    cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+
     duration = generate_duration_to_display(raw_duration)
     add_record_db(raw_duration, track_path)
 
@@ -137,3 +144,9 @@ def save_volume_set_slider(new_value, slider):
     slider.setValue(int(new_value*100))
     settings['volume'] = new_value
     save_json(settings, PATH_JSON_SETTINGS)
+
+
+def update_duration_sum_var_after_track_remove():
+    raw_duration = get_duration_db(cv.active_pl_name.currentRow())
+    cv.active_pl_sum_duration -= raw_duration
+    cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration

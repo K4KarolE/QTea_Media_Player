@@ -10,6 +10,7 @@ from .func_coll import (
     active_utility,
     generate_track_list_detail,
     add_new_list_item,
+    generate_duration_to_display,
     cur, # db
     settings, # json dic
     PATH_JSON_SETTINGS,
@@ -19,7 +20,7 @@ from .func_coll import (
 
 class MyTabs(QTabWidget):
 
-    def __init__(self, play_track):
+    def __init__(self, play_track, duration_sum_widg=None):
         super().__init__()
 
         ''' tabs_created_at_first_run
@@ -27,11 +28,11 @@ class MyTabs(QTabWidget):
             __.currentChanged.connect(self.active_tab)
             SIGNAL AT THE TABS CREATION
         '''
+        self.duration_sum_widg = duration_sum_widg
         self.tabs_created_at_first_run = False
         self.play_track = play_track
         self.setFont(QFont('Times', 10, 500))
         self.tabs_creation()
-        active_utility() # LOAD ACTIVE NAME and DURATION LIST WIDGETS
         self.setCurrentIndex(cv.active_tab)
         self.currentChanged.connect(self.active_tab)
         cv.active_pl_name.setCurrentRow(cv.last_track_index)
@@ -44,6 +45,7 @@ class MyTabs(QTabWidget):
             settings['last_used_tab'] = cv.active_tab
             save_json(settings, PATH_JSON_SETTINGS)
             active_utility()    # set the current lists(name, duration)
+            self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
     def name_list_to_duration_row_selection(self):
@@ -157,3 +159,8 @@ class MyTabs(QTabWidget):
                     track_name, duration = generate_track_list_detail(item)
                     add_new_list_item(track_name, name_list_widget)
                     add_new_list_item(duration, duration_list_widget)
+
+                    cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
+            
+        active_utility()
+        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))

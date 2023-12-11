@@ -9,6 +9,7 @@ from .func_coll import (
     remove_record_db,
     generate_track_list_detail,
     add_record_grouped_actions,
+    update_duration_sum_var_after_track_remove,
     cur, # db
     connection, # db
     settings,   # json dic
@@ -34,7 +35,7 @@ class MyButtons(QPushButton):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setToolTip(tooltip)
         self.setToolTipDuration(2000)
-        self.setFont(QFont('Times', 10, 600))
+        self.setFont(QFont('Times', 9, 600))
         if icon:
             self.setIcon(icon)
             self.setText(None)
@@ -84,18 +85,22 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - REMOVE TRACK '''
     def button_remove_track_clicked(self):
+
+        update_duration_sum_var_after_track_remove()
+        
+        current_row_index = cv.active_pl_name.currentRow()
         # LAST TRACK INDEX
-        if  cv.active_pl_name.currentRow() < cv.last_track_index:
+        if  current_row_index < cv.last_track_index:
             cv.last_track_index = cv.last_track_index - 1
             cv.playing_track_index -= 1
             settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
             save_json(settings, PATH_JSON_SETTINGS)
         # DB
-        row_id_db = cv.active_pl_name.currentRow() + 1
+        row_id_db = current_row_index + 1
         remove_record_db(row_id_db)
         # PLAYLIST
-        cv.active_pl_name.takeItem(cv.active_pl_name.currentRow())
-        cv.active_pl_duration.takeItem(cv.active_pl_name.currentRow())
+        cv.active_pl_name.takeItem(current_row_index)
+        cv.active_pl_duration.takeItem(current_row_index)
         # RENAME PLAYLIST
         cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
         playlist = cur.fetchall()
@@ -113,6 +118,25 @@ class MyButtons(QPushButton):
         # PLAYLIST
         cv.active_pl_name.clear()
         cv.active_pl_duration.clear()
+
+
+    ''' BUTTON PLAYLIST - SET STYLE '''
+    def set_style(self):
+        self.setStyleSheet(
+                        "QPushButton"
+                            "{"
+                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.2 #F0F0F0, stop: 0.8 #F0F0F0, stop: 1 #C2C2C2);"
+                            "color: grey;"   # font
+                            "border: 1px solid grey;"
+                            "border-radius: 4px;"
+                            "margin: 3 px;" # 3 px != 3px
+                            "}"
+                        "QPushButton::pressed"
+                            "{"
+                            "background-color : #C2C2C2;"
+                            "}"
+                        )
+
 
 
     ''' 
@@ -196,3 +220,4 @@ class MyButtons(QPushButton):
         
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json(settings, PATH_JSON_SETTINGS)
+    

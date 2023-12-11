@@ -30,25 +30,29 @@ class Data:
     shuffle_playlist_on = settings['shuffle_playlist_on']
     volume = settings['volume']
     
-    active_db_table = None  # widget
+    active_db_table = None  
     active_playlist = None  # widget
-    active_pl_duration = None
-    last_track_index = None
-    playing_track_index = None
+    active_pl_duration = None # widget
+    active_pl_sum_duration = 0
+    last_track_index = 0
+    playing_track_index = 0
 
     # PLAYLIST
     paylist_widget_dic = {
         "paylist_0": {
             "name_list_widget": "none",
-            "duration_list_widget": "none"
+            "duration_list_widget": "none",
+            "active_pl_sum_duration": 0
             },
         "paylist_1": {
             "name_list_widget": "none",
-            "duration_list_widget": "none"
+            "duration_list_widget": "none",
+            "active_pl_sum_duration": 0
             },
         "paylist_2": {
             "name_list_widget": "none",
-            "duration_list_widget": "none"
+            "duration_list_widget": "none",
+            "active_pl_sum_duration": 0
             }
         } 
           
