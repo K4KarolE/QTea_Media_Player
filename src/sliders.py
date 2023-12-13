@@ -63,7 +63,7 @@ class MyVolumeSlider(QSlider):
 
         self.setMinimum(0)
         self.setMaximum(100)
-        self.resize(100, 20)
+        self.resize(120, 20)
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setSliderPosition(int(cv.volume*100))
@@ -71,17 +71,17 @@ class MyVolumeSlider(QSlider):
                         "QSlider::groove"
                             "{"
                             "background: #C2C2C2;"
-                            "height: 10px;"
-                            "border-radius: 4px;"
+                            "height: 8px;"
+                            "border-radius: 2px;"
                             "}"
 
                         "QSlider::handle"
                             "{"
                             "border: 1px solid grey;"
-                            "border-radius: 8px;"
+                            "border-radius: 2px;"
                             "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
                             "width: 15px;"
-                            "margin: -3 px;  /* expand outside the groove */"
+                            "margin: 0 px;  /* expand outside the groove */"
                             "}"
 
                         "QSlider::sub-page"

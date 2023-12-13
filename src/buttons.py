@@ -121,7 +121,7 @@ class MyButtons(QPushButton):
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''
-    def set_style(self):
+    def set_style_playlist_buttons(self):
         self.setStyleSheet(
                         "QPushButton"
                             "{"
@@ -130,6 +130,24 @@ class MyButtons(QPushButton):
                             "border: 1px solid grey;"
                             "border-radius: 4px;"
                             "margin: 3 px;" # 3 px != 3px
+                            "}"
+                        "QPushButton::pressed"
+                            "{"
+                            "background-color : #C2C2C2;"
+                            "}"
+                        )
+    
+
+    ''' BUTTON PLAYLIST - SETTINGS - SET STYLE '''
+    def set_style_settings_button(self):
+        self.setStyleSheet(
+                        "QPushButton"
+                            "{"
+                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.2 #F0F0F0, stop: 0.8 #F0F0F0, stop: 1 #C2C2C2);"
+                            "color: grey;"   
+                            "border: 1px solid grey;"
+                            "border-radius: 4px;"
+                            "margin: 3px;" # 3 px != 3px, diff. pre. style sheet
                             "}"
                         "QPushButton::pressed"
                             "{"

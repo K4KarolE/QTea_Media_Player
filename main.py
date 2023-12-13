@@ -60,6 +60,7 @@ app = MyApp()
 ''' WINDOW '''
 WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
 WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 250
+WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 450, 180
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
@@ -172,11 +173,28 @@ button_remove_all_track = MyButtons(
 button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
+
+''' BUTTON PLAYLIST - SETTINGS '''
+button_settings = QIcon(f'skins/{cv.skin_selected}/settings.png')
+
+def button_settings_clicked():
+    pass
+
+button_settings = MyButtons(
+    'SE',
+    'Settings',
+    icon = button_settings
+    )
+button_settings.setGeometry(button_x_pos(4), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_settings.clicked.connect(button_settings_clicked)
+button_settings.set_style_settings_button()
+
 playlist_buttons_list = [
     button_add_track,
     button_add_dir,
     button_remove_track,
-    button_remove_all_track
+    button_remove_all_track,
+    button_settings
                     ]
 
 ''' 
@@ -318,9 +336,11 @@ def button_toggle_video_clicked():
         layout_vert_left_qframe.hide()
         av_player.video_area_visible = False
         window.resize(int(WINDOW_WIDTH/3), window.geometry().height())
+        window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
         button_toggle_playlist.setDisabled(1)
     else:
         window.resize(WINDOW_WIDTH, window.geometry().height())
+        window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         layout_vert_left_qframe.show()
         av_player.video_area_visible = True
         button_toggle_playlist.setDisabled(0)
@@ -450,11 +470,12 @@ layout_vert_left.addWidget(image_logo)
 ''' TOP RIGHT '''
 # BUTTONS
 playlist_buttons_list_wrapper = QFrame()
-playlist_buttons_list_wrapper.setFixedSize(160, PLIST_BUTTONS_HEIGHT+5)
+playlist_buttons_list_wrapper.setFixedSize(250, PLIST_BUTTONS_HEIGHT+5)
 
 for button in playlist_buttons_list:
     button.setParent(playlist_buttons_list_wrapper)
-    button.set_style()
+    if button != button_settings:
+        button.set_style_playlist_buttons()
 
 
 layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
@@ -474,16 +495,21 @@ layout_playlist.addWidget(tabs_playlist)
 # SLIDER
 layout_bottom_slider.addWidget(play_slider)
 
-# BUTTONS / VOLUME
+# LAYOUT BUTTONS / VOLUME
 layout_bottom_buttons = QVBoxLayout()
-layout_bottom_volume = QVBoxLayout()
+layout_bottom_volume = QHBoxLayout()
 layout_bottom_volume.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-layout_bottom_wrapper.addLayout(layout_bottom_buttons)
-layout_bottom_wrapper.addLayout(layout_bottom_volume)
+layout_bottom_wrapper.addLayout(layout_bottom_buttons, 80)
+layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
+
+# WIDGETS
+image_volume = MyImage(f'{cv.skin_selected}/volume.png', 20)
 
 volume_slider = MyVolumeSlider(av_player)
 volume_slider.setFixedSize(100,30)
+
+
 
 # BUTTONS WRAPPER
 play_buttons_list_wrapper= QFrame()
@@ -493,6 +519,7 @@ for button in play_buttons_list:
 
 
 layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
+layout_bottom_volume.addWidget(image_volume, alignment=Qt.AlignmentFlag.AlignRight)
 layout_bottom_volume.addWidget(volume_slider)
 
 # TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
