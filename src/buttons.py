@@ -154,6 +154,18 @@ class MyButtons(QPushButton):
                             "background-color : #C2C2C2;"
                             "}"
                         )
+    
+
+    ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''
+    def set_style_duration_info_button(self):
+        self.setFont(QFont('Times', 14, 600))
+        self.setFlat(1)
+        self.setStyleSheet(
+                        "QPushButton"
+                            "{"
+                            "color: grey;"   
+                            "}"
+                        )
 
 
 

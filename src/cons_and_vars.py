@@ -37,6 +37,8 @@ class Data:
     last_track_index = 0
     playing_track_index = 0
 
+    track_duration = 0
+
     # PLAYLIST
     paylist_widget_dic = {
         "paylist_0": {

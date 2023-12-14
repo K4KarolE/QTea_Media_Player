@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QFrame,
-    QPushButton
+    QPushButton,
+    QSplitter
     )
 from PyQt6.QtCore import Qt, QEvent, QSize
 from PyQt6.QtGui import QIcon
@@ -16,7 +17,7 @@ from src import Path
 from src import cv, inactive_track_font_style
 from src import AVPlayer, TrackDuration, MySlider, MyVolumeSlider 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
-from src import save_volume_set_slider, generate_duration_to_display
+from src import save_volume_set_slider, generate_duration_to_display, update_duration_info
 
 
 
@@ -58,9 +59,9 @@ class MyApp(QApplication):
 app = MyApp()
 
 ''' WINDOW '''
-WINDOW_WIDTH, WINDOW_HEIGHT = 1600, 750
-WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 250
-WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 450, 180
+WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
+WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 600, 250
+WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 600, 180
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
@@ -222,6 +223,13 @@ button_image_shuffle = QIcon(f'skins/{cv.skin_selected}/shuffle.png')
 button_image_toggle_vid = QIcon(f'skins/{cv.skin_selected}/toggle_vid.png')
 button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.png')
 
+
+
+''' BUTTON PLAY SECTION - PLAY/PAUSE '''
+def button_play_pause_clicked():
+    button_play_pause.button_play_pause_clicked()
+    button_duration_info.setText(update_duration_info())
+
 button_play_pause = MyButtons(
     'PLAY/PAUSE',
     'Start/stop playing',
@@ -230,7 +238,7 @@ button_play_pause = MyButtons(
     play_funcs,
     button_image_start,
     )
-button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
+button_play_pause.clicked.connect(button_play_pause_clicked)
 button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
 button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
@@ -353,6 +361,21 @@ button_toggle_video = MyButtons(
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
+
+''' BUTTON PLAY SECTION - DURATION INFO '''
+def button_duration_info_clicked():
+    pass
+    
+
+
+button_duration_info = MyButtons(
+    '00:00 / 00:00',
+    'Click to switch',
+    )
+button_duration_info.move(play_buttons_x_pos(9.5), 0)
+button_duration_info.clicked.connect(button_duration_info_clicked)
+button_duration_info.set_style_duration_info_button()
+
 play_buttons_list = [
     button_play_pause,
     button_stop,
@@ -361,7 +384,8 @@ play_buttons_list = [
     button_toggle_repeat_pl,
     button_toggle_shuffle_pl,
     button_toggle_playlist,
-    button_toggle_video
+    button_toggle_video,
+    button_duration_info
 ]
 
 
@@ -415,6 +439,11 @@ layout_base.addLayout(layout_bottom_slider, 5)
 layout_base.addLayout(layout_bottom_wrapper, 5)
 
 
+''' SPLITTER - LEFT / RIGHT'''
+splitter_left_right = QSplitter(Qt.Orientation.Horizontal)
+layout_hor_top.addWidget(splitter_left_right)
+
+
 ''' TOP LEFT - VIDEO / QTEA LOGO '''
 layout_vert_left = QVBoxLayout() # here layout type is not relevant
 layout_vert_left.setContentsMargins(0, 0, 0, 0)
@@ -428,8 +457,12 @@ layout_vert_right_qframe = QFrame()
 layout_vert_right_qframe.setLayout(layout_vert_right)
 layout_vert_right_qframe.setMinimumWidth(WINDOW_MIN_WIDTH-200)
 
-layout_hor_top.addWidget(layout_vert_left_qframe, 65)
-layout_hor_top.addWidget(layout_vert_right_qframe, 35)
+
+splitter_left_right.addWidget(layout_vert_left_qframe)
+splitter_left_right.addWidget(layout_vert_right_qframe)
+splitter_left_right.setStretchFactor( 0, 3)
+splitter_left_right.setStretchFactor( 1, 1)
+
 
 
 ''' TOP RIGHT 

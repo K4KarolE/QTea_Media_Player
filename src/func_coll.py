@@ -150,3 +150,9 @@ def update_duration_sum_var_after_track_remove():
     raw_duration = get_duration_db(cv.active_pl_name.currentRow())
     cv.active_pl_sum_duration -= raw_duration
     cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+
+# TODO
+def update_duration_info():
+    track_duration = generate_duration_to_display(cv.track_duration)
+    to_display = f'00:00 / {track_duration}'
+    return to_display

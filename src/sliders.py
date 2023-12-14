@@ -72,7 +72,7 @@ class MyVolumeSlider(QSlider):
                             "{"
                             "background: #C2C2C2;"
                             "height: 8px;"
-                            "border-radius: 2px;"
+                            "border-radius: 3px;"
                             "}"
 
                         "QSlider::handle"

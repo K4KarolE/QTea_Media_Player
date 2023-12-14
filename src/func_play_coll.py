@@ -76,6 +76,7 @@ class PlaysFunc():
             # PATH / DURATION / SLIDER
             track_path = get_path_db(playing_track_index)
             track_duration = get_duration_db(playing_track_index)
+            cv.track_duration = track_duration
             self.play_slider.setMaximum(track_duration)
             # PLAYER
             ''' 
