@@ -17,7 +17,7 @@ from src import Path
 from src import cv, inactive_track_font_style
 from src import AVPlayer, TrackDuration, MySlider, MyVolumeSlider 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
-from src import save_volume_set_slider, generate_duration_to_display, update_duration_info
+from src import save_volume_set_slider, generate_duration_to_display
 
 
 
@@ -34,7 +34,7 @@ class MyApp(QApplication):
         # IF FULL SCREEN: SET UP IN 'AVPlayer class'
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
-            if event.key() == Qt.Key.Key_Space:
+            if event.key() == Qt.Key.Key_0:
                 button_play_pause.button_play_pause_clicked()
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
@@ -52,6 +52,7 @@ class MyApp(QApplication):
                 av_player.player.setPosition(av_player.player.position() + 600)
         if to_save_settings:
             save_volume_set_slider(new_volume, volume_slider)
+
         return super().eventFilter(source, event)
     
 
@@ -60,8 +61,8 @@ app = MyApp()
 
 ''' WINDOW '''
 WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
-WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 600, 250
-WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 600, 180
+WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
+WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 179
 window = QWidget()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
@@ -71,6 +72,29 @@ window.setWindowTitle("QTea media player")
 
 ''' PLAYER '''
 av_player = AVPlayer(volume=cv.volume)
+
+def update_duration_info():
+    if av_player.base_played:
+
+        track_current_duration = av_player.player.position()
+
+        if (track_current_duration % 1000 > 900 or track_current_duration % 1000 == 0 and 
+            cv.track_full_duration_to_display):
+
+            cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
+            cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
+
+            if cv.is_duration_to_display_straight:
+                button_duration_info.setText(cv.duration_to_display_straight)
+          
+            else:
+                button_duration_info.setText(cv.duration_to_display_back)
+
+            button_duration_info.adjustSize()
+
+
+av_player.player.positionChanged.connect(update_duration_info)
+
 
 """ 
     av_player_duration
@@ -226,10 +250,6 @@ button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.
 
 
 ''' BUTTON PLAY SECTION - PLAY/PAUSE '''
-def button_play_pause_clicked():
-    button_play_pause.button_play_pause_clicked()
-    button_duration_info.setText(update_duration_info())
-
 button_play_pause = MyButtons(
     'PLAY/PAUSE',
     'Start/stop playing',
@@ -238,16 +258,19 @@ button_play_pause = MyButtons(
     play_funcs,
     button_image_start,
     )
-button_play_pause.clicked.connect(button_play_pause_clicked)
+button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
 button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
 button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
 
 ''' BUTTON PLAY SECTION - STOP '''
+
+
 def button_stop_clicked():
     av_player.player.stop()
     av_player.paused = False
     button_play_pause.setIcon(button_image_start)
+
 
 button_stop = MyButtons(
     'Stop',
@@ -364,8 +387,16 @@ button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 ''' BUTTON PLAY SECTION - DURATION INFO '''
 def button_duration_info_clicked():
-    pass
-    
+    if cv.track_full_duration_to_display:
+        if cv.is_duration_to_display_straight:
+            cv.is_duration_to_display_straight = False
+            button_duration_info.setText(cv.duration_to_display_back)
+
+        else:
+            cv.is_duration_to_display_straight = True
+            button_duration_info.setText(cv.duration_to_display_straight)
+        
+        button_duration_info.adjustSize()
 
 
 button_duration_info = MyButtons(

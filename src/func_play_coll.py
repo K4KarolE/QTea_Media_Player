@@ -10,6 +10,7 @@ from .func_coll import (
     get_path_db,
     get_duration_db,
     list_item_style_update,
+    generate_duration_to_display,
     Path,
     inactive_track_font_style,  
     active_track_font_style
@@ -75,9 +76,9 @@ class PlaysFunc():
             
             # PATH / DURATION / SLIDER
             track_path = get_path_db(playing_track_index)
-            track_duration = get_duration_db(playing_track_index)
-            cv.track_duration = track_duration
-            self.play_slider.setMaximum(track_duration)
+            cv.track_full_duration = get_duration_db(playing_track_index)
+            cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+            self.play_slider.setMaximum(cv.track_full_duration)
             # PLAYER
             ''' 
                 Why showing the previous vid's last 

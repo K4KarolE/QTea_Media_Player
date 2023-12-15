@@ -37,7 +37,11 @@ class Data:
     last_track_index = 0
     playing_track_index = 0
 
-    track_duration = 0
+    track_full_duration = 0
+    track_full_duration_to_display = 0
+    is_duration_to_display_straight = True
+    duration_to_display_straight = 0
+    duration_to_display_back = 0
 
     # PLAYLIST
     paylist_widget_dic = {
