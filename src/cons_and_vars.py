@@ -43,6 +43,8 @@ class Data:
     duration_to_display_straight = 0
     duration_to_display_back = 0
 
+    is_speaker_muted = False
+
     # PLAYLIST
     paylist_widget_dic = {
         "paylist_0": {

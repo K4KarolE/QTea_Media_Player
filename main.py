@@ -50,6 +50,10 @@ class MyApp(QApplication):
                 av_player.player.setPosition(av_player.player.position() - 600)
             elif event.key() == Qt.Key.Key_Right:
                 av_player.player.setPosition(av_player.player.position() + 600)
+            # SPEAKER MUTED TOOGLE
+            elif event.key() == Qt.Key.Key_M:
+                button_speaker_clicked    
+
         if to_save_settings:
             save_volume_set_slider(new_volume, volume_slider)
 
@@ -568,7 +572,31 @@ layout_bottom_wrapper.addLayout(layout_bottom_buttons, 80)
 layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
 
 # WIDGETS
-image_volume = MyImage(f'{cv.skin_selected}/volume.png', 20)
+button_image_speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
+button_image_speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
+
+
+def button_speaker_clicked():
+
+    if cv.is_speaker_muted:
+        cv.is_speaker_muted = False
+        button_speaker.setIcon(button_image_speaker)
+        av_player.audio_output.setVolume(cv.volume)
+
+    else:
+        cv.is_speaker_muted = True
+        button_speaker.setIcon(button_image_speaker_muted)
+        av_player.audio_output.setVolume(0)
+ 
+
+button_speaker = MyButtons(
+    'Speaker',
+    'Toggle Mute',
+    icon = button_image_speaker
+    )
+button_speaker.setFlat(1)
+button_speaker.clicked.connect(button_speaker_clicked)
+
 
 volume_slider = MyVolumeSlider(av_player)
 volume_slider.setFixedSize(100,30)
@@ -583,7 +611,7 @@ for button in play_buttons_list:
 
 
 layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
-layout_bottom_volume.addWidget(image_volume, alignment=Qt.AlignmentFlag.AlignRight)
+layout_bottom_volume.addWidget(button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
 layout_bottom_volume.addWidget(volume_slider)
 
 # TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
