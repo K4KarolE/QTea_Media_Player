@@ -20,12 +20,26 @@ from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
 
 
+''' 
+    APP
 
-''' APP '''
-class MyApp(QApplication):
+    LEARNED:
+    No eventFilter on the app(QApplication)
+    otherwise: keyRelease --> multiple trigger
+
+'''
+app = QApplication(sys.argv)
+
+
+''' WINDOW '''
+WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
+WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
+WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 180
+
+class MyWindow(QWidget):
 
     def __init__(self):
-        super().__init__(sys.argv)
+        super().__init__()
         self.installEventFilter(self) 
 
     def eventFilter(self, source, event):
@@ -52,22 +66,22 @@ class MyApp(QApplication):
                 av_player.player.setPosition(av_player.player.position() + 600)
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
-                button_speaker_clicked    
+                button_speaker_clicked()
+            # PLAY NEXT
+            elif event.key() == Qt.Key.Key_N:
+                button_next_track.button_next_track_clicked()
+            # PLAY PREVIOUS
+            elif event.key() == Qt.Key.Key_B:
+                button_prev_track.button_prev_track_clicked()    
 
         if to_save_settings:
             save_volume_set_slider(new_volume, volume_slider)
 
         return super().eventFilter(source, event)
-    
 
-''' APP '''
-app = MyApp()
 
-''' WINDOW '''
-WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
-WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
-WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 179
-window = QWidget()
+window = MyWindow()
+
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))

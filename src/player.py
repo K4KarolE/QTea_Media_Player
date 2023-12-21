@@ -3,6 +3,9 @@ from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
+
+#TODO from .buttons import MyButtons
+
 # TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
 
 """
@@ -43,7 +46,10 @@ class AVPlayer(QWidget):
             self.pause_play_track()
         elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_Escape:
             self.video_output.setFullScreen(0)
-        
+        # TODO PLAY NEXT
+        # elif event.type() == QEvent.Type.KeyRelease and event.key() == Qt.Key.Key_N:
+        #     next_track = MyButtons('test', 'Test')
+        #     next_track.button_next_track_clicked()
         # TODO elif source == self.video_output and event.type() == QEvent.Type.Wheel:
         #     # print(QEvent.Type.GraphicsSceneWheel)
         #     pass

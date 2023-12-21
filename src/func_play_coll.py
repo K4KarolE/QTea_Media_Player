@@ -117,7 +117,7 @@ class PlaysFunc():
         if cv.playing_track_index == None:
             cv.playing_track_index = cv.active_pl_name.currentRow()
         # SHUFFLE
-        if cv.shuffle_playlist_on and cv.active_pl_name.count() > 1:
+        elif cv.shuffle_playlist_on and cv.active_pl_name.count() > 1:
             next_track_index = list(range(0, cv.active_pl_name.count()))
             next_track_index.pop(cv.playing_track_index)
             next_track_index = random.choice(next_track_index)
