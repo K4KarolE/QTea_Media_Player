@@ -45,6 +45,9 @@ class Data:
 
     is_speaker_muted = False
 
+    small_jump = 2000
+    medium_jump = 60000
+
     # PLAYLIST
     paylist_widget_dic = {
         "paylist_0": {

@@ -9,15 +9,143 @@ from PyQt6.QtWidgets import (
     QSplitter
     )
 from PyQt6.QtCore import Qt, QEvent, QSize
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
+
+# AV PLAYER
+from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
+from PyQt6.QtCore import QUrl, QEvent, Qt
+from PyQt6.QtMultimediaWidgets import QVideoWidget
+from PyQt6.QtWidgets import QWidget
 
 import sys
 from src import Path
 
 from src import cv, inactive_track_font_style
-from src import AVPlayer, TrackDuration, MySlider, MyVolumeSlider 
+from src import MySlider, MyVolumeSlider 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
+
+
+# TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
+
+"""
+PLAY EMPTY SOUND WORKAROUND
+at least one music file need to be played from start to finish
+before be able to switch tracks without crashing
+--> class instance creation = dummy "song" played
+"""
+class AVPlayer(QWidget):
+
+    def __init__(self, play_base=True, volume=0):
+        super().__init__()
+        self.player = QMediaPlayer()
+        # VIDEO
+        self.video_output = QVideoWidget()
+        self.video_output.installEventFilter(self)
+        self.player.setVideoOutput(self.video_output)
+        # AUDIO
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        if play_base:
+            self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
+            self.player.play()
+        ''' SETTINGS'''
+        # self.player.setLoops(1) # -1=infinite
+        self.audio_output.setVolume(volume)
+        self.base_played = False
+        self.paused = False
+        self.playlist_visible = True
+        self.video_area_visible = True
+
+
+    #     ''' JUMPS '''
+    #     self.video_output.medium_jump_forward = QShortcut(QKeySequence('Ctrl+Right'), self)
+    #     self.video_output.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
+    #     self.video_output.medium_jump_back = QShortcut(QKeySequence('Ctrl+Left'), self)
+    #     self.video_output.medium_jump_back.activated.connect(self.medium_jump_back_action)
+
+    # def medium_jump_back_action(self):
+    #     self.player.setPosition(self.player.position() - cv.medium_jump)
+
+    # def medium_jump_forward_action(self):
+    #     self.player.setPosition(self.player.position() + cv.medium_jump)
+    
+
+    ''' FOR FULL SCREEN MODE '''
+    def eventFilter(self, source, event):
+        to_save_settings = False
+
+        if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
+            self.vid_full_screen()
+
+        
+        if event.type() == QEvent.Type.KeyRelease:
+            # PAUSE
+            if event.key() == Qt.Key.Key_Space:
+                button_play_pause.button_play_pause_clicked()
+            # EXIT FULL SCREEN
+            elif event.key() == Qt.Key.Key_Escape:
+                self.video_output.setFullScreen(0)
+                
+            # VOLUME
+            elif event.key() == Qt.Key.Key_Plus:
+                new_volume = round(av_player.audio_output.volume() + 0.01, 4)
+                av_player.audio_output.setVolume(new_volume)
+                to_save_settings = True
+            elif event.key() == Qt.Key.Key_Minus:
+                new_volume = round(av_player.audio_output.volume() - 0.01, 4)
+                av_player.audio_output.setVolume(new_volume)
+                to_save_settings = True
+            
+
+            # JUMP - SMALL
+            elif event.key() == Qt.Key.Key_Left:
+                av_player.player.setPosition(av_player.player.position() - cv.small_jump)
+            elif event.key() == Qt.Key.Key_Right:
+                av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
+          
+
+            # SPEAKER MUTED TOOGLE
+            elif event.key() == Qt.Key.Key_M:
+                button_speaker_clicked()
+            # PLAY NEXT
+            elif event.key() == Qt.Key.Key_N:
+                button_next_track.button_next_track_clicked()
+            # PLAY PREVIOUS
+            elif event.key() == Qt.Key.Key_B:
+                button_prev_track.button_prev_track_clicked()    
+
+        if to_save_settings:
+            save_volume_set_slider(new_volume, volume_slider)
+        
+        return super().eventFilter(source, event)
+
+
+    def vid_full_screen(self):
+        if self.video_output.isFullScreen():
+            self.video_output.setFullScreen(0)
+        else:
+            self.video_output.setFullScreen(1)
+
+
+    def pause_play_track(self):
+        if self.player.isPlaying():
+            self.paused = True
+        else:
+            self.paused = False
+        button_play_pause.button_play_pause_clicked()
+
+
+""" 
+    Only used for duration calculation -->
+    Able to add new track(s) without interrupting 
+    the current playing
+"""
+class TrackDuration(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.player = QMediaPlayer()
 
 
 ''' 
@@ -42,13 +170,25 @@ class MyWindow(QWidget):
         super().__init__()
         self.installEventFilter(self) 
 
+        self.medium_jump_forward = QShortcut(QKeySequence('Ctrl+Right'), self)
+        self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
+        self.medium_jump_back = QShortcut(QKeySequence('Ctrl+Left'), self)
+        self.medium_jump_back.activated.connect(self.medium_jump_back_action)
+
+    def medium_jump_back_action(self):
+        av_player.player.setPosition(av_player.player.position() - cv.medium_jump)
+
+    def medium_jump_forward_action(self):
+        av_player.player.setPosition(av_player.player.position() + cv.medium_jump)
+
+
+    ''' FOR NON FULL SCREEN MODE '''
     def eventFilter(self, source, event):
         to_save_settings = False
-        # PAUSE/PLAY - IF PLAYER IS NOT FULL SCREEN
-        # IF FULL SCREEN: SET UP IN 'AVPlayer class'
+
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
-            if event.key() == Qt.Key.Key_0:
+            if event.key() == Qt.Key.Key_Space:
                 button_play_pause.button_play_pause_clicked()
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
@@ -59,11 +199,13 @@ class MyWindow(QWidget):
                 new_volume = round(av_player.audio_output.volume() - 0.01, 4)
                 av_player.audio_output.setVolume(new_volume)
                 to_save_settings = True
+            
             # JUMP - SMALL
             elif event.key() == Qt.Key.Key_Left:
-                av_player.player.setPosition(av_player.player.position() - 600)
+                av_player.player.setPosition(av_player.player.position() - cv.small_jump)
             elif event.key() == Qt.Key.Key_Right:
-                av_player.player.setPosition(av_player.player.position() + 600)
+                av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
+   
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
