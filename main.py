@@ -25,7 +25,8 @@ from src import MySlider, MyVolumeSlider
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
 
-
+left_jump_key_comb = QKeySequence('Ctrl+Left')
+right_jump_key_comb = QKeySequence('Ctrl+Right')
 # TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
 
 """
@@ -36,7 +37,7 @@ before be able to switch tracks without crashing
 """
 class AVPlayer(QWidget):
 
-    def __init__(self, play_base=True, volume=0):
+    def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
         # VIDEO
@@ -46,29 +47,33 @@ class AVPlayer(QWidget):
         # AUDIO
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
-        if play_base:
-            self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
-            self.player.play()
-        ''' SETTINGS'''
-        # self.player.setLoops(1) # -1=infinite
-        self.audio_output.setVolume(volume)
-        self.base_played = False
+        # BASE PLAY
+        self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
+        self.player.play()
+        # SETTINGS
+        self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
+        self.audio_output.setVolume(cv.volume)
         self.paused = False
         self.playlist_visible = True
         self.video_area_visible = True
 
 
-    #     ''' JUMPS '''
-    #     self.video_output.medium_jump_forward = QShortcut(QKeySequence('Ctrl+Right'), self)
-    #     self.video_output.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
-    #     self.video_output.medium_jump_back = QShortcut(QKeySequence('Ctrl+Left'), self)
-    #     self.video_output.medium_jump_back.activated.connect(self.medium_jump_back_action)
+        ''' JUMPS - FULL SCREEN '''
+        self.video_output.medium_jump_forward = QShortcut(right_jump_key_comb, self.video_output)
+        self.video_output.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.video_output.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
+        self.video_output.medium_jump_forward.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
 
-    # def medium_jump_back_action(self):
-    #     self.player.setPosition(self.player.position() - cv.medium_jump)
+        self.video_output.medium_jump_back = QShortcut(left_jump_key_comb, self.video_output)
+        self.video_output.medium_jump_back.activated.connect(self.medium_jump_back_action)
+        self.video_output.medium_jump_back.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
 
-    # def medium_jump_forward_action(self):
-    #     self.player.setPosition(self.player.position() + cv.medium_jump)
+
+    def medium_jump_back_action(self):
+        self.player.setPosition(self.player.position() - cv.medium_jump)
+
+    def medium_jump_forward_action(self):
+        self.player.setPosition(self.player.position() + cv.medium_jump)
     
 
     ''' FOR FULL SCREEN MODE '''
@@ -78,11 +83,11 @@ class AVPlayer(QWidget):
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
             self.vid_full_screen()
 
-        
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
             if event.key() == Qt.Key.Key_Space:
                 button_play_pause.button_play_pause_clicked()
+
             # EXIT FULL SCREEN
             elif event.key() == Qt.Key.Key_Escape:
                 self.video_output.setFullScreen(0)
@@ -97,20 +102,20 @@ class AVPlayer(QWidget):
                 av_player.audio_output.setVolume(new_volume)
                 to_save_settings = True
             
-
             # JUMP - SMALL
             elif event.key() == Qt.Key.Key_Left:
                 av_player.player.setPosition(av_player.player.position() - cv.small_jump)
             elif event.key() == Qt.Key.Key_Right:
                 av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
           
-
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
+
             # PLAY NEXT
             elif event.key() == Qt.Key.Key_N:
                 button_next_track.button_next_track_clicked()
+
             # PLAY PREVIOUS
             elif event.key() == Qt.Key.Key_B:
                 button_prev_track.button_prev_track_clicked()    
@@ -170,9 +175,14 @@ class MyWindow(QWidget):
         super().__init__()
         self.installEventFilter(self) 
 
-        self.medium_jump_forward = QShortcut(QKeySequence('Ctrl+Right'), self)
+        ''' JUMPS - NON FULL SCREEN '''
+        self.medium_jump_forward = QShortcut(right_jump_key_comb, self)
+        self.medium_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
-        self.medium_jump_back = QShortcut(QKeySequence('Ctrl+Left'), self)
+       
+
+        self.medium_jump_back = QShortcut(left_jump_key_comb, self)
+        self.medium_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.medium_jump_back.activated.connect(self.medium_jump_back_action)
 
     def medium_jump_back_action(self):
@@ -190,6 +200,7 @@ class MyWindow(QWidget):
             # PAUSE
             if event.key() == Qt.Key.Key_Space:
                 button_play_pause.button_play_pause_clicked()
+
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
                 new_volume = round(av_player.audio_output.volume() + 0.01, 4)
@@ -209,9 +220,11 @@ class MyWindow(QWidget):
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
+
             # PLAY NEXT
             elif event.key() == Qt.Key.Key_N:
                 button_next_track.button_next_track_clicked()
+
             # PLAY PREVIOUS
             elif event.key() == Qt.Key.Key_B:
                 button_prev_track.button_prev_track_clicked()    
@@ -231,7 +244,7 @@ window.setWindowTitle("QTea media player")
 
 
 ''' PLAYER '''
-av_player = AVPlayer(volume=cv.volume)
+av_player = AVPlayer()
 
 def update_duration_info():
     if av_player.base_played:
