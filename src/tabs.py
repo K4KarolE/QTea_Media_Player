@@ -74,7 +74,7 @@ class MyTabs(QTabWidget):
 
     def tabs_creation(self):
         for pl in cv.paylist_widget_dic:
-            if settings[pl]['tab_index'] != None:
+            if len(settings[pl]['tab_title']):
                 
                 scroll_bar_name_ver = QScrollBar()
                 scroll_bar_name_hor = QScrollBar()

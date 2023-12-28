@@ -1,8 +1,8 @@
 {
-  "last_used_tab": 2,
+  "last_used_tab": 1,
   "repeat_playlist": 2,
-  "shuffle_playlist_on": false,
-  "volume": 0.49,
+  "shuffle_playlist_on": true,
+  "volume": 0.4,
   "skin_selected": "default",
   "skins": {
     "default": {
@@ -28,7 +28,12 @@
   },
   "paylist_2": {
     "tab_index": 2,
-    "tab_title": "Temp",
-    "last_track_index": 6
+    "tab_title": "",
+    "last_track_index": 111
+  },
+  "paylist_3": {
+    "tab_index": 3,
+    "tab_title": "",
+    "last_track_index": 0
   }
 }

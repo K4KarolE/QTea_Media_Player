@@ -64,6 +64,11 @@ class Data:
             "name_list_widget": "none",
             "duration_list_widget": "none",
             "active_pl_sum_duration": 0
+            },
+        "paylist_3": {
+            "name_list_widget": "none",
+            "duration_list_widget": "none",
+            "active_pl_sum_duration": 0
             }
         } 
           
