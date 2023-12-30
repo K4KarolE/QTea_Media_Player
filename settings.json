@@ -1,8 +1,8 @@
 {
-  "last_used_tab": 1,
-  "repeat_playlist": 2,
+  "last_used_tab": 9,
+  "repeat_playlist": 1,
   "shuffle_playlist_on": true,
-  "volume": 0.4,
+  "volume": 0.27,
   "skin_selected": "default",
   "skins": {
     "default": {
@@ -16,24 +16,54 @@
       }
     }
   },
-  "paylist_0": {
+  "playlist_0": {
     "tab_index": 0,
     "tab_title": "Movies",
-    "last_track_index": 5
+    "last_track_index": 4
   },
-  "paylist_1": {
+  "playlist_1": {
     "tab_index": 1,
     "tab_title": "Music",
-    "last_track_index": 0
+    "last_track_index": 45
   },
-  "paylist_2": {
+  "playlist_2": {
     "tab_index": 2,
-    "tab_title": "",
-    "last_track_index": 111
+    "tab_title": "Temp",
+    "last_track_index": 4
   },
-  "paylist_3": {
+  "playlist_3": {
     "tab_index": 3,
     "tab_title": "",
+    "last_track_index": 4
+  },
+  "playlist_4": {
+    "tab_index": 4,
+    "tab_title": "",
+    "last_track_index": 8
+  },
+  "playlist_5": {
+    "tab_index": 5,
+    "tab_title": "",
     "last_track_index": 0
+  },
+  "playlist_6": {
+    "tab_index": 6,
+    "tab_title": "",
+    "last_track_index": 0
+  },
+  "playlist_7": {
+    "tab_index": 7,
+    "tab_title": "",
+    "last_track_index": 0
+  },
+  "playlist_8": {
+    "tab_index": 8,
+    "tab_title": "",
+    "last_track_index": 0
+  },
+  "playlist_9": {
+    "tab_index": 9,
+    "tab_title": "10th",
+    "last_track_index": 7
   }
 }

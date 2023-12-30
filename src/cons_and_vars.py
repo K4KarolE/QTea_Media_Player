@@ -48,35 +48,23 @@ class Data:
     small_jump = 2000
     medium_jump = 60000
 
-    # PLAYLIST
-    paylist_widget_dic = {
-        "paylist_0": {
-            "name_list_widget": "none",
-            "duration_list_widget": "none",
-            "active_pl_sum_duration": 0
-            },
-        "paylist_1": {
-            "name_list_widget": "none",
-            "duration_list_widget": "none",
-            "active_pl_sum_duration": 0
-            },
-        "paylist_2": {
-            "name_list_widget": "none",
-            "duration_list_widget": "none",
-            "active_pl_sum_duration": 0
-            },
-        "paylist_3": {
-            "name_list_widget": "none",
-            "duration_list_widget": "none",
-            "active_pl_sum_duration": 0
-            }
-        } 
-          
-    paylist_list = list(paylist_widget_dic.keys())
-
     MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
     AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
     VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
     FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
+    
+    # PLAYLISTS
+    paylist_widget_dic = {}
+
+    for i in range(0,10):
+        pl_name = f'playlist_{i}'
+        paylist_widget_dic[pl_name] = {
+            "name_list_widget": "none",
+            "duration_list_widget": "none",
+            "active_pl_sum_duration": 0
+            }
+      
+    paylist_list = list(paylist_widget_dic.keys())
+
 
 cv = Data()
