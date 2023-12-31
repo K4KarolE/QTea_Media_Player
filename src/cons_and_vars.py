@@ -56,7 +56,8 @@ class Data:
     # PLAYLISTS
     paylist_widget_dic = {}
 
-    for i in range(0,10):
+    playlist_amount = 10
+    for i in range(0, playlist_amount):
         pl_name = f'playlist_{i}'
         paylist_widget_dic[pl_name] = {
             "name_list_widget": "none",

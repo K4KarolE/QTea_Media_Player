@@ -29,12 +29,12 @@ NUMBER_COUNTER = 1
 app = QApplication(sys.argv)
 
 window_settings = QWidget()
-WINDOW_WIDTH, WINDOW_HEIGHT = 600, 500
+WINDOW_WIDTH, WINDOW_HEIGHT = 600, 600
 window_settings.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
 for pl in cv.paylist_widget_dic:
     number = QLabel(window_settings, text=f'{NUMBER_COUNTER}.')
-    number.move(WIDGET_POS_X - 20, WIDGET_POS_Y)
+    number.move(WIDGET_POS_X - 25, WIDGET_POS_Y)
     number.setFont(inactive_track_font_style)
 
     cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(window_settings)

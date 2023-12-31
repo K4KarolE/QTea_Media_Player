@@ -1,4 +1,6 @@
 
+from cons_and_vars import cv, settings, PATH_JSON_SETTINGS, save_json
+
 import sqlite3
 
 connection = sqlite3.connect('playlist.db')
@@ -14,8 +16,11 @@ def list_all_tables():
 
 ''' CREATE TABLES / PLAYLISTS '''
 def create_tables():
-    for i in range(0,10):
+
+    for i in range(0, cv.playlist_amount):
         table_name = f'playlist_{i}'
+
+        ''' SQL '''
         cur.execute("""CREATE TABLE {0}
                     (
                     row_id INTEGER PRIMARY KEY,
@@ -23,6 +28,14 @@ def create_tables():
                     path TEXT(20)
                     )
                     """.format(table_name))
+        
+        ''' JSON '''
+        settings[table_name] = {
+            "tab_index": i,
+            "tab_title": str(i + 1),
+            "last_track_index": 0
+            }
+    save_json(settings, PATH_JSON_SETTINGS)
 # create_tables()
 
 

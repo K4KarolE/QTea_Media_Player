@@ -37,6 +37,13 @@ class MyTabs(QTabWidget):
         self.currentChanged.connect(self.active_tab)
         cv.active_pl_name.setCurrentRow(cv.last_track_index)
         self.tabs_created_at_first_run = True
+        self.setStyleSheet(
+                        "QTabBar::tab:selected"
+                            "{"
+                            "background: #287DCC;" 
+                            "color: white;"   # font
+                            "}"
+                        )
         
 
     def active_tab(self):
