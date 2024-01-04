@@ -21,9 +21,10 @@ import sys
 from src import Path
 
 from src import cv, inactive_track_font_style
-from src import MySlider, MyVolumeSlider 
+from src import MySlider, MyVolumeSlider, MySettingsWindow 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
+
 
 left_jump_key_comb = QKeySequence('Ctrl+Left')
 right_jump_key_comb = QKeySequence('Ctrl+Right')
@@ -242,6 +243,7 @@ window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
 
+window_settings = MySettingsWindow()
 
 ''' PLAYER '''
 av_player = AVPlayer()
@@ -376,7 +378,7 @@ button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 button_settings = QIcon(f'skins/{cv.skin_selected}/settings.png')
 
 def button_settings_clicked():
-    pass
+    window_settings.show()
 
 button_settings = MyButtons(
     'SE',
