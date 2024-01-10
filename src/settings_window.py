@@ -5,7 +5,8 @@ from PyQt6.QtWidgets import (
     QLabel
     )
 
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtCore import Qt
 
 from pathlib import Path
 
@@ -24,11 +25,19 @@ class MySettingsWindow(QWidget):
         WIDGET_POS_X=50
         WIDGET_POS_Y=50
         NUMBER_COUNTER = 1
-        WINDOW_WIDTH, WINDOW_HEIGHT = 400, 600
+        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 500
+        title_font = QFont('Arial', 12, 600)
         
-        self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
+        self.setFixedWidth(WINDOW_WIDTH)
+        self.setFixedHeight(WINDOW_HEIGHT)
         self.setWindowIcon(QIcon(str(Path(Path().resolve(), 'skins', cv.skin_selected, 'settings.png'))))
         self.setWindowTitle("Settings")
+
+        title_playlist = QLabel(self, text='Playlists / Tabs')
+        title_playlist.move(WIDGET_POS_X - 25, WIDGET_POS_Y - 35)
+        title_playlist.setFont(title_font)
+
 
         for pl in cv.paylist_widget_dic:
             number = QLabel(self, text=f'{NUMBER_COUNTER}.')
@@ -78,8 +87,9 @@ class MySettingsWindow(QWidget):
 
                 if to_save:
                     save_json(settings, PATH_JSON_SETTINGS)
-
+            
+            self.hide()
 
         button_save = QPushButton(self, text='SAVE')
-        button_save.setGeometry(50, WIDGET_POS_Y + 60, 120, 20)    
+        button_save.setGeometry(WINDOW_WIDTH - 100, WINDOW_HEIGHT - 50, 50, 25)    
         button_save.clicked.connect(button_save_clicked)

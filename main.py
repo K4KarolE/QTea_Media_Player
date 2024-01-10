@@ -243,6 +243,7 @@ window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
 
+''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow()
 
 ''' PLAYER '''

@@ -31,7 +31,6 @@ def create_tables():
         
         ''' JSON '''
         settings[table_name] = {
-            "tab_index": i,
             "tab_title": str(i + 1),
             "last_track_index": 0
             }

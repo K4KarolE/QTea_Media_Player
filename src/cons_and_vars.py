@@ -48,12 +48,13 @@ class Data:
     small_jump = 2000
     medium_jump = 60000
 
+    ''' FILE TYPES '''
     MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
     AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
     VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-    FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, 'All Files']
+    FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES]
     
-    # PLAYLISTS
+    ''' PLAYLISTS '''
     paylist_widget_dic = {}
 
     playlist_amount = 10
