@@ -2,7 +2,8 @@ from PyQt6.QtWidgets import (
     QWidget,
     QPushButton,
     QLineEdit,
-    QLabel
+    QLabel,
+    QTabWidget
     )
 
 from PyQt6.QtGui import QIcon, QFont
@@ -22,11 +23,8 @@ class MySettingsWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        WIDGET_POS_X=50
-        WIDGET_POS_Y=50
-        NUMBER_COUNTER = 1
-        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 500
-        title_font = QFont('Arial', 12, 600)
+        ''' WINDOW '''
+        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 530
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
@@ -34,22 +32,50 @@ class MySettingsWindow(QWidget):
         self.setWindowIcon(QIcon(str(Path(Path().resolve(), 'skins', cv.skin_selected, 'settings.png'))))
         self.setWindowTitle("Settings")
 
-        title_playlist = QLabel(self, text='Playlists / Tabs')
-        title_playlist.move(WIDGET_POS_X - 25, WIDGET_POS_Y - 35)
-        title_playlist.setFont(title_font)
 
+        ''' TABS '''
+        WIDGET_POS_X=25
+        WIDGET_POS_Y=25
+        number_counter = 1
+        
+        TABS_POS_X = 10
+        TABS_POS_Y = 10
 
+        tabs = QTabWidget(self)
+        tabs.setFont(QFont('Times', 10, 500))
+        tabs.setStyleSheet(
+                        "QTabBar::tab:selected"
+                            "{"
+                            "background: #287DCC;" 
+                            "color: white;"   # font
+                            "}"
+                        )
+
+        tab_playlist = QWidget() 
+        tab_general = QWidget()
+
+        tabs.addTab(tab_playlist, 'Playlists')
+        tabs.addTab(tab_general, 'General')
+        tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, WINDOW_HEIGHT-TABS_POS_Y*6) 
+        tabs.move(TABS_POS_X+2, TABS_POS_Y+2)
+        
+
+        ''' TAB - PLAYLISTS '''
         for pl in cv.paylist_widget_dic:
-            number = QLabel(self, text=f'{NUMBER_COUNTER}.')
-            number.move(WIDGET_POS_X - 25, WIDGET_POS_Y)
+            number = QLabel(tab_playlist, text=f'{number_counter}.')
             number.setFont(inactive_track_font_style)
+            
+            if number_counter >= 10:
+                number.move(WIDGET_POS_X - 7, WIDGET_POS_Y)
+            else:
+                number.move(WIDGET_POS_X, WIDGET_POS_Y)
 
-            cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(self)
+            cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             cv.paylist_widget_dic[pl]['line_edit'].setText(settings[pl]['tab_title'])
-            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(50, WIDGET_POS_Y, 120, 20)
+            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(WIDGET_POS_X + 20, WIDGET_POS_Y, 150, 20)
             cv.paylist_widget_dic[pl]['line_edit'].setFont(inactive_track_font_style)
 
-            NUMBER_COUNTER += 1
+            number_counter += 1
             WIDGET_POS_Y += 40
 
 
@@ -66,6 +92,11 @@ class MySettingsWindow(QWidget):
                 return pl_list_with_title
 
             
+        ''' BUTTON - SAVE'''
+        BUTTON_SAVE_WIDTH = 50
+        BUTTON_SAVE_HIGHT = 25
+        BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
+        BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HIGHT
 
         def button_save_clicked(to_save = False):
             
@@ -90,6 +121,7 @@ class MySettingsWindow(QWidget):
             
             self.hide()
 
+
         button_save = QPushButton(self, text='SAVE')
-        button_save.setGeometry(WINDOW_WIDTH - 100, WINDOW_HEIGHT - 50, 50, 25)    
+        button_save.setGeometry(BUTTON_SAVE_POS_X, BUTTON_SAVE_POS_Y, BUTTON_SAVE_WIDTH, BUTTON_SAVE_HIGHT)    
         button_save.clicked.connect(button_save_clicked)
