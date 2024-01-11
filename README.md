@@ -1,5 +1,6 @@
 # QTea Media Player
-- Media player supports multiple playlists at the same time. Inspired by `Winamp` and `VLC media player`.
+- The media player supports multiple playlists at the same time. Inspired by `Winamp` and `VLC media player`. 
+- Ten playlists are available by default. More can be generated.
 
 <div align="left">
     <img src="docs/promo/screenshot_0.png">
@@ -30,7 +31,7 @@
 
 ## Settings
 ### Playlist management
-- Ten playlists are available by default. More can be generated, please see next section.
+- Ten playlists are available by default. To create playlists beyond the default amount, please see next section.
 - In the `Settings window / Playlists` all the available playlists are listed
     - To make a playlist visible:
         - Add a title to the playlist
@@ -39,13 +40,14 @@
     - To hide a playlist:
         - Remove the title of the playlist
         - Playlists without a title will be hidden after restart
+        - At least one of the playlist remains visible - not able to remove all the playlist titles
         - The hidden playlist's records/media information remains in the database
 - Add/remove tracks: the current playlist is saved automatically
 - At statup all playlists loading automatically
     - The last played track's playlist will be active/selected
-    - The last played track will be selected  
+    - The last played track will be selected
 
-## Steps to generate new playlist database / increase the number of playlists beyond the default
+## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Rename the current playlist database: `playlist.db`
 2. In the `src / cons_and_vars.py` file change the `playlist_amount = 10` value to as many playlists you wish, save the file
 3. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created
@@ -56,7 +58,7 @@
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg
 - Not all the listed file types are tested
-- To update, please see the `src / cons_and_vars.py / FILE TYPES` section
+- To update the file types lists, please see the `src / cons_and_vars.py / FILE TYPES` section
     - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button
     - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button
 
