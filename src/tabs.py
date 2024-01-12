@@ -1,3 +1,5 @@
+''' TABS - PLAYLISTS CREATION '''
+
 
 from PyQt6.QtWidgets import QListWidget, QHBoxLayout
 from PyQt6.QtWidgets import QFrame, QTabWidget, QScrollBar

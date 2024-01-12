@@ -6,3 +6,4 @@ from .func_play_coll import *
 from .tabs import *
 from .buttons import *
 from .settings_window import *
+from .message_box import *

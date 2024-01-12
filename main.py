@@ -25,9 +25,6 @@ from src import MySlider, MyVolumeSlider, MySettingsWindow
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
 
-
-left_jump_key_comb = QKeySequence('Ctrl+Left')
-right_jump_key_comb = QKeySequence('Ctrl+Right')
 # TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
 
 """
@@ -58,25 +55,7 @@ class AVPlayer(QWidget):
         self.playlist_visible = True
         self.video_area_visible = True
 
-
-        ''' JUMPS - FULL SCREEN '''
-        self.video_output.medium_jump_forward = QShortcut(right_jump_key_comb, self.video_output)
-        self.video_output.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.video_output.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
-        self.video_output.medium_jump_forward.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
-
-        self.video_output.medium_jump_back = QShortcut(left_jump_key_comb, self.video_output)
-        self.video_output.medium_jump_back.activated.connect(self.medium_jump_back_action)
-        self.video_output.medium_jump_back.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
-
-
-    def medium_jump_back_action(self):
-        self.player.setPosition(self.player.position() - cv.medium_jump)
-
-    def medium_jump_forward_action(self):
-        self.player.setPosition(self.player.position() + cv.medium_jump)
     
-
     ''' FOR FULL SCREEN MODE '''
     def eventFilter(self, source, event):
         to_save_settings = False
@@ -177,20 +156,34 @@ class MyWindow(QWidget):
         self.installEventFilter(self) 
 
         ''' JUMPS - NON FULL SCREEN '''
-        self.medium_jump_forward = QShortcut(right_jump_key_comb, self)
-        self.medium_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
-       
-
-        self.medium_jump_back = QShortcut(left_jump_key_comb, self)
+        self.medium_jump_back = QShortcut(QKeySequence(cv.medium_jump_key_comb_backward), self)
         self.medium_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.medium_jump_back.activated.connect(self.medium_jump_back_action)
+       
+        self.medium_jump_forward = QShortcut(QKeySequence(cv.medium_jump_key_comb_forward), self)
+        self.medium_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
 
+        self.big_jump_back = QShortcut(QKeySequence(cv.big_jump_key_comb_backward), self)
+        self.big_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.big_jump_back.activated.connect(self.big_jump_back_action)
+
+        self.big_jump_forward = QShortcut(QKeySequence(cv.big_jump_key_comb_forward), self)
+        self.big_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.big_jump_forward.activated.connect(self.big_jump_forward_action)
+
+    
     def medium_jump_back_action(self):
         av_player.player.setPosition(av_player.player.position() - cv.medium_jump)
 
     def medium_jump_forward_action(self):
         av_player.player.setPosition(av_player.player.position() + cv.medium_jump)
+
+    def big_jump_back_action(self):
+        av_player.player.setPosition(av_player.player.position() - cv.big_jump)
+
+    def big_jump_forward_action(self):
+        av_player.player.setPosition(av_player.player.position() + cv.big_jump)
 
 
     ''' FOR NON FULL SCREEN MODE '''
