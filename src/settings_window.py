@@ -3,7 +3,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLineEdit,
     QLabel,
-    QTabWidget
+    QTabWidget,
+    QScrollArea
     )
 
 from PyQt6.QtGui import QIcon, QFont
@@ -25,7 +26,7 @@ class MySettingsWindow(QWidget):
         super().__init__()
 
         ''' WINDOW '''
-        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 530
+        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 570
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
@@ -59,12 +60,45 @@ class MySettingsWindow(QWidget):
         tabs.addTab(tab_general, 'General')
         tabs.addTab(tab_hotkey, 'Hotkeys')
 
+        LINE_EDIT_TEXT_ALIGNMENT = (Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        LINE_EDIT_HIGHT = 23
+
+
+        ''' TAB - HOTKEYS '''
+        WIDGET_HOTKEY_POS_X=45
+        widget_hotkey_pos_y=30
+        WIDGET_HOTKEY_POS_Y_DIFF = 70
+        HOTKEY_LABEL_LINE_EDIT_POS_Y_DIFF = 25
+
+        for item in cv.hotkey_settings_dic:
+            item_text = cv.hotkey_settings_dic[item]['text']
+            item_value = cv.hotkey_settings_dic[item]['value']
+
+            item_label = QLabel(tab_hotkey, text=item_text)
+            item_label.setFont(inactive_track_font_style)
+            item_label.move(WIDGET_HOTKEY_POS_X, widget_hotkey_pos_y)
+
+            cv.hotkey_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_hotkey)
+            cv.hotkey_settings_dic[item]['line_edit_widget'].setText(item_value)
+            cv.hotkey_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
+            cv.hotkey_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
+            cv.hotkey_settings_dic[item]['line_edit_widget'].setGeometry(
+                WIDGET_HOTKEY_POS_X + 10,
+                widget_hotkey_pos_y + HOTKEY_LABEL_LINE_EDIT_POS_Y_DIFF,
+                120,
+                LINE_EDIT_HIGHT
+                )
+
+            widget_hotkey_pos_y += WIDGET_HOTKEY_POS_Y_DIFF
+
+
 
         ''' TAB - GENEREAL '''
         WIDGET_GENERAL_POS_X=45
         widget_general_pos_y=30
-        WIDGET_GENERAL_POS_Y_DIFF = 60
+        WIDGET_GENERAL_POS_Y_DIFF = 70
         LABEL_LINE_EDIT_POS_Y_DIFF = 25
+
 
         for item in cv.general_settings_dic:
             item_text = cv.general_settings_dic[item]['text']
@@ -78,12 +112,12 @@ class MySettingsWindow(QWidget):
             cv.general_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_general)
             cv.general_settings_dic[item]['line_edit_widget'].setText(str(int(item_value/1000)))
             cv.general_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
-            cv.general_settings_dic[item]['line_edit_widget'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+            cv.general_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             cv.general_settings_dic[item]['line_edit_widget'].setGeometry(
                 WIDGET_GENERAL_POS_X + 10,
                 widget_general_pos_y + LABEL_LINE_EDIT_POS_Y_DIFF,
-                120,
-                20
+                100,
+                LINE_EDIT_HIGHT
                 )
 
             widget_general_pos_y += WIDGET_GENERAL_POS_Y_DIFF
@@ -124,12 +158,17 @@ class MySettingsWindow(QWidget):
 
             cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             cv.paylist_widget_dic[pl]['line_edit'].setText(settings[pl]['tab_title'])
-            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(WIDGET_PL_POS_X + 20, widget_pl_pos_y, 150, 20)
+            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(
+                WIDGET_PL_POS_X + 20,
+                widget_pl_pos_y,
+                150,
+                LINE_EDIT_HIGHT
+                )
             cv.paylist_widget_dic[pl]['line_edit'].setFont(inactive_track_font_style)
-            cv.paylist_widget_dic[pl]['line_edit'].setAlignment(Qt.AlignmentFlag.AlignCenter)
+            cv.paylist_widget_dic[pl]['line_edit'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
 
             number_counter += 1
-            widget_pl_pos_y += 40
+            widget_pl_pos_y += 45
         
         
 

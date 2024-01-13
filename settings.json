@@ -1,13 +1,21 @@
 {
-  "last_used_tab": 0,
+  "last_used_tab": 3,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.41,
+  "volume": 0.21,
   "skin_selected": "default",
   "general_settings": {
     "small_jump": 3000,
     "medium_jump": 60000,
     "big_jump": 180000
+  },
+  "hotkey_settings": {
+    "small_jump_backward": "Left",
+    "small_jump_forward": "Right",
+    "medium_jump_backward": "Ctrl+Left",
+    "medium_jump_forward": "Ctrl+Right",
+    "big_jump_backward": "Alt+Left",
+    "big_jump_forward": "Alt+Right"
   },
   "skins": {
     "default": {
@@ -24,7 +32,7 @@
   "playlist_0": {
     "tab_title": "Movies",
     "tab_index": 0,
-    "last_track_index": 8
+    "last_track_index": 5
   },
   "playlist_1": {
     "tab_title": "Music",
@@ -39,7 +47,7 @@
   "playlist_3": {
     "tab_title": "04",
     "tab_index": 3,
-    "last_track_index": 0
+    "last_track_index": 4
   },
   "playlist_4": {
     "tab_title": "",

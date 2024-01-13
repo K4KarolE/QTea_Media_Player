@@ -83,10 +83,10 @@ class AVPlayer(QWidget):
                 to_save_settings = True
             
             # JUMP - SMALL
-            elif event.key() == Qt.Key.Key_Left:
-                av_player.player.setPosition(av_player.player.position() - cv.small_jump)
-            elif event.key() == Qt.Key.Key_Right:
-                av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
+            # elif event.key() == Qt.Key.Key_Left:
+            #     av_player.player.setPosition(av_player.player.position() - cv.small_jump)
+            # elif event.key() == Qt.Key.Key_Right:
+            #     av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
           
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
@@ -156,23 +156,36 @@ class MyWindow(QWidget):
         self.installEventFilter(self) 
 
         ''' JUMPS - NON FULL SCREEN '''
-        self.medium_jump_back = QShortcut(QKeySequence(cv.medium_jump_key_comb_backward), self)
+        self.small_jump_back = QShortcut(QKeySequence(cv.small_jump_backward), self)
+        self.small_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.small_jump_back.activated.connect(self.small_jump_back_action)
+       
+        self.small_jump_forward = QShortcut(QKeySequence(cv.small_jump_forward), self)
+        self.small_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.small_jump_forward.activated.connect(self.small_jump_forward_action)
+
+        self.medium_jump_back = QShortcut(QKeySequence(cv.medium_jump_backward), self)
         self.medium_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.medium_jump_back.activated.connect(self.medium_jump_back_action)
        
-        self.medium_jump_forward = QShortcut(QKeySequence(cv.medium_jump_key_comb_forward), self)
+        self.medium_jump_forward = QShortcut(QKeySequence(cv.medium_jump_forward), self)
         self.medium_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
 
-        self.big_jump_back = QShortcut(QKeySequence(cv.big_jump_key_comb_backward), self)
+        self.big_jump_back = QShortcut(QKeySequence(cv.big_jump_backward), self)
         self.big_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.big_jump_back.activated.connect(self.big_jump_back_action)
 
-        self.big_jump_forward = QShortcut(QKeySequence(cv.big_jump_key_comb_forward), self)
+        self.big_jump_forward = QShortcut(QKeySequence(cv.big_jump_forward), self)
         self.big_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.big_jump_forward.activated.connect(self.big_jump_forward_action)
 
-    
+    def small_jump_back_action(self):
+        av_player.player.setPosition(av_player.player.position() - cv.small_jump)
+
+    def small_jump_forward_action(self):
+        av_player.player.setPosition(av_player.player.position() + cv.small_jump)
+
     def medium_jump_back_action(self):
         av_player.player.setPosition(av_player.player.position() - cv.medium_jump)
 
@@ -206,10 +219,10 @@ class MyWindow(QWidget):
                 to_save_settings = True
             
             # JUMP - SMALL
-            elif event.key() == Qt.Key.Key_Left:
-                av_player.player.setPosition(av_player.player.position() - cv.small_jump)
-            elif event.key() == Qt.Key.Key_Right:
-                av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
+            # elif event.key() == Qt.Key.Key_Left:
+            #     av_player.player.setPosition(av_player.player.position() - cv.small_jump)
+            # elif event.key() == Qt.Key.Key_Right:
+            #     av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
    
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:

@@ -70,11 +70,45 @@ class Data:
 
 
     ''' HOTKEYS TAB - SETTINGS WINDOW '''
-    medium_jump_key_comb_backward = 'Ctrl+Left'
-    medium_jump_key_comb_forward = 'Ctrl+Right'
-    big_jump_key_comb_backward = 'Alt+Left'
-    big_jump_key_comb_forward = 'Alt+Right'
+    small_jump_backward = settings['hotkey_settings']['small_jump_backward']
+    small_jump_forward = settings['hotkey_settings']['small_jump_forward']
+    medium_jump_backward = settings['hotkey_settings']['medium_jump_backward']
+    medium_jump_forward = settings['hotkey_settings']['medium_jump_forward']
+    big_jump_backward = settings['hotkey_settings']['big_jump_backward']
+    big_jump_forward = settings['hotkey_settings']['big_jump_forward']
 
+    hotkey_settings_dic = {
+        'small_jump_backward': {
+            'text': 'Small jump backward',
+            'value': small_jump_backward,
+            'line_edit_widget': ''
+        },
+        'small_jump_forward': {
+            'text': 'Small jump forward',
+            'value': small_jump_forward,
+            'line_edit_widget': ''
+        },
+        'medium_jump_backward': {
+            'text': 'Medium jump backward',
+            'value': medium_jump_backward,
+            'line_edit_widget': ''
+        },
+        'medium_jump_forward': {
+            'text': 'Medium jump forward',
+            'value': medium_jump_forward,
+            'line_edit_widget': ''
+        },
+        'big_jump_backward': {
+            'text': 'Big jump backward',
+            'value': big_jump_backward,
+            'line_edit_widget': ''
+        },
+        'big_jump_forward': {
+            'text': 'Big jump forward',
+            'value': big_jump_forward,
+            'line_edit_widget': ''
+        }
+    }
 
     ''' FILE TYPES '''
     '''
@@ -108,7 +142,7 @@ class Data:
             'active_pl_sum_duration': 0
             }
       
-    paylist_list = list(paylist_widget_dic.keys())
+    paylist_list = list(paylist_widget_dic)
 
 
 cv = Data()
