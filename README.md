@@ -1,6 +1,5 @@
 # QTea Media Player
-- The media player supports multiple playlists at the same time. Inspired by `Winamp` and `VLC media player`. 
-- Ten playlists are available by default. More can be generated.
+- The media player supports twenty playlists at the same time. Inspired by `Winamp` and `VLC media player`. 
 
 <div align="left">
     <img src="docs/promo/screenshot_0.png">
@@ -31,8 +30,8 @@
 
 ## Settings
 ### Playlist management
-- Ten playlists are available by default. To create playlists beyond the default amount, please see next section.
-- In the `Settings window / Playlists` all the available playlists are listed
+- Twenty playlists are available by default. To create playlists beyond the default amount, please see next section.
+- In the `Settings window / Playlists` tab all the available playlists are listed
     - To make a playlist visible:
         - Add a title to the playlist
         - If the playlist will be used the first time: empty playlist will be displayed after restart
@@ -43,17 +42,20 @@
         - At least one of the playlist remains visible - not able to remove all the playlist titles
         - The hidden playlist's records/media information remains in the database
 - Add/remove tracks: the current playlist is saved automatically
-- At statup all playlists loading automatically
+- At startup all playlists loading automatically
     - The last played track's playlist will be active/selected
     - The last played track will be selected
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
-1. Rename the current playlist database: `playlist.db`
-2. In the `src / cons_and_vars.py` file change the `playlist_amount = 10` value to as many playlists you wish, save the file
-3. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created
-3. After the next start of the app, all the playlists will be visible with increasing numeric titles
-4. Optional: Change the title of the playlists via the `Settings window / Playlists`
-5. Optional: Remove the previous playlist database
+- The `Settings window` tabs are not scrollable, which put a limitation on how much playlists will be visible on the `Settings window / Playlist` tab
+1. Review how much space the `Settings window` occupies of your screen
+2. Change the `src / settings_window.py / WINDOW_HEIGHT ` value to your screen height
+3. Rename the current playlist database: `playlist.db`
+4. In the `src / cons_and_vars.py` file change the `playlist_amount = 10` value to as many playlists you wish / your screen allows, save the file
+5. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created
+6. After the next start of the app, all the playlists will be visible with increasing numeric titles
+7. Optional: Change the title of the playlists via the `Settings window / Playlists`
+8. Optional: Remove the previous playlist database
 
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg
@@ -61,20 +63,6 @@
 - To update the file types lists, please see the `src / cons_and_vars.py / FILE TYPES` section
     - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button
     - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button
-
-## Planned to add / work in progress:
-- Readme
-- Settings window:
-    - Playlist management
-        - Rename, show, hide playlists
-    - Change keyboard shortcuts via UI
-- Playlist:
-    - Marking tracks - adding tracks to the Play Queue 
-    - Able to move tracks in the playlist
-    - Able to add tracks, folders via grab and drop
-- Playing from the last point of the media
-- Video: able to switch audio track
-- Changing volume via scroll wheel over the video screen
 
 ## Requirements
 ### Python 3 - used: 3.11.5

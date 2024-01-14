@@ -49,6 +49,7 @@ class Data:
     small_jump = settings['general_settings']['small_jump']
     medium_jump = settings['general_settings']['medium_jump']
     big_jump = settings['general_settings']['big_jump']
+    
 
     general_settings_dic = {
         'small_jump': {
@@ -76,6 +77,10 @@ class Data:
     medium_jump_forward = settings['hotkey_settings']['medium_jump_forward']
     big_jump_backward = settings['hotkey_settings']['big_jump_backward']
     big_jump_forward = settings['hotkey_settings']['big_jump_forward']
+    mute = settings['hotkey_settings']['mute']
+    next_track = settings['hotkey_settings']['next_track']
+    previous_track = settings['hotkey_settings']['previous_track']
+
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -107,7 +112,22 @@ class Data:
             'text': 'Big jump forward',
             'value': big_jump_forward,
             'line_edit_widget': ''
-        }
+        },
+        'mute': {
+            'text': 'Mute',
+            'value': mute,
+            'line_edit_widget': ''
+        },
+        'next_track': {
+            'text': 'Play next track',
+            'value': next_track,
+            'line_edit_widget': ''
+        },
+        'previous_track': {
+            'text': 'Play previous track',
+            'value': previous_track,
+            'line_edit_widget': ''
+        },
     }
 
     ''' FILE TYPES '''
@@ -133,7 +153,7 @@ class Data:
     '''
     paylist_widget_dic = {}
 
-    playlist_amount = 10
+    playlist_amount = 20
     for i in range(0, playlist_amount):
         pl_name = f'playlist_{i}'
         paylist_widget_dic[pl_name] = {

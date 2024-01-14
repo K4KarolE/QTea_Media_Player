@@ -3,8 +3,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLineEdit,
     QLabel,
-    QTabWidget,
-    QScrollArea
+    QTabWidget
     )
 
 from PyQt6.QtGui import QIcon, QFont
@@ -26,7 +25,7 @@ class MySettingsWindow(QWidget):
         super().__init__()
 
         ''' WINDOW '''
-        WINDOW_WIDTH, WINDOW_HEIGHT = 250, 570
+        WINDOW_WIDTH, WINDOW_HEIGHT = 400, 630
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
@@ -35,8 +34,7 @@ class MySettingsWindow(QWidget):
         self.setWindowTitle("Settings")
 
 
-        ''' TABS '''
-               
+        ''' TABS '''  
         TABS_POS_X = 10
         TABS_POS_Y = 10
 
@@ -61,14 +59,17 @@ class MySettingsWindow(QWidget):
         tabs.addTab(tab_hotkey, 'Hotkeys')
 
         LINE_EDIT_TEXT_ALIGNMENT = (Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        LINE_EDIT_HIGHT = 23
+
+        LINE_EDIT_HIGHT = 20
+        WIDGETS_POS_X=45
+        WIDGETS_POS_Y=20
+        WIDGETS_NEXT_LINE_POS_Y_DIFF = 25
 
 
         ''' TAB - HOTKEYS '''
-        WIDGET_HOTKEY_POS_X=45
-        widget_hotkey_pos_y=30
-        WIDGET_HOTKEY_POS_Y_DIFF = 70
-        HOTKEY_LABEL_LINE_EDIT_POS_Y_DIFF = 25
+        WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
+        widget_hotkey_pos_y = WIDGETS_POS_Y
+        HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 170
 
         for item in cv.hotkey_settings_dic:
             item_text = cv.hotkey_settings_dic[item]['text']
@@ -83,27 +84,44 @@ class MySettingsWindow(QWidget):
             cv.hotkey_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
             cv.hotkey_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             cv.hotkey_settings_dic[item]['line_edit_widget'].setGeometry(
-                WIDGET_HOTKEY_POS_X + 10,
-                widget_hotkey_pos_y + HOTKEY_LABEL_LINE_EDIT_POS_Y_DIFF,
-                120,
+                WIDGET_HOTKEY_POS_X + HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF,
+                widget_hotkey_pos_y,
+                130,
                 LINE_EDIT_HIGHT
                 )
 
-            widget_hotkey_pos_y += WIDGET_HOTKEY_POS_Y_DIFF
+            widget_hotkey_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
 
+        # def hotkey_fields_validation(pass_validation = True):
+
+        #     ''' DUPLICATE CHECK '''
+        #     hotkeys_list = []
+
+        #     for item in cv.hotkey_settings_dic:
+        #         line_edit_text = cv.hotkey_settings_dic[item]['line_edit_widget'].text().strip()
+        #         hotkeys_list.append(line_edit_text)
+            
+        #     for index, item in enumerate(hotkeys_list):
+        #             for to_compare_index in 
+
+
+        #             pass_validation = False
+        #     if not pass_validation:
+        #         MyMessageBoxError('HOTKEYS TAB', 'The jump values need to be integers!')
+        #         return False
+        #     else:
+        #         return True
 
 
         ''' TAB - GENEREAL '''
-        WIDGET_GENERAL_POS_X=45
-        widget_general_pos_y=30
-        WIDGET_GENERAL_POS_Y_DIFF = 70
-        LABEL_LINE_EDIT_POS_Y_DIFF = 25
+        WIDGET_GENERAL_POS_X = WIDGETS_POS_X
+        widget_general_pos_y = WIDGETS_POS_Y
+        GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
 
 
         for item in cv.general_settings_dic:
             item_text = cv.general_settings_dic[item]['text']
             item_value = cv.general_settings_dic[item]['value']
-            # item_line_edit_widget = cv.general_settings_dic[item]['line_edit_widget']
 
             item_label = QLabel(tab_general, text=item_text)
             item_label.setFont(inactive_track_font_style)
@@ -114,17 +132,17 @@ class MySettingsWindow(QWidget):
             cv.general_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
             cv.general_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             cv.general_settings_dic[item]['line_edit_widget'].setGeometry(
-                WIDGET_GENERAL_POS_X + 10,
-                widget_general_pos_y + LABEL_LINE_EDIT_POS_Y_DIFF,
+                WIDGET_GENERAL_POS_X + GENERAL_LABEL_LINE_EDIT_POS_X_DIFF,
+                widget_general_pos_y,
                 100,
                 LINE_EDIT_HIGHT
                 )
 
-            widget_general_pos_y += WIDGET_GENERAL_POS_Y_DIFF
+            widget_general_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
         
         def general_fields_validation(pass_validation = True):
             for item in cv.general_settings_dic:
-                line_edit_text = cv.general_settings_dic[item]['line_edit_widget'].text()
+                line_edit_text = cv.general_settings_dic[item]['line_edit_widget'].text().strip()
                 if not line_edit_text.isdecimal():
                     pass_validation = False
             if not pass_validation:
@@ -143,32 +161,33 @@ class MySettingsWindow(QWidget):
 
 
         ''' TAB - PLAYLISTS '''
-        WIDGET_PL_POS_X=25
-        widget_pl_pos_y=25
+        WIDGET_PL_POS_X = WIDGETS_POS_X
+        widget_pl_pos_y = WIDGETS_POS_Y
+        PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
         number_counter = 1
 
         for pl in cv.paylist_widget_dic:
-            number = QLabel(tab_playlist, text=f'{number_counter}.')
+            number = QLabel(tab_playlist, text=f'Playlist #{number_counter}')
             number.setFont(inactive_track_font_style)
             
             if number_counter >= 10:
-                number.move(WIDGET_PL_POS_X - 7, widget_pl_pos_y)
+                number.move(WIDGET_PL_POS_X, widget_pl_pos_y)
             else:
                 number.move(WIDGET_PL_POS_X, widget_pl_pos_y)
 
             cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             cv.paylist_widget_dic[pl]['line_edit'].setText(settings[pl]['tab_title'])
-            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(
-                WIDGET_PL_POS_X + 20,
-                widget_pl_pos_y,
-                150,
-                LINE_EDIT_HIGHT
-                )
             cv.paylist_widget_dic[pl]['line_edit'].setFont(inactive_track_font_style)
             cv.paylist_widget_dic[pl]['line_edit'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
+            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(
+                WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF,
+                widget_pl_pos_y,
+                170,
+                LINE_EDIT_HIGHT
+                )
 
             number_counter += 1
-            widget_pl_pos_y += 45
+            widget_pl_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
         
         
 

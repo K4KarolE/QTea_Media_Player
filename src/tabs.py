@@ -79,110 +79,107 @@ class MyTabs(QTabWidget):
                                     "color: black;"   
                                     "}"
                                 )
-        
-
+    ''' LEARNED '''
+    ''' 
+        The last tab added to the TABS widget should not be hidden
+        it will make the right tab selection arrow inactive/unusable to
+        select the un-hidden tabs beyond the visible TABS window
+    '''
     def tabs_creation(self):
-        tabs_index_counter = 0
-        tabs_witout_title_list = []
 
         for pl in cv.paylist_widget_dic:
-                
-            scroll_bar_name_ver = QScrollBar()
-            scroll_bar_name_hor = QScrollBar()
-            scroll_bar_duration_ver = QScrollBar()
-            scroll_bar_duration_hor = QScrollBar()
 
-            scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
-            scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
-
-            scroll_bar_name_ver.setStyleSheet(
-                            "QScrollBar::vertical"
-                                "{"
-                                "width: 0px;"
-                                "}"
-                            )
-            scroll_bar_name_hor.setStyleSheet(
-                            "QScrollBar::horizontal"
-                                "{"
-                                "height: 0px;"
-                                "}"
-                            )
-            
-            scroll_bar_duration_ver.setStyleSheet(
-                            "QScrollBar::vertical"
-                                "{"
-                                "width: 10px;"
-                                "}"               
-                            )
-            
-            scroll_bar_duration_hor.setStyleSheet(
-                            "QScrollBar::horizontal"
-                                "{"
-                                "height: 0px;"
-                                "}"
-                            )
-            
-            '''  LISTS CREATION '''
-            cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
-            name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
-            name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
-            name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
-            # name_list_widget.setAlternatingRowColors(True)
-            name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
-            
-
-            cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
-            duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
-            duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
-            duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
-            # duration_list_widget.setAlternatingRowColors(True)
-            duration_list_widget.setFixedWidth(70)
-            duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
-            
-
-            name_list_widget.itemDoubleClicked.connect(self.play_track)
-            duration_list_widget.itemDoubleClicked.connect(self.play_track)
-            
             tab_title = settings[pl]['tab_title']
+
+            if tab_title:
+                    
+                scroll_bar_name_ver = QScrollBar()
+                scroll_bar_name_hor = QScrollBar()
+                scroll_bar_duration_ver = QScrollBar()
+                scroll_bar_duration_hor = QScrollBar()
+
+                scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
+                scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
+
+                scroll_bar_name_ver.setStyleSheet(
+                                "QScrollBar::vertical"
+                                    "{"
+                                    "width: 0px;"
+                                    "}"
+                                )
+                scroll_bar_name_hor.setStyleSheet(
+                                "QScrollBar::horizontal"
+                                    "{"
+                                    "height: 0px;"
+                                    "}"
+                                )
+                
+                scroll_bar_duration_ver.setStyleSheet(
+                                "QScrollBar::vertical"
+                                    "{"
+                                    "width: 10px;"
+                                    "}"               
+                                )
+                
+                scroll_bar_duration_hor.setStyleSheet(
+                                "QScrollBar::horizontal"
+                                    "{"
+                                    "height: 0px;"
+                                    "}"
+                                )
+                
+                ''' LISTS CREATION '''
+                ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
+                cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
+                name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
+                name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
+                name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
+                # name_list_widget.setAlternatingRowColors(True)
+                name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
+                
+
+                cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
+                duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
+                duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
+                duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
+                # duration_list_widget.setAlternatingRowColors(True)
+                duration_list_widget.setFixedWidth(70)
+                duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
+                
+
+                name_list_widget.itemDoubleClicked.connect(self.play_track)
+                duration_list_widget.itemDoubleClicked.connect(self.play_track)
+                
+                
+                
+
+                layout = QHBoxLayout()
+                layout.setSpacing(0)
+                layout.setContentsMargins(0, 0, 0, 0)
+                layout.addWidget(name_list_widget, 90)
+                layout.addWidget(duration_list_widget, 10)
+
+                frame = QFrame()
+                frame.setStyleSheet(
+                                "QFrame"
+                                    "{"
+                                    "border: 0px;"
+                                    "}"
+                                )
+                frame.setLayout(layout)
+
+                self.addTab(frame, tab_title)
+
+
+                ''' PLAYLIST DB --> LIST WIDGET '''
+                cur.execute("SELECT * FROM {0}".format(pl))
+                playlist = cur.fetchall()
+                for item in playlist:
+                    track_name, duration = generate_track_list_detail(item)
+                    add_new_list_item(track_name, name_list_widget)
+                    add_new_list_item(duration, duration_list_widget)
+                    cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
             
-
-            layout = QHBoxLayout()
-            layout.setSpacing(0)
-            layout.setContentsMargins(0, 0, 0, 0)
-            layout.addWidget(name_list_widget, 90)
-            layout.addWidget(duration_list_widget, 10)
-
-            frame = QFrame()
-            frame.setStyleSheet(
-                            "QFrame"
-                                "{"
-                                "border: 0px;"
-                                "}"
-                            )
-            frame.setLayout(layout)
-
-            self.addTab(frame, tab_title)
-
-
-            ''' PLAYLIST DB --> LIST WIDGET '''
-            cur.execute("SELECT * FROM {0}".format(pl))
-            playlist = cur.fetchall()
-            for item in playlist:
-                track_name, duration = generate_track_list_detail(item)
-                add_new_list_item(track_name, name_list_widget)
-                add_new_list_item(duration, duration_list_widget)
-
-                cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
-            
-
-            ''' LISTING TABS TO HIDE '''
-            if len(tab_title) == 0:
-                tabs_witout_title_list.append(tabs_index_counter)
-            tabs_index_counter += 1
-        
-
-        for index in tabs_witout_title_list:
-            self.setTabVisible(index, False)
-            
+  
         active_utility()
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))

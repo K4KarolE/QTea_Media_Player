@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QSplitter
     )
-from PyQt6.QtCore import Qt, QEvent, QSize
+from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
 
 # AV PLAYER
@@ -25,7 +25,6 @@ from src import MySlider, MyVolumeSlider, MySettingsWindow
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import save_volume_set_slider, generate_duration_to_display
 
-# TODO QGraphicsSceneWheelEvent, QGraphicsScene, QGraphicsView, QGraphicsItem
 
 """
 PLAY EMPTY SOUND WORKAROUND
