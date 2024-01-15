@@ -11,20 +11,22 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
 
-# AV PLAYER
+
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
 
+
 import sys
+import ctypes
 from src import Path
+
 
 from src import cv, inactive_track_font_style
 from src import MySlider, MyVolumeSlider, MySettingsWindow 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
-from src import save_volume_set_slider, generate_duration_to_display
-
+from src import update_and_save_volume_slider_value, generate_duration_to_display
 
 """
 PLAY EMPTY SOUND WORKAROUND
@@ -57,7 +59,7 @@ class AVPlayer(QWidget):
     
     ''' FOR FULL SCREEN MODE '''
     def eventFilter(self, source, event):
-        to_save_settings = False
+        to_update_save = False
 
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
             self.vid_full_screen()
@@ -73,19 +75,18 @@ class AVPlayer(QWidget):
                 
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
-                new_volume = round(av_player.audio_output.volume() + 0.01, 4)
+                cv.volume = cv.volume + 0.01
+                new_volume = round(cv.volume + 0.01, 4)
                 av_player.audio_output.setVolume(new_volume)
-                to_save_settings = True
+                button_speaker_update()
+                to_update_save = True
             elif event.key() == Qt.Key.Key_Minus:
-                new_volume = round(av_player.audio_output.volume() - 0.01, 4)
+                cv.volume = cv.volume - 0.01
+                new_volume = round(cv.volume, 4)
                 av_player.audio_output.setVolume(new_volume)
-                to_save_settings = True
+                button_speaker_update()
+                to_update_save = True
             
-            # JUMP - SMALL
-            # elif event.key() == Qt.Key.Key_Left:
-            #     av_player.player.setPosition(av_player.player.position() - cv.small_jump)
-            # elif event.key() == Qt.Key.Key_Right:
-            #     av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
           
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
@@ -99,8 +100,8 @@ class AVPlayer(QWidget):
             elif event.key() == Qt.Key.Key_B:
                 button_prev_track.button_prev_track_clicked()    
 
-        if to_save_settings:
-            save_volume_set_slider(new_volume, volume_slider)
+        if to_update_save:
+            update_and_save_volume_slider_value(new_volume, volume_slider)
         
         return super().eventFilter(source, event)
 
@@ -111,7 +112,7 @@ class AVPlayer(QWidget):
         else:
             self.video_output.setFullScreen(1)
 
-
+    
     def pause_play_track(self):
         if self.player.isPlaying():
             self.paused = True
@@ -120,10 +121,33 @@ class AVPlayer(QWidget):
         button_play_pause.button_play_pause_clicked()
 
 
+    # SCREEN SAVER SETTINGS UPDATE
+    # src / func_play_coll.py / play_track()
+    # src / buttons / button_play_pause_clicked()
+    # main / button_stop_clicked()    
+    def screen_saver_on_off(self):
+        # SCREEN SAVER OFF
+        if self.video_output.isVisible() and self.player.isPlaying():
+            self.screen_saver_off()
+        # SCREEN SAVER ON
+        else:
+            self.screen_saver_on()
+
+    def screen_saver_on(self):
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
+    
+    def screen_saver_off(self):
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+
+
+
 """ 
     Only used for duration calculation -->
-    Able to add new track(s) without interrupting 
-    the current playing
+    Adding small amount of new record/track:
+        Able to add new tracks without interrupting the current playing
+    Adding big amount of new record/track:
+        Video frame lagging while the new tracks are loading
+        No interruption in the sound
 """
 class TrackDuration(QWidget):
 
@@ -200,7 +224,7 @@ class MyWindow(QWidget):
 
     ''' FOR NON FULL SCREEN MODE '''
     def eventFilter(self, source, event):
-        to_save_settings = False
+        to_update_save = False
 
         if event.type() == QEvent.Type.KeyRelease:
             # PAUSE
@@ -209,19 +233,17 @@ class MyWindow(QWidget):
 
             # VOLUME
             elif event.key() == Qt.Key.Key_Plus:
-                new_volume = round(av_player.audio_output.volume() + 0.01, 4)
+                cv.volume = cv.volume + 0.01
+                new_volume = round(cv.volume, 4)
                 av_player.audio_output.setVolume(new_volume)
-                to_save_settings = True
+                button_speaker_update()
+                to_update_save = True
             elif event.key() == Qt.Key.Key_Minus:
-                new_volume = round(av_player.audio_output.volume() - 0.01, 4)
+                cv.volume = cv.volume - 0.01
+                new_volume = round(cv.volume, 4)
                 av_player.audio_output.setVolume(new_volume)
-                to_save_settings = True
-            
-            # JUMP - SMALL
-            # elif event.key() == Qt.Key.Key_Left:
-            #     av_player.player.setPosition(av_player.player.position() - cv.small_jump)
-            # elif event.key() == Qt.Key.Key_Right:
-            #     av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
+                button_speaker_update()
+                to_update_save = True     
    
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
@@ -235,8 +257,8 @@ class MyWindow(QWidget):
             elif event.key() == Qt.Key.Key_B:
                 button_prev_track.button_prev_track_clicked()    
 
-        if to_save_settings:
-            save_volume_set_slider(new_volume, volume_slider)
+        if to_update_save:
+            update_and_save_volume_slider_value(new_volume, volume_slider)
 
         return super().eventFilter(source, event)
 
@@ -247,6 +269,8 @@ window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
+if cv.always_on_top == 'True':
+    window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
 ''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow()
@@ -445,12 +469,11 @@ button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
 
 ''' BUTTON PLAY SECTION - STOP '''
-
-
 def button_stop_clicked():
     av_player.player.stop()
     av_player.paused = False
     button_play_pause.setIcon(button_image_start)
+    av_player.screen_saver_on()
 
 
 button_stop = MyButtons(
@@ -764,7 +787,15 @@ def button_speaker_clicked():
         cv.is_speaker_muted = True
         button_speaker.setIcon(button_image_speaker_muted)
         av_player.audio_output.setVolume(0)
- 
+
+
+# USED WHEN CHANGING VOLUME WHILE MUTED
+# WITHOUT THE SPEAKER BUTTON - SLIDER, HOTKEYS
+def button_speaker_update():
+    if cv.is_speaker_muted:
+        cv.is_speaker_muted = False
+        button_speaker.setIcon(button_image_speaker)
+
 
 button_speaker = MyButtons(
     'Speaker',
@@ -775,7 +806,7 @@ button_speaker.setFlat(1)
 button_speaker.clicked.connect(button_speaker_clicked)
 
 
-volume_slider = MyVolumeSlider(av_player)
+volume_slider = MyVolumeSlider(av_player, button_speaker_update)
 volume_slider.setFixedSize(100,30)
 
 
@@ -791,7 +822,6 @@ layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
 layout_bottom_volume.addWidget(button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
 layout_bottom_volume.addWidget(volume_slider)
 
-# TODO: settings, add/edit tabs, tabs_playlist.setTabVisible(2, 0)
 
 window.show()
 

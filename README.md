@@ -42,9 +42,9 @@
         - At least one of the playlist remains visible - not able to remove all the playlist titles
         - The hidden playlist's records/media information remains in the database
 - Add/remove tracks: the current playlist is saved automatically
-- At startup all playlists loading automatically
-    - The last played track's playlist will be active/selected
-    - The last played track will be selected
+- At startup:
+    - All playlists loading automatically
+    - The last used tab/playlist is active/displayed
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 - The `Settings window` tabs are not scrollable, which put a limitation on how much playlists will be visible on the `Settings window / Playlist` tab

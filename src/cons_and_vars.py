@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from json import load, dump
+import re
 
 
 def open_json(path_json):
@@ -49,7 +50,7 @@ class Data:
     small_jump = settings['general_settings']['small_jump']
     medium_jump = settings['general_settings']['medium_jump']
     big_jump = settings['general_settings']['big_jump']
-    
+    always_on_top = settings['general_settings']['always_on_top']
 
     general_settings_dic = {
         'small_jump': {
@@ -65,6 +66,11 @@ class Data:
         'big_jump': {
             'text': 'Big jump (second)',
             'value': big_jump,
+            'line_edit_widget': ''
+        },
+        'always_on_top': {
+            'text': 'Always on top',
+            'value': always_on_top,
             'line_edit_widget': ''
         },
     }
@@ -129,6 +135,45 @@ class Data:
             'line_edit_widget': ''
         },
     }
+
+
+    ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
+    ''' More info in the docs / learning / regex_for_hotkey_validation.py '''
+    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Backspace', '[a-zA-Z0-9]']
+
+    # ONE KEY
+    exp_1 = r''
+    for item in keys_list[0:-1]:
+        exp_1 = exp_1 + f'^{item}$|'
+    exp_1 = exp_1 + f'^{keys_list[-1]}$'
+
+    # TWO KEYS
+    exp_2 = r'('
+    for item in keys_list[0:-1]:
+        exp_2 = exp_2 + f'^{item}|'
+    exp_2 = exp_2 + f'^{keys_list[-1]})\+('
+
+    for item in keys_list[0:-1]:
+        exp_2 = exp_2 + f'{item}$|'
+    exp_2 = exp_2 + f'{keys_list[-1]}$)'
+
+    # THREE KEYS
+    exp_3 = r'('
+    for item in keys_list[0:-1]:
+        exp_3 = exp_3 + f'^{item}|'
+    exp_3 = exp_3+ f'^{keys_list[-1]})\+('
+
+    for item in keys_list[0:-1]:
+        exp_3 = exp_3 + f'{item}|'
+    exp_3 = exp_3+ f'{keys_list[-1]})\+('
+
+    for item in keys_list[0:-1]:
+        exp_3 = exp_3 + f'{item}$|'
+    exp_3 = exp_3+ f'{keys_list[-1]}$)'
+
+    search_regex = re.compile(f'{exp_1}|{exp_2}|{exp_3}')
+
+
 
     ''' FILE TYPES '''
     '''

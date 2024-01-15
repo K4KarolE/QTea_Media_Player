@@ -139,7 +139,7 @@ def list_item_style_update(list_item, font_style, font_color, font_bg_color):
         list_item.setBackground(QColor(font_bg_color))
 
 
-def save_volume_set_slider(new_value, slider):
+def update_and_save_volume_slider_value(new_value, slider):
     cv.volum = new_value
     slider.setValue(int(new_value*100))
     settings['volume'] = new_value

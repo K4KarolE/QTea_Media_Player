@@ -1,13 +1,14 @@
 {
-  "last_used_tab": 2,
+  "last_used_tab": 0,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
   "volume": 0.56,
   "skin_selected": "default",
   "general_settings": {
-    "small_jump": 3000,
+    "small_jump": 5000,
     "medium_jump": 60000,
-    "big_jump": 180000
+    "big_jump": 180000,
+    "always_on_top": "True"
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",
@@ -35,12 +36,12 @@
   "playlist_0": {
     "tab_title": "Movies",
     "tab_index": 0,
-    "last_track_index": 5
+    "last_track_index": 100
   },
   "playlist_1": {
     "tab_title": "Music",
     "tab_index": 1,
-    "last_track_index": 0
+    "last_track_index": 7
   },
   "playlist_2": {
     "tab_title": "Temp",

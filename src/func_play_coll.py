@@ -18,6 +18,7 @@ from .func_coll import (
 
 
 class PlaysFunc():
+
     def __init__(self, window, av_player, play_slider, image_logo, playing_track_index):
         self.window = window
         self.av_player = av_player
@@ -25,6 +26,7 @@ class PlaysFunc():
         self.play_slider = play_slider
         self.image_logo = image_logo
         self.playing_track_index = playing_track_index
+    
 
     def play_track(self, playing_track_index=None):
         if playing_track_index == None:
@@ -107,9 +109,11 @@ class PlaysFunc():
             # OUT OF THE VISIBLE WINDOW/LIST
             cv.active_pl_name.scrollToItem(cv.active_pl_name.item(cv.playing_track_index))
 
+            # SCREEN SAVER SETTINGS UPDATE
+            self.av_player.screen_saver_on_off()
+
         except:
             print('ERROR - play_track')
-            # self.play_next_track()
 
 
     def play_next_track(self):

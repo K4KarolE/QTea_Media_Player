@@ -168,7 +168,6 @@ class MyButtons(QPushButton):
                         )
 
 
-
     ''' 
     PLAY SECTION
     '''
@@ -184,19 +183,23 @@ class MyButtons(QPushButton):
             self.av_player.player.pause()
             self.av_player.paused = True
             self.setIcon(button_image_start)
+            self.av_player.screen_saver_on()
         elif self.av_player.paused:
             self.av_player.player.play()
             self.av_player.paused = False
             self.setIcon(button_image_pause)
+            self.av_player.screen_saver_on_off()
         elif not self.av_player.player.isPlaying() and not self.av_player.paused:
             self.play_funcs.play_track()
             self.setIcon(button_image_pause)
+        
     
+    # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
         button_image_pause = QIcon('skins/default/pause.png')
         self.setIcon(button_image_pause)
         self.play_funcs.play_track()
-
+    
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):

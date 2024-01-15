@@ -17,9 +17,7 @@ from .func_coll import inactive_track_font_style
 from .message_box import MyMessageBoxError
 
 
-
 class MySettingsWindow(QWidget):
-    
     
     def __init__(self):
         super().__init__()
@@ -66,19 +64,34 @@ class MySettingsWindow(QWidget):
         WIDGETS_NEXT_LINE_POS_Y_DIFF = 25
 
 
+        def get_dic_values_before_widget_creation(dictionary, item):
+            item_text = dictionary[item]['text']
+            item_value = dictionary[item]['value']
+            return item_text, item_value
+
+        def get_dic_values_after_widget_creation(dictionary, item):
+            item_text = dictionary[item]['text']
+            item_value = dictionary[item]['value']
+            line_edit_text = dictionary[item]['line_edit_widget'].text()
+            line_edit_text = line_edit_text.strip().title()
+            return item_text, item_value, line_edit_text
+        
+
         ''' TAB - HOTKEYS '''
         WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
         widget_hotkey_pos_y = WIDGETS_POS_Y
         HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 170
 
         for item in cv.hotkey_settings_dic:
-            item_text = cv.hotkey_settings_dic[item]['text']
-            item_value = cv.hotkey_settings_dic[item]['value']
 
+            item_text, item_value = get_dic_values_before_widget_creation(cv.hotkey_settings_dic, item)
+
+            ''' LABEL '''
             item_label = QLabel(tab_hotkey, text=item_text)
             item_label.setFont(inactive_track_font_style)
             item_label.move(WIDGET_HOTKEY_POS_X, widget_hotkey_pos_y)
 
+            ''' LINE EDIT '''
             cv.hotkey_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_hotkey)
             cv.hotkey_settings_dic[item]['line_edit_widget'].setText(item_value)
             cv.hotkey_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
@@ -92,25 +105,39 @@ class MySettingsWindow(QWidget):
 
             widget_hotkey_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
 
-        # def hotkey_fields_validation(pass_validation = True):
 
-        #     ''' DUPLICATE CHECK '''
-        #     hotkeys_list = []
-
-        #     for item in cv.hotkey_settings_dic:
-        #         line_edit_text = cv.hotkey_settings_dic[item]['line_edit_widget'].text().strip()
-        #         hotkeys_list.append(line_edit_text)
+        def hotkey_fields_validation(pass_validation = True):
             
-        #     for index, item in enumerate(hotkeys_list):
-        #             for to_compare_index in 
+            ''' EXPRESSION CHECK '''
+            for item in cv.hotkey_settings_dic:
+
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.hotkey_settings_dic, item)
+  
+                search_result = cv.search_regex.search(line_edit_text.title())
+                if not search_result:
+                    MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid!')
+                    pass_validation = False
+
+            return pass_validation  
 
 
-        #             pass_validation = False
-        #     if not pass_validation:
-        #         MyMessageBoxError('HOTKEYS TAB', 'The jump values need to be integers!')
-        #         return False
-        #     else:
-        #         return True
+            ''' DUPLICATE CHECK '''
+            # hotkeys_list = []
+
+            # for item in cv.hotkey_settings_dic:
+            #     line_edit_text = cv.hotkey_settings_dic[item]['line_edit_widget'].text().strip()
+            #     hotkeys_list.append(line_edit_text)
+            
+            # for index, item in enumerate(hotkeys_list):
+            #         for to_compare_index in 
+
+
+            #         pass_validation = False
+            # if not pass_validation:
+            #     MyMessageBoxError('HOTKEYS TAB', 'The jump values need to be integers!')
+            #     return False
+            # else:
+            #     return True
 
 
         ''' TAB - GENEREAL '''
@@ -120,15 +147,24 @@ class MySettingsWindow(QWidget):
 
 
         for item in cv.general_settings_dic:
-            item_text = cv.general_settings_dic[item]['text']
-            item_value = cv.general_settings_dic[item]['value']
 
+            item_text, item_value = get_dic_values_before_widget_creation(cv.general_settings_dic, item)
+
+            ''' LABEL '''
             item_label = QLabel(tab_general, text=item_text)
             item_label.setFont(inactive_track_font_style)
             item_label.move(WIDGET_GENERAL_POS_X, widget_general_pos_y)
 
+            ''' LINE EDIT '''
             cv.general_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_general)
-            cv.general_settings_dic[item]['line_edit_widget'].setText(str(int(item_value/1000)))
+            
+            # JUMP VALUES
+            if 'jump' in item_text:
+                cv.general_settings_dic[item]['line_edit_widget'].setText(str(int(item_value/1000)))
+            # OTHER VALUES    
+            else:
+                cv.general_settings_dic[item]['line_edit_widget'].setText(str(item_value))
+
             cv.general_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
             cv.general_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             cv.general_settings_dic[item]['line_edit_widget'].setGeometry(
@@ -140,22 +176,40 @@ class MySettingsWindow(QWidget):
 
             widget_general_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
         
+
         def general_fields_validation(pass_validation = True):
             for item in cv.general_settings_dic:
-                line_edit_text = cv.general_settings_dic[item]['line_edit_widget'].text().strip()
-                if not line_edit_text.isdecimal():
-                    pass_validation = False
-            if not pass_validation:
-                MyMessageBoxError('GENERAL TAB', 'The jump values need to be integers!')
-                return False
-            else:
-                return True
+
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
+
+                if 'jump' in item_text:
+                    if not line_edit_text.isdecimal():
+                        MyMessageBoxError('GENERAL TAB', 'The jump values need to be integers!')
+                        pass_validation = False
+                        
+                elif 'Always on top' in item_text:
+                    if line_edit_text not in ['True', 'False']:
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False"!')
+                        pass_validation = False
+            
+            return pass_validation
         
+
         def general_fields_to_save(to_save = False):
             for item in cv.general_settings_dic:
-                if settings['general_settings'][item] != int(cv.general_settings_dic[item]['line_edit_widget'].text())*1000:
-                    settings['general_settings'][item] = int(cv.general_settings_dic[item]['line_edit_widget'].text())*1000
-                    to_save = True
+
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
+
+                if 'jump' in item_text:
+                    if item_value != int(line_edit_text)*1000:
+                        settings['general_settings'][item] = int(line_edit_text)*1000
+                        to_save = True
+
+                elif 'Always on top' in item_text:
+                    if item_value != line_edit_text:
+                        settings['general_settings'][item] = line_edit_text
+                        to_save = True
+
             return to_save
             
 
@@ -167,6 +221,8 @@ class MySettingsWindow(QWidget):
         number_counter = 1
 
         for pl in cv.paylist_widget_dic:
+
+            ''' LABEL '''
             number = QLabel(tab_playlist, text=f'Playlist #{number_counter}')
             number.setFont(inactive_track_font_style)
             
@@ -175,6 +231,7 @@ class MySettingsWindow(QWidget):
             else:
                 number.move(WIDGET_PL_POS_X, widget_pl_pos_y)
 
+            ''' LINE EDIT '''
             cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             cv.paylist_widget_dic[pl]['line_edit'].setText(settings[pl]['tab_title'])
             cv.paylist_widget_dic[pl]['line_edit'].setFont(inactive_track_font_style)
@@ -214,7 +271,7 @@ class MySettingsWindow(QWidget):
                 
             pl_list_with_title = is_at_least_one_playlist_title_kept()
             
-            if pl_list_with_title and general_fields_validation():
+            if pl_list_with_title and general_fields_validation() and hotkey_fields_validation():
 
                 ''' GENERAL TAB FIELDS '''
                 to_save = general_fields_to_save()

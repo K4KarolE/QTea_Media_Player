@@ -2,9 +2,12 @@ from PyQt6.QtWidgets import QSlider, QStyle
 from PyQt6.QtCore import Qt
 
 from .cons_and_vars import cv
-from .func_coll import save_volume_set_slider
+from .func_coll import update_and_save_volume_slider_value
+
+
 
 class MySlider(QSlider):
+
     def __init__(self, av_player):
         super().__init__()
         self.av_player = av_player
@@ -48,6 +51,7 @@ class MySlider(QSlider):
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
         self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
      
+     
     def mouseMoveEvent(self, event):
         # JUMP TO POINTER POSITION WHILE MOVING
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
@@ -57,9 +61,11 @@ class MySlider(QSlider):
 
 
 class MyVolumeSlider(QSlider):
-    def __init__(self, av_player):
+
+    def __init__(self, av_player, button_speaker_update):
         super().__init__()
         self.av_player = av_player
+        self.button_speaker_update = button_speaker_update
 
         self.setMinimum(0)
         self.setMaximum(100)
@@ -98,12 +104,15 @@ class MyVolumeSlider(QSlider):
         slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(slider_value)
         self.av_player.audio_output.setVolume(slider_value/100)
-        save_volume_set_slider(slider_value/100, self)
+        update_and_save_volume_slider_value(slider_value/100, self)
+        self.button_speaker_update()
+
 
     def mouseMoveEvent(self, event):
         # JUMP TO POINTER POSITION WHILE MOVING
         slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(slider_value)
         self.av_player.audio_output.setVolume(slider_value/100)
-        save_volume_set_slider(slider_value/100, self)
+        update_and_save_volume_slider_value(slider_value/100, self)
+        self.button_speaker_update()
 
