@@ -109,42 +109,49 @@ class MySettingsWindow(QWidget):
         def hotkey_fields_validation(pass_validation = True):
             
             ''' EXPRESSION CHECK '''
+            line_edit_text_all_values = []
+
             for item in cv.hotkey_settings_dic:
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.hotkey_settings_dic, item)
-  
+
+                line_edit_text_all_values.append(line_edit_text)
+
                 search_result = cv.search_regex.search(line_edit_text.title())
                 if not search_result:
                     MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid!')
                     pass_validation = False
 
-            return pass_validation  
-
-
+             
             ''' DUPLICATE CHECK '''
-            # hotkeys_list = []
+            if pass_validation:
+                for index, item in enumerate(line_edit_text_all_values):
+                    for index_2, item_2 in enumerate(line_edit_text_all_values[(index+1):]):
+                        if item == item_2:
+                            MyMessageBoxError('HOTKEYS TAB', f'The "{item}" hotkey value used more than once!')
+                            pass_validation = False
 
-            # for item in cv.hotkey_settings_dic:
-            #     line_edit_text = cv.hotkey_settings_dic[item]['line_edit_widget'].text().strip()
-            #     hotkeys_list.append(line_edit_text)
+            return pass_validation 
+        
+
+        def hotkeys_fields_to_save(to_save = False):
             
-            # for index, item in enumerate(hotkeys_list):
-            #         for to_compare_index in 
+            for item in cv.hotkey_settings_dic:
 
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.hotkey_settings_dic, item)
 
-            #         pass_validation = False
-            # if not pass_validation:
-            #     MyMessageBoxError('HOTKEYS TAB', 'The jump values need to be integers!')
-            #     return False
-            # else:
-            #     return True
+                if item_value != line_edit_text:
+                    settings['hotkey_settings'][item] = line_edit_text
+                    to_save = True
+                    
+            if to_save:
+                save_json(settings, PATH_JSON_SETTINGS)
 
 
         ''' TAB - GENEREAL '''
         WIDGET_GENERAL_POS_X = WIDGETS_POS_X
         widget_general_pos_y = WIDGETS_POS_Y
         GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
-
 
         for item in cv.general_settings_dic:
 
@@ -210,16 +217,20 @@ class MySettingsWindow(QWidget):
                         settings['general_settings'][item] = line_edit_text
                         to_save = True
 
-            return to_save
+            if to_save:
+                save_json(settings, PATH_JSON_SETTINGS)
             
 
 
         ''' TAB - PLAYLISTS '''
+        ''' VALUE SAVING IN button_save_clicked()'''
         WIDGET_PL_POS_X = WIDGETS_POS_X
         widget_pl_pos_y = WIDGETS_POS_Y
         PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
         number_counter = 1
 
+        # AT GENERAL AND HOTKEYS TAB THE LOWEST DIC. KAY-VALUE PAIR WERE ITERATED
+        # AT PLAYLIST IT IS THE TOP / PLAYLIST TITLES
         for pl in cv.paylist_widget_dic:
 
             ''' LABEL '''
@@ -245,7 +256,7 @@ class MySettingsWindow(QWidget):
 
             number_counter += 1
             widget_pl_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
-        
+
         
 
         ''' BUTTON - SAVE'''
@@ -272,9 +283,13 @@ class MySettingsWindow(QWidget):
             pl_list_with_title = is_at_least_one_playlist_title_kept()
             
             if pl_list_with_title and general_fields_validation() and hotkey_fields_validation():
+                
+                ''' GENERAL TAB FIELDS '''
+                hotkeys_fields_to_save()
 
                 ''' GENERAL TAB FIELDS '''
-                to_save = general_fields_to_save()
+                general_fields_to_save()
+
 
                 ''' PAYLISTS TAB FIELDS '''
                 for pl in cv.paylist_widget_dic:
@@ -284,11 +299,13 @@ class MySettingsWindow(QWidget):
                         settings[pl]['tab_title'] = playlist_title
                         to_save = True
 
-                ''' IF THE LAST USED TAB/PLAYLIST REMOVED '''
+                ''' 
+                    IF THE LAST USED TAB/PLAYLIST REMOVED 
+                    AT NEXT START THE NEW LAST TAB WILL ACTIVE / DISPLAYED
+                '''
                 if  len(settings[cv.paylist_list[cv.active_tab]]['tab_title']) == 0:
                     cv.active_tab = settings[pl_list_with_title[-1]]['tab_index']
                     settings['last_used_tab'] = cv.active_tab
-                    to_save = True
 
                 if to_save:
                     save_json(settings, PATH_JSON_SETTINGS)

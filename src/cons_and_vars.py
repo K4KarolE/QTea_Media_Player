@@ -22,29 +22,36 @@ settings = open_json(PATH_JSON_SETTINGS)
 
 @dataclass
 class Data:
+
+    ''' SUPPORTING VARIABLES '''
     skin_selected = settings['skin_selected']
-
-    icon_size = 20
-
-    active_tab = settings['last_used_tab']
     repeat_playlist = settings['repeat_playlist']
     shuffle_playlist_on = settings['shuffle_playlist_on']
     volume = settings['volume']
-    
-    active_db_table = None  
-    active_playlist = None  # widget
-    active_pl_duration = None # widget
-    active_pl_sum_duration = 0
-    last_track_index = 0
+    icon_size = 20  # used for the buttons
     playing_track_index = 0
-
+    is_speaker_muted = False
+    
+    '''
+    ACTIVE UTILITY VALUES
+    src / func_coll.py / active_utility()
+    Updated after every playlist/tab change
+    '''
+    active_tab = settings['last_used_tab']
+    last_track_index = 0
+    active_db_table = None  
+    active_pl_name = None   # widget
+    active_pl_duration = None   # widget
+    active_pl_sum_duration = 0
+    
+    ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
     track_full_duration = 0
     track_full_duration_to_display = 0
+
+    ''' DISPLAYED DURATION COUNT DOWN TYPES '''
     is_duration_to_display_straight = True
     duration_to_display_straight = 0
     duration_to_display_back = 0
-
-    is_speaker_muted = False
 
     ''' GENERAL TAB - SETTINGS WINDOW '''
     small_jump = settings['general_settings']['small_jump']

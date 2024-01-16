@@ -36,7 +36,7 @@ class PlaysFunc():
         try:  
            # FONT STYLE - PREV/NEW TRACK
             if cv.playing_track_index != None:
-
+                
                 try:
                     ''' PREVIOUS TRACK STYLE'''
                     list_item_style_update(
@@ -54,7 +54,7 @@ class PlaysFunc():
                     )
 
                 except:
-                    print(f'ERROR in row: {cv.last_track_index}\n\n')
+                    print(f'ERROR in row: {cv.last_track_index}\n')
              
             cv.last_track_index = cv.playing_track_index
           
@@ -83,8 +83,8 @@ class PlaysFunc():
             self.play_slider.setMaximum(cv.track_full_duration)
             # PLAYER
             ''' 
-                Why showing the previous vid's last 
-                frame in a vid-audio-vid(here) sequence? 
+                Why showing the previous vid's last frame in the
+                play vid - play just audio - play vid(prev. vid's frame here) sequence? 
                 
                 Tried:
                     - stop player before hiding
@@ -113,7 +113,7 @@ class PlaysFunc():
             self.av_player.screen_saver_on_off()
 
         except:
-            print('ERROR - play_track')
+            print('ERROR - play_track\n')
 
 
     def play_next_track(self):

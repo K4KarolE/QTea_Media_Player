@@ -92,13 +92,6 @@ class AVPlayer(QWidget):
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
 
-            # PLAY NEXT
-            elif event.key() == Qt.Key.Key_N:
-                button_next_track.button_next_track_clicked()
-
-            # PLAY PREVIOUS
-            elif event.key() == Qt.Key.Key_B:
-                button_prev_track.button_prev_track_clicked()    
 
         if to_update_save:
             update_and_save_volume_slider_value(new_volume, volume_slider)
@@ -203,6 +196,15 @@ class MyWindow(QWidget):
         self.big_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.big_jump_forward.activated.connect(self.big_jump_forward_action)
 
+        self.next_track = QShortcut(QKeySequence(cv.next_track), self)
+        self.next_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.next_track.activated.connect(self.play_next_track_action)
+
+        self.prev_track = QShortcut(QKeySequence(cv.previous_track), self)
+        self.prev_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.prev_track.activated.connect(self.play_prev_track_action)
+
+
     def small_jump_back_action(self):
         av_player.player.setPosition(av_player.player.position() - cv.small_jump)
 
@@ -220,6 +222,12 @@ class MyWindow(QWidget):
 
     def big_jump_forward_action(self):
         av_player.player.setPosition(av_player.player.position() + cv.big_jump)
+
+    def play_next_track_action(self):
+        button_next_track.button_next_track_clicked()
+    
+    def play_prev_track_action(self):
+        button_prev_track.button_prev_track_clicked()
 
 
     ''' FOR NON FULL SCREEN MODE '''
@@ -248,10 +256,6 @@ class MyWindow(QWidget):
             # SPEAKER MUTED TOOGLE
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
-
-            # PLAY NEXT
-            elif event.key() == Qt.Key.Key_N:
-                button_next_track.button_next_track_clicked()
 
             # PLAY PREVIOUS
             elif event.key() == Qt.Key.Key_B:
@@ -557,7 +561,7 @@ def button_toggle_playlist_clicked():
 
 button_toggle_playlist = MyButtons(
     'Shuffle PL',
-    'Toggle Shuffle Playlist',
+    'Toggle Show Playlists',
     icon = button_image_toggle_playlist
     )
 button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -582,7 +586,7 @@ def button_toggle_video_clicked():
 
 button_toggle_video = MyButtons(
     'Shuffle PL',
-    'Toggle Shuffle Playlist',
+    'Toggle Show Video Window',
     icon = button_image_toggle_vid
     )
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)

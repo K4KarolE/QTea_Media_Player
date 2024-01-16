@@ -29,7 +29,12 @@
     - Adjust the player's jump values (work in progress)
 
 ## Settings
-### Playlist management
+- Click on `Save button`:
+    - Saves all the values from all the tabs if there is no invalid value
+    - Else: pop-up window displayed with the error message for all the invalid scenarios
+        - The tab's name with the invalid field value is displyed in the pop-up window title
+
+### Playlists
 - Twenty playlists are available by default. To create playlists beyond the default amount, please see next section.
 - In the `Settings window / Playlists` tab all the available playlists are listed
     - To make a playlist visible:
@@ -40,11 +45,23 @@
         - Remove the title of the playlist
         - Playlists without a title will be hidden after restart
         - At least one of the playlist remains visible - not able to remove all the playlist titles
+            - In this case clicking on the `Save button`: pop-up window will be displayed with the error message
         - The hidden playlist's records/media information remains in the database
 - Add/remove tracks: the current playlist is saved automatically
 - At startup:
     - All playlists loading automatically
     - The last used tab/playlist is active/displayed
+
+### General and Hotkeys
+- Behave as usual, like in other media players
+
+## App behavior
+- Changing the volume after the app is muted:
+    - It switches back to the un-muted state
+    - The volume = volume before muted -/+ the change
+- The volume range is less wide compare to `VLC media player`
+- When video window is displayed and video is playing the screen saver is turned off
+    - Otherwise the screen saver is on as usual
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 - The `Settings window` tabs are not scrollable, which put a limitation on how much playlists will be visible on the `Settings window / Playlist` tab

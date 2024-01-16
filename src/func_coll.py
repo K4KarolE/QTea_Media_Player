@@ -21,7 +21,7 @@ def active_utility():
     # LIST WIDGETS
     cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
-    # STR
+    # PLAYLIST DURATION
     cv.active_pl_sum_duration = cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
 
 def save_last_track_index():

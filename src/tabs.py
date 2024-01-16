@@ -30,9 +30,9 @@ class MyTabs(QTabWidget):
             __.currentChanged.connect(self.active_tab)
             SIGNAL AT THE TABS CREATION
         '''
+        self.play_track = play_track
         self.duration_sum_widg = duration_sum_widg
         self.tabs_created_at_first_run = False
-        self.play_track = play_track
         self.setFont(QFont('Times', 10, 500))
         self.tabs_creation()
         self.setCurrentIndex(cv.active_tab)
