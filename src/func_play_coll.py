@@ -100,10 +100,11 @@ class PlaysFunc():
                 self.av_player.video_output.show()
             
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+            cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
             self.av_player.player.play()
             
             # WINDOW TITLE
-            self.window.setWindowTitle(f'{Path(track_path).stem} - QTea media player')
+            self.window.setWindowTitle(f'{cv.active_playlist_title} | {Path(track_path).stem} - QTea media player')
 
             # SCROLL TO PLAYING TRACK IF IT WOULD BE
             # OUT OF THE VISIBLE WINDOW/LIST
@@ -152,5 +153,10 @@ class PlaysFunc():
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
                 self.play_next_track()
         else:
-            self.av_player.base_played = True    
+            self.av_player.base_played = True
+
+
+    def audio_tracks_play_next_one(self):
+        cv.audio_track_played = (cv.audio_track_played + 1) % cv.audio_tracks_amount
+        self.av_player.player.setActiveAudioTrack(cv.audio_track_played)
            

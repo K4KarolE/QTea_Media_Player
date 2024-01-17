@@ -31,6 +31,8 @@ class Data:
     icon_size = 20  # used for the buttons
     playing_track_index = 0
     is_speaker_muted = False
+    audio_tracks_amount = 0
+    audio_track_played = 0
     
     '''
     ACTIVE UTILITY VALUES
@@ -38,6 +40,7 @@ class Data:
     Updated after every playlist/tab change
     '''
     active_tab = settings['last_used_tab']
+    active_playlist_title = None
     last_track_index = 0
     active_db_table = None  
     active_pl_name = None   # widget
@@ -90,7 +93,11 @@ class Data:
     medium_jump_forward = settings['hotkey_settings']['medium_jump_forward']
     big_jump_backward = settings['hotkey_settings']['big_jump_backward']
     big_jump_forward = settings['hotkey_settings']['big_jump_forward']
-    mute = settings['hotkey_settings']['mute']
+    volume_mute = settings['hotkey_settings']['volume_mute']
+    volume_up = settings['hotkey_settings']['volume_up']
+    volume_down = settings['hotkey_settings']['volume_down']
+    audio_tracks_rotate = settings['hotkey_settings']['audio_tracks_rotate']
+    play_pause = settings['hotkey_settings']['play_pause']
     next_track = settings['hotkey_settings']['next_track']
     previous_track = settings['hotkey_settings']['previous_track']
 
@@ -126,14 +133,29 @@ class Data:
             'value': big_jump_forward,
             'line_edit_widget': ''
         },
-        'mute': {
-            'text': 'Mute',
-            'value': mute,
+        'volume_mute': {
+            'text': 'Volume - Mute',
+            'value': volume_mute,
             'line_edit_widget': ''
         },
-        'next_track': {
-            'text': 'Play next track',
-            'value': next_track,
+        'volume_up': {
+            'text': 'Volume - Increase',
+            'value': volume_up,
+            'line_edit_widget': ''
+        },
+        'volume_down': {
+            'text': 'Volume - Decrease',
+            'value': volume_down,
+            'line_edit_widget': ''
+        },
+        'audio_tracks_rotate': {
+            'text': 'Audio track - use next',
+            'value': audio_tracks_rotate,
+            'line_edit_widget': ''
+        },
+        'play_pause': {
+            'text': 'Play / pause',
+            'value': play_pause,
             'line_edit_widget': ''
         },
         'previous_track': {
@@ -141,12 +163,17 @@ class Data:
             'value': previous_track,
             'line_edit_widget': ''
         },
+        'next_track': {
+            'text': 'Play next track',
+            'value': next_track,
+            'line_edit_widget': ''
+        }
     }
 
 
     ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
     ''' More info in the docs / learning / regex_for_hotkey_validation.py '''
-    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Backspace', '[a-zA-Z0-9]']
+    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
 
     # ONE KEY
     exp_1 = r''

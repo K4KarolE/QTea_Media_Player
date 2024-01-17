@@ -17,16 +17,16 @@ from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
 
-
 import sys
 import ctypes
 from src import Path
-
 
 from src import cv, inactive_track_font_style
 from src import MySlider, MyVolumeSlider, MySettingsWindow 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import update_and_save_volume_slider_value, generate_duration_to_display
+
+
 
 """
 PLAY EMPTY SOUND WORKAROUND
@@ -59,43 +59,16 @@ class AVPlayer(QWidget):
     
     ''' FOR FULL SCREEN MODE '''
     def eventFilter(self, source, event):
-        to_update_save = False
 
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
             self.vid_full_screen()
 
         if event.type() == QEvent.Type.KeyRelease:
-            # PAUSE
-            if event.key() == Qt.Key.Key_Space:
-                button_play_pause.button_play_pause_clicked()
 
             # EXIT FULL SCREEN
-            elif event.key() == Qt.Key.Key_Escape:
+            if event.key() == Qt.Key.Key_Escape:
                 self.video_output.setFullScreen(0)
                 
-            # VOLUME
-            elif event.key() == Qt.Key.Key_Plus:
-                cv.volume = cv.volume + 0.01
-                new_volume = round(cv.volume + 0.01, 4)
-                av_player.audio_output.setVolume(new_volume)
-                button_speaker_update()
-                to_update_save = True
-            elif event.key() == Qt.Key.Key_Minus:
-                cv.volume = cv.volume - 0.01
-                new_volume = round(cv.volume, 4)
-                av_player.audio_output.setVolume(new_volume)
-                button_speaker_update()
-                to_update_save = True
-            
-          
-            # SPEAKER MUTED TOOGLE
-            elif event.key() == Qt.Key.Key_M:
-                button_speaker_clicked()
-
-
-        if to_update_save:
-            update_and_save_volume_slider_value(new_volume, volume_slider)
-        
         return super().eventFilter(source, event)
 
 
@@ -169,9 +142,7 @@ class MyWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.installEventFilter(self) 
 
-        ''' JUMPS - NON FULL SCREEN '''
         self.small_jump_back = QShortcut(QKeySequence(cv.small_jump_backward), self)
         self.small_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.small_jump_back.activated.connect(self.small_jump_back_action)
@@ -196,13 +167,33 @@ class MyWindow(QWidget):
         self.big_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.big_jump_forward.activated.connect(self.big_jump_forward_action)
 
-        self.next_track = QShortcut(QKeySequence(cv.next_track), self)
-        self.next_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.next_track.activated.connect(self.play_next_track_action)
+        self.play_pause = QShortcut(QKeySequence(cv.play_pause), self)
+        self.play_pause.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.play_pause.activated.connect(self.play_pause_action)
 
         self.prev_track = QShortcut(QKeySequence(cv.previous_track), self)
         self.prev_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
         self.prev_track.activated.connect(self.play_prev_track_action)
+
+        self.next_track = QShortcut(QKeySequence(cv.next_track), self)
+        self.next_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.next_track.activated.connect(self.play_next_track_action)
+
+        self.volume_mute = QShortcut(QKeySequence(cv.volume_mute), self)
+        self.volume_mute.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.volume_mute.activated.connect(self.volume_mute_action)
+
+        self.volume_up = QShortcut(QKeySequence(cv.volume_up), self)
+        self.volume_up.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.volume_up.activated.connect(self.volume_up_action)
+
+        self.volume_down = QShortcut(QKeySequence(cv.volume_down), self)
+        self.volume_down.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.volume_down.activated.connect(self.volume_down_action)
+
+        self.audio_tracks_rotate = QShortcut(QKeySequence(cv.audio_tracks_rotate), self)
+        self.audio_tracks_rotate.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self.audio_tracks_rotate.activated.connect(self.audio_tracks_rotate_action)
 
 
     def small_jump_back_action(self):
@@ -223,48 +214,42 @@ class MyWindow(QWidget):
     def big_jump_forward_action(self):
         av_player.player.setPosition(av_player.player.position() + cv.big_jump)
 
-    def play_next_track_action(self):
-        button_next_track.button_next_track_clicked()
-    
+    def play_pause_action(self):
+        button_play_pause.button_play_pause_clicked()
+
     def play_prev_track_action(self):
         button_prev_track.button_prev_track_clicked()
+    
+    def play_next_track_action(self):
+        button_next_track.button_next_track_clicked()
+
+    def volume_mute_action(self):
+        button_speaker_clicked()
+
+    def volume_up_action(self):
+        if cv.volume < 1:
+            cv.volume = cv.volume + 0.01
+            if cv.volume > 1:
+                cv.volume = 1
+            self.volume_update()
+    
+    def volume_down_action(self):
+        if cv.volume > 0:
+            cv.volume = cv.volume - 0.01
+            if cv.volume < 0:
+                cv.volume = 0
+            self.volume_update()
+
+    def volume_update(self):
+        new_volume = round(cv.volume, 4)
+        av_player.audio_output.setVolume(new_volume)
+        button_speaker_update()
+        update_and_save_volume_slider_value(new_volume, volume_slider)
 
 
-    ''' FOR NON FULL SCREEN MODE '''
-    def eventFilter(self, source, event):
-        to_update_save = False
+    def audio_tracks_rotate_action(self):
+        play_funcs.audio_tracks_play_next_one()
 
-        if event.type() == QEvent.Type.KeyRelease:
-            # PAUSE
-            if event.key() == Qt.Key.Key_Space:
-                button_play_pause.button_play_pause_clicked()
-
-            # VOLUME
-            elif event.key() == Qt.Key.Key_Plus:
-                cv.volume = cv.volume + 0.01
-                new_volume = round(cv.volume, 4)
-                av_player.audio_output.setVolume(new_volume)
-                button_speaker_update()
-                to_update_save = True
-            elif event.key() == Qt.Key.Key_Minus:
-                cv.volume = cv.volume - 0.01
-                new_volume = round(cv.volume, 4)
-                av_player.audio_output.setVolume(new_volume)
-                button_speaker_update()
-                to_update_save = True     
-   
-            # SPEAKER MUTED TOOGLE
-            elif event.key() == Qt.Key.Key_M:
-                button_speaker_clicked()
-
-            # PLAY PREVIOUS
-            elif event.key() == Qt.Key.Key_B:
-                button_prev_track.button_prev_track_clicked()    
-
-        if to_update_save:
-            update_and_save_volume_slider_value(new_volume, volume_slider)
-
-        return super().eventFilter(source, event)
 
 
 window = MyWindow()
@@ -306,11 +291,8 @@ av_player.player.positionChanged.connect(update_duration_info)
 
 
 """ 
-    av_player_duration
-    -------------------
-    only used for duration calculation -->
-    able to add new track(s) without interrupting 
-    the playing (av_player)
+    Only used for duration calculation
+    more info @ class definition (main.py)
 """
 av_player_duration = TrackDuration()   
 
@@ -423,6 +405,11 @@ button_settings.setGeometry(button_x_pos(4), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDT
 button_settings.clicked.connect(button_settings_clicked)
 button_settings.set_style_settings_button()
 
+
+''' 
+    PLAYLIST BUTTONS LIST
+    used to add widgets to the layout
+'''
 playlist_buttons_list = [
     button_add_track,
     button_add_dir,
@@ -431,7 +418,10 @@ playlist_buttons_list = [
     button_settings
                     ]
 
-''' 
+
+
+
+'''
     PLAY SECTION
 '''
 PLAY_BUTTONS_WIDTH = 32
@@ -615,6 +605,12 @@ button_duration_info.move(play_buttons_x_pos(9.5), 0)
 button_duration_info.clicked.connect(button_duration_info_clicked)
 button_duration_info.set_style_duration_info_button()
 
+
+''' 
+    PLAY BUTTONS LIST
+    without the speaker/mute button
+    used to add widgets to the layout
+'''
 play_buttons_list = [
     button_play_pause,
     button_stop,
@@ -627,6 +623,41 @@ play_buttons_list = [
     button_duration_info
 ]
 
+
+
+''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
+button_image_speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
+button_image_speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
+
+
+def button_speaker_clicked():
+
+    if cv.is_speaker_muted:
+        cv.is_speaker_muted = False
+        button_speaker.setIcon(button_image_speaker)
+        av_player.audio_output.setVolume(cv.volume)
+
+    else:
+        cv.is_speaker_muted = True
+        button_speaker.setIcon(button_image_speaker_muted)
+        av_player.audio_output.setVolume(0)
+
+
+# USED WHEN CHANGING VOLUME WHILE MUTED
+# WITHOUT THE SPEAKER BUTTON - SLIDER, HOTKEYS
+def button_speaker_update():
+    if cv.is_speaker_muted:
+        cv.is_speaker_muted = False
+        button_speaker.setIcon(button_image_speaker)
+
+
+button_speaker = MyButtons(
+    'Speaker',
+    'Toggle Mute',
+    icon = button_image_speaker
+    )
+button_speaker.setFlat(1)
+button_speaker.clicked.connect(button_speaker_clicked)
 
 
 
@@ -776,43 +807,9 @@ layout_bottom_wrapper.addLayout(layout_bottom_buttons, 80)
 layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
 
 # WIDGETS
-button_image_speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
-button_image_speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
-
-
-def button_speaker_clicked():
-
-    if cv.is_speaker_muted:
-        cv.is_speaker_muted = False
-        button_speaker.setIcon(button_image_speaker)
-        av_player.audio_output.setVolume(cv.volume)
-
-    else:
-        cv.is_speaker_muted = True
-        button_speaker.setIcon(button_image_speaker_muted)
-        av_player.audio_output.setVolume(0)
-
-
-# USED WHEN CHANGING VOLUME WHILE MUTED
-# WITHOUT THE SPEAKER BUTTON - SLIDER, HOTKEYS
-def button_speaker_update():
-    if cv.is_speaker_muted:
-        cv.is_speaker_muted = False
-        button_speaker.setIcon(button_image_speaker)
-
-
-button_speaker = MyButtons(
-    'Speaker',
-    'Toggle Mute',
-    icon = button_image_speaker
-    )
-button_speaker.setFlat(1)
-button_speaker.clicked.connect(button_speaker_clicked)
-
-
+# SPEAKER/MUTE BUTTON CREATED EARLIER
 volume_slider = MyVolumeSlider(av_player, button_speaker_update)
 volume_slider.setFixedSize(100,30)
-
 
 
 # BUTTONS WRAPPER

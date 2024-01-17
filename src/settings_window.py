@@ -1,3 +1,8 @@
+''' 
+    Settings window displayed once the settings button
+    (cog icon) clicked under the playlists section
+'''
+
 from PyQt6.QtWidgets import (
     QWidget,
     QPushButton,
@@ -22,7 +27,11 @@ class MySettingsWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        ''' WINDOW '''
+        '''
+        ##############
+            WINDOW          
+        ##############
+        '''
         WINDOW_WIDTH, WINDOW_HEIGHT = 400, 630
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
@@ -32,7 +41,11 @@ class MySettingsWindow(QWidget):
         self.setWindowTitle("Settings")
 
 
-        ''' TABS '''  
+        '''
+        ############
+            TABS         
+        ############
+        ''' 
         TABS_POS_X = 10
         TABS_POS_Y = 10
 
@@ -77,7 +90,12 @@ class MySettingsWindow(QWidget):
             return item_text, item_value, line_edit_text
         
 
-        ''' TAB - HOTKEYS '''
+        
+        '''
+        ######################
+            TAB - HOTKEYS          
+        ######################
+        '''
         WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
         widget_hotkey_pos_y = WIDGETS_POS_Y
         HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 170
@@ -93,10 +111,12 @@ class MySettingsWindow(QWidget):
 
             ''' LINE EDIT '''
             cv.hotkey_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_hotkey)
-            cv.hotkey_settings_dic[item]['line_edit_widget'].setText(item_value)
-            cv.hotkey_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
-            cv.hotkey_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
-            cv.hotkey_settings_dic[item]['line_edit_widget'].setGeometry(
+            line_edit_widget = cv.hotkey_settings_dic[item]['line_edit_widget']
+
+            line_edit_widget.setText(item_value)
+            line_edit_widget.setFont(inactive_track_font_style)
+            line_edit_widget.setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
+            line_edit_widget.setGeometry(
                 WIDGET_HOTKEY_POS_X + HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_hotkey_pos_y,
                 130,
@@ -148,7 +168,12 @@ class MySettingsWindow(QWidget):
                 save_json(settings, PATH_JSON_SETTINGS)
 
 
-        ''' TAB - GENEREAL '''
+        
+        '''
+        ######################
+            TAB - GENEREAL          
+        ######################
+        '''
         WIDGET_GENERAL_POS_X = WIDGETS_POS_X
         widget_general_pos_y = WIDGETS_POS_Y
         GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
@@ -164,17 +189,18 @@ class MySettingsWindow(QWidget):
 
             ''' LINE EDIT '''
             cv.general_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_general)
+            line_edit_widget = cv.general_settings_dic[item]['line_edit_widget']
             
             # JUMP VALUES
             if 'jump' in item_text:
-                cv.general_settings_dic[item]['line_edit_widget'].setText(str(int(item_value/1000)))
+                line_edit_widget.setText(str(int(item_value/1000)))
             # OTHER VALUES    
             else:
-                cv.general_settings_dic[item]['line_edit_widget'].setText(str(item_value))
+                line_edit_widget.setText(str(item_value))
 
-            cv.general_settings_dic[item]['line_edit_widget'].setFont(inactive_track_font_style)
-            cv.general_settings_dic[item]['line_edit_widget'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
-            cv.general_settings_dic[item]['line_edit_widget'].setGeometry(
+            line_edit_widget.setFont(inactive_track_font_style)
+            line_edit_widget.setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
+            line_edit_widget.setGeometry(
                 WIDGET_GENERAL_POS_X + GENERAL_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_general_pos_y,
                 100,
@@ -244,10 +270,12 @@ class MySettingsWindow(QWidget):
 
             ''' LINE EDIT '''
             cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
-            cv.paylist_widget_dic[pl]['line_edit'].setText(settings[pl]['tab_title'])
-            cv.paylist_widget_dic[pl]['line_edit'].setFont(inactive_track_font_style)
-            cv.paylist_widget_dic[pl]['line_edit'].setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
-            cv.paylist_widget_dic[pl]['line_edit'].setGeometry(
+            line_edit_widget = cv.paylist_widget_dic[pl]['line_edit']
+
+            line_edit_widget.setText(settings[pl]['tab_title'])
+            line_edit_widget.setFont(inactive_track_font_style)
+            line_edit_widget.setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
+            line_edit_widget.setGeometry(
                 WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_pl_pos_y,
                 170,
@@ -259,7 +287,11 @@ class MySettingsWindow(QWidget):
 
         
 
-        ''' BUTTON - SAVE'''
+        '''
+        ####################
+            BUTTON - SAVE      
+        ####################
+        '''
         BUTTON_SAVE_WIDTH = 50
         BUTTON_SAVE_HIGHT = 25
         BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
@@ -273,9 +305,7 @@ class MySettingsWindow(QWidget):
                     pl_list_with_title.append(pl)
             if len(pl_list_with_title) == 0:
                 MyMessageBoxError('PAYLISTS TAB', 'At least one playlist title needed!')
-                return pl_list_with_title
-            else:
-                return pl_list_with_title
+            return pl_list_with_title
 
     
         def button_save_clicked(to_save = False):
@@ -300,8 +330,8 @@ class MySettingsWindow(QWidget):
                         to_save = True
 
                 ''' 
-                    IF THE LAST USED TAB/PLAYLIST REMOVED 
-                    AT NEXT START THE NEW LAST TAB WILL ACTIVE / DISPLAYED
+                    If the last used tab/playlist removed 
+                    at next start the new last tab will active / displayed
                 '''
                 if  len(settings[cv.paylist_list[cv.active_tab]]['tab_title']) == 0:
                     cv.active_tab = settings[pl_list_with_title[-1]]['tab_index']

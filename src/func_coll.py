@@ -14,15 +14,14 @@ active_track_font_style = QFont('Arial', 11, 600)
 
 
 def active_utility():
-    # playlist_1, playlist_2, ..
-    cv.active_db_table = cv.paylist_list[cv.active_tab]
-    # LAST TRACK 
+    cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
+    cv.active_playlist_title = settings[cv.active_db_table]['tab_title']
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
+    cv.active_pl_sum_duration = cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
     # LIST WIDGETS
     cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
-    # PLAYLIST DURATION
-    cv.active_pl_sum_duration = cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
+
 
 def save_last_track_index():
     settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
@@ -140,7 +139,7 @@ def list_item_style_update(list_item, font_style, font_color, font_bg_color):
 
 
 def update_and_save_volume_slider_value(new_value, slider):
-    cv.volum = new_value
+    cv.volume = new_value
     slider.setValue(int(new_value*100))
     settings['volume'] = new_value
     save_json(settings, PATH_JSON_SETTINGS)
