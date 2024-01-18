@@ -6,11 +6,12 @@ import random
 from .cons_and_vars import cv
 
 from .func_coll import (
-    save_last_track_index,
+    save_playing_last_track_index,
     get_path_db,
     get_duration_db,
     list_item_style_update,
     generate_duration_to_display,
+    playing_tab_utility,
     Path,
     inactive_track_font_style,  
     active_track_font_style
@@ -29,56 +30,66 @@ class PlaysFunc():
     
 
     def play_track(self, playing_track_index=None):
-        if playing_track_index == None:
-            playing_track_index = cv.active_pl_name.currentRow()
-            cv.playing_track_index = cv.active_pl_name.currentRow()
+        
+        if playing_track_index == None: # track double-clicked in playlist
+            cv.playing_tab = cv.active_tab
+            playing_tab_utility()
 
-        try:  
-           # FONT STYLE - PREV/NEW TRACK
-            if cv.playing_track_index != None:
-                
-                try:
-                    ''' PREVIOUS TRACK STYLE'''
-                    list_item_style_update(
-                        cv.active_pl_name.item(cv.last_track_index),
-                        inactive_track_font_style,
-                        'black',
-                        'white'
-                    )
+            if cv.playing_pl_name.count() > 0:
+                if cv.playing_pl_name.currentRow() > -1: # When row selected
+                    cv.playing_track_index = cv.playing_pl_name.currentRow()
+                else:
+                    cv.playing_track_index = 0
+            else:   # empry playlist
+                return
+        
+        else:   # play next/prev buttons
+            cv.playing_track_index = playing_track_index
 
-                    list_item_style_update(
-                        cv.active_pl_duration.item(cv.last_track_index),
-                        inactive_track_font_style,
-                        'black',
-                        'white'
-                    )
+        try:
 
-                except:
-                    print(f'ERROR in row: {cv.last_track_index}\n')
+            try:
+                ''' PREVIOUS TRACK STYLE'''
+                list_item_style_update(
+                    cv.playing_pl_name.item(cv.playing_last_track_index),
+                    inactive_track_font_style,
+                    'black',
+                    'white'
+                )
+
+                list_item_style_update(
+                    cv.playing_pl_duration.item(cv.playing_last_track_index),
+                    inactive_track_font_style,
+                    'black',
+                    'white'
+                )
+
+            except:
+                print(f'ERROR in row: {cv.playing_last_track_index}\n')
              
-            cv.last_track_index = cv.playing_track_index
+            cv.playing_last_track_index = cv.playing_track_index
+            save_playing_last_track_index()
           
       
             ''' NEW TRACK STYLE'''
             list_item_style_update(
-                cv.active_pl_name.item(playing_track_index), 
+                cv.playing_pl_name.item(cv.playing_track_index), 
                 active_track_font_style,
                 'white',
                 '#287DCC'
                 )
 
             list_item_style_update(
-                cv.active_pl_duration.item(playing_track_index),
+                cv.playing_pl_duration.item(cv.playing_track_index),
                 active_track_font_style,
                 'white',
                 '#287DCC'
                 )
 
-            save_last_track_index()
             
             # PATH / DURATION / SLIDER
-            track_path = get_path_db(playing_track_index)
-            cv.track_full_duration = get_duration_db(playing_track_index)
+            track_path = get_path_db(cv.playing_track_index, cv.playing_db_table)
+            cv.track_full_duration = get_duration_db(cv.playing_track_index, cv.playing_db_table)
             cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
             self.play_slider.setMaximum(cv.track_full_duration)
             # PLAYER
@@ -101,14 +112,15 @@ class PlaysFunc():
             
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
             cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
+            cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
             self.av_player.player.play()
             
             # WINDOW TITLE
-            self.window.setWindowTitle(f'{cv.active_playlist_title} | {Path(track_path).stem} - QTea media player')
+            self.window.setWindowTitle(f'{cv.playing_playlist_title} | {Path(track_path).stem} - QTea media player')
 
             # SCROLL TO PLAYING TRACK IF IT WOULD BE
             # OUT OF THE VISIBLE WINDOW/LIST
-            cv.active_pl_name.scrollToItem(cv.active_pl_name.item(cv.playing_track_index))
+            cv.playing_pl_name.scrollToItem(cv.playing_pl_name.item(cv.playing_track_index))
 
             # SCREEN SAVER SETTINGS UPDATE
             self.av_player.screen_saver_on_off()
@@ -119,33 +131,33 @@ class PlaysFunc():
 
     def play_next_track(self):
 
-        if cv.playing_track_index == None:
-            cv.playing_track_index = cv.active_pl_name.currentRow()
-        # SHUFFLE
-        elif cv.shuffle_playlist_on and cv.active_pl_name.count() > 1:
-            next_track_index = list(range(0, cv.active_pl_name.count()))
-            next_track_index.pop(cv.playing_track_index)
-            next_track_index = random.choice(next_track_index)
-            cv.playing_track_index = next_track_index
-            self.play_track(next_track_index)
-        # REPEAT SINGLE TRACK - NO BUTTON CLICK    
-        elif (cv.repeat_playlist == 0 and 
-            self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia):
-                self.av_player.player.setPosition(0)
-                self.av_player.player.play()
-        # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
-        elif (cv.active_pl_name.count() != cv.playing_track_index + 1 and 
-              cv.repeat_playlist in [0,1,2]):
-            cv.playing_track_index += 1
-            self.play_track(cv.playing_track_index)
-        # REPEAT PLAYLIST    
-        elif (cv.active_pl_name.count() == cv.playing_track_index + 1 and
-            cv.repeat_playlist == 2):
-                cv.playing_track_index = 0
+        if cv.playing_pl_name.count() > 0:
+
+            # SHUFFLE
+            if cv.shuffle_playlist_on and cv.playing_pl_name.count() > 1:
+                next_track_index = list(range(0, cv.playing_pl_name.count()))
+                next_track_index.pop(cv.playing_track_index)
+                next_track_index = random.choice(next_track_index)
+                cv.playing_track_index = next_track_index
+                self.play_track(next_track_index)
+            # REPEAT SINGLE TRACK - NO BUTTON CLICK    
+            elif (cv.repeat_playlist == 0 and 
+                self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia):
+                    self.av_player.player.setPosition(0)
+                    self.av_player.player.play()
+            # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
+            elif (cv.playing_pl_name.count() != cv.playing_track_index + 1 and 
+                cv.repeat_playlist in [0,1,2]):
+                cv.playing_track_index += 1
                 self.play_track(cv.playing_track_index)
-        # CURRENT TRACK BACK TO START         
-        else:
-            self.av_player.player.setPosition(0)
+            # REPEAT PLAYLIST    
+            elif (cv.playing_pl_name.count() == cv.playing_track_index + 1 and
+                cv.repeat_playlist == 2):
+                    cv.playing_track_index = 0
+                    self.play_track(cv.playing_track_index)
+            # CURRENT TRACK BACK TO START         
+            else:
+                self.av_player.player.setPosition(0)
 
 
     def auto_play_next_track(self):
@@ -157,6 +169,15 @@ class PlaysFunc():
 
 
     def audio_tracks_play_next_one(self):
-        cv.audio_track_played = (cv.audio_track_played + 1) % cv.audio_tracks_amount
-        self.av_player.player.setActiveAudioTrack(cv.audio_track_played)
+        if cv.audio_tracks_amount:
+            cv.audio_track_played = (cv.audio_track_played + 1) % cv.audio_tracks_amount
+            self.av_player.player.setActiveAudioTrack(cv.audio_track_played)
+    
+
+    def subtitle_tracks_play_next_one(self):
+        if cv.subtitle_tracks_amount:
+            sub_list = [n for n in range(cv.subtitle_tracks_amount)]
+            sub_list.append(-1) # -1: disable subtitle
+            cv.subtitle_track_played = sub_list[cv.subtitle_track_played + 1]
+            self.av_player.player.setActiveSubtitleTrack(cv.subtitle_track_played)
            

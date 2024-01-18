@@ -13,7 +13,7 @@ inactive_track_font_style = QFont('Arial', 11, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
-def active_utility():
+def active_tab_utility():
     cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
     cv.active_playlist_title = settings[cv.active_db_table]['tab_title']
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
@@ -23,8 +23,17 @@ def active_utility():
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
 
 
-def save_last_track_index():
-    settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
+def playing_tab_utility():
+    cv.playing_db_table = cv.paylist_list[cv.playing_tab] # playlist_1, playlist_2, ..
+    cv.playing_playlist_title = settings[cv.playing_db_table]['tab_title']
+    cv.playing_last_track_index = settings[cv.playing_db_table]['last_track_index']
+    # LIST WIDGETS
+    cv.playing_pl_name = cv.paylist_widget_dic[cv.playing_db_table]['name_list_widget']
+    cv.playing_pl_duration = cv.paylist_widget_dic[cv.playing_db_table]['duration_list_widget']
+
+
+def save_playing_last_track_index():
+    settings[cv.playing_db_table]['last_track_index'] = cv.playing_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
 
@@ -44,13 +53,13 @@ def get_row_id_db(path):
     # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
 
 
-def get_path_db(playing_track_index):
-    return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
+def get_path_db(playing_track_index, db_table):
+    return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
                         (playing_track_index + 1,)).fetchall()[0][2]
 
 
-def get_duration_db(playing_track_index):
-    return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(cv.active_db_table),
+def get_duration_db(playing_track_index, db_table):
+    return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
                            (playing_track_index + 1,)).fetchall()[0][1])
 
 
@@ -85,7 +94,7 @@ def generate_duration_to_display(raw_duration):
         else:
             duration = f'{minutes}:{seconds}'
     except:
-        duration = 'ERROR'
+        print('ERROR - generate_duration_to_display(raw_duration)')
 
     return duration
 
@@ -146,6 +155,6 @@ def update_and_save_volume_slider_value(new_value, slider):
 
 
 def update_duration_sum_var_after_track_remove():
-    raw_duration = get_duration_db(cv.active_pl_name.currentRow())
+    raw_duration = get_duration_db(cv.active_pl_name.currentRow(), cv.active_db_table)
     cv.active_pl_sum_duration -= raw_duration
     cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration

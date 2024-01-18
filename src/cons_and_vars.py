@@ -33,10 +33,18 @@ class Data:
     is_speaker_muted = False
     audio_tracks_amount = 0
     audio_track_played = 0
+    subtitle_tracks_amount = 0
+    subtitle_track_played = 0
+    window_size_normal = True   # for window_size_toggle
     
+
+    ''' 
+    ACTIVE AND PLAYING PLAYLISTS/TABS SEPARATION
+    More informaration in the README
     '''
-    ACTIVE UTILITY VALUES
-    src / func_coll.py / active_utility()
+    '''
+    ACTIVE TAB UTILITY VALUES
+    src / func_coll.py / active_tab_utility()
     Updated after every playlist/tab change
     '''
     active_tab = settings['last_used_tab']
@@ -46,6 +54,18 @@ class Data:
     active_pl_name = None   # widget
     active_pl_duration = None   # widget
     active_pl_sum_duration = 0
+
+    '''
+    PLAYING TAB UTILITY VALUES
+    src / func_coll.py / playing_tab_utility()
+    '''
+    playing_tab = 0
+    playing_playlist_title = None
+    playing_last_track_index = 0
+    playing_db_table = None  
+    playing_pl_name = None   # widget
+    playing_pl_duration = None   # widget
+
     
     ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
     track_full_duration = 0
@@ -61,6 +81,14 @@ class Data:
     medium_jump = settings['general_settings']['medium_jump']
     big_jump = settings['general_settings']['big_jump']
     always_on_top = settings['general_settings']['always_on_top']
+    window_width = settings['general_settings']['window_width']
+    window_height = settings['general_settings']['window_height']
+    window_alt_width = settings['general_settings']['window_alt_width']
+    window_alt_height = settings['general_settings']['window_alt_height']
+
+    window_min_width = settings['general_settings']['window_min_width']
+    window_min_height = settings['general_settings']['window_min_height']
+
 
     general_settings_dic = {
         'small_jump': {
@@ -83,6 +111,26 @@ class Data:
             'value': always_on_top,
             'line_edit_widget': ''
         },
+        'window_width': {
+            'text': 'Window width',
+            'value': window_width,
+            'line_edit_widget': ''
+        },
+        'window_height': {
+            'text': 'Window height',
+            'value': window_height,
+            'line_edit_widget': ''
+        },
+        'window_alt_width': {
+            'text': 'Window alt. width',
+            'value': window_alt_width,
+            'line_edit_widget': ''
+        },
+        'window_alt_height': {
+            'text': 'Window alt. height',
+            'value': window_alt_height,
+            'line_edit_widget': ''
+        },
     }
 
 
@@ -97,10 +145,15 @@ class Data:
     volume_up = settings['hotkey_settings']['volume_up']
     volume_down = settings['hotkey_settings']['volume_down']
     audio_tracks_rotate = settings['hotkey_settings']['audio_tracks_rotate']
+    subtitle_tracks_rotate = settings['hotkey_settings']['subtitle_tracks_rotate']
     play_pause = settings['hotkey_settings']['play_pause']
     next_track = settings['hotkey_settings']['next_track']
     previous_track = settings['hotkey_settings']['previous_track']
-
+    repeat_track_playlist_toggle = settings['hotkey_settings']['repeat_track_playlist_toggle']
+    shuffle_playlist_toggle = settings['hotkey_settings']['shuffle_playlist_toggle']
+    full_screen_toggle = settings['hotkey_settings']['full_screen_toggle']
+    playlist_toggle = settings['hotkey_settings']['playlist_toggle']
+    window_size_toggle = settings['hotkey_settings']['window_size_toggle']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -153,6 +206,11 @@ class Data:
             'value': audio_tracks_rotate,
             'line_edit_widget': ''
         },
+        'subtitle_tracks_rotate': {
+            'text': 'Subtitle track - use next',
+            'value': subtitle_tracks_rotate,
+            'line_edit_widget': ''
+        },
         'play_pause': {
             'text': 'Play / pause',
             'value': play_pause,
@@ -167,8 +225,35 @@ class Data:
             'text': 'Play next track',
             'value': next_track,
             'line_edit_widget': ''
+        },
+        'repeat_track_playlist_toggle': {
+            'text': 'Toogle - Repeat',
+            'value': repeat_track_playlist_toggle,
+            'line_edit_widget': ''
+        },
+        'shuffle_playlist_toggle': {
+            'text': 'Toogle - Shuffle',
+            'value': shuffle_playlist_toggle,
+            'line_edit_widget': ''
+        },
+        'playlist_toggle': {
+            'text': 'Toogle - Visible Playlist',
+            'value': playlist_toggle,
+            'line_edit_widget': ''
+        },
+        'full_screen_toggle': {
+            'text': 'Toogle - Full screen',
+            'value': full_screen_toggle,
+            'line_edit_widget': ''
+        },
+        'window_size_toggle': {
+            'text': 'Toogle - Window alt. size',
+            'value': window_size_toggle,
+            'line_edit_widget': ''
         }
     }
+
+    hotkeys_list = list(hotkey_settings_dic)
 
 
     ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''

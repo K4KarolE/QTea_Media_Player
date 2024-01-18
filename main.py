@@ -61,7 +61,7 @@ class AVPlayer(QWidget):
     def eventFilter(self, source, event):
 
         if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
-            self.vid_full_screen()
+            self.full_screen_toggle()
 
         if event.type() == QEvent.Type.KeyRelease:
 
@@ -72,19 +72,12 @@ class AVPlayer(QWidget):
         return super().eventFilter(source, event)
 
 
-    def vid_full_screen(self):
-        if self.video_output.isFullScreen():
-            self.video_output.setFullScreen(0)
-        else:
-            self.video_output.setFullScreen(1)
-
-    
-    def pause_play_track(self):
-        if self.player.isPlaying():
-            self.paused = True
-        else:
-            self.paused = False
-        button_play_pause.button_play_pause_clicked()
+    def full_screen_toggle(self):
+        if self.video_output.isVisible():
+            if self.video_output.isFullScreen():
+                self.video_output.setFullScreen(0)
+            else:
+                self.video_output.setFullScreen(1)
 
 
     # SCREEN SAVER SETTINGS UPDATE
@@ -134,8 +127,8 @@ app = QApplication(sys.argv)
 
 
 ''' WINDOW '''
-WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
-WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
+# WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
+# WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
 WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 180
 
 class MyWindow(QWidget):
@@ -143,59 +136,35 @@ class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.small_jump_back = QShortcut(QKeySequence(cv.small_jump_backward), self)
-        self.small_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.small_jump_back.activated.connect(self.small_jump_back_action)
-       
-        self.small_jump_forward = QShortcut(QKeySequence(cv.small_jump_forward), self)
-        self.small_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.small_jump_forward.activated.connect(self.small_jump_forward_action)
+        hotkeys_action_dic = {
+        'small_jump_backward': self.small_jump_back_action,
+        'small_jump_forward': self.small_jump_forward_action,
+        'medium_jump_backward': self.medium_jump_back_action,
+        'medium_jump_forward': self.medium_jump_forward_action,
+        'big_jump_backward': self.big_jump_back_action,
+        'big_jump_forward': self.big_jump_forward_action,
+        'volume_mute': self.volume_mute_action,
+        'volume_up': self.volume_up_action,
+        'volume_down': self.volume_down_action,
+        'audio_tracks_rotate': self.audio_tracks_rotate_action,
+        'subtitle_tracks_rotate': self.subtitle_tracks_rotate_action,
+        'play_pause': self.play_pause_action,
+        'previous_track': self.play_prev_track_action,
+        'next_track': self.play_next_track_action,
+        'repeat_track_playlist_toggle': self.repeat_track_playlist_toggle_action,
+        'shuffle_playlist_toggle': self.shuffle_playlist_toggle_action,
+        'full_screen_toggle': self.full_screen_toggle_action,
+        'playlist_toggle': self.playlist_toggle_action,
+        'window_size_toggle': self.window_size_toggle_action,
+        }
 
-        self.medium_jump_back = QShortcut(QKeySequence(cv.medium_jump_backward), self)
-        self.medium_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.medium_jump_back.activated.connect(self.medium_jump_back_action)
-       
-        self.medium_jump_forward = QShortcut(QKeySequence(cv.medium_jump_forward), self)
-        self.medium_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.medium_jump_forward.activated.connect(self.medium_jump_forward_action)
-
-        self.big_jump_back = QShortcut(QKeySequence(cv.big_jump_backward), self)
-        self.big_jump_back.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.big_jump_back.activated.connect(self.big_jump_back_action)
-
-        self.big_jump_forward = QShortcut(QKeySequence(cv.big_jump_forward), self)
-        self.big_jump_forward.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.big_jump_forward.activated.connect(self.big_jump_forward_action)
-
-        self.play_pause = QShortcut(QKeySequence(cv.play_pause), self)
-        self.play_pause.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.play_pause.activated.connect(self.play_pause_action)
-
-        self.prev_track = QShortcut(QKeySequence(cv.previous_track), self)
-        self.prev_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.prev_track.activated.connect(self.play_prev_track_action)
-
-        self.next_track = QShortcut(QKeySequence(cv.next_track), self)
-        self.next_track.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.next_track.activated.connect(self.play_next_track_action)
-
-        self.volume_mute = QShortcut(QKeySequence(cv.volume_mute), self)
-        self.volume_mute.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.volume_mute.activated.connect(self.volume_mute_action)
-
-        self.volume_up = QShortcut(QKeySequence(cv.volume_up), self)
-        self.volume_up.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.volume_up.activated.connect(self.volume_up_action)
-
-        self.volume_down = QShortcut(QKeySequence(cv.volume_down), self)
-        self.volume_down.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.volume_down.activated.connect(self.volume_down_action)
-
-        self.audio_tracks_rotate = QShortcut(QKeySequence(cv.audio_tracks_rotate), self)
-        self.audio_tracks_rotate.setContext(Qt.ShortcutContext.ApplicationShortcut)
-        self.audio_tracks_rotate.activated.connect(self.audio_tracks_rotate_action)
-
-
+        for index, hotkey in enumerate(cv.hotkeys_list):
+            hotkey_value = cv.hotkey_settings_dic[hotkey]['value']
+            hotkey = QShortcut(QKeySequence(hotkey_value), self)
+            hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
+            hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+    
+   
     def small_jump_back_action(self):
         av_player.player.setPosition(av_player.player.position() - cv.small_jump)
 
@@ -228,14 +197,14 @@ class MyWindow(QWidget):
 
     def volume_up_action(self):
         if cv.volume < 1:
-            cv.volume = cv.volume + 0.01
+            cv.volume = cv.volume + 0.05
             if cv.volume > 1:
                 cv.volume = 1
             self.volume_update()
     
     def volume_down_action(self):
         if cv.volume > 0:
-            cv.volume = cv.volume - 0.01
+            cv.volume = cv.volume - 0.05
             if cv.volume < 0:
                 cv.volume = 0
             self.volume_update()
@@ -246,16 +215,39 @@ class MyWindow(QWidget):
         button_speaker_update()
         update_and_save_volume_slider_value(new_volume, volume_slider)
 
-
     def audio_tracks_rotate_action(self):
         play_funcs.audio_tracks_play_next_one()
+    
+    def subtitle_tracks_rotate_action(self):
+        play_funcs.subtitle_tracks_play_next_one()
+    
+    def full_screen_toggle_action(self):
+        av_player.full_screen_toggle()
+
+    def repeat_track_playlist_toggle_action(self):
+        button_toggle_repeat_pl.button_toggle_repeat_pl_clicked()
+
+    def shuffle_playlist_toggle_action(self):
+        button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked()
+    
+    def playlist_toggle_action(self):
+        button_toggle_playlist_clicked()
+
+    def window_size_toggle_action(self):
+        button_toggle_playlist_clicked()
+        if cv.window_size_normal:
+            cv.window_size_normal = False
+            self.resize(cv.window_alt_width, cv.window_alt_height)
+        else:
+            cv.window_size_normal = True
+            self.resize(cv.window_width, cv.window_height)
 
 
 
 window = MyWindow()
 
-window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
+window.resize(cv.window_width, cv.window_height)
+window.setMinimumSize(cv.window_min_width, cv.window_min_height)
 window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
 window.setWindowTitle("QTea media player")
 if cv.always_on_top == 'True':
@@ -268,24 +260,23 @@ window_settings = MySettingsWindow()
 av_player = AVPlayer()
 
 def update_duration_info():
+
     if av_player.base_played:
 
         track_current_duration = av_player.player.position()
 
-        if (track_current_duration % 1000 > 900 or track_current_duration % 1000 == 0 and 
-            cv.track_full_duration_to_display):
+        cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
+        cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
 
-            cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
-            cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
+        if cv.is_duration_to_display_straight:
+            button_duration_info.setText(cv.duration_to_display_straight)
+        
+        else:
+            button_duration_info.setText(cv.duration_to_display_back)
 
-            if cv.is_duration_to_display_straight:
-                button_duration_info.setText(cv.duration_to_display_straight)
-          
-            else:
-                button_duration_info.setText(cv.duration_to_display_back)
-
-            button_duration_info.adjustSize()
-
+        button_duration_info.adjustSize()
+    
+        cv.prev_track_current_duration = track_current_duration
 
 av_player.player.positionChanged.connect(update_duration_info)
 
@@ -564,12 +555,12 @@ def button_toggle_video_clicked():
     if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_left_qframe.hide()
         av_player.video_area_visible = False
-        window.resize(int(WINDOW_WIDTH/3), window.geometry().height())
+        window.resize(int(cv.window_width/3), window.geometry().height())
         window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
         button_toggle_playlist.setDisabled(1)
     else:
-        window.resize(WINDOW_WIDTH, window.geometry().height())
-        window.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
+        window.resize(cv.window_width, window.geometry().height())
+        window.setMinimumSize(cv.window_min_width, cv.window_min_height)
         layout_vert_left_qframe.show()
         av_player.video_area_visible = True
         button_toggle_playlist.setDisabled(0)
@@ -725,7 +716,7 @@ layout_vert_right = QVBoxLayout() # here layout type is not relevant
 layout_vert_right.setContentsMargins(5, 0, 4, 0)
 layout_vert_right_qframe = QFrame()
 layout_vert_right_qframe.setLayout(layout_vert_right)
-layout_vert_right_qframe.setMinimumWidth(WINDOW_MIN_WIDTH-200)
+layout_vert_right_qframe.setMinimumWidth(cv.window_min_width-200)
 
 
 splitter_left_right.addWidget(layout_vert_left_qframe)

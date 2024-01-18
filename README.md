@@ -54,14 +54,35 @@
 
 ### General and Hotkeys
 - Behave as usual, like in other media players
+- Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
+- Acceptable hotkey formats: `M`/`m`, `Ctrl`/`ctrl`, `M+Ctrl`, `M+Ctrl+Space`
 
 ## App behavior
 - Changing the volume after the app is muted:
     - It switches back to the un-muted state
-    - The volume = volume before muted -/+ the change
+    - New volume = volume before muted -/+ the change
 - The volume range is less wide compare to `VLC media player`
 - When video window is displayed and video is playing the screen saver is turned off
-    - Otherwise the screen saver is on as usual
+    - Otherwise the screen saver is on as usual    
+
+### Active and playing playlists separation
+- Playing playlist = where a track is in playing / paused state
+- Active playlist = any selected / displayed playlist
+- On any playlist able to:
+    - Add / remove track(s)
+    - Start a track by:
+        - Double click on it in the playlist
+        - Click on the Play button if
+            - Playlist not empty
+            - No track selected -> playing the first track in the playlist
+- All the below steps actioned on the playing playlist even if the active and playing playists are different:
+    - Paused --> Play
+    - Play previous track
+    - Play next track
+    - Play next track in the playlist automatically
+    - Shuffle / repeat functionalities
+    - Change audio track
+- Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 - The `Settings window` tabs are not scrollable, which put a limitation on how much playlists will be visible on the `Settings window / Playlist` tab

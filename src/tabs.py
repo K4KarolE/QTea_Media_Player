@@ -9,7 +9,7 @@ from PyQt6.QtGui import QFont
 from .cons_and_vars import cv
 from .func_coll import (
     save_json,
-    active_utility,
+    active_tab_utility,
     generate_track_list_detail,
     add_new_list_item,
     generate_duration_to_display,
@@ -36,7 +36,7 @@ class MyTabs(QTabWidget):
         self.setFont(QFont('Times', 10, 500))
         self.tabs_creation()
         self.setCurrentIndex(cv.active_tab)
-        self.currentChanged.connect(self.active_tab)
+        self.currentChanged.connect(self.active_tab_changed)
         cv.active_pl_name.setCurrentRow(cv.last_track_index)
         self.tabs_created_at_first_run = True
         self.setStyleSheet(
@@ -48,12 +48,12 @@ class MyTabs(QTabWidget):
                         )
         
 
-    def active_tab(self):
+    def active_tab_changed(self):
         if self.tabs_created_at_first_run:
             cv.active_tab = self.currentIndex()
             settings['last_used_tab'] = cv.active_tab
             save_json(settings, PATH_JSON_SETTINGS)
-            active_utility()    # set the current lists(name, duration)
+            active_tab_utility()    # set the current lists(name, duration)
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
@@ -146,7 +146,7 @@ class MyTabs(QTabWidget):
                 duration_list_widget.setFixedWidth(70)
                 duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
                 
-
+                
                 name_list_widget.itemDoubleClicked.connect(self.play_track)
                 duration_list_widget.itemDoubleClicked.connect(self.play_track)
                 
@@ -181,5 +181,5 @@ class MyTabs(QTabWidget):
                     cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
             
   
-        active_utility()
+        active_tab_utility()
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))

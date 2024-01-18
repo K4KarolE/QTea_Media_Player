@@ -98,7 +98,7 @@ class MySettingsWindow(QWidget):
         '''
         WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
         widget_hotkey_pos_y = WIDGETS_POS_Y
-        HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 170
+        HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 180
 
         for item in cv.hotkey_settings_dic:
 
@@ -119,7 +119,7 @@ class MySettingsWindow(QWidget):
             line_edit_widget.setGeometry(
                 WIDGET_HOTKEY_POS_X + HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_hotkey_pos_y,
-                130,
+                120,
                 LINE_EDIT_HIGHT
                 )
 
@@ -211,20 +211,29 @@ class MySettingsWindow(QWidget):
         
 
         def general_fields_validation(pass_validation = True):
+
+            # screen values can be bigger than the display size - no over-reaching
             for item in cv.general_settings_dic:
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
 
-                if 'jump' in item_text:
-                    if not line_edit_text.isdecimal():
-                        MyMessageBoxError('GENERAL TAB', 'The jump values need to be integers!')
-                        pass_validation = False
-                        
-                elif 'Always on top' in item_text:
+                if 'Always on top' in item_text:
                     if line_edit_text not in ['True', 'False']:
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False"!')
                         pass_validation = False
-            
+                elif 'width' in item_text:
+                    if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_width:
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_width}!')
+                        pass_validation = False
+                elif 'height' in item_text:
+                    if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_height:
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_height}!')
+                        pass_validation = False
+                else:
+                    if not line_edit_text.isdecimal():
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer!')
+                        pass_validation = False
+
             return pass_validation
         
 
@@ -242,6 +251,11 @@ class MySettingsWindow(QWidget):
                     if item_value != line_edit_text:
                         settings['general_settings'][item] = line_edit_text
                         to_save = True
+                else:
+                    if item_value != int(line_edit_text):
+                        settings['general_settings'][item] = int(line_edit_text)
+                        to_save = True
+
 
             if to_save:
                 save_json(settings, PATH_JSON_SETTINGS)
