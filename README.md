@@ -29,13 +29,16 @@
     - Adjust the player's jump values (work in progress)
 
 ## Settings
-- Click on `Save button`:
+- To open the `Setting window` click on the `Cog/Settings icon` under the playlists section 
+- Saving the `Settings window` values by clicking on the  `Save button`:
     - Saves all the values from all the tabs if there is no invalid value
-    - Else: pop-up window displayed with the error message for all the invalid scenarios
-        - The tab's name with the invalid field value is displyed in the pop-up window title
+    - Else: 
+        - Pop-up window displayed with the error message for all the invalid scenarios
+        - Error message includes the name of the field with the invalid value and the rule it should follow
+        - The pop-up window title: ERROR - TAB'S NAME (where the invalid value occurred)
 
 ### Playlists
-- Twenty playlists are available by default. To create playlists beyond the default amount, please see next section.
+- Twenty playlists are available by default.
 - In the `Settings window / Playlists` tab all the available playlists are listed
     - To make a playlist visible:
         - Add a title to the playlist
@@ -52,10 +55,12 @@
     - All playlists loading automatically
     - The last used tab/playlist is active/displayed
 
-### General and Hotkeys
-- Behave as usual, like in other media players
+### General
+- coming
+
+### Hotkeys
+- Acceptable hotkey formats example: `M`, `m`, `Ctrl`, `ctrl`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
-- Acceptable hotkey formats: `M`/`m`, `Ctrl`/`ctrl`, `M+Ctrl`, `M+Ctrl+Space`
 
 ## App behavior
 - Changing the volume after the app is muted:
@@ -85,7 +90,9 @@
 - Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
-- The `Settings window` tabs are not scrollable, which put a limitation on how much playlists will be visible on the `Settings window / Playlist` tab
+- The `Settings window` tabs are not scrollable, which put a limitation on how much playlists can be visible on the `Settings window / Playlist` tab:
+    - Display(27" - 2560*1440 - 150% scale) ~ 50+ playlists
+    - Display(15.6" - 2560*1440 - 150% scale) ~ 30 playlists
 1. Review how much space the `Settings window` occupies of your screen
 2. Change the `src / settings_window.py / WINDOW_HEIGHT ` value to your screen height
 3. Rename the current playlist database: `playlist.db`

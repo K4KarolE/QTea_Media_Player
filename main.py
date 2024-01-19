@@ -25,6 +25,7 @@ from src import cv, inactive_track_font_style
 from src import MySlider, MyVolumeSlider, MySettingsWindow 
 from src import MyButtons, PlaysFunc, MyImage, MyTabs
 from src import update_and_save_volume_slider_value, generate_duration_to_display
+from src import update_raw_current_duration_db
 
 
 
@@ -265,18 +266,23 @@ def update_duration_info():
 
         track_current_duration = av_player.player.position()
 
+        # SAVING THE CURRENT DURATION EVERY 5 SEC
+        if cv.continue_playback == 'True' and ((track_current_duration - cv.counter_for_duration) / 5000) >= 1:
+            update_raw_current_duration_db(track_current_duration, cv.playing_track_index)
+            cv.counter_for_duration = track_current_duration
+
+        # DURATION TO DISPLAY
         cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
         cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
 
         if cv.is_duration_to_display_straight:
             button_duration_info.setText(cv.duration_to_display_straight)
-        
         else:
             button_duration_info.setText(cv.duration_to_display_back)
 
         button_duration_info.adjustSize()
     
-        cv.prev_track_current_duration = track_current_duration
+        # cv.prev_track_current_duration = track_current_duration
 
 av_player.player.positionChanged.connect(update_duration_info)
 

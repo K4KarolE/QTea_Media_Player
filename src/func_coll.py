@@ -36,15 +36,22 @@ def save_playing_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
-
+# A DB record: row_id, duration, path
+# row_id populating automatically
+# QListwidget list first index: 0 // SQLite DB first index: 1
 def add_record_db(duration, path):
-    cur.execute("INSERT INTO {0}(duration, path) VALUES (?, ?)".format(cv.active_db_table), (duration, str(path)))
+    cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.active_db_table), (duration, 0, str(path)))
+    connection.commit()
+
+
+def update_raw_current_duration_db(raw_current_duration, list_row_id):
+    cur.execute("UPDATE {0} SET current_duration = {1} WHERE row_id = {2}".format(cv.playing_db_table, raw_current_duration, list_row_id+1))
     connection.commit()
 
 
 def remove_record_db(list_row_id):
-    cur.execute("DELETE FROM {0} WHERE row_id = ?".format(cv.active_db_table), (list_row_id,))
-    cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > ?".format(cv.active_db_table), (list_row_id,) )
+    cur.execute("DELETE FROM {0} WHERE row_id = ?".format(cv.active_db_table), (list_row_id+1,))
+    cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > ?".format(cv.active_db_table), (list_row_id+1,) )
     connection.commit()
 
 
@@ -55,12 +62,23 @@ def get_row_id_db(path):
 
 def get_path_db(playing_track_index, db_table):
     return cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
-                        (playing_track_index + 1,)).fetchall()[0][2]
+                        (playing_track_index + 1,)).fetchall()[0][3]
 
 
 def get_duration_db(playing_track_index, db_table):
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
                            (playing_track_index + 1,)).fetchall()[0][1])
+
+
+def get_all_from_db(playing_track_index, db_table):
+    duration = int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
+                           (playing_track_index + 1,)).fetchall()[0][1])
+    current_duration = int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
+                           (playing_track_index + 1,)).fetchall()[0][2])
+    path = cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
+                           (playing_track_index + 1,)).fetchall()[0][3]
+    
+    return duration, current_duration, path
 
 
 def generate_duration_to_display(raw_duration):
@@ -86,7 +104,6 @@ def generate_duration_to_display(raw_duration):
         else:
             minutes = str(int_minutes % 60)
 
-
         # HOURS
         if int_minutes > 60:
             str_hours = str(int((int_minutes - int_minutes%60)/60))
@@ -100,8 +117,8 @@ def generate_duration_to_display(raw_duration):
 
 
 def generate_track_list_detail(db_track_record):
-    # [0]:row, [1]:duration, [2]:path
-    track_name = f'{db_track_record[0]}. {Path(db_track_record[2]).stem}'
+    # [0]:row, [1]:duration, [2]:current_duration, [3]:path
+    track_name = f'{db_track_record[0]}. {Path(db_track_record[3]).stem}'
     duration = generate_duration_to_display(db_track_record[1])
     return track_name, duration
 

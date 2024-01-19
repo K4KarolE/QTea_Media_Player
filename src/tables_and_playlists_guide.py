@@ -25,6 +25,7 @@ def create_tables():
                     (
                     row_id INTEGER PRIMARY KEY,
                     duration VARCHAR(20),
+                    current_duration VARCHAR(20), 
                     path TEXT(20)
                     )
                     """.format(table_name))

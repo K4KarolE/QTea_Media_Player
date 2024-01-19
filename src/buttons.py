@@ -96,12 +96,12 @@ class MyButtons(QPushButton):
             settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
             save_json(settings, PATH_JSON_SETTINGS)
         # DB
-        row_id_db = current_row_index + 1
-        remove_record_db(row_id_db)
+        remove_record_db(current_row_index)
         # PLAYLIST
         cv.active_pl_name.takeItem(current_row_index)
         cv.active_pl_duration.takeItem(current_row_index)
         # RENAME PLAYLIST
+        row_id_db = current_row_index + 1
         cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
         playlist = cur.fetchall()
         for item in playlist:

@@ -7,11 +7,10 @@ from .cons_and_vars import cv
 
 from .func_coll import (
     save_playing_last_track_index,
-    get_path_db,
-    get_duration_db,
     list_item_style_update,
     generate_duration_to_display,
     playing_tab_utility,
+    get_all_from_db,
     Path,
     inactive_track_font_style,  
     active_track_font_style
@@ -30,6 +29,8 @@ class PlaysFunc():
     
 
     def play_track(self, playing_track_index=None):
+
+        cv.counter_for_duration = 0  # for iterate: saving the current duration
         
         if playing_track_index == None: # track double-clicked in playlist
             cv.playing_tab = cv.active_tab
@@ -88,9 +89,9 @@ class PlaysFunc():
 
             
             # PATH / DURATION / SLIDER
-            track_path = get_path_db(cv.playing_track_index, cv.playing_db_table)
-            cv.track_full_duration = get_duration_db(cv.playing_track_index, cv.playing_db_table)
+            cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
             cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+            
             self.play_slider.setMaximum(cv.track_full_duration)
             # PLAYER
             ''' 
@@ -111,6 +112,11 @@ class PlaysFunc():
                 self.av_player.video_output.show()
             
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+            
+            # PLAY FROM LAST POINT
+            if cv.track_current_duration > 0 and cv.continue_playback == 'True':
+                self.av_player.player.setPosition(cv.track_current_duration)
+            
             cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
             cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
             self.av_player.player.play()

@@ -71,16 +71,22 @@ class Data:
     track_full_duration = 0
     track_full_duration_to_display = 0
 
+    ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
+    track_current_duration = 0
+    track_current_duration_to_display = 0
+    counter_for_duration = 0
+
     ''' DISPLAYED DURATION COUNT DOWN TYPES '''
     is_duration_to_display_straight = True
     duration_to_display_straight = 0
     duration_to_display_back = 0
 
     ''' GENERAL TAB - SETTINGS WINDOW '''
+    always_on_top = settings['general_settings']['always_on_top']
+    continue_playback = settings['general_settings']['continue_playback']
     small_jump = settings['general_settings']['small_jump']
     medium_jump = settings['general_settings']['medium_jump']
     big_jump = settings['general_settings']['big_jump']
-    always_on_top = settings['general_settings']['always_on_top']
     window_width = settings['general_settings']['window_width']
     window_height = settings['general_settings']['window_height']
     window_alt_width = settings['general_settings']['window_alt_width']
@@ -91,6 +97,16 @@ class Data:
 
 
     general_settings_dic = {
+        'always_on_top': {
+            'text': 'Always on top',
+            'value': always_on_top,
+            'line_edit_widget': ''
+        },
+        'continue_playback': {
+            'text': 'Continue playback',
+            'value': continue_playback,
+            'line_edit_widget': ''
+        },
         'small_jump': {
             'text': 'Small jump (second)',
             'value': small_jump,
@@ -104,11 +120,6 @@ class Data:
         'big_jump': {
             'text': 'Big jump (second)',
             'value': big_jump,
-            'line_edit_widget': ''
-        },
-        'always_on_top': {
-            'text': 'Always on top',
-            'value': always_on_top,
             'line_edit_widget': ''
         },
         'window_width': {
@@ -130,8 +141,31 @@ class Data:
             'text': 'Window alt. height',
             'value': window_alt_height,
             'line_edit_widget': ''
-        },
+        }
     }
+
+    # used in the src / settings_window.py / field validation - fieldsave 
+    gen_sett_boolean_text_list = [
+        general_settings_dic['always_on_top']['text'],
+        general_settings_dic['continue_playback']['text']
+        ]
+    
+    gen_sett_window_width_text_list = [
+        general_settings_dic['window_width']['text'],
+        general_settings_dic['window_alt_width']['text']
+        ]
+    
+    gen_sett_window_height_text_list = [
+        general_settings_dic['window_height']['text'],
+        general_settings_dic['window_alt_height']['text']
+        ]
+    
+    gen_sett_jump_text_list = [
+        general_settings_dic['small_jump']['text'],
+        general_settings_dic['medium_jump']['text'],
+        general_settings_dic['big_jump']['text'],
+        ]
+
 
 
     ''' HOTKEYS TAB - SETTINGS WINDOW '''
@@ -237,7 +271,7 @@ class Data:
             'line_edit_widget': ''
         },
         'playlist_toggle': {
-            'text': 'Toogle - Visible Playlist',
+            'text': 'Toogle - Playlist',
             'value': playlist_toggle,
             'line_edit_widget': ''
         },

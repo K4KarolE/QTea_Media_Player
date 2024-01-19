@@ -217,15 +217,17 @@ class MySettingsWindow(QWidget):
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
 
-                if 'Always on top' in item_text:
+                if item_text in cv.gen_sett_boolean_text_list:
                     if line_edit_text not in ['True', 'False']:
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False"!')
                         pass_validation = False
-                elif 'width' in item_text:
+                
+                elif item_text in cv.gen_sett_window_width_text_list:
                     if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_width:
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_width}!')
                         pass_validation = False
-                elif 'height' in item_text:
+                
+                elif item_text in cv.gen_sett_window_height_text_list:
                     if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_height:
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_height}!')
                         pass_validation = False
@@ -242,20 +244,20 @@ class MySettingsWindow(QWidget):
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
 
-                if 'jump' in item_text:
+                if item_text in cv.gen_sett_jump_text_list:
                     if item_value != int(line_edit_text)*1000:
                         settings['general_settings'][item] = int(line_edit_text)*1000
                         to_save = True
-
-                elif 'Always on top' in item_text:
+   
+                elif item_text in cv.gen_sett_boolean_text_list:
                     if item_value != line_edit_text:
                         settings['general_settings'][item] = line_edit_text
                         to_save = True
+   
                 else:
                     if item_value != int(line_edit_text):
                         settings['general_settings'][item] = int(line_edit_text)
                         to_save = True
-
 
             if to_save:
                 save_json(settings, PATH_JSON_SETTINGS)
