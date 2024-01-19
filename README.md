@@ -55,12 +55,21 @@
     - All playlists loading automatically
     - The last used tab/playlist is active/displayed
 
+
 ### General
 - coming
 
 ### Hotkeys
-- Acceptable hotkey formats example: `M`, `m`, `Ctrl`, `ctrl`, `M+Ctrl`, `M+Ctrl+Space`
+- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctrl`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
+
+<br>
+<div align="left">
+    <img width="230" src="docs/promo/screenshot_sett_win_playlists.png">
+    <img width="230" src="docs/promo/screenshot_sett_win_general.png">
+    <img width="230" src="docs/promo/screenshot_sett_win_hotkeys.png">
+</div>
+
 
 ## App behavior
 - Changing the volume after the app is muted:
