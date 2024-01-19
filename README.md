@@ -65,9 +65,9 @@
 
 <br>
 <div align="left">
-    <img width="230" src="docs/promo/screenshot_sett_win_playlists.png">
-    <img width="230" src="docs/promo/screenshot_sett_win_general.png">
-    <img width="230" src="docs/promo/screenshot_sett_win_hotkeys.png">
+    <img width="260" src="docs/promo/screenshot_sett_win_playlists.png">
+    <img width="260" src="docs/promo/screenshot_sett_win_general.png">
+    <img width="260" src="docs/promo/screenshot_sett_win_hotkeys.png">
 </div>
 
 
