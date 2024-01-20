@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
 
-
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
@@ -19,7 +18,7 @@ from PyQt6.QtWidgets import QWidget
 
 import sys
 import ctypes
-from src import Path
+from pathlib import Path
 
 from src import cv, inactive_track_font_style
 from src import MySlider, MyVolumeSlider, MySettingsWindow 

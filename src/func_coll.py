@@ -32,7 +32,8 @@ def playing_tab_utility():
     cv.playing_pl_duration = cv.paylist_widget_dic[cv.playing_db_table]['duration_list_widget']
 
 
-def save_playing_last_track_index():
+def save_playing_tab_and_playing_last_track_index():
+    settings['playing_tab'] = cv.active_tab
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 

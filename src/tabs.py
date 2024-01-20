@@ -35,9 +35,9 @@ class MyTabs(QTabWidget):
         self.tabs_created_at_first_run = False
         self.setFont(QFont('Times', 10, 500))
         self.tabs_creation()
-        self.setCurrentIndex(cv.active_tab)
+        self.setCurrentIndex(cv.playing_tab)
         self.currentChanged.connect(self.active_tab_changed)
-        cv.active_pl_name.setCurrentRow(cv.last_track_index)
+        # cv.active_pl_name.setCurrentRow(cv.last_track_index)
         self.tabs_created_at_first_run = True
         self.setStyleSheet(
                         "QTabBar::tab:selected"
@@ -57,6 +57,7 @@ class MyTabs(QTabWidget):
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
+    ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
     def name_list_to_duration_row_selection(self):
         cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
         if cv.active_pl_name.currentRow() != cv.last_track_index:
@@ -67,7 +68,6 @@ class MyTabs(QTabWidget):
                                     "color: black;"   # font
                                     "}"
                                 )
-
 
     def duration_list_to_name_row_selection(self):
         cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
@@ -87,12 +87,30 @@ class MyTabs(QTabWidget):
     '''
     def tabs_creation(self):
 
+        
         for pl in cv.paylist_widget_dic:
 
             tab_title = settings[pl]['tab_title']
 
             if tab_title:
-                    
+
+                def set_last_played_row_style():
+                    name_list_widget.setStyleSheet(
+                                            "QListWidget::item:selected"
+                                                "{"
+                                                "background: #CCE8FF;" 
+                                                "color: black;"   # font
+                                                "}"
+                                            )
+                    duration_list_widget.setStyleSheet(
+                                            "QListWidget::item:selected"
+                                                "{"
+                                                "background: #CCE8FF;" 
+                                                "color: black;"   # font
+                                                "}"
+                                            )
+
+
                 scroll_bar_name_ver = QScrollBar()
                 scroll_bar_name_hor = QScrollBar()
                 scroll_bar_duration_ver = QScrollBar()
@@ -128,31 +146,24 @@ class MyTabs(QTabWidget):
                                     "}"
                                 )
                 
+
+                
                 ''' LISTS CREATION '''
                 ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
                 cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
                 name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
                 name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
                 name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
-                # name_list_widget.setAlternatingRowColors(True)
-                name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
+                name_list_widget.itemDoubleClicked.connect(self.play_track)
                 
-
                 cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
                 duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
                 duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
                 duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
-                # duration_list_widget.setAlternatingRowColors(True)
-                duration_list_widget.setFixedWidth(70)
-                duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
-                
-                
-                name_list_widget.itemDoubleClicked.connect(self.play_track)
                 duration_list_widget.itemDoubleClicked.connect(self.play_track)
+                duration_list_widget.setFixedWidth(70)
                 
-                
-                
-
+            
                 layout = QHBoxLayout()
                 layout.setSpacing(0)
                 layout.setContentsMargins(0, 0, 0, 0)
@@ -179,7 +190,28 @@ class MyTabs(QTabWidget):
                     add_new_list_item(track_name, name_list_widget)
                     add_new_list_item(duration, duration_list_widget)
                     cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
+                
+                ''' SET BACK / SELECT LAST USED ROWS '''
+                name_list_widget.setCurrentRow(settings[pl]['last_track_index'])
+                duration_list_widget.setCurrentRow(settings[pl]['last_track_index'])
+                
+                ''' 
+                    LAST PLAYED ROWS' STYLE
+                    the currently playing track's style is different --> ignored
+                '''
+                if cv.play_at_startup == 'False':
+                    set_last_played_row_style()
+                elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_tab]:
+                    set_last_played_row_style()
+                
+
+                ''' 
+                    SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE
+                    AFTER NEWLY SELECTED TRACK
+                '''
+                name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
+                duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
             
-  
         active_tab_utility()
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+

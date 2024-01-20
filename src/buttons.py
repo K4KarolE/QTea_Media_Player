@@ -19,6 +19,7 @@ from .func_coll import (
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
 
 
+
 class MyButtons(QPushButton):
 
     def __init__(
@@ -44,6 +45,11 @@ class MyButtons(QPushButton):
         self.av_player = av_player
         self.av_player_duration = av_player_duration
         self.play_funcs = play_funcs
+
+        self.button_image_start = QIcon(f'skins/{cv.skin_selected}/start.png')
+        self.button_image_pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
+        self.button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
+        self.button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
 
     ''' 
     PLAYLIST SECTION
@@ -173,29 +179,25 @@ class MyButtons(QPushButton):
     '''
     ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
     def button_play_pause_clicked(self):
-        button_image_start = QIcon('skins/default/start.png')
-        button_image_pause = QIcon('skins/default/pause.png')
-
         if self.av_player.player.isPlaying():
             self.av_player.player.pause()
             self.av_player.paused = True
-            self.setIcon(button_image_start)
+            self.setIcon(self.button_image_start)
             self.av_player.screen_saver_on()
         elif self.av_player.paused:
             self.av_player.player.play()
             self.av_player.paused = False
-            self.setIcon(button_image_pause)
+            self.setIcon(self.button_image_pause)
             self.av_player.screen_saver_on_off()
         elif not self.av_player.player.isPlaying() and not self.av_player.paused:
             self.play_funcs.play_track()
             if self.av_player.player.isPlaying(): # ignoring empty playlist
-                self.setIcon(button_image_pause)
+                self.setIcon(self.button_image_pause)
         
     
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
-        button_image_pause = QIcon('skins/default/pause.png')
-        self.setIcon(button_image_pause)
+        self.setIcon(self.button_image_pause)
         self.play_funcs.play_track()
     
 
@@ -220,20 +222,18 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
     def button_toggle_repeat_pl_clicked(self):
-        button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
-        button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
         cv.repeat_playlist =  (cv.repeat_playlist + 1) % 3
         
         # NO REPEAT
         if cv.repeat_playlist == 1:
             self.setFlat(0)
-            self.setIcon(button_image_repeat)
+            self.setIcon(self.button_image_repeat)
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(1)
         # REPEAT SINGLE TRACK
         else:
-            self.setIcon(button_image_repeat_single)
+            self.setIcon(self.button_image_repeat_single)
         
         settings['repeat_playlist'] = cv.repeat_playlist
         save_json(settings, PATH_JSON_SETTINGS)

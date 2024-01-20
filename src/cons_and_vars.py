@@ -59,7 +59,7 @@ class Data:
     PLAYING TAB UTILITY VALUES
     src / func_coll.py / playing_tab_utility()
     '''
-    playing_tab = 0
+    playing_tab = settings['playing_tab']
     playing_playlist_title = None
     playing_last_track_index = 0
     playing_db_table = None  
@@ -84,6 +84,7 @@ class Data:
     ''' GENERAL TAB - SETTINGS WINDOW '''
     always_on_top = settings['general_settings']['always_on_top']
     continue_playback = settings['general_settings']['continue_playback']
+    play_at_startup = settings['general_settings']['play_at_startup']
     small_jump = settings['general_settings']['small_jump']
     medium_jump = settings['general_settings']['medium_jump']
     big_jump = settings['general_settings']['big_jump']
@@ -91,10 +92,11 @@ class Data:
     window_height = settings['general_settings']['window_height']
     window_alt_width = settings['general_settings']['window_alt_width']
     window_alt_height = settings['general_settings']['window_alt_height']
-
+    # USED FOR VALIDATION
     window_min_width = settings['general_settings']['window_min_width']
     window_min_height = settings['general_settings']['window_min_height']
-
+    # COUNTER for play_at_startup
+    played_at_startup_counter = False
 
     general_settings_dic = {
         'always_on_top': {
@@ -105,6 +107,11 @@ class Data:
         'continue_playback': {
             'text': 'Continue playback',
             'value': continue_playback,
+            'line_edit_widget': ''
+        },
+        'play_at_startup': {
+            'text': 'Play at startup',
+            'value': play_at_startup,
             'line_edit_widget': ''
         },
         'small_jump': {
@@ -147,7 +154,8 @@ class Data:
     # used in the src / settings_window.py / field validation - fieldsave 
     gen_sett_boolean_text_list = [
         general_settings_dic['always_on_top']['text'],
-        general_settings_dic['continue_playback']['text']
+        general_settings_dic['continue_playback']['text'],
+        general_settings_dic['play_at_startup']['text']
         ]
     
     gen_sett_window_width_text_list = [

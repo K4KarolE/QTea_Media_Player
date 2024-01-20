@@ -4,6 +4,7 @@
 *copy*
 settings.json
 playlist.db
+*.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

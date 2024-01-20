@@ -6,16 +6,18 @@ import random
 from .cons_and_vars import cv
 
 from .func_coll import (
-    save_playing_last_track_index,
+    save_playing_tab_and_playing_last_track_index,
     list_item_style_update,
     generate_duration_to_display,
     playing_tab_utility,
+    active_tab_utility,
     get_all_from_db,
     Path,
     inactive_track_font_style,  
     active_track_font_style
     )
 
+import time
 
 class PlaysFunc():
 
@@ -35,6 +37,7 @@ class PlaysFunc():
         if playing_track_index == None: # track double-clicked in playlist
             cv.playing_tab = cv.active_tab
             playing_tab_utility()
+            active_tab_utility()
 
             if cv.playing_pl_name.count() > 0:
                 if cv.playing_pl_name.currentRow() > -1: # When row selected
@@ -69,7 +72,7 @@ class PlaysFunc():
                 print(f'ERROR in row: {cv.playing_last_track_index}\n')
              
             cv.playing_last_track_index = cv.playing_track_index
-            save_playing_last_track_index()
+            save_playing_tab_and_playing_last_track_index()
           
       
             ''' NEW TRACK STYLE'''
@@ -166,12 +169,28 @@ class PlaysFunc():
                 self.av_player.player.setPosition(0)
 
 
+    '''
+        AT STARTUP 
+        - On every tab/playlist the last played row will be selected (src/tabs.py) 
+        - The last playing tab/playist will be set active/displayed (src/tabs.py)
+        - If 'Play at startup' active (Settings / General), track will be played automatically (below)
+    '''
     def auto_play_next_track(self):
+
+        if not cv.played_at_startup_counter:
+            cv.active_tab = cv.playing_tab
+
         if self.av_player.base_played:   # avoiding the dummy song played when the class created
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
                 self.play_next_track()
         else:
             self.av_player.base_played = True
+
+            if cv.play_at_startup == 'True' and not cv.played_at_startup_counter:
+                time.sleep(0.1) # otherwise media loading error occurs / not mediastatus problem
+                self.play_track()
+
+        cv.played_at_startup_counter = True
 
 
     def audio_tracks_play_next_one(self):

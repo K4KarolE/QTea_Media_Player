@@ -18,19 +18,26 @@
 </div>
 <br>
 
-## Buttons under playlists section
+## Terminology
+- `Playing playlist` = playlist where the current track is in the playing or paused state / playlist where the last track was played
+- `Active playlist` = playlist which is currently selected / displayed
+
+## Play buttons
+- to come 
+
+## Playlist buttons (under playlists section)
 - `AT - Add Track`: add a single media/file to the playlist
 - `AD - Add Directory`: adding all the media files listed in the selected directory and subdirectories
 - `RT - Remove Track`: removes the current/selected track
 - `CP - Clear Playlist`: removes all the items from the current playlist
-- `Settings button`: opens the `Settings window`, where the user:
-    - Able to update the playlists titles - hide/show the playlists
-    - Adjust the shortcut keyboard values (work in progress)
-    - Adjust the player's jump values (work in progress)
+- `Settings button`: opens the `Settings window`
 
-## Settings
+## Settings - Settings window
 - To open the `Setting window` click on the `Cog/Settings icon` under the playlists section 
-- Saving the `Settings window` values by clicking on the  `Save button`:
+- `Playlists tab:`Able to update the playlists titles - hide/show the playlists
+- `Genereal tab:` Adjust the shortcut keyboard values (work in progress)
+- `Hotkeys tab:` Adjust the player's jump values (work in progress)
+- Saving the `Settings window` values by clicking on the `Save button`:
     - Saves all the values from all the tabs if there is no invalid value
     - Else: 
         - Pop-up window displayed with the error message for all the invalid scenarios
@@ -50,11 +57,6 @@
         - At least one of the playlist remains visible - not able to remove all the playlist titles
             - In this case clicking on the `Save button`: pop-up window will be displayed with the error message
         - The hidden playlist's records/media information remains in the database
-- Add/remove tracks: the current playlist is saved automatically
-- At startup:
-    - All playlists loading automatically
-    - The last used tab/playlist is active/displayed
-
 
 ### General
 - coming
@@ -62,6 +64,7 @@
 ### Hotkeys
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctrl`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
+- more to come
 
 <br>
 <div align="left">
@@ -71,31 +74,30 @@
 </div>
 
 
-## App behavior
-- Changing the volume after the app is muted:
-    - It switches back to the un-muted state
-    - New volume = volume before muted -/+ the change
-- The volume range is less wide compare to `VLC media player`
-- When video window is displayed and video is playing the screen saver is turned off
-    - Otherwise the screen saver is on as usual    
+## Behavior
+- `Volume`
+    - Changing the volume after the app is muted:
+        - It switches back to the un-muted state
+        - New volume = volume before muted -/+ the change
+    - The volume range is less wide compare to `VLC media player`
+- `Scree saver`
+    - When video window is displayed and video is playing the screen saver is turned off
+        - Otherwise the screen saver is on as usual
+- `Playlists`
+    - On any playlist able to add/remove tracks: the playlist is saved automatically
+    - At startup:
+        - All playlists loading automatically
+        - On all playlist the last played track is selected
+        - The `Playing playlist` is active/displayed    
 
-### Active and playing playlists separation
-- Playing playlist = where a track is in playing / paused state
-- Active playlist = any selected / displayed playlist
-- On any playlist able to:
-    - Add / remove track(s)
-    - Start a track by:
-        - Double click on it in the playlist
-        - Click on the Play button if
-            - Playlist not empty
-            - No track selected -> playing the first track in the playlist
-- All the below steps actioned on the playing playlist even if the active and playing playists are different:
+### Active and Playing playlists separation
+- All the below steps actioned on the `Playing playlist` even if the active and playing playists are different:
     - Paused --> Play
     - Play previous track
     - Play next track
-    - Play next track in the playlist automatically
+    - Play next track in the playlist automatically after end of the current track
     - Shuffle / repeat functionalities
-    - Change audio track
+    - All hotkeys functionalities: change audio/subtitle track
 - Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
