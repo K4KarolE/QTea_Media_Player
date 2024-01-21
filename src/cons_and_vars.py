@@ -54,6 +54,7 @@ class Data:
     active_pl_name = None   # widget
     active_pl_duration = None   # widget
     active_pl_sum_duration = 0
+    active_pl_tracks_count = 0
 
     '''
     PLAYING TAB UTILITY VALUES
@@ -65,6 +66,7 @@ class Data:
     playing_db_table = None  
     playing_pl_name = None   # widget
     playing_pl_duration = None   # widget
+    playing_pl_tracks_count = 0
 
     
     ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''

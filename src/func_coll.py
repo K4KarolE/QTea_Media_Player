@@ -13,7 +13,7 @@ inactive_track_font_style = QFont('Arial', 11, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
-def active_tab_utility():
+def update_active_tab_vars_and_widgets():
     cv.active_db_table = cv.paylist_list[cv.active_tab] # playlist_1, playlist_2, ..
     cv.active_playlist_title = settings[cv.active_db_table]['tab_title']
     cv.last_track_index = settings[cv.active_db_table]['last_track_index']
@@ -21,16 +21,16 @@ def active_tab_utility():
     # LIST WIDGETS
     cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
+    cv.active_pl_tracks_count = cv.active_pl_name.count() 
 
-
-def playing_tab_utility():
+def update_playing_tab_vars_and_widgets():
     cv.playing_db_table = cv.paylist_list[cv.playing_tab] # playlist_1, playlist_2, ..
     cv.playing_playlist_title = settings[cv.playing_db_table]['tab_title']
     cv.playing_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
     cv.playing_pl_name = cv.paylist_widget_dic[cv.playing_db_table]['name_list_widget']
     cv.playing_pl_duration = cv.paylist_widget_dic[cv.playing_db_table]['duration_list_widget']
-
+    cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
 def save_playing_tab_and_playing_last_track_index():
     settings['playing_tab'] = cv.active_tab

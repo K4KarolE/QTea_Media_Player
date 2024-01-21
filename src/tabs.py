@@ -1,15 +1,22 @@
 ''' TABS - PLAYLISTS CREATION '''
 
-
-from PyQt6.QtWidgets import QListWidget, QHBoxLayout
-from PyQt6.QtWidgets import QFrame, QTabWidget, QScrollBar
+from PyQt6.QtWidgets import (
+    QListWidget,
+    QHBoxLayout,
+    QFrame,
+    QTabWidget,
+    QScrollBar,
+    QListView,
+    QAbstractItemView
+    )
 from PyQt6.QtGui import QFont
 
+from PyQt6.QtCore import Qt
 
 from .cons_and_vars import cv
 from .func_coll import (
     save_json,
-    active_tab_utility,
+    update_active_tab_vars_and_widgets,
     generate_track_list_detail,
     add_new_list_item,
     generate_duration_to_display,
@@ -53,7 +60,7 @@ class MyTabs(QTabWidget):
             cv.active_tab = self.currentIndex()
             settings['last_used_tab'] = cv.active_tab
             save_json(settings, PATH_JSON_SETTINGS)
-            active_tab_utility()    # set the current lists(name, duration)
+            update_active_tab_vars_and_widgets()    # set the current lists(name, duration)
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
@@ -86,8 +93,7 @@ class MyTabs(QTabWidget):
         select the un-hidden tabs beyond the visible TABS window
     '''
     def tabs_creation(self):
-
-        
+ 
         for pl in cv.paylist_widget_dic:
 
             tab_title = settings[pl]['tab_title']
@@ -150,12 +156,15 @@ class MyTabs(QTabWidget):
                 
                 ''' LISTS CREATION '''
                 ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
-                cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
+                cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget() #.model().rowsAboutToBeMoved #.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
                 name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
                 name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
                 name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
                 name_list_widget.itemDoubleClicked.connect(self.play_track)
-                
+                # name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+                # name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item())
+            
+
                 cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
                 duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
                 duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
@@ -212,6 +221,11 @@ class MyTabs(QTabWidget):
                 name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
                 duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
             
-        active_tab_utility()
+        update_active_tab_vars_and_widgets()
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+    
+    def drag_and_drop_list_item(self):
+        print(cv.active_pl_duration.currentRow())
+    
+
 

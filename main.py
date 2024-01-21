@@ -16,6 +16,7 @@ from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget
 
+
 import sys
 import ctypes
 from pathlib import Path
@@ -137,24 +138,24 @@ class MyWindow(QWidget):
         super().__init__()
 
         hotkeys_action_dic = {
-        'small_jump_backward': self.small_jump_back_action,
-        'small_jump_forward': self.small_jump_forward_action,
-        'medium_jump_backward': self.medium_jump_back_action,
-        'medium_jump_forward': self.medium_jump_forward_action,
-        'big_jump_backward': self.big_jump_back_action,
-        'big_jump_forward': self.big_jump_forward_action,
-        'volume_mute': self.volume_mute_action,
+        'small_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.small_jump),
+        'small_jump_forward': lambda: av_player.player.setPosition(av_player.player.position() + cv.small_jump),
+        'medium_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.medium_jump),
+        'medium_jump_forward': lambda: av_player.player.setPosition(av_player.player.position() + cv.medium_jump),
+        'big_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.big_jump),
+        'big_jump_forward': lambda: av_player.player.setPosition(av_player.player.position() + cv.big_jump),
+        'volume_mute': lambda: button_speaker_clicked(),
         'volume_up': self.volume_up_action,
         'volume_down': self.volume_down_action,
-        'audio_tracks_rotate': self.audio_tracks_rotate_action,
-        'subtitle_tracks_rotate': self.subtitle_tracks_rotate_action,
-        'play_pause': self.play_pause_action,
-        'previous_track': self.play_prev_track_action,
-        'next_track': self.play_next_track_action,
-        'repeat_track_playlist_toggle': self.repeat_track_playlist_toggle_action,
-        'shuffle_playlist_toggle': self.shuffle_playlist_toggle_action,
-        'full_screen_toggle': self.full_screen_toggle_action,
-        'playlist_toggle': self.playlist_toggle_action,
+        'audio_tracks_rotate': lambda: play_funcs.audio_tracks_play_next_one(),
+        'subtitle_tracks_rotate': lambda: play_funcs.subtitle_tracks_play_next_one(),
+        'play_pause': lambda: button_play_pause.button_play_pause_clicked(),
+        'previous_track': lambda: button_prev_track.button_prev_track_clicked(),
+        'next_track': lambda: button_next_track.button_next_track_clicked(),
+        'repeat_track_playlist_toggle': lambda: button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
+        'shuffle_playlist_toggle': lambda: button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
+        'full_screen_toggle': lambda: av_player.full_screen_toggle(),
+        'playlist_toggle': lambda: button_toggle_playlist_clicked(),
         'window_size_toggle': self.window_size_toggle_action,
         }
 
@@ -164,36 +165,6 @@ class MyWindow(QWidget):
             hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
             hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
     
-   
-    def small_jump_back_action(self):
-        av_player.player.setPosition(av_player.player.position() - cv.small_jump)
-
-    def small_jump_forward_action(self):
-        av_player.player.setPosition(av_player.player.position() + cv.small_jump)
-
-    def medium_jump_back_action(self):
-        av_player.player.setPosition(av_player.player.position() - cv.medium_jump)
-
-    def medium_jump_forward_action(self):
-        av_player.player.setPosition(av_player.player.position() + cv.medium_jump)
-
-    def big_jump_back_action(self):
-        av_player.player.setPosition(av_player.player.position() - cv.big_jump)
-
-    def big_jump_forward_action(self):
-        av_player.player.setPosition(av_player.player.position() + cv.big_jump)
-
-    def play_pause_action(self):
-        button_play_pause.button_play_pause_clicked()
-
-    def play_prev_track_action(self):
-        button_prev_track.button_prev_track_clicked()
-    
-    def play_next_track_action(self):
-        button_next_track.button_next_track_clicked()
-
-    def volume_mute_action(self):
-        button_speaker_clicked()
 
     def volume_up_action(self):
         if cv.volume < 1:
@@ -215,23 +186,6 @@ class MyWindow(QWidget):
         button_speaker_update()
         update_and_save_volume_slider_value(new_volume, volume_slider)
 
-    def audio_tracks_rotate_action(self):
-        play_funcs.audio_tracks_play_next_one()
-    
-    def subtitle_tracks_rotate_action(self):
-        play_funcs.subtitle_tracks_play_next_one()
-    
-    def full_screen_toggle_action(self):
-        av_player.full_screen_toggle()
-
-    def repeat_track_playlist_toggle_action(self):
-        button_toggle_repeat_pl.button_toggle_repeat_pl_clicked()
-
-    def shuffle_playlist_toggle_action(self):
-        button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked()
-    
-    def playlist_toggle_action(self):
-        button_toggle_playlist_clicked()
 
     def window_size_toggle_action(self):
         button_toggle_playlist_clicked()
@@ -444,7 +398,13 @@ button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.
 
 
 
-''' BUTTON PLAY SECTION - PLAY/PAUSE '''
+''' 
+    BUTTON PLAY SECTION - PLAY/PAUSE
+    Image/icon update after the main / tabs creation
+    if 'Play at startup' enabled and the playlist
+    is not empty
+'''
+
 button_play_pause = MyButtons(
     'PLAY/PAUSE',
     'Start/stop playing',
@@ -788,6 +748,10 @@ layout_under_playlist_duration.addWidget(duration_sum_widg)
 # TABS
 tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list, duration_sum_widg)
 layout_playlist.addWidget(tabs_playlist)
+
+# PLAY BUTTON ICON UPDATE
+if cv.play_at_startup == 'True' and cv.active_pl_tracks_count > 0:
+    button_play_pause.setIcon(button_image_pause)
 
 
 ''' BOTTOM '''

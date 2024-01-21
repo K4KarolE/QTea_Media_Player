@@ -2,17 +2,17 @@
 from PyQt6.QtCore import QUrl
 
 import random
+from pathlib import Path
 
 from .cons_and_vars import cv
-
 from .func_coll import (
     save_playing_tab_and_playing_last_track_index,
     list_item_style_update,
     generate_duration_to_display,
-    playing_tab_utility,
-    active_tab_utility,
+    update_playing_tab_vars_and_widgets,
+    update_active_tab_vars_and_widgets,
     get_all_from_db,
-    Path,
+    update_raw_current_duration_db,
     inactive_track_font_style,  
     active_track_font_style
     )
@@ -33,21 +33,29 @@ class PlaysFunc():
     def play_track(self, playing_track_index=None):
 
         cv.counter_for_duration = 0  # for iterate: saving the current duration
+        update_active_tab_vars_and_widgets()
         
-        if playing_track_index == None: # track double-clicked in playlist
-            cv.playing_tab = cv.active_tab
-            playing_tab_utility()
-            active_tab_utility()
+        '''
+            SCENARIO A - playing_track_index == None:
+            - Double-click on a track in a playlist
+            - Autoplay at startup
 
-            if cv.playing_pl_name.count() > 0:
+            SCENARIO B - playing_track_index = row number:
+            - Play next/prev buttons
+        '''
+        if playing_track_index == None: # Scenario - A
+            cv.playing_tab = cv.active_tab
+            update_playing_tab_vars_and_widgets()
+
+            if cv.playing_pl_tracks_count > 0:
                 if cv.playing_pl_name.currentRow() > -1: # When row selected
                     cv.playing_track_index = cv.playing_pl_name.currentRow()
                 else:
                     cv.playing_track_index = 0
             else:   # empry playlist
                 return
-        
-        else:   # play next/prev buttons
+
+        else:   # Scenario - B
             cv.playing_track_index = playing_track_index
 
         try:
@@ -69,7 +77,7 @@ class PlaysFunc():
                 )
 
             except:
-                print(f'ERROR in row: {cv.playing_last_track_index}\n')
+                print(f'ERROR - Play track() - Row: {cv.playing_last_track_index}\n')
              
             cv.playing_last_track_index = cv.playing_track_index
             save_playing_tab_and_playing_last_track_index()
@@ -94,8 +102,9 @@ class PlaysFunc():
             # PATH / DURATION / SLIDER
             cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
             cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-            
             self.play_slider.setMaximum(cv.track_full_duration)
+            
+
             # PLAYER
             ''' 
                 Why showing the previous vid's last frame in the
@@ -106,23 +115,29 @@ class PlaysFunc():
                     - hide / show - setSource diff. variation
                     - no video_output.hide() --> no problem
             '''
-
             if track_path[-4:] in cv.AUDIO_FILES:
                 self.image_logo.show()
                 self.av_player.video_output.hide()
             else:
                 self.image_logo.hide()
                 self.av_player.video_output.show()
-            
+        
             self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-            
+
+            # FILE REMOVED / RENAMED
+            if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.InvalidMedia:
+                self.play_next_track()
+           
             # PLAY FROM LAST POINT
             if cv.track_current_duration > 0 and cv.continue_playback == 'True':
                 self.av_player.player.setPosition(cv.track_current_duration)
             
+            # PLAY
+            self.av_player.player.play()
+            
+            # AUDIO / SUBTITLE TRACKS
             cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
             cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
-            self.av_player.player.play()
             
             # WINDOW TITLE
             self.window.setWindowTitle(f'{cv.playing_playlist_title} | {Path(track_path).stem} - QTea media player')
@@ -135,16 +150,16 @@ class PlaysFunc():
             self.av_player.screen_saver_on_off()
 
         except:
-            print('ERROR - play_track\n')
+            print('ERROR - play_track()\n')
 
 
     def play_next_track(self):
 
-        if cv.playing_pl_name.count() > 0:
+        if cv.playing_pl_tracks_count > 0:
 
             # SHUFFLE
-            if cv.shuffle_playlist_on and cv.playing_pl_name.count() > 1:
-                next_track_index = list(range(0, cv.playing_pl_name.count()))
+            if cv.shuffle_playlist_on and cv.playing_pl_tracks_count > 1:
+                next_track_index = list(range(0, cv.playing_pl_tracks_count))
                 next_track_index.pop(cv.playing_track_index)
                 next_track_index = random.choice(next_track_index)
                 cv.playing_track_index = next_track_index
@@ -155,12 +170,12 @@ class PlaysFunc():
                     self.av_player.player.setPosition(0)
                     self.av_player.player.play()
             # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
-            elif (cv.playing_pl_name.count() != cv.playing_track_index + 1 and 
+            elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and 
                 cv.repeat_playlist in [0,1,2]):
                 cv.playing_track_index += 1
                 self.play_track(cv.playing_track_index)
             # REPEAT PLAYLIST    
-            elif (cv.playing_pl_name.count() == cv.playing_track_index + 1 and
+            elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
                 cv.repeat_playlist == 2):
                     cv.playing_track_index = 0
                     self.play_track(cv.playing_track_index)
@@ -170,7 +185,9 @@ class PlaysFunc():
 
 
     '''
-        AT STARTUP 
+        AT STARTUP
+        - It first triggered once the based is played (main / AVPlayer())
+          --> cv.played_at_startup_counter needed
         - On every tab/playlist the last played row will be selected (src/tabs.py) 
         - The last playing tab/playist will be set active/displayed (src/tabs.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically (below)
@@ -182,6 +199,10 @@ class PlaysFunc():
 
         if self.av_player.base_played:   # avoiding the dummy song played when the class created
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
+                # To play from the start at next time playing the same track
+                # Not from (duration - 5 sec) position
+                if cv.continue_playback == 'True':
+                    update_raw_current_duration_db(0, cv.playing_track_index)
                 self.play_next_track()
         else:
             self.av_player.base_played = True
