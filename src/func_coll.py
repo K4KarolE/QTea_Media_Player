@@ -37,6 +37,10 @@ def save_playing_tab_and_playing_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
+def save_playing_last_track_index():
+    settings[cv.playing_db_table]['last_track_index'] = cv.playing_last_track_index
+    save_json(settings, PATH_JSON_SETTINGS)
+
 # A DB record: row_id, duration, path
 # row_id populating automatically
 # QListwidget list first index: 0 // SQLite DB first index: 1
@@ -119,9 +123,10 @@ def generate_duration_to_display(raw_duration):
 
 def generate_track_list_detail(db_track_record):
     # [0]:row, [1]:duration, [2]:current_duration, [3]:path
+    track_row_db = db_track_record[0]
     track_name = f'{db_track_record[0]}. {Path(db_track_record[3]).stem}'
-    duration = generate_duration_to_display(db_track_record[1])
-    return track_name, duration
+    duration_to_display = generate_duration_to_display(db_track_record[1])
+    return track_row_db, track_name, duration_to_display
 
 
 def add_record_grouped_actions(track_path, av_player_duration):

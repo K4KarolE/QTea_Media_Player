@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .cons_and_vars import cv
 from .func_coll import (
-    save_playing_tab_and_playing_last_track_index,
+    save_playing_last_track_index,
     list_item_style_update,
     generate_duration_to_display,
     update_playing_tab_vars_and_widgets,
@@ -59,8 +59,13 @@ class PlaysFunc():
             cv.playing_track_index = playing_track_index
 
         try:
-
-            try:
+            ''' AVOID SCENARIO:
+                1, last, played track in the playlist removed
+                2, another track started in the same playlist
+                3, failing last played track style update
+            '''
+            if cv.playing_last_track_index < cv.active_pl_tracks_count:
+                
                 ''' PREVIOUS TRACK STYLE'''
                 list_item_style_update(
                     cv.playing_pl_name.item(cv.playing_last_track_index),
@@ -75,12 +80,9 @@ class PlaysFunc():
                     'black',
                     'white'
                 )
-
-            except:
-                print(f'ERROR - Play track() - Row: {cv.playing_last_track_index}\n')
              
             cv.playing_last_track_index = cv.playing_track_index
-            save_playing_tab_and_playing_last_track_index()
+            save_playing_last_track_index()
           
       
             ''' NEW TRACK STYLE'''

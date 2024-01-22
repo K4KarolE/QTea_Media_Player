@@ -212,6 +212,8 @@ class MySettingsWindow(QWidget):
 
         def general_fields_validation(pass_validation = True):
 
+            MAX_WINDOW_SIZE_XY = 4500
+
             # screen values can be bigger than the display size - no over-reaching
             for item in cv.general_settings_dic:
 
@@ -223,14 +225,18 @@ class MySettingsWindow(QWidget):
                         pass_validation = False
                 
                 elif item_text in cv.gen_sett_window_width_text_list:
-                    if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_width:
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_width}!')
-                        pass_validation = False
+                    if (not line_edit_text.isdecimal() or 
+                        int(line_edit_text) < cv.window_min_width or
+                        int(line_edit_text) > MAX_WINDOW_SIZE_XY):
+                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}')
+                            pass_validation = False
                 
                 elif item_text in cv.gen_sett_window_height_text_list:
-                    if not line_edit_text.isdecimal() or int(line_edit_text) < cv.window_min_height:
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer >={cv.window_min_height}!')
-                        pass_validation = False
+                    if (not line_edit_text.isdecimal() or
+                        int(line_edit_text) < cv.window_min_height or
+                        int(line_edit_text) > MAX_WINDOW_SIZE_XY):
+                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}')
+                            pass_validation = False
                 else:
                     if not line_edit_text.isdecimal():
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer!')

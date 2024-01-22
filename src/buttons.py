@@ -10,6 +10,7 @@ from .func_coll import (
     generate_track_list_detail,
     add_record_grouped_actions,
     update_duration_sum_var_after_track_remove,
+    save_playing_last_track_index,
     cur, # db
     connection, # db
     settings,   # json dic
@@ -96,11 +97,11 @@ class MyButtons(QPushButton):
         
         current_row_index = cv.active_pl_name.currentRow()
         # LAST TRACK INDEX
-        if  current_row_index < cv.last_track_index:
-            cv.last_track_index = cv.last_track_index - 1
-            cv.playing_track_index -= 1
-            settings[cv.active_db_table]['last_track_index'] = cv.last_track_index
-            save_json(settings, PATH_JSON_SETTINGS)
+        if  current_row_index < cv.playing_last_track_index:
+            # cv.last_track_index -= 1
+            # cv.playing_track_index -= 1
+            cv.playing_last_track_index -= 1
+            save_playing_last_track_index()
         # DB
         remove_record_db(current_row_index)
         # PLAYLIST
@@ -111,9 +112,10 @@ class MyButtons(QPushButton):
         cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
         playlist = cur.fetchall()
         for item in playlist:
-            list_name, duration = generate_track_list_detail(item)
-            cv.active_pl_name.item(row_id_db-1).setText(list_name)
-            row_id_db +=1
+            track_row_db, list_name, duration = generate_track_list_detail(item)
+            cv.active_pl_name.item(track_row_db-1).setText(list_name)
+        
+
 
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''

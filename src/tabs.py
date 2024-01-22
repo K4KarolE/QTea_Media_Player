@@ -6,12 +6,9 @@ from PyQt6.QtWidgets import (
     QFrame,
     QTabWidget,
     QScrollBar,
-    QListView,
     QAbstractItemView
     )
 from PyQt6.QtGui import QFont
-
-from PyQt6.QtCore import Qt
 
 from .cons_and_vars import cv
 from .func_coll import (
@@ -20,7 +17,9 @@ from .func_coll import (
     generate_track_list_detail,
     add_new_list_item,
     generate_duration_to_display,
+    save_playing_last_track_index,
     cur, # db
+    connection, # db
     settings, # json dic
     PATH_JSON_SETTINGS,
     )
@@ -44,7 +43,6 @@ class MyTabs(QTabWidget):
         self.tabs_creation()
         self.setCurrentIndex(cv.playing_tab)
         self.currentChanged.connect(self.active_tab_changed)
-        # cv.active_pl_name.setCurrentRow(cv.last_track_index)
         self.tabs_created_at_first_run = True
         self.setStyleSheet(
                         "QTabBar::tab:selected"
@@ -53,7 +51,9 @@ class MyTabs(QTabWidget):
                             "color: white;"   # font
                             "}"
                         )
-        
+        cv.active_tab = self.currentIndex()
+        update_active_tab_vars_and_widgets()
+
 
     def active_tab_changed(self):
         if self.tabs_created_at_first_run:
@@ -156,13 +156,14 @@ class MyTabs(QTabWidget):
                 
                 ''' LISTS CREATION '''
                 ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
-                cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget() #.model().rowsAboutToBeMoved #.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+                cv.paylist_widget_dic[pl]['name_list_widget'] = QListWidget()
                 name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
                 name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
                 name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
                 name_list_widget.itemDoubleClicked.connect(self.play_track)
-                # name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-                # name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item())
+                # MOVE TRACK UP / DOWN
+                name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+                name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
             
 
                 cv.paylist_widget_dic[pl]['duration_list_widget'] = QListWidget()
@@ -195,7 +196,7 @@ class MyTabs(QTabWidget):
                 cur.execute("SELECT * FROM {0}".format(pl))
                 playlist = cur.fetchall()
                 for item in playlist:
-                    track_name, duration = generate_track_list_detail(item)
+                    rack_row_db, track_name, duration = generate_track_list_detail(item)
                     add_new_list_item(track_name, name_list_widget)
                     add_new_list_item(duration, duration_list_widget)
                     cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
@@ -220,12 +221,66 @@ class MyTabs(QTabWidget):
                 '''
                 name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
                 duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
-            
-        update_active_tab_vars_and_widgets()
+        
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     
-    def drag_and_drop_list_item(self):
-        print(cv.active_pl_duration.currentRow())
-    
+
+    def drag_and_drop_list_item_action(self):
+  
+        prev_row_id = cv.active_pl_duration.currentRow()
+        new_row_id = cv.active_pl_name.currentRow()
+
+        new_row_id_db = new_row_id + 1
+        prev_row_id_db = prev_row_id + 1
+
+        ''' RELOCATE DURATION WITH THE TITLE '''
+        current_duration_pl_item = cv.active_pl_duration.currentItem()
+        cv.active_pl_duration.takeItem(prev_row_id)
+        cv.active_pl_duration.insertItem(new_row_id, current_duration_pl_item)
+        cv.active_pl_duration.setCurrentRow(new_row_id)
+
+        ''' 
+            MOVE DOWN / MOVE UP    
+        '''
+        temporary_row_id = 0
+        cur.execute("UPDATE {0} SET row_id = {1} WHERE row_id = {2}".format(cv.active_db_table, temporary_row_id, prev_row_id_db))
+        connection.commit()
 
 
+        if new_row_id_db > prev_row_id_db:
+
+            cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > {1} AND row_id <= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
+            connection.commit()
+            
+            cur.execute("UPDATE {0} SET row_id = {1} WHERE row_id = {2}".format(cv.active_db_table, new_row_id_db, temporary_row_id))
+            connection.commit()
+
+            cur.execute("SELECT * FROM {0} WHERE row_id >= {1} AND row_id <= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
+            playlist = cur.fetchall()
+            for item in playlist:
+                rack_row_db, list_name, duration = generate_track_list_detail(item)
+                cv.active_pl_name.item(rack_row_db-1).setText(list_name)
+            
+
+            if cv.playing_last_track_index in range(prev_row_id_db, new_row_id_db):
+                cv.playing_last_track_index -= 1
+                save_playing_last_track_index()
+        
+
+        else:
+            for item in range(prev_row_id_db - 1, new_row_id_db - 1, -1):
+                cur.execute("UPDATE {0} SET row_id = row_id + 1 WHERE row_id = {1}".format(cv.active_db_table, item))
+            connection.commit()
+
+            cur.execute("UPDATE {0} SET row_id = {1} WHERE row_id = {2}".format(cv.active_db_table, new_row_id_db, temporary_row_id))
+            connection.commit()
+
+            cur.execute("SELECT * FROM {0} WHERE row_id <= {1} AND row_id >= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
+            playlist = cur.fetchall()
+            for item in playlist:
+                rack_row_db, list_name, duration = generate_track_list_detail(item)
+                cv.active_pl_name.item(rack_row_db-1).setText(list_name)
+            
+            if cv.playing_last_track_index in range(new_row_id_db -1, prev_row_id_db - 1):
+                cv.playing_last_track_index += 1
+                save_playing_last_track_index()

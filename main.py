@@ -424,6 +424,9 @@ def button_stop_clicked():
     av_player.paused = False
     button_play_pause.setIcon(button_image_start)
     av_player.screen_saver_on()
+    if av_player.video_output.isVisible():
+        image_logo.show()
+        av_player.video_output.hide()
 
 
 button_stop = MyButtons(
