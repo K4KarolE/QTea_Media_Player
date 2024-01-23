@@ -48,9 +48,9 @@ class Data:
     Updated after every playlist/tab change
     '''
     active_tab = settings['last_used_tab']
-    active_playlist_title = None
-    last_track_index = 0
     active_db_table = None  
+    active_pl_title = None
+    active_pl_last_track_index = 0
     active_pl_name = None   # widget
     active_pl_duration = None   # widget
     active_pl_sum_duration = 0
@@ -61,9 +61,9 @@ class Data:
     src / func_coll.py / playing_tab_utility()
     '''
     playing_tab = settings['playing_tab']
-    playing_playlist_title = None
-    playing_last_track_index = 0
     playing_db_table = None  
+    playing_pl_title = None
+    playing_pl_last_track_index = 0
     playing_pl_name = None   # widget
     playing_pl_duration = None   # widget
     playing_pl_tracks_count = 0

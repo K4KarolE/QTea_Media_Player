@@ -64,24 +64,24 @@ class PlaysFunc():
                 2, another track started in the same playlist
                 3, failing last played track style update
             '''
-            if cv.playing_last_track_index < cv.active_pl_tracks_count:
+            if cv.playing_pl_last_track_index < cv.active_pl_tracks_count:
                 
                 ''' PREVIOUS TRACK STYLE'''
                 list_item_style_update(
-                    cv.playing_pl_name.item(cv.playing_last_track_index),
+                    cv.playing_pl_name.item(cv.playing_pl_last_track_index),
                     inactive_track_font_style,
                     'black',
                     'white'
                 )
 
                 list_item_style_update(
-                    cv.playing_pl_duration.item(cv.playing_last_track_index),
+                    cv.playing_pl_duration.item(cv.playing_pl_last_track_index),
                     inactive_track_font_style,
                     'black',
                     'white'
                 )
              
-            cv.playing_last_track_index = cv.playing_track_index
+            cv.playing_pl_last_track_index = cv.playing_track_index
             save_playing_last_track_index()
           
       
@@ -142,7 +142,7 @@ class PlaysFunc():
             cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
             
             # WINDOW TITLE
-            self.window.setWindowTitle(f'{cv.playing_playlist_title} | {Path(track_path).stem} - QTea media player')
+            self.window.setWindowTitle(f'{cv.playing_pl_title} | {Path(track_path).stem} - QTea media player')
 
             # SCROLL TO PLAYING TRACK IF IT WOULD BE
             # OUT OF THE VISIBLE WINDOW/LIST

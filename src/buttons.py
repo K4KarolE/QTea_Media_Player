@@ -1,3 +1,33 @@
+'''
+    BUTTON FUNCTIONS DECLARED BELOW:
+    --------------------------------
+    - Add track
+    - Add directory
+    - Remove track - *more added/compiled in MAIN
+    - Remova all tracks (Clear playlist) - *more added/compiled in MAIN
+
+    - Set button style/stylesheet functions
+
+    - Play/pause
+    - Play/pause via list
+    - Previous track
+    - Next track
+    - Toggle repeat
+    - Toggle shuffle
+
+    
+
+    BUTTON FUNCTIONS DECLARED IN MAIN:
+    ----------------------------------
+    - Settings
+    - Stop
+    - Toggle playlist
+    - Toogle video
+    - Duration info (text)
+    - Speaker / mute (picture)
+'''
+
+
 from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QFont
@@ -97,10 +127,10 @@ class MyButtons(QPushButton):
         
         current_row_index = cv.active_pl_name.currentRow()
         # LAST TRACK INDEX
-        if  current_row_index < cv.playing_last_track_index:
+        if  current_row_index < cv.playing_pl_last_track_index:
             # cv.last_track_index -= 1
             # cv.playing_track_index -= 1
-            cv.playing_last_track_index -= 1
+            cv.playing_pl_last_track_index -= 1
             save_playing_last_track_index()
         # DB
         remove_record_db(current_row_index)

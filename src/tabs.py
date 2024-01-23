@@ -67,7 +67,7 @@ class MyTabs(QTabWidget):
     ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
     def name_list_to_duration_row_selection(self):
         cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
-        if cv.active_pl_name.currentRow() != cv.last_track_index:
+        if cv.active_pl_name.currentRow() != cv.active_pl_last_track_index:
             cv.active_pl_duration.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
@@ -78,7 +78,7 @@ class MyTabs(QTabWidget):
 
     def duration_list_to_name_row_selection(self):
         cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
-        if cv.active_pl_duration.currentRow() != cv.last_track_index:
+        if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
             cv.active_pl_name.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
@@ -232,8 +232,17 @@ class MyTabs(QTabWidget):
 
         new_row_id_db = new_row_id + 1
         prev_row_id_db = prev_row_id + 1
+        
+        ''' WHEN MOVING TRACK CURRENTLY PLAYING '''
+        def set_track_index_when_moving_currently_playing():
+            if cv.playing_pl_last_track_index == prev_row_id:
+                cv.playing_pl_last_track_index = new_row_id
+                save_playing_last_track_index()
+                return True
+            else:
+                return False
 
-        ''' RELOCATE DURATION WITH THE TITLE '''
+        ''' MOVE DURATION WITH THE TITLE '''
         current_duration_pl_item = cv.active_pl_duration.currentItem()
         cv.active_pl_duration.takeItem(prev_row_id)
         cv.active_pl_duration.insertItem(new_row_id, current_duration_pl_item)
@@ -246,7 +255,8 @@ class MyTabs(QTabWidget):
         cur.execute("UPDATE {0} SET row_id = {1} WHERE row_id = {2}".format(cv.active_db_table, temporary_row_id, prev_row_id_db))
         connection.commit()
 
-
+        
+        # MOVING TRACK DOWN
         if new_row_id_db > prev_row_id_db:
 
             cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > {1} AND row_id <= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
@@ -262,11 +272,11 @@ class MyTabs(QTabWidget):
                 cv.active_pl_name.item(rack_row_db-1).setText(list_name)
             
 
-            if cv.playing_last_track_index in range(prev_row_id_db, new_row_id_db):
-                cv.playing_last_track_index -= 1
+            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(prev_row_id_db, new_row_id_db):
+                cv.playing_pl_last_track_index -= 1
                 save_playing_last_track_index()
         
-
+        # MOVING TRACK UP
         else:
             for item in range(prev_row_id_db - 1, new_row_id_db - 1, -1):
                 cur.execute("UPDATE {0} SET row_id = row_id + 1 WHERE row_id = {1}".format(cv.active_db_table, item))
@@ -281,6 +291,6 @@ class MyTabs(QTabWidget):
                 rack_row_db, list_name, duration = generate_track_list_detail(item)
                 cv.active_pl_name.item(rack_row_db-1).setText(list_name)
             
-            if cv.playing_last_track_index in range(new_row_id_db -1, prev_row_id_db - 1):
-                cv.playing_last_track_index += 1
+            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id_db -1, prev_row_id_db - 1):
+                cv.playing_pl_last_track_index += 1
                 save_playing_last_track_index()

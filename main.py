@@ -10,132 +10,49 @@ from PyQt6.QtWidgets import (
     )
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
-
-from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
-from PyQt6.QtCore import QUrl, QEvent, Qt
-from PyQt6.QtMultimediaWidgets import QVideoWidget
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget
 
-
 import sys
-import ctypes
 from pathlib import Path
 
-from src import cv, inactive_track_font_style
-from src import MySlider, MyVolumeSlider, MySettingsWindow 
-from src import MyButtons, PlaysFunc, MyImage, MyTabs
-from src import update_and_save_volume_slider_value, generate_duration_to_display
-from src import update_raw_current_duration_db
+from src import (
+    cv,
+    inactive_track_font_style,
+    AVPlayer,
+    TrackDuration,
+    MySlider,
+    MyVolumeSlider,
+    MySettingsWindow,
+    MyButtons,
+    PlaysFunc,
+    MyImage,
+    MyTabs,
+    update_and_save_volume_slider_value,
+    generate_duration_to_display,
+    update_raw_current_duration_db
+    )
 
 
 
-"""
-PLAY EMPTY SOUND WORKAROUND
-at least one music file need to be played from start to finish
-before be able to switch tracks without crashing
---> class instance creation = dummy "song" played
-"""
-class AVPlayer(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.player = QMediaPlayer()
-        # VIDEO
-        self.video_output = QVideoWidget()
-        self.video_output.installEventFilter(self)
-        self.player.setVideoOutput(self.video_output)
-        # AUDIO
-        self.audio_output = QAudioOutput()
-        self.player.setAudioOutput(self.audio_output)
-        # BASE PLAY
-        self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
-        self.player.play()
-        # SETTINGS
-        self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
-        self.audio_output.setVolume(cv.volume)
-        self.paused = False
-        self.playlist_visible = True
-        self.video_area_visible = True
-
-    
-    ''' FOR FULL SCREEN MODE '''
-    def eventFilter(self, source, event):
-
-        if source == self.video_output and event.type() == QEvent.Type.MouseButtonDblClick:
-            self.full_screen_toggle()
-
-        if event.type() == QEvent.Type.KeyRelease:
-
-            # EXIT FULL SCREEN
-            if event.key() == Qt.Key.Key_Escape:
-                self.video_output.setFullScreen(0)
-                
-        return super().eventFilter(source, event)
-
-
-    def full_screen_toggle(self):
-        if self.video_output.isVisible():
-            if self.video_output.isFullScreen():
-                self.video_output.setFullScreen(0)
-            else:
-                self.video_output.setFullScreen(1)
-
-
-    # SCREEN SAVER SETTINGS UPDATE
-    # src / func_play_coll.py / play_track()
-    # src / buttons / button_play_pause_clicked()
-    # main / button_stop_clicked()    
-    def screen_saver_on_off(self):
-        # SCREEN SAVER OFF
-        if self.video_output.isVisible() and self.player.isPlaying():
-            self.screen_saver_off()
-        # SCREEN SAVER ON
-        else:
-            self.screen_saver_on()
-
-    def screen_saver_on(self):
-        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
-    
-    def screen_saver_off(self):
-        ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
-
-
-
-""" 
-    Only used for duration calculation -->
-    Adding small amount of new record/track:
-        Able to add new tracks without interrupting the current playing
-    Adding big amount of new record/track:
-        Video frame lagging while the new tracks are loading
-        No interruption in the sound
-"""
-class TrackDuration(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.player = QMediaPlayer()
-
-
-''' 
-    APP
-
-    LEARNED:
-    No eventFilter on the app(QApplication)
-    otherwise: keyRelease --> multiple trigger
-
-'''
+''' APP '''
 app = QApplication(sys.argv)
 
 
 ''' WINDOW '''
-# WINDOW_WIDTH, WINDOW_HEIGHT = 1200, 500
-# WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 650, 250
 WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 180
 
 class MyWindow(QWidget):
 
     def __init__(self):
         super().__init__()
+
+        self.resize(cv.window_width, cv.window_height)
+        self.setMinimumSize(cv.window_min_width, cv.window_min_height)
+        self.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
+        self.setWindowTitle("QTea media player")
+        if cv.always_on_top == 'True':
+            self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
         hotkeys_action_dic = {
         'small_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.small_jump),
@@ -200,12 +117,6 @@ class MyWindow(QWidget):
 
 window = MyWindow()
 
-window.resize(cv.window_width, cv.window_height)
-window.setMinimumSize(cv.window_min_width, cv.window_min_height)
-window.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
-window.setWindowTitle("QTea media player")
-if cv.always_on_top == 'True':
-    window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
 ''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow()
@@ -234,15 +145,13 @@ def update_duration_info():
             button_duration_info.setText(cv.duration_to_display_back)
 
         button_duration_info.adjustSize()
-    
-        # cv.prev_track_current_duration = track_current_duration
 
 av_player.player.positionChanged.connect(update_duration_info)
 
 
 """ 
     Only used for duration calculation
-    more info @ class definition (main.py)
+    more info in src / av_player.py
 """
 av_player_duration = TrackDuration()   
 

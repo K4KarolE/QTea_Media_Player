@@ -1,3 +1,15 @@
+''' 
+    LEARNED:
+    - No eventFilter on the app(QApplication)
+      otherwise: keyRelease --> multiple trigger
+    - Not every eventfilter keys trigger action
+      with both: full / non full screen video
+
+    Below how the eventfilter was used in
+    an early stage of the project
+'''
+
+
 from PyQt6.QtWidgets import  QWidget
 from PyQt6.QtCore import Qt, QEvent
 
