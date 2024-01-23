@@ -23,7 +23,7 @@
 - `Active playlist` = playlist which is currently selected / displayed
 
 ## Play buttons
-- to come 
+- To come 
 
 ## Playlist buttons (under playlists section)
 - `AT - Add Track`: add a single media/file to the playlist
@@ -35,8 +35,8 @@
 ## Settings - Settings window
 - To open the `Setting window` click on the `Cog/Settings icon` under the playlists section 
 - `Playlists tab:`Able to update the playlists titles - hide/show the playlists
-- `Genereal tab:` Adjust the shortcut keyboard values (work in progress)
-- `Hotkeys tab:` Adjust the player's jump values (work in progress)
+- `Genereal tab:` Adjust the shortcut keyboard values
+- `Hotkeys tab:` Adjust the player's jump values
 - Saving the `Settings window` values by clicking on the `Save button`:
     - Saves all the values from all the tabs if there is no invalid value
     - Else: 
@@ -54,17 +54,17 @@
     - To hide a playlist:
         - Remove the title of the playlist
         - Playlists without a title will be hidden after restart
-        - At least one of the playlist remains visible - not able to remove all the playlist titles
-            - In this case clicking on the `Save button`: pop-up window will be displayed with the error message
+        - At least one of the playlist remains visible
+            - Not able to remove all the playlist titles: clicking on the `Save button`: pop-up window will be displayed with the error message
         - The hidden playlist's records/media information remains in the database
 
 ### General
-- coming
+- Coming
 
 ### Hotkeys
-- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctrl`, `M+Ctrl`, `M+Ctrl+Space`
+- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
-- more to come
+- More to come
 
 <br>
 <div align="left">
@@ -101,6 +101,7 @@
 - Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
+- The below playlist limitation will be lifted in the future
 - The `Settings window` tabs are not scrollable, which put a limitation on how much playlists can be visible on the `Settings window / Playlist` tab:
     - Display(27" - 2560*1440 - 150% scale) ~ 50+ playlists
     - Display(15.6" - 2560*1440 - 150% scale) ~ 30 playlists
@@ -116,7 +117,7 @@
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg
 - Not all the listed file types are tested
-- To update the file types lists, please see the `src / cons_and_vars.py / FILE TYPES` section
+- To update to the file types lists, please see the `src / cons_and_vars.py / FILE TYPES` section
     - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button
     - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button
 
