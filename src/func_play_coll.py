@@ -64,7 +64,7 @@ class PlaysFunc():
                 2, another track started in the same playlist
                 3, failing last played track style update
             '''
-            if cv.playing_pl_last_track_index < cv.active_pl_tracks_count:
+            if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
                 
                 ''' PREVIOUS TRACK STYLE'''
                 list_item_style_update(

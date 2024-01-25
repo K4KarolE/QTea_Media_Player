@@ -237,13 +237,13 @@ class MyButtons(QPushButton):
     def button_prev_track_clicked(self):
 
         if cv.playing_track_index == None:
-            cv.playing_track_index = cv.active_pl_name.currentRow() 
-        if cv.active_pl_name.count() > 0:
+            cv.playing_track_index = cv.playing_pl_name.currentRow() 
+        if cv.playing_pl_name.count() > 0:
             if cv.playing_track_index != 0:
                 cv.playing_track_index -= 1
                 self.play_funcs.play_track(cv.playing_track_index)
             else:
-                cv.playing_track_index = cv.active_pl_name.count() - 1
+                cv.playing_track_index = cv.playing_pl_name.count() - 1
                 self.play_funcs.play_track(cv.playing_track_index)
     
 

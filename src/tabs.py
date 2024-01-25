@@ -70,6 +70,7 @@ class MyTabs(QTabWidget):
         
         cv.active_tab = self.currentIndex()
         update_active_tab_vars_and_widgets()
+        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
     def active_tab_changed(self):
@@ -238,8 +239,6 @@ class MyTabs(QTabWidget):
                 '''
                 name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
                 duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
-        
-        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     
 
     def drag_and_drop_list_item_action(self):

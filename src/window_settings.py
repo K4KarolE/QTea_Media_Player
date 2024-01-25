@@ -162,7 +162,7 @@ class MySettingsWindow(QWidget):
 
                 search_result = cv.search_regex.search(line_edit_text.title())
                 if not search_result:
-                    MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid!')
+                    MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.')
                     pass_validation = False
 
              
@@ -171,7 +171,7 @@ class MySettingsWindow(QWidget):
                 for index, item in enumerate(line_edit_text_all_values):
                     for index_2, item_2 in enumerate(line_edit_text_all_values[(index+1):]):
                         if item == item_2:
-                            MyMessageBoxError('HOTKEYS TAB', f'The "{item}" hotkey value used more than once!')
+                            MyMessageBoxError('HOTKEYS TAB', f'The "{item}" hotkey value used more than once.')
                             pass_validation = False
 
             return pass_validation 
@@ -246,25 +246,25 @@ class MySettingsWindow(QWidget):
 
                 if item_text in cv.gen_sett_boolean_text_list:
                     if line_edit_text not in ['True', 'False']:
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False"!')
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False".')
                         pass_validation = False
                 
                 elif item_text in cv.gen_sett_window_width_text_list:
                     if (not line_edit_text.isdecimal() or 
                         int(line_edit_text) < cv.window_min_width or
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
-                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}')
+                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
                 
                 elif item_text in cv.gen_sett_window_height_text_list:
                     if (not line_edit_text.isdecimal() or
                         int(line_edit_text) < cv.window_min_height or
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
-                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}')
+                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
                 else:
                     if not line_edit_text.isdecimal():
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer!')
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer.')
                         pass_validation = False
 
             return pass_validation
@@ -325,7 +325,7 @@ class MySettingsWindow(QWidget):
             line_edit_widget.setGeometry(
                 WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_pl_pos_y,
-                170,
+                190,
                 LINE_EDIT_HIGHT
                 )
 
@@ -444,6 +444,10 @@ class MySettingsWindow(QWidget):
             pl_list_with_title = []
             for pl in cv.paylist_widget_dic:
                 playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                if len(playlist_title) > 25:
+                    playlist_title = f'{playlist_title[0:23]}..'
+                    cv.paylist_widget_dic[pl]['line_edit'].setText(playlist_title)
+                    MyMessageBoxError('PAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
                 if len(playlist_title) != 0:
                     pl_list_with_title.append(pl)
             if len(pl_list_with_title) == 0:
@@ -467,7 +471,6 @@ class MySettingsWindow(QWidget):
                 ''' PAYLISTS TAB FIELDS '''
                 for pl in cv.paylist_widget_dic:
                     playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
-                    
                     if playlist_title != settings[pl]['tab_title']:
                         settings[pl]['tab_title'] = playlist_title
                         to_save = True
