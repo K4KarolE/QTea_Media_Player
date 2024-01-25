@@ -3,13 +3,13 @@
   "playing_tab": 0,
   "playing_tab_empty": true,
   "repeat_playlist": 1,
-  "shuffle_playlist_on": false,
-  "volume": 0.38,
+  "shuffle_playlist_on": true,
+  "volume": 1.0,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": "True",
-    "continue_playback": "False",
-    "play_at_startup": "False",
+    "continue_playback": "True",
+    "play_at_startup": "True",
     "small_jump": 10000,
     "medium_jump": 60000,
     "big_jump": 180000,
@@ -56,27 +56,27 @@
   "playlist_0": {
     "tab_title": "Movies",
     "tab_index": 0,
-    "last_track_index": 61
+    "last_track_index": 129
   },
   "playlist_1": {
     "tab_title": "Music",
     "tab_index": 1,
-    "last_track_index": 7
+    "last_track_index": 0
   },
   "playlist_2": {
     "tab_title": "Temp",
     "tab_index": 2,
-    "last_track_index": 160
+    "last_track_index": 0
   },
   "playlist_3": {
     "tab_title": "4",
     "tab_index": 3,
-    "last_track_index": 8
+    "last_track_index": 0
   },
   "playlist_4": {
     "tab_title": "5",
     "tab_index": 4,
-    "last_track_index": 9
+    "last_track_index": 0
   },
   "playlist_5": {
     "tab_title": "6",
@@ -84,73 +84,123 @@
     "last_track_index": 0
   },
   "playlist_6": {
-    "tab_title": "",
+    "tab_title": "7",
     "tab_index": 6,
     "last_track_index": 0
   },
   "playlist_7": {
-    "tab_title": "",
+    "tab_title": "8",
     "tab_index": 7,
     "last_track_index": 0
   },
   "playlist_8": {
-    "tab_title": "",
+    "tab_title": "9",
     "tab_index": 8,
     "last_track_index": 0
   },
   "playlist_9": {
-    "tab_title": "",
+    "tab_title": "10",
     "tab_index": 9,
     "last_track_index": 0
   },
   "playlist_10": {
-    "tab_title": "",
+    "tab_title": "11",
     "tab_index": 10,
     "last_track_index": 0
   },
   "playlist_11": {
-    "tab_title": "",
+    "tab_title": "12",
     "tab_index": 11,
     "last_track_index": 0
   },
   "playlist_12": {
-    "tab_title": "",
+    "tab_title": "13",
     "tab_index": 12,
     "last_track_index": 0
   },
   "playlist_13": {
-    "tab_title": "",
+    "tab_title": "14",
     "tab_index": 13,
     "last_track_index": 0
   },
   "playlist_14": {
-    "tab_title": "",
+    "tab_title": "15",
     "tab_index": 14,
     "last_track_index": 0
   },
   "playlist_15": {
-    "tab_title": "",
+    "tab_title": "16",
     "tab_index": 15,
     "last_track_index": 0
   },
   "playlist_16": {
-    "tab_title": "",
+    "tab_title": "17",
     "tab_index": 16,
     "last_track_index": 0
   },
   "playlist_17": {
-    "tab_title": "",
+    "tab_title": "18",
     "tab_index": 17,
     "last_track_index": 0
   },
   "playlist_18": {
-    "tab_title": "",
+    "tab_title": "19",
     "tab_index": 18,
     "last_track_index": 0
   },
   "playlist_19": {
-    "tab_title": "",
+    "tab_title": "20",
     "tab_index": 19,
+    "last_track_index": 0
+  },
+  "playlist_20": {
+    "tab_title": "21",
+    "tab_index": 20,
+    "last_track_index": 0
+  },
+  "playlist_21": {
+    "tab_title": "22",
+    "tab_index": 21,
+    "last_track_index": 0
+  },
+  "playlist_22": {
+    "tab_title": "23",
+    "tab_index": 22,
+    "last_track_index": 0
+  },
+  "playlist_23": {
+    "tab_title": "24",
+    "tab_index": 23,
+    "last_track_index": 0
+  },
+  "playlist_24": {
+    "tab_title": "25",
+    "tab_index": 24,
+    "last_track_index": 0
+  },
+  "playlist_25": {
+    "tab_title": "26",
+    "tab_index": 25,
+    "last_track_index": 0
+  },
+  "playlist_26": {
+    "tab_title": "27",
+    "tab_index": 26,
+    "last_track_index": 0
+  },
+  "playlist_27": {
+    "tab_title": "28",
+    "tab_index": 27,
+    "last_track_index": 0
+  },
+  "playlist_28": {
+    "tab_title": "29",
+    "tab_index": 28,
+    "last_track_index": 0
+  },
+  "playlist_29": {
+    "tab_title": "30",
+    "tab_index": 29,
     "last_track_index": 0
   }
 }

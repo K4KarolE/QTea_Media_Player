@@ -21,24 +21,24 @@ window_main = QScrollArea()
 window_widgets = QWidget()
 
 ''' SCROLL BARS '''
-scroll_bar_name_ver = QScrollBar()
-scroll_bar_name_ver.setStyleSheet(
+scroll_bar_ver = QScrollBar()
+scroll_bar_ver.setStyleSheet(
                                 "QScrollBar::vertical"
                                     "{"
                                     "width: 10px;"
                                     "}"
                                 )
 
-scroll_bar_name_hor = QScrollBar()
-scroll_bar_name_hor.setStyleSheet(
+scroll_bar_hor = QScrollBar()
+scroll_bar_hor.setStyleSheet(
                                 "QScrollBar::horizontal"
                                     "{"
                                     "height: 0px;"
                                     "}"
                                 )
 
-window_main.setVerticalScrollBar(scroll_bar_name_ver)
-window_main.setHorizontalScrollBar(scroll_bar_name_hor)
+window_main.setVerticalScrollBar(scroll_bar_ver)
+window_main.setHorizontalScrollBar(scroll_bar_hor)
 
 ''' WIDGETS '''
 counter = 0

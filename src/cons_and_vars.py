@@ -175,7 +175,9 @@ class Data:
         general_settings_dic['medium_jump']['text'],
         general_settings_dic['big_jump']['text'],
         ]
-
+    
+    general_settings_amount = len(list(general_settings_dic))
+    general_settings_last_widget_pos_y = 0  # to calc. the parent widget height
 
 
     ''' HOTKEYS TAB - SETTINGS WINDOW '''
@@ -198,6 +200,7 @@ class Data:
     full_screen_toggle = settings['hotkey_settings']['full_screen_toggle']
     playlist_toggle = settings['hotkey_settings']['playlist_toggle']
     window_size_toggle = settings['hotkey_settings']['window_size_toggle']
+
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -298,6 +301,7 @@ class Data:
     }
 
     hotkeys_list = list(hotkey_settings_dic)
+    hotkey_settings_last_widget_pos_y = 0  # to calc. the parent widget height
 
 
     ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
@@ -361,7 +365,7 @@ class Data:
     '''
     paylist_widget_dic = {}
 
-    playlist_amount = 20
+    playlist_amount = 30
     for i in range(0, playlist_amount):
         pl_name = f'playlist_{i}'
         paylist_widget_dic[pl_name] = {
@@ -371,6 +375,7 @@ class Data:
             }
       
     paylist_list = list(paylist_widget_dic)
+    paylist_settings_last_widget_pos_y = 0     # to calc. the parent widget height
 
 
 cv = Data()

@@ -1,5 +1,9 @@
 # QTea Media Player
-- The media player supports twenty playlists at the same time. Inspired by `Winamp` and `VLC media player`. 
+- The media player supports multiple* playlists at the same time. Inspired by `Winamp` and `VLC media player`.
+    - *30 by default, more can be generated
+    - Planned to add:
+        - Playlist picker window (search, jump to)
+        - Cross playlists queue management and a dedicated queue management window
 
 <div align="left">
     <img src="docs/promo/screenshot_0.png">
@@ -45,7 +49,7 @@
         - The pop-up window title: ERROR - TAB'S NAME (where the invalid value occurred)
 
 ### Playlists
-- Twenty playlists are available by default.
+- Twenty playlists are available by default. To create more, please see the `Steps to increase..` section below
 - In the `Settings window / Playlists` tab all the available playlists are listed
     - To make a playlist visible:
         - Add a title to the playlist
@@ -101,18 +105,13 @@
 - Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
-- The below playlist limitation will be lifted in the future
-- The `Settings window` tabs are not scrollable, which put a limitation on how much playlists can be visible on the `Settings window / Playlist` tab:
-    - Display(27" - 2560*1440 - 150% scale) ~ 50+ playlists
-    - Display(15.6" - 2560*1440 - 150% scale) ~ 30 playlists
-1. Review how much space the `Settings window` occupies of your screen
-2. Change the `src / settings_window.py / WINDOW_HEIGHT ` value to your screen height
-3. Rename the current playlist database: `playlist.db`
-4. In the `src / cons_and_vars.py` file change the `playlist_amount = 10` value to as many playlists you wish / your screen allows, save the file
-5. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created
-6. After the next start of the app, all the playlists will be visible with increasing numeric titles
-7. Optional: Change the title of the playlists via the `Settings window / Playlists`
-8. Optional: Remove the previous playlist database
+1. Close the app if it is running
+2. Rename the current playlist database: `playlist.db`
+3. In the `src / cons_and_vars.py` file change the `playlist_amount = 20` value to as many playlists you wish, save the file
+4. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created
+5. After the next start of the app, all the playlists will be visible with increasing numeric titles
+6. Optional: Change the title of the playlists via the `Settings window / Playlists`
+7. Optional: Remove the previous playlist database
 
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg

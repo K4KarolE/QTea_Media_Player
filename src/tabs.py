@@ -1,4 +1,4 @@
-''' TABS - PLAYLISTS CREATION '''
+''' PLAYLISTS/TABS CREATION '''
 
 from PyQt6.QtWidgets import (
     QListWidget,
@@ -39,7 +39,7 @@ class MyTabs(QTabWidget):
         self.play_track = play_track
         self.duration_sum_widg = duration_sum_widg
         self.tabs_created_at_first_run = False
-        self.setFont(QFont('Times', 10, 500))
+        self.setFont(QFont('Verdana', 10, 500))
         self.tabs_creation()
         self.setCurrentIndex(cv.playing_tab)
         self.currentChanged.connect(self.active_tab_changed)
@@ -47,10 +47,27 @@ class MyTabs(QTabWidget):
         self.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            "background: #287DCC;" 
+                            "background-color: #287DCC;" 
                             "color: white;"   # font
+                            "border: 2px solid #F0F0F0;"
+                            "border-radius: 5px;"
+                            "padding: 6px"
+                            "}"
+                        "QTabBar::tab:!selected"
+                            "{"
+                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
+                            "color: black;"   # font
+                            "border: 2px solid #F0F0F0;"
+                            "border-radius: 6px;"
+                            "padding: 6px"
+                            "}"
+                        "QTabWidget::pane"
+                            "{" 
+                            "position: absolute;"
+                            "top: 0.3em;"
                             "}"
                         )
+        
         cv.active_tab = self.currentIndex()
         update_active_tab_vars_and_widgets()
 

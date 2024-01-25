@@ -1,5 +1,5 @@
 ''' 
-    Settings window displayed once the settings button
+    SETTINGS WINDOW displayed once the settings button
     (cog icon) clicked under the playlists section
 '''
 
@@ -8,7 +8,9 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QLineEdit,
     QLabel,
-    QTabWidget
+    QTabWidget,
+    QScrollArea,
+    QScrollBar
     )
 
 from PyQt6.QtGui import QIcon, QFont
@@ -48,31 +50,50 @@ class MySettingsWindow(QWidget):
         ''' 
         TABS_POS_X = 10
         TABS_POS_Y = 10
+        EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y = 20
 
         tabs = QTabWidget(self)
-        tabs.setFont(QFont('Times', 10, 500))
-        tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, WINDOW_HEIGHT-TABS_POS_Y*6) 
+        tabs.setFont(QFont('Verdana', 10, 500))
+        tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, int(WINDOW_HEIGHT-TABS_POS_Y*5.5)) 
         tabs.move(TABS_POS_X+2, TABS_POS_Y+2)
         tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            "background: #287DCC;" 
+                            "background-color: #287DCC;" 
                             "color: white;"   # font
+                            "border: 2px solid #F0F0F0;"
+                            "border-radius: 4px;"
+                            "padding: 6px"
+                            "}"
+                        "QTabBar::tab:!selected"
+                            "{"
+                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
+                            "color: black;"   # font
+                            "border: 2px solid #F0F0F0;"
+                            "border-radius: 4px;"
+                            "padding: 6px"
+                            "}"
+                        # border set up @ QScrollArea
+                        "QTabWidget::pane"
+                            "{" 
+                            "position: absolute;"
+                            "top: 0.3em;"
                             "}"
                         )
+        
+        tab_playlist_scroll_area = QScrollArea() 
+        tab_general_scroll_area = QScrollArea()
+        tab_hotkey_scroll_area = QScrollArea()
 
         tab_playlist = QWidget() 
         tab_general = QWidget()
         tab_hotkey = QWidget()
 
-        tabs.addTab(tab_playlist, 'Playlists')
-        tabs.addTab(tab_general, 'General')
-        tabs.addTab(tab_hotkey, 'Hotkeys')
 
         LINE_EDIT_TEXT_ALIGNMENT = (Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
 
         LINE_EDIT_HIGHT = 20
-        WIDGETS_POS_X=45
+        WIDGETS_POS_X=25
         WIDGETS_POS_Y=20
         WIDGETS_NEXT_LINE_POS_Y_DIFF = 25
 
@@ -124,6 +145,8 @@ class MySettingsWindow(QWidget):
                 )
 
             widget_hotkey_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
+
+        cv.hotkey_settings_last_widget_pos_y = widget_hotkey_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
 
         def hotkey_fields_validation(pass_validation = True):
@@ -208,6 +231,8 @@ class MySettingsWindow(QWidget):
                 )
 
             widget_general_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
+        
+        cv.general_settings_last_widget_pos_y = widget_general_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
         
 
         def general_fields_validation(pass_validation = True):
@@ -306,8 +331,105 @@ class MySettingsWindow(QWidget):
 
             number_counter += 1
             widget_pl_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
+        
+        cv.paylist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
         
+        ''' 
+        #####################
+            TABS COMPILING     
+        #####################
+        '''
+        def set_widgets_window_style(widgets_window):
+            widgets_window.setStyleSheet(
+                            "QWidget"
+                                "{"
+                                "background-color: #F9F9F9;"
+                                "}"
+                            "QLineEdit"
+                                "{"
+                                "background-color: white;"
+                                "}"
+                                )
+            
+
+        def set_scroll_area_style(scroll_area):
+            scroll_area.setStyleSheet(
+                                "QScrollArea"
+                                    "{"
+                                    "background-color: #F9F9F9;" 
+                                    "border: 1px solid #C2C2C2;"
+                                    "border-radius: 2px;"
+                                    "}"
+                                )
+
+
+        def set_scroll_bar_style(scroll_bar):
+            scroll_bar.setStyleSheet(
+                                    "QScrollBar::vertical"
+                                        "{"
+                                        "width: 10px;"
+                                        "}"
+                                    "QScrollBar::horizontal"
+                                        "{"
+                                        "width: 0px;"
+                                        "}"
+                                    )
+            
+        tabs_dic = {
+            'Paylists': {
+                'text': 'Playlists',
+                'scroll_area': tab_playlist_scroll_area,
+                'scroll_bar_ver': '',
+                'scroll_bar_hor': '',
+                'widgets_window': tab_playlist,
+                'widgets_window_height': cv.paylist_settings_last_widget_pos_y
+            },
+            'General': {
+                'text': 'General',
+                'scroll_area': tab_general_scroll_area,
+                'scroll_bar_ver': '',
+                'scroll_bar_hor': '',
+                'widgets_window': tab_general,
+                'widgets_window_height': cv.general_settings_last_widget_pos_y
+            },
+            'Hotkeys': {
+                'text': 'Hotkeys',
+                'scroll_area': tab_hotkey_scroll_area,
+                'scroll_bar_ver': '',
+                'scroll_bar_hor': '',
+                'widgets_window': tab_hotkey,
+                'widgets_window_height': cv.hotkey_settings_last_widget_pos_y
+            }
+        }
+
+
+        '''
+        WIDGET RESIZE 
+            - If widget size > tab size -> scroll bar visible
+            - resize(WINDOW_WIDTH-50,.. -> no horisontal scroll bar
+            - widget amount -> vertical scroll bar visible / invisible
+            - more info: docs / learning / set_scrollbar_to_tab_widget.pyHi 
+        '''
+        for tab in tabs_dic:
+            print(tabs_dic[tab]['widgets_window_height'])
+            tabs_dic[tab]['widgets_window'].resize(WINDOW_WIDTH, tabs_dic[tab]['widgets_window_height'])
+            set_widgets_window_style(tabs_dic[tab]['widgets_window'])
+
+            tabs_dic[tab]['scroll_bar_ver'] = QScrollBar()
+            set_scroll_bar_style(tabs_dic[tab]['scroll_bar_ver'])
+            tabs_dic[tab]['scroll_bar_hor'] = QScrollBar()
+            set_scroll_bar_style(tabs_dic[tab]['scroll_bar_hor'])
+            
+            tabs_dic[tab]['scroll_area'].setVerticalScrollBar(tabs_dic[tab]['scroll_bar_ver'])
+            tabs_dic[tab]['scroll_area'].setHorizontalScrollBar(tabs_dic[tab]['scroll_bar_hor'])
+            set_scroll_area_style(tabs_dic[tab]['scroll_area'])
+     
+            tabs_dic[tab]['scroll_area'].setWidget(tabs_dic[tab]['widgets_window'])
+            tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
+
+
+
 
         '''
         ####################

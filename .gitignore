@@ -3,7 +3,7 @@
 *virtual*
 *copy*
 settings.json
-playlist.db
+*.db
 *.log
 
 # Byte-compiled / optimized / DLL files
