@@ -74,6 +74,10 @@ class MyWindow(QWidget):
         'full_screen_toggle': lambda: av_player.full_screen_toggle(),
         'playlist_toggle': lambda: button_toggle_playlist_clicked(),
         'window_size_toggle': self.window_size_toggle_action,
+        'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
+        'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
+        'paylist_remove_track': lambda: button_remove_track.button_remove_track_clicked(),
+        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):

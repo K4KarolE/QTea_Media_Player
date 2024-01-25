@@ -254,6 +254,7 @@ class MyTabs(QTabWidget):
         def set_track_index_when_moving_currently_playing():
             if cv.playing_pl_last_track_index == prev_row_id:
                 cv.playing_pl_last_track_index = new_row_id
+                cv.playing_track_index = cv.playing_pl_last_track_index
                 save_playing_last_track_index()
                 return True
             else:

@@ -412,7 +412,6 @@ class MySettingsWindow(QWidget):
             - more info: docs / learning / set_scrollbar_to_tab_widget.pyHi 
         '''
         for tab in tabs_dic:
-            print(tabs_dic[tab]['widgets_window_height'])
             tabs_dic[tab]['widgets_window'].resize(WINDOW_WIDTH, tabs_dic[tab]['widgets_window_height'])
             set_widgets_window_style(tabs_dic[tab]['widgets_window'])
 

@@ -29,7 +29,6 @@ class Data:
     shuffle_playlist_on = settings['shuffle_playlist_on']
     volume = settings['volume']
     icon_size = 20  # used for the buttons
-    playing_track_index = 0
     is_speaker_muted = False
     audio_tracks_amount = 0
     audio_track_played = 0
@@ -37,6 +36,22 @@ class Data:
     subtitle_track_played = 0
     window_size_normal = True   # for window_size_toggle
     
+    ''' 
+    TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)
+    playing_track_index 
+
+    
+    TO SAVE THE PLAY AND SELECTION HISTORY:
+    From below and src / func_coll.py:
+    
+    ACTIVE TAB UTILITY
+    update_active_tab_vars_and_widgets() -  cv.active_pl_last_track_index
+    
+    PLAYING TAB UTILITY
+    update_playing_tab_vars_and_widgets() - cv.playing_pl_last_track_index
+    '''
+    playing_track_index = 0
+
 
     ''' 
     ACTIVE AND PLAYING PLAYLISTS/TABS SEPARATION
@@ -153,7 +168,7 @@ class Data:
         }
     }
 
-    # used in the src / settings_window.py / field validation - fieldsave 
+    # used in the src / settings_window.py / field validation - field save 
     gen_sett_boolean_text_list = [
         general_settings_dic['always_on_top']['text'],
         general_settings_dic['continue_playback']['text'],
@@ -200,6 +215,10 @@ class Data:
     full_screen_toggle = settings['hotkey_settings']['full_screen_toggle']
     playlist_toggle = settings['hotkey_settings']['playlist_toggle']
     window_size_toggle = settings['hotkey_settings']['window_size_toggle']
+    paylist_add_track = settings['hotkey_settings']['paylist_add_track']
+    paylist_add_directory = settings['hotkey_settings']['paylist_add_directory']
+    paylist_remove_track = settings['hotkey_settings']['paylist_remove_track']
+    paylist_remove_all_track = settings['hotkey_settings']['paylist_remove_all_track']
 
 
     hotkey_settings_dic = {
@@ -259,17 +278,17 @@ class Data:
             'line_edit_widget': ''
         },
         'play_pause': {
-            'text': 'Play / pause',
+            'text': 'Play / Pause',
             'value': play_pause,
             'line_edit_widget': ''
         },
         'previous_track': {
-            'text': 'Play previous track',
+            'text': 'Play - Previous track',
             'value': previous_track,
             'line_edit_widget': ''
         },
         'next_track': {
-            'text': 'Play next track',
+            'text': 'Play - Next track',
             'value': next_track,
             'line_edit_widget': ''
         },
@@ -296,6 +315,26 @@ class Data:
         'window_size_toggle': {
             'text': 'Toogle - Window alt. size',
             'value': window_size_toggle,
+            'line_edit_widget': ''
+        },
+        'paylist_add_track': {
+            'text': 'Paylist - Add track',
+            'value': paylist_add_track,
+            'line_edit_widget': ''
+        },
+        'paylist_add_directory': {
+            'text': 'Paylist - Add directory',
+            'value': paylist_add_directory,
+            'line_edit_widget': ''
+        },
+        'paylist_remove_track': {
+            'text': 'Paylist - Remove track',
+            'value': paylist_remove_track,
+            'line_edit_widget': ''
+        },
+        'paylist_remove_all_track': {
+            'text': 'Paylist - Clear playlist',
+            'value': paylist_remove_all_track,
             'line_edit_widget': ''
         }
     }
