@@ -341,12 +341,12 @@ class Data:
             'line_edit_widget': ''
         },
         'paylist_select_prev_pl': {
-            'text': 'Paylist - Select next playlist',
+            'text': 'Paylist - Select next',
             'value': paylist_select_prev_pl,
             'line_edit_widget': ''
         },
         'paylist_select_next_pl': {
-            'text': 'Paylist - Select previous playlist',
+            'text': 'Paylist - Select previous',
             'value': paylist_select_next_pl,
             'line_edit_widget': ''
         }

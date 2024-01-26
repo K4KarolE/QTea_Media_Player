@@ -1,6 +1,7 @@
 ''' PLAYLISTS/TABS CREATION '''
 
 from PyQt6.QtWidgets import (
+    QWidget,
     QListWidget,
     QHBoxLayout,
     QFrame,
@@ -70,6 +71,7 @@ class MyTabs(QTabWidget):
         cv.active_tab = self.currentIndex()
         update_active_tab_vars_and_widgets()
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+        self.add_dummy_tab()
         self.hide_tabs_with_no_title()
 
 
@@ -78,13 +80,15 @@ class MyTabs(QTabWidget):
         The last tab added to the TABS widget should NOT be hidden
         it will make the right tab selection arrow inactive/unusable to
         select the un-hidden tabs beyond the visible tabs
-        workaround --> we leave the last tab always visible
+        workaround --> we leave the last tab always visible and disabled
     '''
+    def add_dummy_tab(self):
+        self.addTab(QWidget(), '')
+        self.setTabEnabled(cv.playlist_amount, 0)
+
     def hide_tabs_with_no_title(self):
-        last_tab_index = cv.playlist_amount - 1
         for index in cv.tabs_without_title_to_hide_index_list:
-            if index != last_tab_index: 
-                self.setTabVisible(index, 0)
+            self.setTabVisible(index, 0)
 
 
     def active_tab_changed(self):

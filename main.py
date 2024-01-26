@@ -129,7 +129,8 @@ class MyWindow(QWidget):
             index_counter -=1
             next_tab_index = current_index + index_counter
         
-        tabs_playlist.setCurrentIndex(next_tab_index)
+        if next_tab_index >= 0:
+            tabs_playlist.setCurrentIndex(next_tab_index)
 
 
     def paylist_select_next_pl_action(self):
@@ -141,8 +142,9 @@ class MyWindow(QWidget):
         while next_tab_index in cv.tabs_without_title_to_hide_index_list and next_tab_index < last_tab_index:
             index_counter +=1
             next_tab_index = current_index + index_counter
-
-        tabs_playlist.setCurrentIndex(next_tab_index)
+        
+        if next_tab_index <= last_tab_index and next_tab_index not in cv.tabs_without_title_to_hide_index_list:
+            tabs_playlist.setCurrentIndex(next_tab_index)
      
 
 
