@@ -77,7 +77,9 @@ class MyWindow(QWidget):
         'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
         'paylist_remove_track': lambda: button_remove_track.button_remove_track_clicked(),
-        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked()
+        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked(),
+        'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
+        'paylist_select_next_pl': self.paylist_select_next_pl_action
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -117,6 +119,31 @@ class MyWindow(QWidget):
             cv.window_size_normal = True
             self.resize(cv.window_width, cv.window_height)
 
+
+    def paylist_select_prev_pl_action(self):
+        current_index = tabs_playlist.currentIndex()
+        index_counter = -1
+        next_tab_index = current_index + index_counter
+
+        while next_tab_index in cv.tabs_without_title_to_hide_index_list and next_tab_index > 0:
+            index_counter -=1
+            next_tab_index = current_index + index_counter
+        
+        tabs_playlist.setCurrentIndex(next_tab_index)
+
+
+    def paylist_select_next_pl_action(self):
+        current_index = tabs_playlist.currentIndex()
+        last_tab_index = cv.playlist_amount-1
+        index_counter = 1
+        next_tab_index = current_index + index_counter
+
+        while next_tab_index in cv.tabs_without_title_to_hide_index_list and next_tab_index < last_tab_index:
+            index_counter +=1
+            next_tab_index = current_index + index_counter
+
+        tabs_playlist.setCurrentIndex(next_tab_index)
+     
 
 
 window = MyWindow()

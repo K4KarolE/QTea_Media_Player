@@ -35,6 +35,7 @@ class Data:
     subtitle_tracks_amount = 0
     subtitle_track_played = 0
     window_size_normal = True   # for window_size_toggle
+    tabs_without_title_to_hide_index_list = []
     
     ''' 
     TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)
@@ -219,6 +220,8 @@ class Data:
     paylist_add_directory = settings['hotkey_settings']['paylist_add_directory']
     paylist_remove_track = settings['hotkey_settings']['paylist_remove_track']
     paylist_remove_all_track = settings['hotkey_settings']['paylist_remove_all_track']
+    paylist_select_prev_pl = settings['hotkey_settings']['paylist_select_prev_pl']
+    paylist_select_next_pl = settings['hotkey_settings']['paylist_select_next_pl']
 
 
     hotkey_settings_dic = {
@@ -336,6 +339,16 @@ class Data:
             'text': 'Paylist - Clear playlist',
             'value': paylist_remove_all_track,
             'line_edit_widget': ''
+        },
+        'paylist_select_prev_pl': {
+            'text': 'Paylist - Select next playlist',
+            'value': paylist_select_prev_pl,
+            'line_edit_widget': ''
+        },
+        'paylist_select_next_pl': {
+            'text': 'Paylist - Select previous playlist',
+            'value': paylist_select_next_pl,
+            'line_edit_widget': ''
         }
     }
 
@@ -345,7 +358,7 @@ class Data:
 
     ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
     ''' More info in the docs / learning / regex_for_hotkey_validation.py '''
-    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
+    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
 
     # ONE KEY
     exp_1 = r''
