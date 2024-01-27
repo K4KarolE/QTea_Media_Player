@@ -129,9 +129,10 @@ class MyWindow(QWidget):
             index_counter -=1
             next_tab_index = current_index + index_counter
         
-        if next_tab_index >= 0:
+        if next_tab_index >= 0 and next_tab_index not in cv.tabs_without_title_to_hide_index_list:
             tabs_playlist.setCurrentIndex(next_tab_index)
-
+        
+        
 
     def paylist_select_next_pl_action(self):
         current_index = tabs_playlist.currentIndex()
@@ -151,8 +152,7 @@ class MyWindow(QWidget):
 window = MyWindow()
 
 
-''' WINDOW SETTINGS '''
-window_settings = MySettingsWindow()
+
 
 ''' PLAYER '''
 av_player = AVPlayer()
@@ -690,13 +690,18 @@ duration_sum_widg.setDisabled(1)
 duration_sum_widg.setFont(inactive_track_font_style)
 layout_under_playlist_duration.addWidget(duration_sum_widg)
 
-# TABS
-tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list, duration_sum_widg)
-layout_playlist.addWidget(tabs_playlist)
-
 # PLAY BUTTON ICON UPDATE
 if cv.play_at_startup == 'True' and cv.active_pl_tracks_count > 0:
     button_play_pause.setIcon(button_image_pause)
+
+
+''' PAYLISTS / TABS '''
+tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list, duration_sum_widg)
+layout_playlist.addWidget(tabs_playlist)
+
+''' WINDOW SETTINGS '''
+window_settings = MySettingsWindow(tabs_playlist, av_player)
+
 
 
 ''' BOTTOM '''

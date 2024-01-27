@@ -26,8 +26,10 @@ from .message_box import MyMessageBoxError
 
 class MySettingsWindow(QWidget):
     
-    def __init__(self):
+    def __init__(self, tabs_playlist, av_player):
         super().__init__()
+        self.tabs_playlist = tabs_playlist
+        self.av_player = av_player
 
         '''
         ##############
@@ -111,7 +113,7 @@ class MySettingsWindow(QWidget):
             return item_text, item_value, line_edit_text
         
 
-        
+
         '''
         ######################
             TAB - HOTKEYS          
@@ -170,7 +172,7 @@ class MySettingsWindow(QWidget):
             if pass_validation:
                 for index, item in enumerate(line_edit_text_all_values):
                     for index_2, item_2 in enumerate(line_edit_text_all_values[(index+1):]):
-                        if item == item_2:
+                        if item == item_2 and item != '':
                             MyMessageBoxError('HOTKEYS TAB', f'The "{item}" hotkey value used more than once.')
                             pass_validation = False
 
@@ -295,8 +297,11 @@ class MySettingsWindow(QWidget):
             
 
 
-        ''' TAB - PLAYLISTS '''
-        ''' VALUE SAVING IN button_save_clicked()'''
+        '''
+        ######################
+            TAB - PLAYLIST            
+        ######################
+        '''
         WIDGET_PL_POS_X = WIDGETS_POS_X
         widget_pl_pos_y = WIDGETS_POS_Y
         PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
@@ -334,11 +339,77 @@ class MySettingsWindow(QWidget):
         
         cv.paylist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
+
+        ''' 
+            Avoid removing all the playlist titles
+            Avoid saving playlist titles over 25 char.s
+        '''
+        def playlist_fields_validation_first():
+            pl_list_with_title = []
+            for pl in cv.paylist_widget_dic:
+                playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                if len(playlist_title) > 25:
+                    playlist_title = f'{playlist_title[0:23]}..'
+                    cv.paylist_widget_dic[pl]['line_edit'].setText(playlist_title)
+                    MyMessageBoxError('PAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
+                if len(playlist_title) != 0:
+                    pl_list_with_title.append(pl)
+            if len(pl_list_with_title) == 0:
+                MyMessageBoxError('PAYLISTS TAB', 'At least one playlist title needed!')
+            return pl_list_with_title
         
+
+        ''' Avoid removing the playing playlist '''
+        def playlist_fields_validation_second(pass_validation = True):
+            for pl in cv.paylist_widget_dic:
+                playlist_index = cv.paylist_list.index(pl)
+                new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                prev_playlist_title = settings[pl]['tab_title']
+
+                if (not new_playlist_title and prev_playlist_title and
+                    playlist_index == cv.playing_tab and
+                    self.av_player.player.isPlaying() or self.av_player.paused):
+                        cv.paylist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
+                        MyMessageBoxError(
+                                        'PAYLISTS TAB',
+                                        f'Active playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
+                        pass_validation = False
+            return pass_validation
+
+
+        def paylists_fields_to_save(to_save = False):
+            for pl in cv.paylist_widget_dic:
+                playlist_index = cv.paylist_list.index(pl)
+                new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                prev_playlist_title = settings[pl]['tab_title']
+
+                if new_playlist_title != prev_playlist_title:
+                    
+                    # NEW TITLE, PREV: EMPTY - INVISIBLE
+                    if new_playlist_title and not prev_playlist_title:
+                        self.tabs_playlist.setTabVisible(playlist_index, 1)
+                        cv.tabs_without_title_to_hide_index_list.remove(playlist_index)
+
+                    # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
+                    elif not new_playlist_title and prev_playlist_title:
+                        self.tabs_playlist.setTabVisible(playlist_index, 0)
+                        cv.tabs_without_title_to_hide_index_list.append(playlist_index)
+                    
+                    self.tabs_playlist.setTabText(playlist_index, new_playlist_title)
+                    settings[pl]['tab_title'] = new_playlist_title
+                    to_save = True  
+            
+            if to_save:
+                save_json(settings, PATH_JSON_SETTINGS)
+        
+
         ''' 
         #####################
             TABS COMPILING     
         #####################
+        
+        WIDGETS_WINDOW and SCROLL_AREA background color is the same
+        --> if WIDGETS_WINDOW size < SCROLL_AREA --> still looks like one window
         '''
         def set_widgets_window_style(widgets_window):
             widgets_window.setStyleSheet(
@@ -440,26 +511,13 @@ class MySettingsWindow(QWidget):
         BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
         BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HIGHT
 
-        def is_at_least_one_playlist_title_kept():
-            pl_list_with_title = []
-            for pl in cv.paylist_widget_dic:
-                playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
-                if len(playlist_title) > 25:
-                    playlist_title = f'{playlist_title[0:23]}..'
-                    cv.paylist_widget_dic[pl]['line_edit'].setText(playlist_title)
-                    MyMessageBoxError('PAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
-                if len(playlist_title) != 0:
-                    pl_list_with_title.append(pl)
-            if len(pl_list_with_title) == 0:
-                MyMessageBoxError('PAYLISTS TAB', 'At least one playlist title needed!')
-            return pl_list_with_title
-
     
-        def button_save_clicked(to_save = False):
+        def button_save_clicked():
                 
-            pl_list_with_title = is_at_least_one_playlist_title_kept()
+            pl_list_with_title = playlist_fields_validation_first()
             
-            if pl_list_with_title and general_fields_validation() and hotkey_fields_validation():
+            if (pl_list_with_title and playlist_fields_validation_second() and
+                general_fields_validation() and hotkey_fields_validation()):
                 
                 ''' GENERAL TAB FIELDS '''
                 hotkeys_fields_to_save()
@@ -467,13 +525,9 @@ class MySettingsWindow(QWidget):
                 ''' GENERAL TAB FIELDS '''
                 general_fields_to_save()
 
-
                 ''' PAYLISTS TAB FIELDS '''
-                for pl in cv.paylist_widget_dic:
-                    playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
-                    if playlist_title != settings[pl]['tab_title']:
-                        settings[pl]['tab_title'] = playlist_title
-                        to_save = True
+                paylists_fields_to_save()
+                
 
                 ''' 
                     If the last used tab/playlist removed 
@@ -482,10 +536,8 @@ class MySettingsWindow(QWidget):
                 if  len(settings[cv.paylist_list[cv.active_tab]]['tab_title']) == 0:
                     cv.active_tab = settings[pl_list_with_title[-1]]['tab_index']
                     settings['last_used_tab'] = cv.active_tab
-
-                if to_save:
                     save_json(settings, PATH_JSON_SETTINGS)
-            
+                
                 self.hide()
 
 

@@ -35,6 +35,7 @@ class Data:
     subtitle_tracks_amount = 0
     subtitle_track_played = 0
     window_size_normal = True   # for window_size_toggle
+    # To track hidden tabs/playlists
     tabs_without_title_to_hide_index_list = []
     
     ''' 
@@ -341,12 +342,12 @@ class Data:
             'line_edit_widget': ''
         },
         'paylist_select_prev_pl': {
-            'text': 'Paylist - Select next',
+            'text': 'Paylist - Select previous',
             'value': paylist_select_prev_pl,
             'line_edit_widget': ''
         },
         'paylist_select_next_pl': {
-            'text': 'Paylist - Select previous',
+            'text': 'Paylist - Select next',
             'value': paylist_select_next_pl,
             'line_edit_widget': ''
         }
@@ -358,7 +359,7 @@ class Data:
 
     ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
     ''' More info in the docs / learning / regex_for_hotkey_validation.py '''
-    keys_list = ['Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
+    keys_list = ['', 'Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
 
     # ONE KEY
     exp_1 = r''

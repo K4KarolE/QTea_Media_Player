@@ -1,10 +1,10 @@
 {
-  "last_used_tab": 2,
-  "playing_tab": 2,
+  "last_used_tab": 0,
+  "playing_tab": 0,
   "playing_tab_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.15,
+  "volume": 0.25,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": "True",
@@ -43,7 +43,9 @@
     "paylist_add_track": "A",
     "paylist_add_directory": "D",
     "paylist_remove_track": "Alt+R",
-    "paylist_remove_all_track": "Alt+C"
+    "paylist_remove_all_track": "Alt+C",
+    "paylist_select_prev_pl": "Shift+Left",
+    "paylist_select_next_pl": "Shift+Right"
   },
   "skins": {
     "default": {
@@ -60,17 +62,17 @@
   "playlist_0": {
     "tab_title": "Movies",
     "tab_index": 0,
-    "last_track_index": 9
+    "last_track_index": 25
   },
   "playlist_1": {
-    "tab_title": "Music - Random",
+    "tab_title": "Music - All",
     "tab_index": 1,
-    "last_track_index": 4
+    "last_track_index": 5
   },
   "playlist_2": {
-    "tab_title": "Music - All",
+    "tab_title": "Blink",
     "tab_index": 2,
-    "last_track_index": 60
+    "last_track_index": 1
   },
   "playlist_3": {
     "tab_title": "Afroman",
@@ -148,47 +150,47 @@
     "last_track_index": 0
   },
   "playlist_18": {
-    "tab_title": "19",
+    "tab_title": "",
     "tab_index": 18,
     "last_track_index": 0
   },
   "playlist_19": {
-    "tab_title": "20",
+    "tab_title": "",
     "tab_index": 19,
     "last_track_index": 0
   },
   "playlist_20": {
-    "tab_title": "21",
+    "tab_title": "",
     "tab_index": 20,
     "last_track_index": 0
   },
   "playlist_21": {
-    "tab_title": "22",
+    "tab_title": "",
     "tab_index": 21,
     "last_track_index": 0
   },
   "playlist_22": {
-    "tab_title": "23",
+    "tab_title": "",
     "tab_index": 22,
     "last_track_index": 0
   },
   "playlist_23": {
-    "tab_title": "24",
+    "tab_title": "",
     "tab_index": 23,
     "last_track_index": 0
   },
   "playlist_24": {
-    "tab_title": "25",
+    "tab_title": "",
     "tab_index": 24,
     "last_track_index": 0
   },
   "playlist_25": {
-    "tab_title": "26",
+    "tab_title": "",
     "tab_index": 25,
     "last_track_index": 0
   },
   "playlist_26": {
-    "tab_title": "27",
+    "tab_title": "",
     "tab_index": 26,
     "last_track_index": 0
   },
