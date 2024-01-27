@@ -1,6 +1,10 @@
 ''' 
     SETTINGS WINDOW displayed once the settings button
     (cog icon) clicked under the playlists section
+
+    In the rest of the files the TABS(Playlists) has been referred
+    as playlist_all, playlist_index, ..
+    In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''
 
 from PyQt6.QtWidgets import (
@@ -26,9 +30,9 @@ from .message_box import MyMessageBoxError
 
 class MySettingsWindow(QWidget):
     
-    def __init__(self, tabs_playlist, av_player):
+    def __init__(self, playlists_all, av_player):
         super().__init__()
-        self.tabs_playlist = tabs_playlist
+        self.playlists_all = playlists_all
         self.av_player = av_player
 
         '''
@@ -324,7 +328,7 @@ class MySettingsWindow(QWidget):
             cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             line_edit_widget = cv.paylist_widget_dic[pl]['line_edit']
 
-            line_edit_widget.setText(settings[pl]['tab_title'])
+            line_edit_widget.setText(settings[pl]['playlist_title'])
             line_edit_widget.setFont(inactive_track_font_style)
             line_edit_widget.setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             line_edit_widget.setGeometry(
@@ -364,10 +368,10 @@ class MySettingsWindow(QWidget):
             for pl in cv.paylist_widget_dic:
                 playlist_index = cv.paylist_list.index(pl)
                 new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
-                prev_playlist_title = settings[pl]['tab_title']
+                prev_playlist_title = settings[pl]['playlist_title']
 
                 if (not new_playlist_title and prev_playlist_title and
-                    playlist_index == cv.playing_tab and
+                    playlist_index == cv.playing_playlist and
                     self.av_player.player.isPlaying() or self.av_player.paused):
                         cv.paylist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
@@ -381,22 +385,22 @@ class MySettingsWindow(QWidget):
             for pl in cv.paylist_widget_dic:
                 playlist_index = cv.paylist_list.index(pl)
                 new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
-                prev_playlist_title = settings[pl]['tab_title']
+                prev_playlist_title = settings[pl]['playlist_title']
 
                 if new_playlist_title != prev_playlist_title:
                     
                     # NEW TITLE, PREV: EMPTY - INVISIBLE
                     if new_playlist_title and not prev_playlist_title:
-                        self.tabs_playlist.setTabVisible(playlist_index, 1)
-                        cv.tabs_without_title_to_hide_index_list.remove(playlist_index)
+                        self.playlists_all.setTabVisible(playlist_index, 1)
+                        cv.paylists_without_title_to_hide_index_list.remove(playlist_index)
 
                     # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
                     elif not new_playlist_title and prev_playlist_title:
-                        self.tabs_playlist.setTabVisible(playlist_index, 0)
-                        cv.tabs_without_title_to_hide_index_list.append(playlist_index)
+                        self.playlists_all.setTabVisible(playlist_index, 0)
+                        cv.paylists_without_title_to_hide_index_list.append(playlist_index)
                     
-                    self.tabs_playlist.setTabText(playlist_index, new_playlist_title)
-                    settings[pl]['tab_title'] = new_playlist_title
+                    self.playlists_all.setTabText(playlist_index, new_playlist_title)
+                    settings[pl]['playlist_title'] = new_playlist_title
                     to_save = True  
             
             if to_save:
@@ -530,12 +534,12 @@ class MySettingsWindow(QWidget):
                 
 
                 ''' 
-                    If the last used tab/playlist removed 
-                    at next start the new last tab will active / displayed
+                    If the last used playlist removed 
+                    at next start the new last playlist will active / displayed
                 '''
-                if  len(settings[cv.paylist_list[cv.active_tab]]['tab_title']) == 0:
-                    cv.active_tab = settings[pl_list_with_title[-1]]['tab_index']
-                    settings['last_used_tab'] = cv.active_tab
+                if  len(settings[cv.paylist_list[cv.active_playlist]]['playlist_title']) == 0:
+                    cv.active_playlist = settings[pl_list_with_title[-1]]['playlist_index']
+                    settings['last_used_playlist'] = cv.active_playlist
                     save_json(settings, PATH_JSON_SETTINGS)
                 
                 self.hide()

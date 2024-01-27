@@ -1,3 +1,14 @@
+'''
+TERMINOLOGY
+-----------
+Apart from the Window Settings TABS (src / window_settings.py)
+the TABS-QTabWidget(Playlists) has been referred as playlist_all, playlist_index, ..
+
+Playing playlist = playlist where the current track is in the playing or paused state
+                     / playlist where the last track was played
+Active playlist = playlist which is currently selected / displayed
+'''
+
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -27,7 +38,7 @@ from src import (
     MyButtons,
     PlaysFunc,
     MyImage,
-    MyTabs,
+    MyPlaylists,
     update_and_save_volume_slider_value,
     generate_duration_to_display,
     update_raw_current_duration_db
@@ -121,31 +132,31 @@ class MyWindow(QWidget):
 
 
     def paylist_select_prev_pl_action(self):
-        current_index = tabs_playlist.currentIndex()
+        current_index = playlists_all.currentIndex()
         index_counter = -1
-        next_tab_index = current_index + index_counter
+        next_playlist_index = current_index + index_counter
 
-        while next_tab_index in cv.tabs_without_title_to_hide_index_list and next_tab_index > 0:
+        while next_playlist_index in cv.paylists_without_title_to_hide_index_list and next_playlist_index > 0:
             index_counter -=1
-            next_tab_index = current_index + index_counter
+            next_playlist_index = current_index + index_counter
         
-        if next_tab_index >= 0 and next_tab_index not in cv.tabs_without_title_to_hide_index_list:
-            tabs_playlist.setCurrentIndex(next_tab_index)
+        if next_playlist_index >= 0 and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
+            playlists_all.setCurrentIndex(next_playlist_index)
         
         
 
     def paylist_select_next_pl_action(self):
-        current_index = tabs_playlist.currentIndex()
-        last_tab_index = cv.playlist_amount-1
+        current_index = playlists_all.currentIndex()
+        last_playlist_index = cv.playlist_amount-1
         index_counter = 1
-        next_tab_index = current_index + index_counter
+        next_playlist_index = current_index + index_counter
 
-        while next_tab_index in cv.tabs_without_title_to_hide_index_list and next_tab_index < last_tab_index:
+        while next_playlist_index in cv.paylists_without_title_to_hide_index_list and next_playlist_index < last_playlist_index:
             index_counter +=1
-            next_tab_index = current_index + index_counter
+            next_playlist_index = current_index + index_counter
         
-        if next_tab_index <= last_tab_index and next_tab_index not in cv.tabs_without_title_to_hide_index_list:
-            tabs_playlist.setCurrentIndex(next_tab_index)
+        if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
+            playlists_all.setCurrentIndex(next_playlist_index)
      
 
 
@@ -342,9 +353,8 @@ button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.
 
 ''' 
     BUTTON PLAY SECTION - PLAY/PAUSE
-    Image/icon update after the main / tabs creation
-    if 'Play at startup' enabled and the playlist
-    is not empty
+    Image/icon update after the main / playlists creation
+    if 'Play at startup' enabled and the playlist is not empty
 '''
 
 button_play_pause = MyButtons(
@@ -695,12 +705,12 @@ if cv.play_at_startup == 'True' and cv.active_pl_tracks_count > 0:
     button_play_pause.setIcon(button_image_pause)
 
 
-''' PAYLISTS / TABS '''
-tabs_playlist = MyTabs(button_play_pause.button_play_pause_via_list, duration_sum_widg)
-layout_playlist.addWidget(tabs_playlist)
+''' PAYLISTS '''
+playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, duration_sum_widg)
+layout_playlist.addWidget(playlists_all)
 
 ''' WINDOW SETTINGS '''
-window_settings = MySettingsWindow(tabs_playlist, av_player)
+window_settings = MySettingsWindow(playlists_all, av_player)
 
 
 

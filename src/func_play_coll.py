@@ -6,11 +6,11 @@ from pathlib import Path
 
 from .cons_and_vars import cv
 from .func_coll import (
-    save_playing_tab_and_playing_last_track_index,
+    save_playing_playlist_and_playing_last_track_index,
     list_item_style_update,
     generate_duration_to_display,
-    update_playing_tab_vars_and_widgets,
-    update_active_tab_vars_and_widgets,
+    update_playing_playlist_vars_and_widgets,
+    update_active_playlist_vars_and_widgets,
     get_all_from_db,
     update_raw_current_duration_db,
     inactive_track_font_style,  
@@ -33,7 +33,7 @@ class PlaysFunc():
     def play_track(self, playing_track_index=None):
 
         cv.counter_for_duration = 0  # for iterate: saving the current duration
-        update_active_tab_vars_and_widgets()
+        update_active_playlist_vars_and_widgets()
         
         '''
             SCENARIO A - playing_track_index == None:
@@ -44,8 +44,8 @@ class PlaysFunc():
             - Play next/prev buttons
         '''
         if playing_track_index == None: # Scenario - A
-            cv.playing_tab = cv.active_tab
-            update_playing_tab_vars_and_widgets()
+            cv.playing_playlist = cv.active_playlist
+            update_playing_playlist_vars_and_widgets()
 
             if cv.playing_pl_tracks_count > 0:
                 if cv.playing_pl_name.currentRow() > -1: # When row selected
@@ -82,7 +82,7 @@ class PlaysFunc():
                 )
              
             cv.playing_pl_last_track_index = cv.playing_track_index
-            save_playing_tab_and_playing_last_track_index()
+            save_playing_playlist_and_playing_last_track_index()
           
       
             ''' NEW TRACK STYLE'''
@@ -190,14 +190,14 @@ class PlaysFunc():
         AT STARTUP
         - It first triggered once the based is played (main / AVPlayer())
           --> cv.played_at_startup_counter needed
-        - On every tab/playlist the last played row will be selected (src/tabs.py) 
-        - The last playing tab/playist will be set active/displayed (src/tabs.py)
+        - On every playlist the last played row will be selected (src/playlists.py) 
+        - The last playing playist will be set active/displayed (src/playlists.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically (below)
     '''
     def auto_play_next_track(self):
 
         if not cv.played_at_startup_counter:
-            cv.active_tab = cv.playing_tab
+            cv.active_playlist = cv.playing_playlist
 
         if self.av_player.base_played:   # avoiding the dummy song played when the class created
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:

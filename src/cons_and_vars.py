@@ -35,8 +35,7 @@ class Data:
     subtitle_tracks_amount = 0
     subtitle_track_played = 0
     window_size_normal = True   # for window_size_toggle
-    # To track hidden tabs/playlists
-    tabs_without_title_to_hide_index_list = []
+    paylists_without_title_to_hide_index_list = []
     
     ''' 
     TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)
@@ -46,25 +45,25 @@ class Data:
     TO SAVE THE PLAY AND SELECTION HISTORY:
     From below and src / func_coll.py:
     
-    ACTIVE TAB UTILITY
-    update_active_tab_vars_and_widgets() -  cv.active_pl_last_track_index
+    ACTIVE PLAYLIST UTILITY
+    update_active_playlist_vars_and_widgets() -  cv.active_pl_last_track_index
     
-    PLAYING TAB UTILITY
-    update_playing_tab_vars_and_widgets() - cv.playing_pl_last_track_index
+    PLAYING PLAYLIST UTILITY
+    update_playing_playlist_vars_and_widgets() - cv.playing_pl_last_track_index
     '''
     playing_track_index = 0
 
 
     ''' 
-    ACTIVE AND PLAYING PLAYLISTS/TABS SEPARATION
+    ACTIVE AND PLAYING PLAYLISTS SEPARATION
     More informaration in the README
     '''
     '''
-    ACTIVE TAB UTILITY VALUES
-    src / func_coll.py / active_tab_utility()
-    Updated after every playlist/tab change
+    ACTIVE PLAYLIST UTILITY VALUES
+    src / func_coll.py / active_playlist_utility()
+    Updated after every playlist change
     '''
-    active_tab = settings['last_used_tab']
+    active_playlist= settings['last_used_playlist']
     active_db_table = None  
     active_pl_title = None
     active_pl_last_track_index = 0
@@ -74,10 +73,10 @@ class Data:
     active_pl_tracks_count = 0
 
     '''
-    PLAYING TAB UTILITY VALUES
-    src / func_coll.py / playing_tab_utility()
+    PLAYING PLAYLIST UTILITY VALUES
+    src / func_coll.py / playing_playlist_utility()
     '''
-    playing_tab = settings['playing_tab']
+    playing_playlist = settings['playing_playlist']
     playing_db_table = None  
     playing_pl_title = None
     playing_pl_last_track_index = 0
@@ -413,7 +412,7 @@ class Data:
     ''' PLAYLISTS '''
     '''
         The dictionary used to:
-        - create playlist-tabs in src/tabs.py
+        - create playlists in src / playlists.py
         - be able to access to the right widget
     '''
     paylist_widget_dic = {}

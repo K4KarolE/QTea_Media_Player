@@ -44,15 +44,15 @@ def create_tables():
 
         ''' JSON '''
         settings[table_name] = {
-            "tab_title": str(i + 1),
-            "tab_index": i,
+            "playlist_title": str(i + 1),
+            "playlist_index": i,
             "last_track_index": 0
             }
         
     connection.close()
     save_json(settings, PATH_JSON_SETTINGS)
 
-# create_tables()
+create_tables()
 
 
 ''' REMOVE TABLE / PLAYLIST '''

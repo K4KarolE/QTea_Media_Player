@@ -14,7 +14,7 @@ from PyQt6.QtGui import QFont
 from .cons_and_vars import cv
 from .func_coll import (
     save_json,
-    update_active_playlist_vars_and_widgets,
+    update_active_tab_vars_and_widgets,
     generate_track_list_detail,
     add_new_list_item,
     generate_duration_to_display,
@@ -27,30 +27,24 @@ from .func_coll import (
 
 
 
-class MyPlaylists(QTabWidget):
+class MyTabs(QTabWidget):
 
     def __init__(self, play_track, duration_sum_widg=None):
         super().__init__()
 
-        ''' playlists_created_at_first_run
+        ''' tabs_created_at_first_run
             USED TO AVOID THE 
-            __.currentChanged.connect(self.active_playlist)
-            SIGNAL AT THE PLAYLISTS CREATION
+            __.currentChanged.connect(self.active_tab)
+            SIGNAL AT THE TABS CREATION
         '''
         self.play_track = play_track
         self.duration_sum_widg = duration_sum_widg
-        self.playlists_created_at_first_run = False
+        self.tabs_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
-        self.playlists_creation()
-        self.setCurrentIndex(cv.playing_playlist)
-        self.currentChanged.connect(self.active_playlist_changed)
-        self.playlists_created_at_first_run = True
-
-        cv.active_playlist = self.currentIndex()
-        update_active_playlist_vars_and_widgets()
-        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
-        self.add_dummy_playlist()
-        self.hide_playlists_with_no_title()
+        self.tabs_creation()
+        self.setCurrentIndex(cv.playing_tab)
+        self.currentChanged.connect(self.active_tab_changed)
+        self.tabs_created_at_first_run = True
         self.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
@@ -74,6 +68,11 @@ class MyPlaylists(QTabWidget):
                             "top: 0.3em;"
                             "}"
                         )
+        cv.active_tab = self.currentIndex()
+        update_active_tab_vars_and_widgets()
+        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+        self.add_dummy_tab()
+        self.hide_tabs_with_no_title()
 
 
     ''' LEARNED '''
@@ -83,21 +82,21 @@ class MyPlaylists(QTabWidget):
         select the un-hidden tabs beyond the visible tabs
         workaround --> we leave the last tab always visible and disabled
     '''
-    def add_dummy_playlist(self):
+    def add_dummy_tab(self):
         self.addTab(QWidget(), '')
         self.setTabEnabled(cv.playlist_amount, 0)
 
-    def hide_playlists_with_no_title(self):
+    def hide_tabs_with_no_title(self):
         for index in cv.paylists_without_title_to_hide_index_list:
             self.setTabVisible(index, 0)
 
 
-    def active_playlist_changed(self):
-        if self.playlists_created_at_first_run:
-            cv.active_playlist = self.currentIndex()
-            settings['last_used_playlist'] = cv.active_playlist
+    def active_tab_changed(self):
+        if self.tabs_created_at_first_run:
+            cv.active_tab = self.currentIndex()
+            settings['last_used_tab'] = cv.active_tab
             save_json(settings, PATH_JSON_SETTINGS)
-            update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
+            update_active_tab_vars_and_widgets()    # set the current lists(name, duration)
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     
 
@@ -125,17 +124,17 @@ class MyPlaylists(QTabWidget):
                                 )
     
 
-    def playlists_creation(self):
+    def tabs_creation(self):
 
-        playlist_index_counter = 0
+        tab_index_counter = 0
         
         for pl in cv.paylist_widget_dic:
              
-            playlist_title = settings[pl]['playlist_title']
+            tab_title = settings[pl]['tab_title']
 
-            if not playlist_title:
-                cv.paylists_without_title_to_hide_index_list.append(playlist_index_counter)
-            playlist_index_counter += 1
+            if not tab_title:
+                cv.paylists_without_title_to_hide_index_list.append(tab_index_counter)
+            tab_index_counter += 1
 
 
             def set_last_played_row_style():
@@ -227,7 +226,7 @@ class MyPlaylists(QTabWidget):
                             )
             frame.setLayout(layout)
 
-            self.addTab(frame, playlist_title)
+            self.addTab(frame, tab_title)
 
 
             ''' PLAYLIST DB --> LIST WIDGET '''
@@ -249,7 +248,7 @@ class MyPlaylists(QTabWidget):
             '''
             if cv.play_at_startup == 'False':
                 set_last_played_row_style()
-            elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_playlist]:
+            elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_tab]:
                 set_last_played_row_style()
             
 
