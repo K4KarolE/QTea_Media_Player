@@ -1,10 +1,10 @@
 {
   "last_used_playlist": 0,
-  "playing_playlist": 4,
+  "playing_playlist": 0,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.15,
+  "volume": 0.23,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": "True",
@@ -33,6 +33,7 @@
     "audio_tracks_rotate": "B",
     "subtitle_tracks_rotate": "V",
     "play_pause": "Space",
+    "stop": "U",
     "next_track": "N",
     "previous_track": "P",
     "repeat_track_playlist_toggle": "R",
@@ -62,7 +63,7 @@
   "playlist_0": {
     "playlist_title": "TV",
     "playlist_index": 0,
-    "last_track_index": 7
+    "last_track_index": 30
   },
   "playlist_1": {
     "playlist_title": "Movies",
@@ -72,7 +73,7 @@
   "playlist_2": {
     "playlist_title": "Music - All",
     "playlist_index": 2,
-    "last_track_index": 8
+    "last_track_index": 6
   },
   "playlist_3": {
     "playlist_title": "",
@@ -82,7 +83,7 @@
   "playlist_4": {
     "playlist_title": "5",
     "playlist_index": 4,
-    "last_track_index": 0
+    "last_track_index": 2
   },
   "playlist_5": {
     "playlist_title": "",

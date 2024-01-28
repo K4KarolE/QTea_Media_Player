@@ -1,3 +1,4 @@
+from .icons import *
 from .av_player import *
 from .cons_and_vars import *
 from .images import *

@@ -56,11 +56,13 @@ class Data:
 
     ''' 
     ACTIVE AND PLAYING PLAYLISTS SEPARATION
-    More informaration in the README
+    Playing playlist = playlist where the current track is in the playing or paused state
+                    / playlist where the last track was played
+    Active playlist = playlist which is currently selected / displayed
     '''
     '''
     ACTIVE PLAYLIST UTILITY VALUES
-    src / func_coll.py / active_playlist_utility()
+    src / func_coll.py / update_active_playlist_vars_and_widgets()
     Updated after every playlist change
     '''
     active_playlist= settings['last_used_playlist']
@@ -74,7 +76,7 @@ class Data:
 
     '''
     PLAYING PLAYLIST UTILITY VALUES
-    src / func_coll.py / playing_playlist_utility()
+    src / func_coll.py / update_playing_playlist_vars_and_widgets()
     '''
     playing_playlist = settings['playing_playlist']
     playing_db_table = None  
@@ -209,6 +211,7 @@ class Data:
     audio_tracks_rotate = settings['hotkey_settings']['audio_tracks_rotate']
     subtitle_tracks_rotate = settings['hotkey_settings']['subtitle_tracks_rotate']
     play_pause = settings['hotkey_settings']['play_pause']
+    stop = settings['hotkey_settings']['stop']
     next_track = settings['hotkey_settings']['next_track']
     previous_track = settings['hotkey_settings']['previous_track']
     repeat_track_playlist_toggle = settings['hotkey_settings']['repeat_track_playlist_toggle']
@@ -283,6 +286,11 @@ class Data:
         'play_pause': {
             'text': 'Play / Pause',
             'value': play_pause,
+            'line_edit_widget': ''
+        },
+        'stop': {
+            'text': 'Stop',
+            'value': stop,
             'line_edit_widget': ''
         },
         'previous_track': {

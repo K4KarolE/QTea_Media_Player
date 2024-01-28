@@ -2,7 +2,7 @@
 TERMINOLOGY
 -----------
 Apart from the Window Settings TABS (src / window_settings.py)
-the TABS-QTabWidget(Playlists) has been referred as playlist_all, playlist_index, ..
+the TABS((QTabWidget) - Playlists) has been referred as playlist_all, playlist_index, ..
 
 Playing playlist = playlist where the current track is in the playing or paused state
                      / playlist where the last track was played
@@ -38,6 +38,7 @@ from src import (
     MyButtons,
     PlaysFunc,
     MyImage,
+    MyIcon,
     MyPlaylists,
     update_and_save_volume_slider_value,
     generate_duration_to_display,
@@ -78,6 +79,7 @@ class MyWindow(QWidget):
         'audio_tracks_rotate': lambda: play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: button_play_pause.button_play_pause_clicked(),
+        'stop': lambda: button_stop_clicked(),
         'previous_track': lambda: button_prev_track.button_prev_track_clicked(),
         'next_track': lambda: button_next_track.button_next_track_clicked(),
         'repeat_track_playlist_toggle': lambda: button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
@@ -99,7 +101,7 @@ class MyWindow(QWidget):
             hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
             hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
     
-
+                
     def volume_up_action(self):
         if cv.volume < 1:
             cv.volume = cv.volume + 0.05
@@ -157,16 +159,29 @@ class MyWindow(QWidget):
         
         if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
             playlists_all.setCurrentIndex(next_playlist_index)
-     
+
+    ''' FOR THE AV PLAYER - EVENT FILTER - CONTEXT MENU ACTIONS ''' 
+    def play_pause(self):
+        button_play_pause.button_play_pause_clicked()
+    
+    def stop(self):
+        button_stop_clicked()
+    
+    def previous_track(self):
+        button_prev_track.button_prev_track_clicked()
+    
+    def next_track(self):
+        button_next_track.button_next_track_clicked()
 
 
+''' WINDOW '''
 window = MyWindow()
 
-
-
+''' ICONS '''
+icon = MyIcon()
 
 ''' PLAYER '''
-av_player = AVPlayer()
+av_player = AVPlayer(window, icon)
 
 def update_duration_info():
 
@@ -294,15 +309,13 @@ button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 
 ''' BUTTON PLAYLIST - SETTINGS '''
-button_settings = QIcon(f'skins/{cv.skin_selected}/settings.png')
-
 def button_settings_clicked():
     window_settings.show()
 
 button_settings = MyButtons(
     'SE',
     'Settings',
-    icon = button_settings
+    icon = icon.settings
     )
 button_settings.setGeometry(button_x_pos(4), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_settings.clicked.connect(button_settings_clicked)
@@ -334,23 +347,6 @@ def play_buttons_x_pos(num):
     return int((PLAY_BUTTONS_WIDTH) * num)
 
 
-''' BUTTON PLAY SECTION - PLAY / PAUSE '''
-''' BUTTON - MUSIC '''
-button_image_start = QIcon(f'skins/{cv.skin_selected}/start.png')
-button_image_pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
-button_image_stop = QIcon(f'skins/{cv.skin_selected}/stop.png')
-button_image_prev = QIcon(f'skins/{cv.skin_selected}/previous.png')
-button_image_next = QIcon(f'skins/{cv.skin_selected}/next.png')
-button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
-button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
-button_image_shuffle = QIcon(f'skins/{cv.skin_selected}/shuffle.png')
-
-
-button_image_toggle_vid = QIcon(f'skins/{cv.skin_selected}/toggle_vid.png')
-button_image_toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.png')
-
-
-
 ''' 
     BUTTON PLAY SECTION - PLAY/PAUSE
     Image/icon update after the main / playlists creation
@@ -363,7 +359,7 @@ button_play_pause = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    button_image_start,
+    icon.start,
     )
 button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
 button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
@@ -374,7 +370,7 @@ button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 def button_stop_clicked():
     av_player.player.stop()
     av_player.paused = False
-    button_play_pause.setIcon(button_image_start)
+    button_play_pause.setIcon(icon.start)
     av_player.screen_saver_on()
     if av_player.video_output.isVisible():
         image_logo.show()
@@ -387,7 +383,7 @@ button_stop = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    button_image_stop
+    icon.stop
     )
 button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_stop.clicked.connect(button_stop_clicked)
@@ -401,7 +397,7 @@ button_prev_track = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    button_image_prev
+    icon.previous
     )
 button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_prev_track.clicked.connect(button_prev_track.button_prev_track_clicked)
@@ -414,7 +410,7 @@ button_next_track = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    button_image_next
+    icon.next
     )
 button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
@@ -424,7 +420,7 @@ button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
 button_toggle_repeat_pl = MyButtons(
     'Tog Rep PL',
     'Toggle Repeat Playlist',
-    icon = button_image_repeat
+    icon = icon.repeat
     )
 button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
@@ -433,14 +429,14 @@ if cv.repeat_playlist == 2:
     button_toggle_repeat_pl.setFlat(1)
 elif cv.repeat_playlist == 0:
     button_toggle_repeat_pl.setFlat(1)
-    button_toggle_repeat_pl.setIcon(button_image_repeat_single)
+    button_toggle_repeat_pl.setIcon(icon.repeat_single)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
 button_toggle_shuffle_pl = MyButtons(
     'Shuffle PL',
     'Toggle Shuffle Playlist',
-    icon = button_image_shuffle
+    icon = icon.shuffle
     )
 button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
@@ -463,7 +459,7 @@ def button_toggle_playlist_clicked():
 button_toggle_playlist = MyButtons(
     'Shuffle PL',
     'Toggle Show Playlists',
-    icon = button_image_toggle_playlist
+    icon = icon.toggle_playlist
     )
 button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
@@ -488,7 +484,7 @@ def button_toggle_video_clicked():
 button_toggle_video = MyButtons(
     'Shuffle PL',
     'Toggle Show Video Window',
-    icon = button_image_toggle_vid
+    icon = icon.toggle_video
     )
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
@@ -537,20 +533,16 @@ play_buttons_list = [
 
 
 ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
-button_image_speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
-button_image_speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
-
-
 def button_speaker_clicked():
 
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
-        button_speaker.setIcon(button_image_speaker)
+        button_speaker.setIcon(icon.speaker)
         av_player.audio_output.setVolume(cv.volume)
 
     else:
         cv.is_speaker_muted = True
-        button_speaker.setIcon(button_image_speaker_muted)
+        button_speaker.setIcon(icon.speaker_muted)
         av_player.audio_output.setVolume(0)
 
 
@@ -559,13 +551,13 @@ def button_speaker_clicked():
 def button_speaker_update():
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
-        button_speaker.setIcon(button_image_speaker)
+        button_speaker.setIcon(icon.speaker)
 
 
 button_speaker = MyButtons(
     'Speaker',
     'Toggle Mute',
-    icon = button_image_speaker
+    icon = icon.speaker
     )
 button_speaker.setFlat(1)
 button_speaker.clicked.connect(button_speaker_clicked)
@@ -700,10 +692,6 @@ duration_sum_widg.setDisabled(1)
 duration_sum_widg.setFont(inactive_track_font_style)
 layout_under_playlist_duration.addWidget(duration_sum_widg)
 
-# PLAY BUTTON ICON UPDATE
-if cv.play_at_startup == 'True' and cv.active_pl_tracks_count > 0:
-    button_play_pause.setIcon(button_image_pause)
-
 
 ''' PAYLISTS '''
 playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, duration_sum_widg)
@@ -712,6 +700,10 @@ layout_playlist.addWidget(playlists_all)
 ''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow(playlists_all, av_player)
 
+
+# PLAY BUTTON ICON UPDATE
+if cv.play_at_startup == 'True' and cv.active_pl_tracks_count > 0:
+    button_play_pause.setIcon(icon.pause)
 
 
 ''' BOTTOM '''
