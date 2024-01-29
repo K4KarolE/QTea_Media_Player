@@ -172,6 +172,9 @@ class MyWindow(QWidget):
     
     def next_track(self):
         button_next_track.button_next_track_clicked()
+    
+    def mute(self):
+        button_speaker_clicked()
 
 
 ''' WINDOW '''
@@ -190,7 +193,7 @@ def update_duration_info():
         track_current_duration = av_player.player.position()
 
         # SAVING THE CURRENT DURATION EVERY 5 SEC
-        if cv.continue_playback == 'True' and ((track_current_duration - cv.counter_for_duration) / 5000) >= 1:
+        if cv.continue_playback == 'True' and (abs(track_current_duration - cv.counter_for_duration) / 5000) >= 1:
             update_raw_current_duration_db(track_current_duration, cv.playing_track_index)
             cv.counter_for_duration = track_current_duration
 

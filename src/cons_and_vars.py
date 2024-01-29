@@ -36,6 +36,7 @@ class Data:
     subtitle_track_played = 0
     window_size_normal = True   # for window_size_toggle
     paylists_without_title_to_hide_index_list = []
+    volume_slider_value = 0
     
     ''' 
     TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)

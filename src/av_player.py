@@ -48,12 +48,24 @@ class AVPlayer(QWidget):
         self.playlist_visible = True
         self.video_area_visible = True
         self.context_menu_dic={ 
-            'Play / Pause': self.icon.start,
-            'Stop': self.icon.stop,
-            'Previous': self.icon.previous,
-            'Next': self.icon.next,
-        }
-    
+            'Play / Pause': {'icon': self.icon.start},
+            'Stop': {'icon': self.icon.stop},
+            'Previous':{'icon': self.icon.previous},
+            'Next':{'icon': self.icon.next},
+            'Mute - Toogle':{'icon': self.icon.speaker},
+            'Audio Track': {
+                'icon': None,
+                'menu_sub': '',
+                'audio_tracks': [],
+                },
+            'Subtitle': {
+                'icon': None,
+                'menu_sub': '',
+                'subtitle_tracks': [],
+                }
+            }    
+
+
 
     def eventFilter(self, source, event):
 
@@ -62,11 +74,43 @@ class AVPlayer(QWidget):
                 
                 menu = QMenu()
 
+                ''' MENU ITEMS '''
                 for item in self.context_menu_dic:
-                    menu.addAction(QAction(self.context_menu_dic[item], item, self))
+
+                    icon = self.context_menu_dic[item]['icon']
+
+                    if icon:
+                        menu.addAction(QAction(icon, item, self))
+                    else:
+                        self.context_menu_dic[item]['menu_sub'] = menu.addMenu(item)
+
+
+                ''' AUDIO TRACKS '''
+                for audio_track in self.player.audioTracks():
+                    title = audio_track.stringValue(audio_track.Key.Title)
+                    audio_language = audio_track.stringValue(audio_track.Key.Language)
+                    if title:
+                        audio_track_title = f'{audio_language} - {title}'
+                    else:
+                        audio_track_title = audio_language
+                    self.context_menu_dic['Audio Track']['menu_sub'].addAction(QAction(audio_track_title, self))
+                    self.context_menu_dic['Audio Track']['audio_tracks'].append(audio_track_title)
+
+
+                ''' SUBTITLE TRACKS '''
+                self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction('Disable', self))
+                for sub_track in self.player.subtitleTracks():
+                    title = sub_track.stringValue(sub_track.Key.Title)
+                    subtitle_language = sub_track.stringValue(sub_track.Key.Language)
+                    if title:
+                        subtitle_track_title = f'{subtitle_language} - {title} [sub]'
+                    else:
+                        subtitle_track_title = f'{subtitle_language} - [sub]'
+                    self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction(subtitle_track_title, self))
+                    self.context_menu_dic['Subtitle']['subtitle_tracks'].append(subtitle_track_title)
+
 
                 menu.triggered[QAction].connect(self.context_menu_clicked)
-                
                 menu.exec(event.globalPos())
       
             
@@ -75,8 +119,6 @@ class AVPlayer(QWidget):
             
 
         if event.type() == QEvent.Type.KeyRelease:
-            print(66)
-
             # EXIT FULL SCREEN
             if event.key() == Qt.Key.Key_Escape:
                 self.video_output.setFullScreen(0)
@@ -84,7 +126,12 @@ class AVPlayer(QWidget):
         return super().eventFilter(source, event)
 
 
+
     def context_menu_clicked(self, q):
+
+        audio_tracks_list = self.context_menu_dic['Audio Track']['audio_tracks']
+        subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
+
         if q.text() == list(self.context_menu_dic)[0]:
             self.window.play_pause()
         elif q.text() == list(self.context_menu_dic)[1]:
@@ -93,6 +140,24 @@ class AVPlayer(QWidget):
             self.window.previous_track()
         elif q.text() == list(self.context_menu_dic)[3]:
             self.window.next_track()
+        elif q.text() == list(self.context_menu_dic)[4]:
+            self.window.mute()
+        
+        elif q.text() in audio_tracks_list:
+            self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
+            cv.audio_track_played = audio_tracks_list.index(q.text())
+            audio_tracks_list.clear()
+
+        elif q.text() in subtitle_tracks_list or q.text() == 'Disable':
+            if q.text() in subtitle_tracks_list:
+                subtitle_track_index = subtitle_tracks_list.index(q.text())
+            else:
+                subtitle_track_index = -1   # -1: disable subtitle
+    
+            self.player.setActiveSubtitleTrack(subtitle_track_index)
+            cv.subtitle_track_played = subtitle_track_index
+            subtitle_tracks_list.clear()
+
 
 
     def full_screen_toggle(self):

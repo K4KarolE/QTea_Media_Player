@@ -73,6 +73,7 @@ class MyVolumeSlider(QSlider):
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setSliderPosition(int(cv.volume*100))
+        self.valueChanged.connect(self.update_volume)
         self.setStyleSheet(
                         "QSlider::groove"
                             "{"
@@ -101,18 +102,18 @@ class MyVolumeSlider(QSlider):
     ''' CLICK, MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mousePressEvent(self, event):
         # JUMP TO CLICK POSITION
-        slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
-        self.setValue(slider_value)
-        self.av_player.audio_output.setVolume(slider_value/100)
-        update_and_save_volume_slider_value(slider_value/100, self)
-        self.button_speaker_update()
+        cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
+        self.setValue(cv.volume_slider_value)
+        update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
 
     def mouseMoveEvent(self, event):
         # JUMP TO POINTER POSITION WHILE MOVING
-        slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
-        self.setValue(slider_value)
-        self.av_player.audio_output.setVolume(slider_value/100)
-        update_and_save_volume_slider_value(slider_value/100, self)
-        self.button_speaker_update()
+        cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
+        self.setValue(cv.volume_slider_value)
+        update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
+
+    def update_volume(self):
+        self.av_player.audio_output.setVolume(self.sliderPosition()/100)
+        self.button_speaker_update() # if muted -> unmuted
