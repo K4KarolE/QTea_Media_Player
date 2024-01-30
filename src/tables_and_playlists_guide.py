@@ -1,5 +1,5 @@
 '''
-THIS FILE IS NOT PART OF THE APP
+THIS FILE CAN BE REACHED OUTSIDE THE APP ONLY
 
 It contains supporting functions only,
 which can be run in this file and

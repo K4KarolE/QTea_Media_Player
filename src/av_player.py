@@ -3,7 +3,7 @@ from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl, QEvent, Qt
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget, QMenu
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtGui import QAction
 
 import ctypes
 
@@ -47,7 +47,7 @@ class AVPlayer(QWidget):
         self.paused = False
         self.playlist_visible = True
         self.video_area_visible = True
-        self.context_menu_dic={ 
+        self.context_menu_dic = { 
             'Play / Pause': {'icon': self.icon.start},
             'Stop': {'icon': self.icon.stop},
             'Previous':{'icon': self.icon.previous},

@@ -20,3 +20,6 @@ class MyIcon():
 
         self.speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
         self.speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
+
+        self.queue = QIcon(f'skins/{cv.skin_selected}/queue.png')
+        self.folder = QIcon(f'skins/{cv.skin_selected}/folder.png')
