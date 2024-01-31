@@ -313,7 +313,7 @@ class MySettingsWindow(QWidget):
 
         # AT GENERAL AND HOTKEYS TAB THE LOWEST DIC. KAY-VALUE PAIR WERE ITERATED
         # AT PLAYLIST IT IS THE TOP / PLAYLIST TITLES
-        for pl in cv.paylist_widget_dic:
+        for pl in cv.playlist_widget_dic:
 
             ''' LABEL '''
             number = QLabel(tab_playlist, text=f'Playlist #{number_counter}')
@@ -325,8 +325,8 @@ class MySettingsWindow(QWidget):
                 number.move(WIDGET_PL_POS_X, widget_pl_pos_y)
 
             ''' LINE EDIT '''
-            cv.paylist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
-            line_edit_widget = cv.paylist_widget_dic[pl]['line_edit']
+            cv.playlist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
+            line_edit_widget = cv.playlist_widget_dic[pl]['line_edit']
 
             line_edit_widget.setText(settings[pl]['playlist_title'])
             line_edit_widget.setFont(inactive_track_font_style)
@@ -350,11 +350,11 @@ class MySettingsWindow(QWidget):
         '''
         def playlist_fields_validation_first():
             pl_list_with_title = []
-            for pl in cv.paylist_widget_dic:
-                playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+            for pl in cv.playlist_widget_dic:
+                playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 if len(playlist_title) > 25:
                     playlist_title = f'{playlist_title[0:23]}..'
-                    cv.paylist_widget_dic[pl]['line_edit'].setText(playlist_title)
+                    cv.playlist_widget_dic[pl]['line_edit'].setText(playlist_title)
                     MyMessageBoxError('PAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
                 if len(playlist_title) != 0:
                     pl_list_with_title.append(pl)
@@ -365,15 +365,15 @@ class MySettingsWindow(QWidget):
 
         ''' Avoid removing the playing playlist '''
         def playlist_fields_validation_second(pass_validation = True):
-            for pl in cv.paylist_widget_dic:
+            for pl in cv.playlist_widget_dic:
                 playlist_index = cv.paylist_list.index(pl)
-                new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 prev_playlist_title = settings[pl]['playlist_title']
 
                 if (not new_playlist_title and prev_playlist_title and
                     playlist_index == cv.playing_playlist and
-                    self.av_player.player.isPlaying() or self.av_player.paused):
-                        cv.paylist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
+                    (self.av_player.player.isPlaying() or self.av_player.paused)):
+                        cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
                                         'PAYLISTS TAB',
                                         f'Active playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
@@ -382,9 +382,9 @@ class MySettingsWindow(QWidget):
 
 
         def paylists_fields_to_save(to_save = False):
-            for pl in cv.paylist_widget_dic:
+            for pl in cv.playlist_widget_dic:
                 playlist_index = cv.paylist_list.index(pl)
-                new_playlist_title = cv.paylist_widget_dic[pl]['line_edit'].text().strip()
+                new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 prev_playlist_title = settings[pl]['playlist_title']
 
                 if new_playlist_title != prev_playlist_title:

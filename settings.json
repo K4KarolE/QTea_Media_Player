@@ -1,22 +1,22 @@
 {
-  "last_used_playlist": 0,
-  "playing_playlist": 0,
+  "last_used_playlist": 2,
+  "playing_playlist": 2,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.23,
+  "volume": 0.14,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": "True",
     "continue_playback": "True",
-    "play_at_startup": "True",
+    "play_at_startup": "False",
     "small_jump": 10000,
     "medium_jump": 60000,
     "big_jump": 180000,
     "window_width": 1200,
     "window_height": 500,
     "window_alt_width": 1200,
-    "window_alt_height": 760,
+    "window_alt_height": 1000,
     "window_min_width": 650,
     "window_min_height": 250
   },
@@ -46,7 +46,8 @@
     "paylist_remove_track": "Alt+R",
     "paylist_remove_all_track": "Alt+C",
     "paylist_select_prev_pl": "Shift+Left",
-    "paylist_select_next_pl": "Shift+Right"
+    "paylist_select_next_pl": "Shift+Right",
+    "queue_toggle": "Q"
   },
   "skins": {
     "default": {
@@ -61,19 +62,19 @@
     }
   },
   "playlist_0": {
-    "playlist_title": "TV",
+    "playlist_title": "Friends",
     "playlist_index": 0,
-    "last_track_index": 30
+    "last_track_index": 40
   },
   "playlist_1": {
-    "playlist_title": "Movies",
+    "playlist_title": "MWCh",
     "playlist_index": 1,
-    "last_track_index": 0
+    "last_track_index": 14
   },
   "playlist_2": {
     "playlist_title": "Music - All",
     "playlist_index": 2,
-    "last_track_index": 6
+    "last_track_index": 10
   },
   "playlist_3": {
     "playlist_title": "",
@@ -86,7 +87,7 @@
     "last_track_index": 2
   },
   "playlist_5": {
-    "playlist_title": "",
+    "playlist_title": "6",
     "playlist_index": 5,
     "last_track_index": 0
   },

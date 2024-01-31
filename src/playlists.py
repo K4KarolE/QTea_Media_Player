@@ -132,7 +132,7 @@ class MyPlaylists(QTabWidget):
 
         playlist_index_counter = 0
         
-        for pl in cv.paylist_widget_dic:
+        for pl in cv.playlist_widget_dic:
              
             playlist_title = settings[pl]['playlist_title']
 
@@ -197,8 +197,8 @@ class MyPlaylists(QTabWidget):
             
             ''' LISTS CREATION '''
             ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
-            cv.paylist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track, self.window)
-            name_list_widget = cv.paylist_widget_dic[pl]['name_list_widget']
+            cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track, self.window)
+            name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
             name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
             name_list_widget.itemDoubleClicked.connect(self.play_track)
@@ -207,8 +207,8 @@ class MyPlaylists(QTabWidget):
             name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
         
 
-            cv.paylist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track, self.window)
-            duration_list_widget = cv.paylist_widget_dic[pl]['duration_list_widget']
+            cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track, self.window)
+            duration_list_widget = cv.playlist_widget_dic[pl]['duration_list_widget']
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
             duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             duration_list_widget.itemDoubleClicked.connect(self.play_track)
@@ -240,7 +240,7 @@ class MyPlaylists(QTabWidget):
                 rack_row_db, track_name, duration = generate_track_list_detail(item)
                 add_new_list_item(track_name, name_list_widget)
                 add_new_list_item(duration, duration_list_widget)
-                cv.paylist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
+                cv.playlist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
             
             ''' SET BACK / SELECT LAST USED ROWS '''
             name_list_widget.setCurrentRow(settings[pl]['last_track_index'])

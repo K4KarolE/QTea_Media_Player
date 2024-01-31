@@ -7,8 +7,13 @@ from pathlib import Path
 
 from .icons import *
 from .cons_and_vars import cv
-from .func_coll import get_path_db
 from .message_box import MyMessageBoxError
+from .func_coll import (
+    get_path_db,
+    list_item_style_update,
+    inactive_track_font_style,  
+    active_track_font_style
+    )
 
 
 class MyListWidget(QListWidget):
@@ -61,5 +66,56 @@ class MyListWidget(QListWidget):
                 webbrowser.open(Path(file_path).parent)
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
+
+        
+        
+        # QUEUE
+        elif q.text() == list(self.context_menu_dic)[1]:
+            
+            current_track_index = self.currentRow()
+
+            ''' QUEUED TRACK STYLE'''
+            if not current_track_index in cv.playlist_widget_dic[cv.active_db_table]['queued_tracks']:
+
+                cv.playlist_widget_dic[cv.active_db_table]['queued_tracks'].append(current_track_index)
+
+                list_item_style_update(
+                    cv.active_pl_name.item(current_track_index), 
+                    inactive_track_font_style,
+                    'black',
+                    '#C2C2C2'
+                    )
+
+                list_item_style_update(
+                    cv.active_pl_duration.item(current_track_index),
+                    inactive_track_font_style,
+                    'black',
+                    '#C2C2C2'
+                    )
+            
+            
+
+                ''' DEQUEUE / STANDARD TRACK STYLE'''
+            else:
+
+                cv.playlist_widget_dic[cv.active_db_table]['queued_tracks'].remove(current_track_index)
+                
+                list_item_style_update(
+                    cv.active_pl_name.item(current_track_index),
+                    inactive_track_font_style,
+                    'black',
+                    'white'
+                )
+
+                list_item_style_update(
+                    cv.active_pl_duration.item(current_track_index),
+                    inactive_track_font_style,
+                    'black',
+                    'white'
+                )
+                
+
+                
+
 
 

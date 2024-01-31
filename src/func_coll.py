@@ -17,10 +17,10 @@ def update_active_playlist_vars_and_widgets():
     cv.active_db_table = cv.paylist_list[cv.active_playlist] # playlist_1, playlist_2, ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
-    cv.active_pl_sum_duration = cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
+    cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
     # LIST WIDGETS
-    cv.active_pl_name = cv.paylist_widget_dic[cv.active_db_table]['name_list_widget']
-    cv.active_pl_duration = cv.paylist_widget_dic[cv.active_db_table]['duration_list_widget']
+    cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']
+    cv.active_pl_duration = cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget']
     cv.active_pl_tracks_count = cv.active_pl_name.count() 
 
 def update_playing_playlist_vars_and_widgets():
@@ -28,8 +28,8 @@ def update_playing_playlist_vars_and_widgets():
     cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
-    cv.playing_pl_name = cv.paylist_widget_dic[cv.playing_db_table]['name_list_widget']
-    cv.playing_pl_duration = cv.paylist_widget_dic[cv.playing_db_table]['duration_list_widget']
+    cv.playing_pl_name = cv.playlist_widget_dic[cv.playing_db_table]['name_list_widget']
+    cv.playing_pl_duration = cv.playlist_widget_dic[cv.playing_db_table]['duration_list_widget']
     cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
 def save_playing_playlist_and_playing_last_track_index():
@@ -136,7 +136,7 @@ def add_record_grouped_actions(track_path, av_player_duration):
     raw_duration = av_player_duration.player.duration()
 
     cv.active_pl_sum_duration += raw_duration
-    cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+    cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
     duration = generate_duration_to_display(raw_duration)
     add_record_db(raw_duration, track_path)
@@ -180,4 +180,4 @@ def update_and_save_volume_slider_value(new_value, slider):
 def update_duration_sum_var_after_track_remove():
     raw_duration = get_duration_db(cv.active_pl_name.currentRow(), cv.active_db_table)
     cv.active_pl_sum_duration -= raw_duration
-    cv.paylist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+    cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration

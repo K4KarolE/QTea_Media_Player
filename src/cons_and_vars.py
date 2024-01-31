@@ -226,7 +226,7 @@ class Data:
     paylist_remove_all_track = settings['hotkey_settings']['paylist_remove_all_track']
     paylist_select_prev_pl = settings['hotkey_settings']['paylist_select_prev_pl']
     paylist_select_next_pl = settings['hotkey_settings']['paylist_select_next_pl']
-
+    queue_toggle = settings['hotkey_settings']['queue_toggle']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -358,6 +358,11 @@ class Data:
             'text': 'Paylist - Select next',
             'value': paylist_select_next_pl,
             'line_edit_widget': ''
+        },
+        'queue_toggle': {
+            'text': 'Queue / Dequeue track',
+            'value': queue_toggle,
+            'line_edit_widget': ''
         }
     }
 
@@ -424,18 +429,19 @@ class Data:
         - create playlists in src / playlists.py
         - be able to access to the right widget
     '''
-    paylist_widget_dic = {}
+    playlist_widget_dic = {}
 
     playlist_amount = 30
     for i in range(0, playlist_amount):
         pl_name = f'playlist_{i}'
-        paylist_widget_dic[pl_name] = {
+        playlist_widget_dic[pl_name] = {
             'name_list_widget': '',
             'duration_list_widget': '',
-            'active_pl_sum_duration': 0
+            'active_pl_sum_duration': 0,
+            'queued_tracks': []
             }
       
-    paylist_list = list(paylist_widget_dic)
+    paylist_list = list(playlist_widget_dic)
     paylist_settings_last_widget_pos_y = 0     # to calc. the parent widget height
 
 
