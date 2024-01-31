@@ -20,6 +20,7 @@ def update_active_playlist_vars_and_widgets():
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
     # LIST WIDGETS
     cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']
+    cv.active_pl_queue = cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget']
     cv.active_pl_duration = cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget']
     cv.active_pl_tracks_count = cv.active_pl_name.count() 
 
@@ -29,6 +30,7 @@ def update_playing_playlist_vars_and_widgets():
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
     cv.playing_pl_name = cv.playlist_widget_dic[cv.playing_db_table]['name_list_widget']
+    cv.playing_pl_queue = cv.playlist_widget_dic[cv.playing_db_table]['queue_list_widget']
     cv.playing_pl_duration = cv.playlist_widget_dic[cv.playing_db_table]['duration_list_widget']
     cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
@@ -145,6 +147,7 @@ def add_record_grouped_actions(track_path, av_player_duration):
     track_name = f'{row_id}. {track_name}'
     
     add_new_list_item(track_name, cv.active_pl_name)
+    add_new_list_item('', cv.active_pl_queue)
     add_new_list_item(duration, cv.active_pl_duration)
 
 

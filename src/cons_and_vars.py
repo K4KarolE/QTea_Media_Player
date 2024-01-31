@@ -37,6 +37,15 @@ class Data:
     window_size_normal = True   # for window_size_toggle
     paylists_without_title_to_hide_index_list = []
     volume_slider_value = 0
+
+    '''
+    QUEUE TRACKING
+    queue_tracking_title = [playlist_3, 6] / playlist, track index
+    queued_tracks_list = [queue_tracking_title-1, queue_tracking_title-2, ..]
+    '''
+    queued_tracks_list = []
+    queue_tracking_title = []
+    
     
     ''' 
     TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)
@@ -70,7 +79,8 @@ class Data:
     active_db_table = None  
     active_pl_title = None
     active_pl_last_track_index = 0
-    active_pl_name = None   # widget
+    active_pl_name = None       # widget
+    playing_pl_queue = None     # widget
     active_pl_duration = None   # widget
     active_pl_sum_duration = 0
     active_pl_tracks_count = 0
@@ -83,8 +93,9 @@ class Data:
     playing_db_table = None  
     playing_pl_title = None
     playing_pl_last_track_index = 0
-    playing_pl_name = None   # widget
-    playing_pl_duration = None   # widget
+    playing_pl_name = None      # widget
+    playing_pl_queue = None     # widget
+    playing_pl_duration = None  # widget
     playing_pl_tracks_count = 0
 
     
@@ -436,9 +447,9 @@ class Data:
         pl_name = f'playlist_{i}'
         playlist_widget_dic[pl_name] = {
             'name_list_widget': '',
+            'queue_list_widget': '',
             'duration_list_widget': '',
-            'active_pl_sum_duration': 0,
-            'queued_tracks': []
+            'active_pl_sum_duration': 0
             }
       
     paylist_list = list(playlist_widget_dic)

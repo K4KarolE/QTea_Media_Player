@@ -105,8 +105,9 @@ class MyPlaylists(QTabWidget):
     
 
     ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
-    def name_list_to_duration_row_selection(self):
+    def name_list_to_queue_and_duration_row_selection(self):
         cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
+        cv.active_pl_queue.setCurrentRow(cv.active_pl_name.currentRow())
         if cv.active_pl_name.currentRow() != cv.active_pl_last_track_index:
             cv.active_pl_duration.setStyleSheet(
                                 "QListWidget::item:selected"
@@ -115,15 +116,51 @@ class MyPlaylists(QTabWidget):
                                     "color: black;"   # font
                                     "}"
                                 )
+            cv.active_pl_queue.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
 
-    def duration_list_to_name_row_selection(self):
+
+    def duration_list_to_name_and_queue_row_selection(self):
         cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
+        cv.active_pl_queue.setCurrentRow(cv.active_pl_duration.currentRow())
         if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
             cv.active_pl_name.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
                                     "background: #CCE8FF;" 
                                     "color: black;"   
+                                    "}"
+                                )
+            cv.active_pl_queue.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
+
+
+    def queue_list_to_name_and_duration_row_selection(self):
+        cv.active_pl_name.setCurrentRow(cv.active_pl_queue.currentRow())
+        cv.active_pl_queue.setCurrentRow(cv.active_pl_queue.currentRow())
+        if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
+            cv.active_pl_name.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   
+                                    "}"
+                                )
+            cv.active_pl_duration.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
                                     "}"
                                 )
     
@@ -149,6 +186,15 @@ class MyPlaylists(QTabWidget):
                                             "color: black;"   # font
                                             "}"
                                         )
+                
+                queue_list_widget.setStyleSheet(
+                                        "QListWidget::item:selected"
+                                            "{"
+                                            "background: #CCE8FF;" 
+                                            "color: black;"   # font
+                                            "}"
+                                        )
+
                 duration_list_widget.setStyleSheet(
                                         "QListWidget::item:selected"
                                             "{"
@@ -205,7 +251,14 @@ class MyPlaylists(QTabWidget):
             # MOVE TRACK UP / DOWN
             name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
             name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
-        
+
+
+            cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget(self.play_track, self.window)
+            queue_list_widget = cv.playlist_widget_dic[pl]['queue_list_widget']
+            queue_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
+            queue_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
+            queue_list_widget.itemDoubleClicked.connect(self.play_track)
+
 
             cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track, self.window)
             duration_list_widget = cv.playlist_widget_dic[pl]['duration_list_widget']
@@ -218,7 +271,8 @@ class MyPlaylists(QTabWidget):
             layout = QHBoxLayout()
             layout.setSpacing(0)
             layout.setContentsMargins(0, 0, 0, 0)
-            layout.addWidget(name_list_widget, 90)
+            layout.addWidget(name_list_widget, 84)
+            layout.addWidget(queue_list_widget, 6)
             layout.addWidget(duration_list_widget, 10)
 
             frame = QFrame()
@@ -239,11 +293,13 @@ class MyPlaylists(QTabWidget):
             for item in playlist:
                 rack_row_db, track_name, duration = generate_track_list_detail(item)
                 add_new_list_item(track_name, name_list_widget)
+                add_new_list_item('', queue_list_widget)
                 add_new_list_item(duration, duration_list_widget)
                 cv.playlist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
             
             ''' SET BACK / SELECT LAST USED ROWS '''
             name_list_widget.setCurrentRow(settings[pl]['last_track_index'])
+            queue_list_widget.setCurrentRow(settings[pl]['last_track_index'])
             duration_list_widget.setCurrentRow(settings[pl]['last_track_index'])
             
             ''' 
@@ -260,9 +316,9 @@ class MyPlaylists(QTabWidget):
                 SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE
                 AFTER NEWLY SELECTED TRACK
             '''
-            name_list_widget.currentRowChanged.connect(self.name_list_to_duration_row_selection)
-            duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_row_selection)
-    
+            name_list_widget.currentRowChanged.connect(self.name_list_to_queue_and_duration_row_selection)
+            duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_and_queue_row_selection)
+            queue_list_widget.currentRowChanged.connect(self.queue_list_to_name_and_duration_row_selection)
 
     def drag_and_drop_list_item_action(self):
   

@@ -136,6 +136,7 @@ class MyButtons(QPushButton):
         remove_record_db(current_row_index)
         # PLAYLIST
         cv.active_pl_name.takeItem(current_row_index)
+        cv.active_pl_queue.takeItem(current_row_index)
         cv.active_pl_duration.takeItem(current_row_index)
         # RENAME PLAYLIST
         row_id_db = current_row_index + 1
@@ -155,6 +156,7 @@ class MyButtons(QPushButton):
         connection.commit()
         # PLAYLIST
         cv.active_pl_name.clear()
+        cv.active_pl_queue.clear()
         cv.active_pl_duration.clear()
 
 

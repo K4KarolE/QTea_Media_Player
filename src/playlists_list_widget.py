@@ -50,7 +50,7 @@ class MyListWidget(QListWidget):
 
 
     def context_menu_clicked(self, q):
-        # Play
+        # PLAY
         if q.text() == list(self.context_menu_dic)[0]:
             try:
                 if self.currentRow() == cv.playing_track_index:
@@ -59,6 +59,7 @@ class MyListWidget(QListWidget):
                     self.play_track()
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
+        
         # Folder
         elif q.text() == list(self.context_menu_dic)[2]:
             try:
@@ -68,53 +69,80 @@ class MyListWidget(QListWidget):
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
 
         
-        
         # QUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
             
             current_track_index = self.currentRow()
+            cv.queue_tracking_title = [cv.active_db_table, current_track_index]
 
-            ''' QUEUED TRACK STYLE'''
-            if not current_track_index in cv.playlist_widget_dic[cv.active_db_table]['queued_tracks']:
+            ''' QUEUED TRACK '''
+            if not cv.queue_tracking_title in cv.queued_tracks_list:
 
-                cv.playlist_widget_dic[cv.active_db_table]['queued_tracks'].append(current_track_index)
+                cv.queued_tracks_list.append(cv.queue_tracking_title)
 
-                list_item_style_update(
-                    cv.active_pl_name.item(current_track_index), 
-                    inactive_track_font_style,
-                    'black',
-                    '#C2C2C2'
-                    )
+                if current_track_index != cv.playing_pl_last_track_index:
 
-                list_item_style_update(
-                    cv.active_pl_duration.item(current_track_index),
-                    inactive_track_font_style,
-                    'black',
-                    '#C2C2C2'
-                    )
+                    self.update_queued_track_style(current_track_index)
+                
+                queue_order_number = f'[{cv.queued_tracks_list.index(cv.queue_tracking_title) + 1}]'
+                cv.active_pl_queue.item(current_track_index).setText(queue_order_number)
             
             
-
-                ''' DEQUEUE / STANDARD TRACK STYLE'''
+                ''' DEQUEUE / STANDARD TRACK '''
             else:
 
-                cv.playlist_widget_dic[cv.active_db_table]['queued_tracks'].remove(current_track_index)
-                
-                list_item_style_update(
-                    cv.active_pl_name.item(current_track_index),
-                    inactive_track_font_style,
-                    'black',
-                    'white'
-                )
+                cv.queued_tracks_list.remove(cv.queue_tracking_title)
+                cv.active_pl_queue.item(current_track_index).setText('')
 
-                list_item_style_update(
-                    cv.active_pl_duration.item(current_track_index),
-                    inactive_track_font_style,
-                    'black',
-                    'white'
-                )
+                if current_track_index != cv.playing_pl_last_track_index:
                 
+                    self.update_dequeued_track_style(current_track_index)
 
+
+    def update_queued_track_style(self, current_track_index):
+        list_item_style_update(
+            cv.active_pl_name.item(current_track_index), 
+            inactive_track_font_style,
+            'black',
+            '#C2C2C2'
+            )
+        
+        list_item_style_update(
+            cv.active_pl_queue.item(current_track_index), 
+            inactive_track_font_style,
+            'black',
+            '#C2C2C2'
+            )
+
+        list_item_style_update(
+            cv.active_pl_duration.item(current_track_index),
+            inactive_track_font_style,
+            'black',
+            '#C2C2C2'
+            )
+
+
+    def update_dequeued_track_style(self, current_track_index):
+        list_item_style_update(
+            cv.active_pl_name.item(current_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
+
+        list_item_style_update(
+            cv.active_pl_queue.item(current_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
+
+        list_item_style_update(
+            cv.active_pl_duration.item(current_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
                 
 
 

@@ -35,28 +35,12 @@ class PlaysFunc():
         cv.counter_for_duration = 0  # for iterate: saving the current duration
         update_active_playlist_vars_and_widgets()
         
-        '''
-            SCENARIO A - playing_track_index == None:
-            - Double-click on a track in a playlist
-            - Autoplay at startup
-
-            SCENARIO B - playing_track_index = row number:
-            - Play next/prev buttons
-        '''
-        if playing_track_index == None: # Scenario - A
-            cv.playing_playlist = cv.active_playlist
-            update_playing_playlist_vars_and_widgets()
-
-            if cv.playing_pl_tracks_count > 0:
-                if cv.playing_pl_name.currentRow() > -1: # When row selected
-                    cv.playing_track_index = cv.playing_pl_name.currentRow()
-                else:
-                    cv.playing_track_index = 0
-            else:   # empry playlist
-                return
-
-        else:   # Scenario - B
-            cv.playing_track_index = playing_track_index
+        self.get_playing_track_index(playing_track_index)
+        
+        cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
+        if cv.queue_tracking_title in cv.queued_tracks_list:
+            cv.queued_tracks_list.remove(cv.queue_tracking_title)
+            cv.playing_pl_queue.item(cv.playing_track_index).setText('')
 
         try:
             ''' AVOID SCENARIO:
@@ -65,41 +49,14 @@ class PlaysFunc():
                 3, failing last played track style update
             '''
             if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
-                
-                ''' PREVIOUS TRACK STYLE'''
-                list_item_style_update(
-                    cv.playing_pl_name.item(cv.playing_pl_last_track_index),
-                    inactive_track_font_style,
-                    'black',
-                    'white'
-                )
 
-                list_item_style_update(
-                    cv.playing_pl_duration.item(cv.playing_pl_last_track_index),
-                    inactive_track_font_style,
-                    'black',
-                    'white'
-                )
+                self.update_previous_track_style()
+                
+            self.update_new_track_style()
              
+            
             cv.playing_pl_last_track_index = cv.playing_track_index
             save_playing_playlist_and_playing_last_track_index()
-          
-      
-            ''' NEW TRACK STYLE'''
-            list_item_style_update(
-                cv.playing_pl_name.item(cv.playing_track_index), 
-                active_track_font_style,
-                'white',
-                '#287DCC'
-                )
-
-            list_item_style_update(
-                cv.playing_pl_duration.item(cv.playing_track_index),
-                active_track_font_style,
-                'white',
-                '#287DCC'
-                )
-
             
             # PATH / DURATION / SLIDER
             cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
@@ -153,11 +110,43 @@ class PlaysFunc():
 
         except:
             print('ERROR - play_track()\n')
+            # self.play_next_track()
+
+
+    def get_playing_track_index(self, playing_track_index):
+    
+        '''
+            SCENARIO A - playing_track_index == None:
+            - Double-click on a track in a playlist
+            - Autoplay at startup
+
+            SCENARIO B - playing_track_index = row number:
+            - Play next/prev buttons
+        '''
+        if playing_track_index == None: # Scenario - A
+            cv.playing_playlist = cv.active_playlist
+            update_playing_playlist_vars_and_widgets()
+
+            if cv.playing_pl_tracks_count > 0:
+                if cv.playing_pl_name.currentRow() > -1: # When row selected
+                    cv.playing_track_index = cv.playing_pl_name.currentRow()
+                else:
+                    cv.playing_track_index = 0
+            else:   # empry playlist
+                return
+
+        else:   # Scenario - B
+            cv.playing_track_index = playing_track_index
 
 
     def play_next_track(self):
 
-        if cv.playing_pl_tracks_count > 0:
+        if cv.queued_tracks_list:
+            cv.playing_playlist = cv.paylist_list.index(cv.queued_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
+            update_playing_playlist_vars_and_widgets()
+            self.play_track(cv.queued_tracks_list[0][1])
+
+        elif cv.playing_pl_tracks_count > 0:
 
             # SHUFFLE
             if cv.shuffle_playlist_on and cv.playing_pl_tracks_count > 1:
@@ -228,4 +217,51 @@ class PlaysFunc():
             sub_list.append(-1) # -1: disable subtitle
             cv.subtitle_track_played = sub_list[cv.subtitle_track_played + 1]
             self.av_player.player.setActiveSubtitleTrack(cv.subtitle_track_played)
+    
+    
+
+    def update_previous_track_style(self):
+        list_item_style_update(
+            cv.playing_pl_name.item(cv.playing_pl_last_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
+
+        list_item_style_update(
+            cv.playing_pl_queue.item(cv.playing_pl_last_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
+
+        list_item_style_update(
+            cv.playing_pl_duration.item(cv.playing_pl_last_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+        )
+    
+
+    def update_new_track_style(self):
+        list_item_style_update(
+            cv.playing_pl_name.item(cv.playing_track_index), 
+            active_track_font_style,
+            'white',
+            '#287DCC'
+            )
+                
+        list_item_style_update(
+            cv.playing_pl_queue.item(cv.playing_track_index), 
+            active_track_font_style,
+            'white',
+            '#287DCC'
+            )
+
+        list_item_style_update(
+            cv.playing_pl_duration.item(cv.playing_track_index),
+            active_track_font_style,
+            'white',
+            '#287DCC'
+            )
            
