@@ -13,6 +13,7 @@ from .func_coll import (
     update_active_playlist_vars_and_widgets,
     get_all_from_db,
     update_raw_current_duration_db,
+    update_queued_tracks_order_number,
     inactive_track_font_style,  
     active_track_font_style
     )
@@ -37,11 +38,16 @@ class PlaysFunc():
         
         self.get_playing_track_index(playing_track_index)
         
+        ''' QUEUE MANAGEMENT '''
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
-        if cv.queue_tracking_title in cv.queued_tracks_list:
-            cv.queued_tracks_list.remove(cv.queue_tracking_title)
+        if cv.queue_tracking_title in cv.queue_tracks_list:
+            cv.queue_tracks_list.remove(cv.queue_tracking_title)
+            cv.queue_playlists_list.remove(cv.playing_db_table)
             cv.playing_pl_queue.item(cv.playing_track_index).setText('')
+            update_queued_tracks_order_number()
 
+
+        ''' PLAY '''
         try:
             ''' AVOID SCENARIO:
                 1, last, played track in the playlist removed
@@ -141,10 +147,10 @@ class PlaysFunc():
 
     def play_next_track(self):
 
-        if cv.queued_tracks_list:
-            cv.playing_playlist = cv.paylist_list.index(cv.queued_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
+        if cv.queue_tracks_list:
+            cv.playing_playlist = cv.paylist_list.index(cv.queue_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
             update_playing_playlist_vars_and_widgets()
-            self.play_track(cv.queued_tracks_list[0][1])
+            self.play_track(cv.queue_tracks_list[0][1])
 
         elif cv.playing_pl_tracks_count > 0:
 

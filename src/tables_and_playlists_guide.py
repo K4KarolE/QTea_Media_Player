@@ -2,8 +2,7 @@
 THIS FILE CAN BE REACHED OUTSIDE THE APP ONLY
 
 It contains supporting functions only,
-which can be run in this file and
-which can be used to:
+which can be actioned in this file for:
     - Verify the tables availble in the DB
     - Creating new DB
     - Remove a table from the DB

@@ -37,14 +37,17 @@ class Data:
     window_size_normal = True   # for window_size_toggle
     paylists_without_title_to_hide_index_list = []
     volume_slider_value = 0
+    current_track_index = 0
 
     '''
     QUEUE TRACKING
     queue_tracking_title = [playlist_3, 6] / playlist, track index
-    queued_tracks_list = [queue_tracking_title-1, queue_tracking_title-2, ..]
+    queue_tracks_list = [queue_tracking_title-1, queue_tracking_title-2, ..]
+    queue_playlist_list = [playlist_3, playlist_6, ..] - playlists with a queued track
     '''
-    queued_tracks_list = []
     queue_tracking_title = []
+    queue_tracks_list = []
+    queue_playlists_list = []
     
     
     ''' 
@@ -405,15 +408,15 @@ class Data:
     exp_3 = r'('
     for item in keys_list[0:-1]:
         exp_3 = exp_3 + f'^{item}|'
-    exp_3 = exp_3+ f'^{keys_list[-1]})\+('
+    exp_3 = exp_3 + f'^{keys_list[-1]})\+('
 
     for item in keys_list[0:-1]:
         exp_3 = exp_3 + f'{item}|'
-    exp_3 = exp_3+ f'{keys_list[-1]})\+('
+    exp_3 = exp_3 + f'{keys_list[-1]})\+('
 
     for item in keys_list[0:-1]:
         exp_3 = exp_3 + f'{item}$|'
-    exp_3 = exp_3+ f'{keys_list[-1]}$)'
+    exp_3 = exp_3 + f'{keys_list[-1]}$)'
 
     search_regex = re.compile(f'{exp_1}|{exp_2}|{exp_3}')
 

@@ -106,6 +106,7 @@ class MyPlaylists(QTabWidget):
 
     ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
     def name_list_to_queue_and_duration_row_selection(self):
+        cv.current_track_index = cv.active_pl_name.currentRow()
         cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
         cv.active_pl_queue.setCurrentRow(cv.active_pl_name.currentRow())
         if cv.active_pl_name.currentRow() != cv.active_pl_last_track_index:
@@ -124,8 +125,8 @@ class MyPlaylists(QTabWidget):
                                     "}"
                                 )
 
-
     def duration_list_to_name_and_queue_row_selection(self):
+        cv.current_track_index = cv.active_pl_duration.currentRow()
         cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
         cv.active_pl_queue.setCurrentRow(cv.active_pl_duration.currentRow())
         if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
@@ -144,8 +145,8 @@ class MyPlaylists(QTabWidget):
                                     "}"
                                 )
 
-
     def queue_list_to_name_and_duration_row_selection(self):
+        cv.current_track_index = cv.active_pl_queue.currentRow()
         cv.active_pl_name.setCurrentRow(cv.active_pl_queue.currentRow())
         cv.active_pl_queue.setCurrentRow(cv.active_pl_queue.currentRow())
         if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
@@ -243,6 +244,7 @@ class MyPlaylists(QTabWidget):
             
             ''' LISTS CREATION '''
             ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
+            
             cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track, self.window)
             name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
@@ -319,6 +321,8 @@ class MyPlaylists(QTabWidget):
             name_list_widget.currentRowChanged.connect(self.name_list_to_queue_and_duration_row_selection)
             duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_and_queue_row_selection)
             queue_list_widget.currentRowChanged.connect(self.queue_list_to_name_and_duration_row_selection)
+
+
 
     def drag_and_drop_list_item_action(self):
   

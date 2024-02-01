@@ -22,7 +22,8 @@ def update_active_playlist_vars_and_widgets():
     cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_queue = cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget']
     cv.active_pl_duration = cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget']
-    cv.active_pl_tracks_count = cv.active_pl_name.count() 
+    cv.active_pl_tracks_count = cv.active_pl_name.count()
+    cv.active_pl_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
 
 def update_playing_playlist_vars_and_widgets():
     cv.playing_db_table = cv.paylist_list[cv.playing_playlist] # playlist_1, playlist_2, ..
@@ -184,3 +185,67 @@ def update_duration_sum_var_after_track_remove():
     raw_duration = get_duration_db(cv.active_pl_name.currentRow(), cv.active_db_table)
     cv.active_pl_sum_duration -= raw_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+
+
+
+def queue_add_remove_track():
+
+    cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+
+    ''' QUEUED TRACK '''
+    if not cv.queue_tracking_title in cv.queue_tracks_list:
+
+        cv.queue_tracks_list.append(cv.queue_tracking_title)
+        cv.queue_playlists_list.append(cv.active_db_table)
+
+        queue_order_number = f'[{cv.queue_tracks_list.index(cv.queue_tracking_title) + 1}]'
+        cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
+        
+        if cv.current_track_index != cv.playing_pl_last_track_index:
+
+            update_queued_track_style(cv.current_track_index)
+        
+    
+        ''' DEQUEUE / STANDARD TRACK '''
+    else:
+
+        cv.queue_tracks_list.remove(cv.queue_tracking_title)
+        cv.queue_playlists_list.remove(cv.active_db_table)
+        cv.active_pl_queue.item(cv.current_track_index).setText('')
+
+        if cv.current_track_index != cv.playing_pl_last_track_index:
+        
+            update_dequeued_track_style(cv.current_track_index)
+
+
+def update_queued_track_style(current_track_index):
+    for list_widget in cv.active_pl_list_widgets_list:
+        list_item_style_update(
+            list_widget.item(current_track_index), 
+            inactive_track_font_style,
+            'black',
+            '#C2C2C2'
+            )
+
+
+def update_dequeued_track_style(current_track_index):
+    for list_widget in cv.active_pl_list_widgets_list:
+        list_item_style_update(
+            list_widget.item(current_track_index),
+            inactive_track_font_style,
+            'black',
+            'white'
+            )
+
+def update_queued_tracks_order_number():
+    for index, item in enumerate(cv.queue_tracks_list):
+        playlist = item[0]
+        track_index = item[1]
+        queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
+        queue_new_order_number = f'[{index + 1}]'
+        queue_list_widget.item(track_index).setText(queue_new_order_number)
+
+        
+            
+
+

@@ -42,7 +42,8 @@ from src import (
     MyPlaylists,
     update_and_save_volume_slider_value,
     generate_duration_to_display,
-    update_raw_current_duration_db
+    update_raw_current_duration_db,
+    queue_add_remove_track
     )
 
 
@@ -93,7 +94,7 @@ class MyWindow(QWidget):
         'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
         'paylist_select_next_pl': self.paylist_select_next_pl_action,
-        'queue_toggle': lambda: print('Queue')
+        'queue_toggle': lambda: queue_add_remove_track()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
