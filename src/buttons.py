@@ -41,6 +41,8 @@ from .func_coll import (
     add_record_grouped_actions,
     update_duration_sum_var_after_track_remove,
     save_playing_last_track_index,
+    update_queued_tracks_after_track_deletion,
+    remove_queued_tracks_after_playlist_clear,
     cur, # db
     connection, # db
     settings,   # json dic
@@ -124,6 +126,8 @@ class MyButtons(QPushButton):
     def button_remove_track_clicked(self):
 
         update_duration_sum_var_after_track_remove()
+
+        update_queued_tracks_after_track_deletion()
         
         current_row_index = cv.active_pl_name.currentRow()
         # LAST TRACK INDEX
@@ -151,6 +155,8 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track_clicked(self):
+        # QUEUE
+        remove_queued_tracks_after_playlist_clear()
         # DB
         cur.execute("DELETE FROM {0}".format(cv.active_db_table))
         connection.commit()

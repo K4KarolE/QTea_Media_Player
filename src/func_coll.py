@@ -201,7 +201,8 @@ def queue_add_remove_track():
         queue_order_number = f'[{cv.queue_tracks_list.index(cv.queue_tracking_title) + 1}]'
         cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
         
-        if cv.current_track_index != cv.playing_pl_last_track_index:
+        # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
+        if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
 
             update_queued_track_style(cv.current_track_index)
         
@@ -245,7 +246,43 @@ def update_queued_tracks_order_number():
         queue_new_order_number = f'[{index + 1}]'
         queue_list_widget.item(track_index).setText(queue_new_order_number)
 
+
+def update_queued_tracks_after_track_deletion():
+
+    if cv.active_db_table in cv.queue_playlists_list:
+
+        cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+
+        # DELETING A QUEUED TRACK
+        if cv.queue_tracking_title in cv.queue_tracks_list:
+            cv.queue_tracks_list.remove(cv.queue_tracking_title)
+            cv.queue_playlists_list.remove(cv.active_db_table)
+            update_queued_tracks_order_number()
         
+        # DELETING A TRACK ABOVE THE QUEUED TRACK(S)
+        for item in cv.queue_tracks_list:   # item = [playlist_3, 6]
+            if cv.active_db_table == item[0]:
+                if cv.current_track_index < item[1]:
+                    item[1] = item[1] - 1
+        
+
+def remove_queued_tracks_after_playlist_clear():
+
+    if cv.active_db_table in cv.queue_playlists_list:
+
+        queue_tracks_list_item_to_remove = []
+
+        for item in cv.queue_tracks_list:   # item = [playlist_3, 6]
+            if cv.active_db_table == item[0]:
+                queue_tracks_list_item_to_remove.append(item)
+
+        for item in queue_tracks_list_item_to_remove: 
+            cv.queue_tracks_list.remove(item)
+            cv.queue_playlists_list.remove(item[0])        
+        
+        update_queued_tracks_order_number()
+
+
             
 
 

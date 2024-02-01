@@ -14,6 +14,7 @@ from .func_coll import (
     get_all_from_db,
     update_raw_current_duration_db,
     update_queued_tracks_order_number,
+    update_queued_track_style,
     inactive_track_font_style,  
     active_track_font_style
     )
@@ -55,8 +56,12 @@ class PlaysFunc():
                 3, failing last played track style update
             '''
             if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
-
-                self.update_previous_track_style()
+                
+                # PLAYING TRACK ADDED TO THE QUEUE VALUATION
+                if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
+                    self.update_previous_track_style()
+                else:
+                    update_queued_track_style(cv.playing_pl_last_track_index)
                 
             self.update_new_track_style()
              
