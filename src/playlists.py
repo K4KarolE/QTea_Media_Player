@@ -33,7 +33,7 @@ class MyPlaylists(QTabWidget):
     def __init__(self, play_track, window, duration_sum_widg=None):
         super().__init__()
 
-        ''' playlists_created_at_first_run
+        ''' playlists_created_at_first_run VAR
             USED TO AVOID THE 
             __.currentChanged.connect(self.active_playlist)
             SIGNAL AT THE PLAYLISTS CREATION
@@ -43,14 +43,17 @@ class MyPlaylists(QTabWidget):
         self.duration_sum_widg = duration_sum_widg
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
-        # self.ntt = MyNameListWidget()
         self.playlists_creation()
         self.setCurrentIndex(cv.playing_playlist)
         self.currentChanged.connect(self.active_playlist_changed)
         self.playlists_created_at_first_run = True
-
         cv.active_playlist = self.currentIndex()
         update_active_playlist_vars_and_widgets()
+        
+        # IF ADD TO THE QUEUE WITHOUT ROW SELECTION AT THE STARTUP
+        # GOING TO SELECT THE LAST PLAYED ROW
+        cv.current_track_index = cv.active_pl_last_track_index
+        
         self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
         self.add_dummy_playlist()
         self.hide_playlists_with_no_title()
@@ -93,7 +96,6 @@ class MyPlaylists(QTabWidget):
     def hide_playlists_with_no_title(self):
         for index in cv.paylists_without_title_to_hide_index_list:
             self.setTabVisible(index, 0)
-
 
     def active_playlist_changed(self):
         if self.playlists_created_at_first_run:
@@ -325,13 +327,29 @@ class MyPlaylists(QTabWidget):
 
 
     def drag_and_drop_list_item_action(self):
-  
+
         prev_row_id = cv.active_pl_duration.currentRow()
         new_row_id = cv.active_pl_name.currentRow()
 
         new_row_id_db = new_row_id + 1
         prev_row_id_db = prev_row_id + 1
+
+        current_queue_pl_item = cv.active_pl_queue.currentItem()
+        current_duration_pl_item = cv.active_pl_duration.currentItem()
         
+        
+        ''' MOVE / UPDATE QUEUE WITH THE TITLE '''
+        cv.active_pl_queue.takeItem(prev_row_id)
+        cv.active_pl_queue.insertItem(new_row_id, current_queue_pl_item)
+        cv.active_pl_queue.setCurrentRow(new_row_id)
+        self.update_queued_tracks_index(prev_row_id, new_row_id)
+    
+        ''' MOVE DURATION WITH THE TITLE '''
+        cv.active_pl_duration.takeItem(prev_row_id)
+        cv.active_pl_duration.insertItem(new_row_id, current_duration_pl_item)
+        cv.active_pl_duration.setCurrentRow(new_row_id)
+
+
         ''' WHEN MOVING TRACK CURRENTLY PLAYING '''
         def set_track_index_when_moving_currently_playing():
             if cv.playing_pl_last_track_index == prev_row_id:
@@ -341,12 +359,6 @@ class MyPlaylists(QTabWidget):
                 return True
             else:
                 return False
-
-        ''' MOVE DURATION WITH THE TITLE '''
-        current_duration_pl_item = cv.active_pl_duration.currentItem()
-        cv.active_pl_duration.takeItem(prev_row_id)
-        cv.active_pl_duration.insertItem(new_row_id, current_duration_pl_item)
-        cv.active_pl_duration.setCurrentRow(new_row_id)
 
         ''' 
             MOVE DOWN / MOVE UP    
@@ -372,8 +384,10 @@ class MyPlaylists(QTabWidget):
                 cv.active_pl_name.item(rack_row_db-1).setText(list_name)
             
 
-            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(prev_row_id_db, new_row_id_db):
+            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(prev_row_id, new_row_id + 1):
                 cv.playing_pl_last_track_index -= 1
+                cv.playing_track_index = cv.playing_pl_last_track_index
+                print(cv.playing_pl_last_track_index)
                 save_playing_last_track_index()
         
         # MOVING TRACK UP
@@ -391,6 +405,30 @@ class MyPlaylists(QTabWidget):
                 rack_row_db, list_name, duration = generate_track_list_detail(item)
                 cv.active_pl_name.item(rack_row_db-1).setText(list_name)
             
-            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id_db -1, prev_row_id_db - 1):
+            if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id, prev_row_id + 1):
                 cv.playing_pl_last_track_index += 1
+                cv.playing_track_index = cv.playing_pl_last_track_index
                 save_playing_last_track_index()
+        
+
+
+
+    def update_queued_tracks_index(self, prev_row_id, new_row_id):
+        
+        if cv.active_db_table in cv.queue_playlists_list:
+            
+            for item in cv.queue_tracks_list:   # item = [playlist_3, 6]
+                
+                if cv.active_db_table == item[0]:
+                    
+                    # MOVING THE QUEUED TRACK
+                    if item[1] == prev_row_id:
+                        item[1] = new_row_id
+
+                    # MOVING A TRACK BELOW THE QUEUED TRACK
+                    elif item[1] in range(prev_row_id, new_row_id + 1 ):
+                        item[1] = item[1] - 1
+                    
+                    # MOVING A TRACK ABOVE THE QUEUED TRACK
+                    elif item[1] in range(new_row_id, prev_row_id + 1):
+                        item[1] = item[1] + 1

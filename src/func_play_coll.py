@@ -110,7 +110,7 @@ class PlaysFunc():
             cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
             
             # WINDOW TITLE
-            self.window.setWindowTitle(f'{cv.playing_pl_title} | {Path(track_path).stem} - QTea media player')
+            self.window.setWindowTitle(f'{cv.playing_pl_title}  |  {Path(track_path).stem} - QTea media player')
 
             # SCROLL TO PLAYING TRACK IF IT WOULD BE
             # OUT OF THE VISIBLE WINDOW/LIST

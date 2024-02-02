@@ -215,7 +215,9 @@ class MyButtons(QPushButton):
 
 
     ''' 
-    PLAY SECTION
+    #####################
+        PLAY SECTION    
+    #####################
     '''
     ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
     def button_play_pause_clicked(self):

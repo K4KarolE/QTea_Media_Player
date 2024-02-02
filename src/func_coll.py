@@ -44,7 +44,7 @@ def save_playing_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
-# A DB record: row_id, duration, path
+# A DB record: row_id, duration, current_duration, path
 # row_id populating automatically
 # QListwidget list first index: 0 // SQLite DB first index: 1
 def add_record_db(duration, path):
@@ -225,7 +225,7 @@ def update_queued_track_style(current_track_index):
             list_widget.item(current_track_index), 
             inactive_track_font_style,
             'black',
-            '#C2C2C2'
+            '#D5DFE2'
             )
 
 
@@ -281,8 +281,3 @@ def remove_queued_tracks_after_playlist_clear():
             cv.queue_playlists_list.remove(item[0])        
         
         update_queued_tracks_order_number()
-
-
-            
-
-
