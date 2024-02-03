@@ -75,14 +75,14 @@ class AVPlayer(QWidget):
                 menu = QMenu()
 
                 ''' MENU ITEMS '''
-                for item in self.context_menu_dic:
+                for menu_title, menu_icon in self.context_menu_dic.items():
 
-                    icon = self.context_menu_dic[item]['icon']
+                    icon = menu_icon['icon']
 
                     if icon:
-                        menu.addAction(QAction(icon, item, self))
+                        menu.addAction(QAction(icon, menu_title, self))
                     else:
-                        self.context_menu_dic[item]['menu_sub'] = menu.addMenu(item)
+                        self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
 
 
                 ''' AUDIO TRACKS '''

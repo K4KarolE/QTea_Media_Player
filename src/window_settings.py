@@ -104,15 +104,15 @@ class MySettingsWindow(QWidget):
         WIDGETS_NEXT_LINE_POS_Y_DIFF = 25
 
 
-        def get_dic_values_before_widget_creation(dictionary, item):
-            item_text = dictionary[item]['text']
-            item_value = dictionary[item]['value']
+        def get_dic_values_before_widget_creation(dic_value):
+            item_text = dic_value['text']
+            item_value = dic_value['value']
             return item_text, item_value
 
-        def get_dic_values_after_widget_creation(dictionary, item):
-            item_text = dictionary[item]['text']
-            item_value = dictionary[item]['value']
-            line_edit_text = dictionary[item]['line_edit_widget'].text()
+        def get_dic_values_after_widget_creation(dic_value):
+            item_text = dic_value['text']
+            item_value = dic_value['value']
+            line_edit_text = dic_value['line_edit_widget'].text()
             line_edit_text = line_edit_text.strip().title()
             return item_text, item_value, line_edit_text
         
@@ -127,9 +127,9 @@ class MySettingsWindow(QWidget):
         widget_hotkey_pos_y = WIDGETS_POS_Y
         HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 180
 
-        for item in cv.hotkey_settings_dic:
+        for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
 
-            item_text, item_value = get_dic_values_before_widget_creation(cv.hotkey_settings_dic, item)
+            item_text, item_value = get_dic_values_before_widget_creation(hotkey_dic_value)
 
             ''' LABEL '''
             item_label = QLabel(tab_hotkey, text=item_text)
@@ -137,8 +137,8 @@ class MySettingsWindow(QWidget):
             item_label.move(WIDGET_HOTKEY_POS_X, widget_hotkey_pos_y)
 
             ''' LINE EDIT '''
-            cv.hotkey_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_hotkey)
-            line_edit_widget = cv.hotkey_settings_dic[item]['line_edit_widget']
+            hotkey_dic_value['line_edit_widget'] = QLineEdit(tab_hotkey)
+            line_edit_widget = hotkey_dic_value['line_edit_widget']
 
             line_edit_widget.setText(item_value)
             line_edit_widget.setFont(inactive_track_font_style)
@@ -160,9 +160,9 @@ class MySettingsWindow(QWidget):
             ''' EXPRESSION CHECK '''
             line_edit_text_all_values = []
 
-            for item in cv.hotkey_settings_dic:
+            for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
 
-                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.hotkey_settings_dic, item)
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(hotkey_dic_value)
 
                 line_edit_text_all_values.append(line_edit_text)
 
@@ -185,12 +185,12 @@ class MySettingsWindow(QWidget):
 
         def hotkeys_fields_to_save(to_save = False):
             
-            for item in cv.hotkey_settings_dic:
+            for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
 
-                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.hotkey_settings_dic, item)
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(hotkey_dic_value)
 
                 if item_value != line_edit_text:
-                    settings['hotkey_settings'][item] = line_edit_text
+                    settings['hotkey_settings'][hotkey_dic_key] = line_edit_text
                     to_save = True
                     
             if to_save:
@@ -207,9 +207,9 @@ class MySettingsWindow(QWidget):
         widget_general_pos_y = WIDGETS_POS_Y
         GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
 
-        for item in cv.general_settings_dic:
+        for item, dic_value in cv.general_settings_dic.items():
 
-            item_text, item_value = get_dic_values_before_widget_creation(cv.general_settings_dic, item)
+            item_text, item_value = get_dic_values_before_widget_creation(dic_value)
 
             ''' LABEL '''
             item_label = QLabel(tab_general, text=item_text)
@@ -246,9 +246,9 @@ class MySettingsWindow(QWidget):
             MAX_WINDOW_SIZE_XY = 4500
 
             # screen values can be bigger than the display size - no over-reaching
-            for item in cv.general_settings_dic:
+            for general_dic_key, general_dic_value in cv.general_settings_dic.items():
 
-                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_boolean_text_list:
                     if line_edit_text not in ['True', 'False']:
@@ -277,23 +277,24 @@ class MySettingsWindow(QWidget):
         
 
         def general_fields_to_save(to_save = False):
-            for item in cv.general_settings_dic:
 
-                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(cv.general_settings_dic, item)
+            for general_dic_key, general_dic_value in cv.general_settings_dic.items():
+
+                item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_jump_text_list:
                     if item_value != int(line_edit_text)*1000:
-                        settings['general_settings'][item] = int(line_edit_text)*1000
+                        settings['general_settings'][general_dic_key] = int(line_edit_text)*1000
                         to_save = True
    
                 elif item_text in cv.gen_sett_boolean_text_list:
                     if item_value != line_edit_text:
-                        settings['general_settings'][item] = line_edit_text
+                        settings['general_settings'][general_dic_key] = line_edit_text
                         to_save = True
    
                 else:
                     if item_value != int(line_edit_text):
-                        settings['general_settings'][item] = int(line_edit_text)
+                        settings['general_settings'][general_dic_key] = int(line_edit_text)
                         to_save = True
 
             if to_save:

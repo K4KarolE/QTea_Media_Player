@@ -213,6 +213,7 @@ def queue_add_remove_track():
         cv.queue_tracks_list.remove(cv.queue_tracking_title)
         cv.queue_playlists_list.remove(cv.active_db_table)
         cv.active_pl_queue.item(cv.current_track_index).setText('')
+        update_queued_tracks_order_number()
 
         if cv.current_track_index != cv.playing_pl_last_track_index:
         

@@ -1,10 +1,10 @@
 ## Main features
 - Thirty playlists supported by default. More can be generated.
-- Playlists saved by default.
 - Cross playlists queue management.
 - Start from the latest point.
 - Start the last played media at startup.
 - Quick switch to alternative window mode / size.
+- Playlists saved by default.
 - Planned to add:
     - Cross playlists search window
     - Dedicated queue management window

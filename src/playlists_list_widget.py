@@ -36,10 +36,10 @@ class MyListWidget(QListWidget):
 
             menu = QMenu()
 
-            for item in self.context_menu_dic:
+            for menu_title, menu_icon in self.context_menu_dic.items():
 
-                icon = self.context_menu_dic[item]['icon']
-                menu.addAction(QAction(icon, item, self))
+                icon = menu_icon['icon']
+                menu.addAction(QAction(icon, menu_title, self))
    
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())

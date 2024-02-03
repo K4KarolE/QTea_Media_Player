@@ -34,6 +34,7 @@ from PyQt6.QtGui import QIcon, QFont
 
 import os
 
+from .icons import MyIcon
 from .cons_and_vars import Path, save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     remove_record_db,
@@ -74,16 +75,11 @@ class MyButtons(QPushButton):
             self.setIcon(icon)
             self.setText(None)
             self.setIconSize(QSize(cv.icon_size, cv.icon_size))
-
         self.av_player = av_player
         self.av_player_duration = av_player_duration
         self.play_funcs = play_funcs
-
-        self.button_image_start = QIcon(f'skins/{cv.skin_selected}/start.png')
-        self.button_image_pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
-        self.button_image_repeat = QIcon(f'skins/{cv.skin_selected}/repeat.png')
-        self.button_image_repeat_single = QIcon(f'skins/{cv.skin_selected}/repeat_single.png')
-
+        self.icon_img = MyIcon()
+    
     ''' 
     PLAYLIST SECTION
     '''
@@ -132,8 +128,6 @@ class MyButtons(QPushButton):
         current_row_index = cv.active_pl_name.currentRow()
         # LAST TRACK INDEX
         if  current_row_index < cv.playing_pl_last_track_index:
-            # cv.last_track_index -= 1
-            # cv.playing_track_index -= 1
             cv.playing_pl_last_track_index -= 1
             save_playing_last_track_index()
         # DB
@@ -224,22 +218,22 @@ class MyButtons(QPushButton):
         if self.av_player.player.isPlaying():
             self.av_player.player.pause()
             self.av_player.paused = True
-            self.setIcon(self.button_image_start)
+            self.setIcon(self.icon_img.start)
             self.av_player.screen_saver_on()
         elif self.av_player.paused:
             self.av_player.player.play()
             self.av_player.paused = False
-            self.setIcon(self.button_image_pause)
+            self.setIcon(self.icon_img.pause)
             self.av_player.screen_saver_on_off()
         elif not self.av_player.player.isPlaying() and not self.av_player.paused:
             self.play_funcs.play_track()
             if self.av_player.player.isPlaying(): # ignoring empty playlist
-                self.setIcon(self.button_image_pause)
+                self.setIcon(self.icon_img.pause)
         
     
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
-        self.setIcon(self.button_image_pause)
+        self.setIcon(self.icon_img.pause)
         self.play_funcs.play_track()
     
 
@@ -269,13 +263,13 @@ class MyButtons(QPushButton):
         # NO REPEAT
         if cv.repeat_playlist == 1:
             self.setFlat(0)
-            self.setIcon(self.button_image_repeat)
+            self.setIcon(self.icon_img.repeat)
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(1)
         # REPEAT SINGLE TRACK
         else:
-            self.setIcon(self.button_image_repeat_single)
+            self.setIcon(self.icon_img.repeat_single)
         
         settings['repeat_playlist'] = cv.repeat_playlist
         save_json(settings, PATH_JSON_SETTINGS)
