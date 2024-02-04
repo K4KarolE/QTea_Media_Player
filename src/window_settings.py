@@ -2,6 +2,7 @@
     SETTINGS WINDOW displayed once the settings button
     (cog icon) clicked under the playlists section
 
+    TERMINOLOGY
     In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
     In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''

@@ -13,6 +13,7 @@ from .cons_and_vars import cv
 '''
 DURATION INFO UPDATE
 The positionChanged signal action declared in MAIN
+after the instance of the class is created
 
 PLAY EMPTY SOUND WORKAROUND
 - At least one file needs to be played from start to finish
@@ -20,7 +21,7 @@ before be able to switch tracks without crashing:
     - At the AVPlayer class instance creation, dummy "song" loaded, played (<1s, no sound)
     - After the 1st dummy track played, no error while switching media
 Tried to fix/test:
-    - Created an "empty" script to exclude possible errors on my side, same behaviour
+    - Created an "empty" script to exclude possible errors on my side(like: docs/learning), same behaviour
     - Checked online sources and GitHub repos, but the class creation steps look the same
 '''
 class AVPlayer(QWidget):
@@ -168,7 +169,7 @@ class AVPlayer(QWidget):
                 self.video_output.setFullScreen(1)
 
 
-    # SCREEN SAVER SETTINGS UPDATE
+    # SCREEN SAVER SETTINGS UPDATE USED IN:
     # src / func_play_coll.py / play_track()
     # src / buttons / button_play_pause_clicked()
     # main / button_stop_clicked()    
@@ -209,15 +210,15 @@ qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is 
 [h264 @ 000001B93D732280] no frame!
     
 LEARNED:
-    QWidget can not be created earlier than the APP
-    --> instance can not be created in the SRC / any file
-    --> instead passed as a parameter from MAIN:
-        button_add_dir = MyButtons(
-                                'AD',
-                                'Add Directory',
-                                av_player,
-                            --> av_player_duration,
-                                )
+QWidget can not be created earlier than the APP
+--> instance can not be created in the SRC / any file
+--> instead passed as a parameter from MAIN:
+    button_add_dir = MyButtons(
+                            'AD',
+                            'Add Directory',
+                            av_player,
+                        --> av_player_duration,
+                            )
 """
 class TrackDuration(QWidget):
 

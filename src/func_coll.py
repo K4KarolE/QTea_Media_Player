@@ -13,9 +13,12 @@ inactive_track_font_style = QFont('Arial', 11, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
-
-
+'''
+More info about the ACTIVE and PLAYING playlist
+seperation in the src / cons_and_vars.py
+'''
 def update_active_playlist_vars_and_widgets():
+    ''' Used / update values after playlist change '''
     cv.active_db_table = cv.paylist_list[cv.active_playlist] # playlist_1, playlist_2, ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
@@ -28,6 +31,7 @@ def update_active_playlist_vars_and_widgets():
     cv.active_pl_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
 
 def update_playing_playlist_vars_and_widgets():
+    ''' Used / update values after a track started in a new playlist '''
     cv.playing_db_table = cv.paylist_list[cv.playing_playlist] # playlist_1, playlist_2, ..
     cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
@@ -46,10 +50,13 @@ def save_playing_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
-# A DB record: row_id, duration, current_duration, path
-# row_id populating automatically
-# QListwidget list first index: 0 // SQLite DB first index: 1
+
 def place_record_into_db(duration, path):
+    '''
+    A DB record: row_id, duration, current_duration, path
+    row_id populating automatically
+    QListwidget list first index: 0 // SQLite DB first index: 1
+    '''
     cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.active_db_table), (duration, 0, str(path)))
 
 def save_db():
@@ -64,11 +71,6 @@ def remove_record_db(list_row_id):
     cur.execute("DELETE FROM {0} WHERE row_id = ?".format(cv.active_db_table), (list_row_id+1,))
     cur.execute("UPDATE {0} SET row_id = row_id - 1 WHERE row_id > ?".format(cv.active_db_table), (list_row_id+1,) )
     connection.commit()
-
-
-def get_row_id_db(path):
-    return cur.execute("SELECT row_id FROM {0} WHERE path = ?".format(cv.active_db_table), (str(path),)).fetchall()[-1][0] 
-    # [-1][0]: adding same track multiple times --> row_id: picked the latest's one
 
 
 def get_path_db(playing_track_index, db_table):
@@ -144,7 +146,7 @@ def add_record_grouped_actions(track_path, av_player_duration):
                                                    in the playlist
         Other
         -------                                      
-        - place file`s path, file`s duration to the DB
+        - place file`s path and file`s duration to the DB
             - commit/save DB will actioned outside this function
         - add the values to the list widgets
             - the queue list widget value is just a placeholder           
@@ -191,6 +193,11 @@ def list_item_style_update(list_item, font_style, font_color, font_bg_color):
 def update_and_save_volume_slider_value(new_value, slider):
     cv.volume = new_value
     slider.setValue(int(new_value*100))
+    settings['volume'] = new_value
+    save_json(settings, PATH_JSON_SETTINGS)
+
+def save_volume_slider_value(new_value):
+    cv.volume = new_value
     settings['volume'] = new_value
     save_json(settings, PATH_JSON_SETTINGS)
 

@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QSlider, QStyle
 from PyQt6.QtCore import Qt
 
 from .cons_and_vars import cv
-from .func_coll import update_and_save_volume_slider_value
+from .func_coll import update_and_save_volume_slider_value, save_volume_slider_value
 
 
 
@@ -116,4 +116,5 @@ class MyVolumeSlider(QSlider):
 
     def update_volume(self):
         self.av_player.audio_output.setVolume(self.sliderPosition()/100)
+        save_volume_slider_value(self.sliderPosition()/100)
         self.button_speaker_update() # if muted -> unmuted
