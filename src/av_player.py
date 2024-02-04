@@ -189,12 +189,35 @@ class AVPlayer(QWidget):
 
 
 """ 
-    Only used for duration calculation -->
-    Adding small amount of new record/track:
-        Able to add new tracks without interrupting the current playing
-    Adding big amount of new record/track:
-        Video frame lagging while the new tracks are loading
-        No interruption in the sound / only audio media playing
+Only used for duration calculation -->
+Adding small amount of new record/track:
+    Able to add new tracks without interrupting the current playing
+Adding big amount of new record/track:
+    VIDEO frame lagging while the new tracks are loading:
+        - No / minimal interruption while loading 10 seasons of a TV show
+        - It takes 8+ seconds while video cathes up after loading 400+ music library
+    No interruption in the sound of the currently playing video or if only audio media is playing
+
+Message example when adding files:
+...
+qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is invalid. Taking it from the metadata
+qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is invalid. Taking it from the metadata
+[AVHWFramesContext @ 000001B939AE5AC0] Static surface pool size exceeded.
+[h264 @ 000001B93D732280] get_buffer() failed
+[h264 @ 000001B93D732280] thread_get_buffer() failed
+[h264 @ 000001B93D732280] decode_slice_header error
+[h264 @ 000001B93D732280] no frame!
+    
+LEARNED:
+    QWidget can not be created earlier than the APP
+    --> instance can not be created in the SRC / any file
+    --> instead passed as a parameter from MAIN:
+        button_add_dir = MyButtons(
+                                'AD',
+                                'Add Directory',
+                                av_player,
+                            --> av_player_duration,
+                                )
 """
 class TrackDuration(QWidget):
 

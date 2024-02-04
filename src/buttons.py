@@ -1,30 +1,30 @@
 '''
-    BUTTON FUNCTIONS DECLARED BELOW:
-    --------------------------------
-    - Add track
-    - Add directory
-    - Remove track - *more added/compiled in MAIN
-    - Remova all tracks (Clear playlist) - *more added/compiled in MAIN
+BUTTON FUNCTIONS DECLARED BELOW:
+--------------------------------
+- Add track
+- Add directory
+- Remove track - *more added/compiled in MAIN
+- Remova all tracks (Clear playlist) - *more added/compiled in MAIN
 
-    - Set button style/stylesheet functions
+- Set button style/stylesheet functions
 
-    - Play/pause
-    - Play/pause via list
-    - Previous track
-    - Next track
-    - Toggle repeat
-    - Toggle shuffle
+- Play/pause
+- Play/pause via list
+- Previous track
+- Next track
+- Toggle repeat
+- Toggle shuffle
 
-    
 
-    BUTTON FUNCTIONS DECLARED IN MAIN:
-    ----------------------------------
-    - Settings
-    - Stop
-    - Toggle playlist
-    - Toogle video
-    - Duration info (text)
-    - Speaker / mute (picture)
+
+BUTTON FUNCTIONS DECLARED IN MAIN:
+----------------------------------
+- Settings
+- Stop
+- Toggle playlist
+- Toogle video
+- Duration info (text)
+- Speaker / mute (picture)
 '''
 
 
@@ -35,11 +35,13 @@ from PyQt6.QtGui import QIcon, QFont
 import os
 
 from .icons import MyIcon
+from .logging import logger_runtime, logger_basic
 from .cons_and_vars import Path, save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     remove_record_db,
     generate_track_list_detail,
     add_record_grouped_actions,
+    save_db,
     update_duration_sum_var_after_track_remove,
     save_playing_last_track_index,
     update_queued_tracks_after_track_deletion,
@@ -51,7 +53,6 @@ from .func_coll import (
     )
 
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
-
 
 
 class MyButtons(QPushButton):
@@ -79,9 +80,13 @@ class MyButtons(QPushButton):
         self.av_player_duration = av_player_duration
         self.play_funcs = play_funcs
         self.icon_img = MyIcon()
-    
-    ''' 
-    PLAYLIST SECTION
+
+
+
+    '''
+    ########################
+        PLAYLIST SECTION
+    ########################
     '''
     ''' BUTTON PLAYLIST - ADD TRACK '''
     def button_add_track_clicked(self):
@@ -95,27 +100,32 @@ class MyButtons(QPushButton):
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
+    @logger_runtime
     def button_add_dir_clicked(self):
-        track_path_list = []
         error_path_list = []
         dialog_add_dir = QFileDialog()
         dialog_add_dir.setWindowTitle("Select a directory")
         dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
         dialog_add_dir.exec()
         if dialog_add_dir.result():
+            logger_basic('button_add_dir_clicked: Loop - start')
+            cv.adding_records_at_moment = True
             for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
                 for file in file_names:
                     if file[-4:] in cv.MEDIA_FILES:
-                        track_path_list.append(Path(dir_path, file))
-            if len(track_path_list) > 0:
-                for track_path in track_path_list:
-                    try:
-                        add_record_grouped_actions(track_path, self.av_player_duration)
-                    except:
-                        error_path_list.append(track_path)
+                        try:
+                            add_record_grouped_actions(Path(dir_path, file), self.av_player_duration)
+                        except:
+                            error_path_list.append(Path(dir_path, file))
                 if error_path_list:
                     for item in error_path_list:
-                        print(f'ERROR - {item}')
+                        logger_basic(f'ERROR: {item}')
+            try:
+                save_db()
+                logger_basic('button_add_dir_clicked: DB Saved')
+            except:
+                logger_basic('ERROR: button_add_dir_clicked: Saving DB')
+            cv.adding_records_at_moment = False
 
 
     ''' BUTTON PLAYLIST - REMOVE TRACK '''

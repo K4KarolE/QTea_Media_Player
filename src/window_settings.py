@@ -2,8 +2,7 @@
     SETTINGS WINDOW displayed once the settings button
     (cog icon) clicked under the playlists section
 
-    In the rest of the files the TABS(Playlists) has been referred
-    as playlist_all, playlist_index, ..
+    In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
     In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''
 
@@ -242,10 +241,13 @@ class MySettingsWindow(QWidget):
         
 
         def general_fields_validation(pass_validation = True):
+            ''' Sccreen values can be bigger than the display size:
+                    -> no over-reaching or error would occur
+                Still feels good idea to cap the max window values
+            '''
 
             MAX_WINDOW_SIZE_XY = 4500
 
-            # screen values can be bigger than the display size - no over-reaching
             for general_dic_key, general_dic_value in cv.general_settings_dic.items():
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
@@ -485,7 +487,7 @@ class MySettingsWindow(QWidget):
             - If widget size > tab size -> scroll bar visible
             - resize(WINDOW_WIDTH-50,.. -> no horisontal scroll bar
             - widget amount -> vertical scroll bar visible / invisible
-            - more info: docs / learning / set_scrollbar_to_tab_widget.pyHi 
+            - more info: docs / learning / set_scrollbar_to_tab_widget.py 
         '''
         for tab in tabs_dic:
             tabs_dic[tab]['widgets_window'].resize(WINDOW_WIDTH, tabs_dic[tab]['widgets_window_height'])

@@ -33,7 +33,7 @@ class MyPlaylists(QTabWidget):
     def __init__(self, play_track, window, duration_sum_widg=None):
         super().__init__()
 
-        ''' playlists_created_at_first_run VAR
+        ''' playlists_created_at_first_run variable
             USED TO AVOID THE 
             __.currentChanged.connect(self.active_playlist)
             SIGNAL AT THE PLAYLISTS CREATION

@@ -34,10 +34,13 @@ class Data:
     audio_track_played = 0
     subtitle_tracks_amount = 0
     subtitle_track_played = 0
-    window_size_normal = True   # for window_size_toggle
+    window_size_toggle_counter = 0
     paylists_without_title_to_hide_index_list = []
     volume_slider_value = 0
     current_track_index = 0
+    # to disable current duration autosave while
+    # files from directory are added
+    adding_records_at_moment = False  
 
     '''
     QUEUE TRACKING
@@ -127,6 +130,8 @@ class Data:
     window_height = settings['general_settings']['window_height']
     window_alt_width = settings['general_settings']['window_alt_width']
     window_alt_height = settings['general_settings']['window_alt_height']
+    window_second_alt_width = settings['general_settings']['window_second_alt_width']
+    window_second_alt_height = settings['general_settings']['window_second_alt_height']
     # USED FOR VALIDATION
     window_min_width = settings['general_settings']['window_min_width']
     window_min_height = settings['general_settings']['window_min_height']
@@ -183,6 +188,16 @@ class Data:
             'text': 'Window alt. height',
             'value': window_alt_height,
             'line_edit_widget': ''
+        },
+        'window_second_alt_width': {
+            'text': 'Window 2nd alt. width',
+            'value': window_second_alt_width,
+            'line_edit_widget': ''
+        },
+        'window_second_alt_height': {
+            'text': 'Window 2nd alt. height',
+            'value': window_second_alt_height,
+            'line_edit_widget': ''
         }
     }
 
@@ -195,12 +210,14 @@ class Data:
     
     gen_sett_window_width_text_list = [
         general_settings_dic['window_width']['text'],
-        general_settings_dic['window_alt_width']['text']
+        general_settings_dic['window_alt_width']['text'],
+        general_settings_dic['window_second_alt_width']['text']
         ]
     
     gen_sett_window_height_text_list = [
         general_settings_dic['window_height']['text'],
-        general_settings_dic['window_alt_height']['text']
+        general_settings_dic['window_alt_height']['text'],
+        general_settings_dic['window_second_alt_height']['text']
         ]
     
     gen_sett_jump_text_list = [
@@ -208,7 +225,7 @@ class Data:
         general_settings_dic['medium_jump']['text'],
         general_settings_dic['big_jump']['text'],
         ]
-    
+  
     general_settings_amount = len(list(general_settings_dic))
     general_settings_last_widget_pos_y = 0  # to calc. the parent widget height
 

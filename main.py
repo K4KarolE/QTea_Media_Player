@@ -2,7 +2,7 @@
 TERMINOLOGY
 -----------
 Apart from the Window Settings TABS (src / window_settings.py)
-the TABS((QTabWidget) - Playlists) has been referred as playlist_all, playlist_index, ..
+the TABS has been referred as paylists, playlist_all, playlist_index, ..
 
 Playing playlist = playlist where the current track is in the playing or paused state
                      / playlist where the last track was played
@@ -43,12 +43,14 @@ from src import (
     update_and_save_volume_slider_value,
     generate_duration_to_display,
     update_raw_current_duration_db,
-    queue_add_remove_track
+    queue_add_remove_track,
+    logger_basic
     )
 
 
 
 ''' APP '''
+logger_basic('App start')
 app = QApplication(sys.argv)
 
 
@@ -126,13 +128,19 @@ class MyWindow(QWidget):
 
 
     def window_size_toggle_action(self):
-        button_toggle_playlist_clicked()
-        if cv.window_size_normal:
-            cv.window_size_normal = False
+        cv.window_size_toggle_counter =  (cv.window_size_toggle_counter + 1) % 3
+        # 1ST
+        if cv.window_size_toggle_counter == 1:
+            button_toggle_playlist_clicked()
             self.resize(cv.window_alt_width, cv.window_alt_height)
+        # 2ND
+        elif cv.window_size_toggle_counter == 2:
+            self.resize(cv.window_second_alt_width, cv.window_second_alt_height)
+        # STANDARD
         else:
-            cv.window_size_normal = True
+            button_toggle_playlist_clicked()
             self.resize(cv.window_width, cv.window_height)
+        
 
 
     def paylist_select_prev_pl_action(self):
@@ -179,13 +187,10 @@ class MyWindow(QWidget):
         button_speaker_clicked()
 
 
-''' WINDOW '''
 window = MyWindow()
 
-''' ICONS '''
 icon = MyIcon()
 
-''' PLAYER '''
 av_player = AVPlayer(window, icon)
 
 def update_duration_info():
@@ -214,18 +219,11 @@ av_player.player.positionChanged.connect(update_duration_info)
 
 
 """ 
-    Only used for duration calculation
-    more info in src / av_player.py
+Only used for duration calculation
+more info in src / av_player.py
 """
 av_player_duration = TrackDuration()   
 
-
-
-''' 
-########################################
-        SLIDER / LOGO / PLAY FUNCS                        
-########################################
-'''
 play_slider = MySlider(av_player)
 
 image_logo = MyImage('logo.png', 200)
@@ -343,7 +341,9 @@ playlist_buttons_list = [
 
 
 '''
+####################
     PLAY SECTION
+####################
 '''
 PLAY_BUTTONS_WIDTH = 32
 PLAY_BUTTONS_HEIGHT = 32
@@ -353,9 +353,9 @@ def play_buttons_x_pos(num):
 
 
 ''' 
-    BUTTON PLAY SECTION - PLAY/PAUSE
-    Image/icon update after the main / playlists creation
-    if 'Play at startup' enabled and the playlist is not empty
+BUTTON PLAY SECTION - PLAY/PAUSE
+Image/icon update after the main / playlists creation
+if 'Play at startup' enabled and the playlist is not empty
 '''
 
 button_play_pause = MyButtons(
@@ -742,5 +742,6 @@ layout_bottom_volume.addWidget(volume_slider)
 
 
 window.show()
+logger_basic('Window displayed')
 
 sys.exit(app.exec())

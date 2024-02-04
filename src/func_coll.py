@@ -13,6 +13,8 @@ inactive_track_font_style = QFont('Arial', 11, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
+
+
 def update_active_playlist_vars_and_widgets():
     cv.active_db_table = cv.paylist_list[cv.active_playlist] # playlist_1, playlist_2, ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
@@ -47,10 +49,11 @@ def save_playing_last_track_index():
 # A DB record: row_id, duration, current_duration, path
 # row_id populating automatically
 # QListwidget list first index: 0 // SQLite DB first index: 1
-def add_record_db(duration, path):
+def place_record_into_db(duration, path):
     cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.active_db_table), (duration, 0, str(path)))
-    connection.commit()
 
+def save_db():
+    connection.commit()
 
 def update_raw_current_duration_db(raw_current_duration, list_row_id):
     cur.execute("UPDATE {0} SET current_duration = {1} WHERE row_id = {2}".format(cv.playing_db_table, raw_current_duration, list_row_id+1))
@@ -133,27 +136,38 @@ def generate_track_list_detail(db_track_record):
 
 
 def add_record_grouped_actions(track_path, av_player_duration):
+    ''' Generating
+        ----------- 
+        - file path -> track name -> track name to display 
+        - file path -> QMediaPlayer -> duration -> duration to display
+                                                -> SUM all files duration
+                                                   in the playlist
+        Other
+        -------                                      
+        - place file`s path, file`s duration to the DB
+            - commit/save DB will actioned outside this function
+        - add the values to the list widgets
+            - the queue list widget value is just a placeholder           
+    '''
 
     track_name = Path(track_path).stem
     av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     raw_duration = av_player_duration.player.duration()
-
     cv.active_pl_sum_duration += raw_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
     duration = generate_duration_to_display(raw_duration)
-    add_record_db(raw_duration, track_path)
+    place_record_into_db(raw_duration, track_path)
 
     row_id = cv.active_pl_name.count() + 1
-    track_name = f'{row_id}. {track_name}'
+    new_track_name = f'{row_id}. {track_name}'
     
-    add_new_list_item(track_name, cv.active_pl_name)
+    add_new_list_item(new_track_name, cv.active_pl_name)
     add_new_list_item('', cv.active_pl_queue)
     add_new_list_item(duration, cv.active_pl_duration)
 
 
 def add_new_list_item(new_item, list_widget):
-    
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
@@ -169,9 +183,9 @@ def add_new_list_item(new_item, list_widget):
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):
-        list_item.setFont(font_style)   #QFont
-        list_item.setForeground(QColor(font_color)) #'blue'
-        list_item.setBackground(QColor(font_bg_color))
+    list_item.setFont(font_style)   #QFont
+    list_item.setForeground(QColor(font_color)) #'blue'
+    list_item.setBackground(QColor(font_bg_color))
 
 
 def update_and_save_volume_slider_value(new_value, slider):
@@ -189,6 +203,18 @@ def update_duration_sum_var_after_track_remove():
 
 
 def queue_add_remove_track():
+    ''' queue_tracking_title - unique value pair/list to track the queued records
+        queue_tracking_title = [current playlist, current row/track index]
+        queue_playlists_list = [queue_tracking_title 1, queue_tracking_title 2, ...]
+
+        queue_playlists_list - collecting all the playlist where at least one track is queued
+        queue_playlists_list = [playlist title 1, playlist title 2, ..]
+
+        add record to queue -> queue_tracking_title generated -> added to the queue_playlists_list
+                            -> current playlist added to the queue_playlists_list
+                            -> queue list widget text/order number update
+                            -> list widgets style update
+    '''
 
     cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
 

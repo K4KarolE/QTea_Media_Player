@@ -78,7 +78,7 @@ class PlaysFunc():
             # PLAYER
             ''' 
                 Why showing the previous vid's last frame in the
-                play vid - play just audio - play vid(prev. vid's frame here) sequence? 
+                play vid -- play just audio / stop video -- play vid sequence? 
                 
                 Tried:
                     - stop player before hiding
@@ -125,14 +125,12 @@ class PlaysFunc():
 
 
     def get_playing_track_index(self, playing_track_index):
-    
-        '''
-            SCENARIO A - playing_track_index == None:
-            - Double-click on a track in a playlist
-            - Autoplay at startup
+        ''' SCENARIO A - playing_track_index == None:
+                - Double-click on a track in a playlist
+                - Autoplay at startup
 
-            SCENARIO B - playing_track_index = row number:
-            - Play next/prev buttons
+            SCENARIO B - playing_track_index == row number:
+                - Play next/prev buttons
         '''
         if playing_track_index == None: # Scenario - A
             cv.playing_playlist = cv.active_playlist
@@ -143,7 +141,7 @@ class PlaysFunc():
                     cv.playing_track_index = cv.playing_pl_name.currentRow()
                 else:
                     cv.playing_track_index = 0
-            else:   # empry playlist
+            else:   # empty playlist
                 return
 
         else:   # Scenario - B
@@ -151,6 +149,8 @@ class PlaysFunc():
 
 
     def play_next_track(self):
+
+        cv.playing_pl_tracks_count = cv.playing_pl_name.count() # use the latest track amount
 
         if cv.queue_tracks_list:
             cv.playing_playlist = cv.paylist_list.index(cv.queue_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
@@ -186,16 +186,15 @@ class PlaysFunc():
                 self.av_player.player.setPosition(0)
 
 
-    '''
-        AT STARTUP
-        - It first triggered once the based is played (main / AVPlayer())
-          --> cv.played_at_startup_counter needed
-        - On every playlist the last played row will be selected (src/playlists.py) 
-        - The last playing playist will be set active/displayed (src/playlists.py)
-        - If 'Play at startup' active (Settings / General), track will be played automatically (below)
-    '''
+    
     def auto_play_next_track(self):
-
+        ''' AT STARTUP:
+            - It first triggered once the based is played (main / AVPlayer())
+            --> cv.played_at_startup_counter needed
+            - On every playlist the last/previously played row will be selected (src/playlists.py) 
+            - The last playing playist will be set active/displayed (src/playlists.py)
+            - If 'Play at startup' active (Settings / General), track will be played automatically
+        '''
         if not cv.played_at_startup_counter:
             cv.active_playlist = cv.playing_playlist
 
@@ -203,7 +202,7 @@ class PlaysFunc():
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
                 # To play from the start at next time playing the same track
                 # Not from (duration - 5 sec) position
-                if cv.continue_playback == 'True':
+                if cv.continue_playback == 'True' and not cv.adding_records_at_moment:
                     update_raw_current_duration_db(0, cv.playing_track_index)
                 self.play_next_track()
         else:
