@@ -3,7 +3,6 @@ BUTTON FUNCTIONS DECLARED BELOW:
 --------------------------------
 - Add track
 - Add directory
-- Remove track - *more added/compiled in MAIN
 - Remova all tracks (Clear playlist) - *more added/compiled in MAIN
 
 - Set button style/stylesheet functions
@@ -19,6 +18,7 @@ BUTTON FUNCTIONS DECLARED BELOW:
 
 BUTTON FUNCTIONS DECLARED IN MAIN:
 ----------------------------------
+- Remove track
 - Settings
 - Stop
 - Toggle playlist
@@ -38,13 +38,8 @@ from .icons import MyIcon
 from .logging import logger_runtime, logger_basic
 from .cons_and_vars import Path, save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
-    remove_record_db,
-    generate_track_list_detail,
     add_record_grouped_actions,
     save_db,
-    update_duration_sum_var_after_track_remove,
-    save_playing_last_track_index,
-    update_queued_tracks_after_track_deletion,
     remove_queued_tracks_after_playlist_clear,
     cur, # db
     connection, # db
@@ -120,41 +115,15 @@ class MyButtons(QPushButton):
                 if error_path_list:
                     for item in error_path_list:
                         logger_basic(f'ERROR: {item}')
+
+            cv.active_pl_tracks_count = cv.active_pl_name.count() # use the latest track amount
+            
             try:
                 save_db()
                 logger_basic('button_add_dir_clicked: DB Saved')
             except:
                 logger_basic('ERROR: button_add_dir_clicked: Saving DB')
             cv.adding_records_at_moment = False
-
-
-    ''' BUTTON PLAYLIST - REMOVE TRACK '''
-    def button_remove_track_clicked(self):
-
-        update_duration_sum_var_after_track_remove()
-
-        update_queued_tracks_after_track_deletion()
-        
-        current_row_index = cv.active_pl_name.currentRow()
-        # LAST TRACK INDEX
-        if  current_row_index < cv.playing_pl_last_track_index:
-            cv.playing_pl_last_track_index -= 1
-            save_playing_last_track_index()
-        # DB
-        remove_record_db(current_row_index)
-        # PLAYLIST
-        cv.active_pl_name.takeItem(current_row_index)
-        cv.active_pl_queue.takeItem(current_row_index)
-        cv.active_pl_duration.takeItem(current_row_index)
-        # RENAME PLAYLIST
-        row_id_db = current_row_index + 1
-        cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
-        playlist = cur.fetchall()
-        for item in playlist:
-            track_row_db, list_name, duration = generate_track_list_detail(item)
-            cv.active_pl_name.item(track_row_db-1).setText(list_name)
-        
-
 
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''

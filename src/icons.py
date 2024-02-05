@@ -23,3 +23,4 @@ class MyIcon():
 
         self.queue = QIcon(f'skins/{cv.skin_selected}/queue.png')
         self.folder = QIcon(f'skins/{cv.skin_selected}/folder.png')
+        self.remove = QIcon(f'skins/{cv.skin_selected}/remove.png')

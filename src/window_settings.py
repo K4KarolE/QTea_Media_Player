@@ -1,10 +1,10 @@
 ''' 
-    SETTINGS WINDOW displayed once the settings button
-    (cog icon) clicked under the playlists section
+SETTINGS WINDOW displayed once the settings button
+(cog icon) clicked under the playlists section
 
-    TERMINOLOGY
-    In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
-    In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
+TERMINOLOGY
+In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
+In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''
 
 from PyQt6.QtWidgets import (
@@ -26,6 +26,7 @@ from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
 from .cons_and_vars import save_json
 from .func_coll import inactive_track_font_style
 from .message_box import MyMessageBoxError
+from .icons import MyIcon
 
 
 class MySettingsWindow(QWidget):
@@ -45,7 +46,7 @@ class MySettingsWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
         self.setFixedHeight(WINDOW_HEIGHT)
-        self.setWindowIcon(QIcon(str(Path(Path().resolve(), 'skins', cv.skin_selected, 'settings.png'))))
+        self.setWindowIcon(MyIcon().settings)
         self.setWindowTitle("Settings")
 
 
@@ -54,14 +55,13 @@ class MySettingsWindow(QWidget):
             TABS         
         ############
         ''' 
-        TABS_POS_X = 10
-        TABS_POS_Y = 10
+        TABS_POS_X, TABS_POS_Y  = 12, 12
         EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y = 20
 
         tabs = QTabWidget(self)
         tabs.setFont(QFont('Verdana', 10, 500))
         tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, int(WINDOW_HEIGHT-TABS_POS_Y*5.5)) 
-        tabs.move(TABS_POS_X+2, TABS_POS_Y+2)
+        tabs.move(TABS_POS_X, TABS_POS_Y)
         tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"

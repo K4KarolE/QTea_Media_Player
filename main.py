@@ -34,6 +34,7 @@ from src import (
     TrackDuration,
     MySlider,
     MyVolumeSlider,
+    MyQueueWindow,
     MySettingsWindow,
     MyButtons,
     PlaysFunc,
@@ -44,7 +45,8 @@ from src import (
     generate_duration_to_display,
     update_raw_current_duration_db,
     queue_add_remove_track,
-    logger_basic
+    logger_basic,
+    remove_track_from_playlist
     )
 
 
@@ -246,7 +248,7 @@ PLIST_BUTTONS_X_BASE = 0
 PLIST_BUTTONS_Y = 3
 
 def button_x_pos(num):
-    return PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 6) * num
+    return int(PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 6) * num)
 
 def update_duration_sum_widg():
     duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
@@ -285,7 +287,7 @@ button_add_dir.clicked.connect(button_add_dir_clicked)
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
 def button_remove_track_clicked():
     if cv.active_pl_name.currentRow() > -1:
-        button_remove_track.button_remove_track_clicked()
+        remove_track_from_playlist()
         update_duration_sum_widg()
 
 button_remove_track = MyButtons(
@@ -311,6 +313,22 @@ button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_
 button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
 
 
+''' BUTTON PLAYLIST - QUEUE '''
+def button_queue_clicked():
+    window_queue.show()
+
+button_queue = MyButtons(
+    'Q',
+    'Queue',
+    icon = icon.queue
+    )
+button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_queue.clicked.connect(button_queue_clicked)
+button_queue.set_style_settings_button()
+button_queue.setIconSize(QSize(15, 15))
+
+
+
 ''' BUTTON PLAYLIST - SETTINGS '''
 def button_settings_clicked():
     window_settings.show()
@@ -320,7 +338,7 @@ button_settings = MyButtons(
     'Settings',
     icon = icon.settings
     )
-button_settings.setGeometry(button_x_pos(4), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_settings.clicked.connect(button_settings_clicked)
 button_settings.set_style_settings_button()
 
@@ -334,6 +352,7 @@ playlist_buttons_list = [
     button_add_dir,
     button_remove_track,
     button_remove_all_track,
+    button_queue,
     button_settings
                     ]
 
@@ -685,7 +704,7 @@ playlist_buttons_list_wrapper.setFixedSize(250, PLIST_BUTTONS_HEIGHT+5)
 
 for button in playlist_buttons_list:
     button.setParent(playlist_buttons_list_wrapper)
-    if button != button_settings:
+    if button not in [button_settings, button_queue]:
         button.set_style_playlist_buttons()
 
 
@@ -701,6 +720,10 @@ layout_under_playlist_duration.addWidget(duration_sum_widg)
 ''' PAYLISTS '''
 playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, window, duration_sum_widg)
 layout_playlist.addWidget(playlists_all)
+
+''' WINDOW QUEUE '''
+window_queue = MyQueueWindow(playlists_all, av_player)
+window_queue.show()
 
 ''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow(playlists_all, av_player)

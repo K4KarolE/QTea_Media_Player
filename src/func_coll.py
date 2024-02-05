@@ -27,8 +27,10 @@ def update_active_playlist_vars_and_widgets():
     cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_queue = cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget']
     cv.active_pl_duration = cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget']
+    
     cv.active_pl_tracks_count = cv.active_pl_name.count()
     cv.active_pl_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
+
 
 def update_playing_playlist_vars_and_widgets():
     ''' Used / update values after a track started in a new playlist '''
@@ -39,12 +41,15 @@ def update_playing_playlist_vars_and_widgets():
     cv.playing_pl_name = cv.playlist_widget_dic[cv.playing_db_table]['name_list_widget']
     cv.playing_pl_queue = cv.playlist_widget_dic[cv.playing_db_table]['queue_list_widget']
     cv.playing_pl_duration = cv.playlist_widget_dic[cv.playing_db_table]['duration_list_widget']
+    
     cv.playing_pl_tracks_count = cv.playing_pl_name.count()
+
 
 def save_playing_playlist_and_playing_last_track_index():
     settings['playing_playlist'] = cv.active_playlist
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
+
 
 def save_playing_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
@@ -59,8 +64,10 @@ def place_record_into_db(duration, path):
     '''
     cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.active_db_table), (duration, 0, str(path)))
 
+
 def save_db():
     connection.commit()
+
 
 def update_raw_current_duration_db(raw_current_duration, list_row_id):
     cur.execute("UPDATE {0} SET current_duration = {1} WHERE row_id = {2}".format(cv.playing_db_table, raw_current_duration, list_row_id+1))
@@ -138,18 +145,19 @@ def generate_track_list_detail(db_track_record):
 
 
 def add_record_grouped_actions(track_path, av_player_duration):
-    ''' Generating
-        ----------- 
-        - file path -> track name -> track name to display 
-        - file path -> QMediaPlayer -> duration -> duration to display
-                                                -> SUM all files duration
-                                                   in the playlist
-        Other
-        -------                                      
-        - place file`s path and file`s duration to the DB
-            - commit/save DB will actioned outside this function
-        - add the values to the list widgets
-            - the queue list widget value is just a placeholder           
+    ''' 
+    Generating
+    ----------- 
+    - file path -> track name -> track name to display 
+    - file path -> QMediaPlayer -> duration -> duration to display
+                                            -> SUM all files duration
+                                                in the playlist
+    Other
+    -------                                      
+    - place file`s path and file`s duration to the DB
+        - commit/save DB will actioned outside this function
+    - add the values to the list widgets
+        - the queue list widget value is just a placeholder           
     '''
 
     track_name = Path(track_path).stem
@@ -195,6 +203,7 @@ def update_and_save_volume_slider_value(new_value, slider):
     slider.setValue(int(new_value*100))
     settings['volume'] = new_value
     save_json(settings, PATH_JSON_SETTINGS)
+
 
 def save_volume_slider_value(new_value):
     cv.volume = new_value
@@ -315,3 +324,40 @@ def remove_queued_tracks_after_playlist_clear():
             cv.queue_playlists_list.remove(item[0])        
         
         update_queued_tracks_order_number()
+
+
+def remove_track_from_playlist():
+    '''
+    Remove actioned via Remove Track button or right click in the playlist / menu / Remove
+    -> new sum duration = sum duration - removed track`s duration
+    -> update queue order numbers if the removed tracked was queued
+    -> remove record from DB and update DB records row_id value where necessary
+    -> remove the track's list widget items(name, queue, duration)
+    -> rename the remaining track's name where necessary (13.MMMBop -> 12.MMMBop )
+    '''
+
+    update_duration_sum_var_after_track_remove()
+
+    update_queued_tracks_after_track_deletion()
+    
+    current_row_index = cv.active_pl_name.currentRow()
+    # LAST TRACK INDEX
+    if  current_row_index < cv.playing_pl_last_track_index:
+        cv.playing_pl_last_track_index -= 1
+        save_playing_last_track_index()
+    # DB
+    remove_record_db(current_row_index)
+    # PLAYLIST
+    cv.active_pl_name.takeItem(current_row_index)
+    cv.active_pl_queue.takeItem(current_row_index)
+    cv.active_pl_duration.takeItem(current_row_index)
+    # RENAME TRACKS' NAME
+    row_id_db = current_row_index + 1
+    cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
+    playlist = cur.fetchall()
+    for item in playlist:
+        track_row_db, list_name, duration = generate_track_list_detail(item)
+        cv.active_pl_name.item(track_row_db-1).setText(list_name)
+    
+    cv.active_pl_tracks_count = cv.active_pl_name.count()
+    

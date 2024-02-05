@@ -150,7 +150,7 @@ class PlaysFunc():
 
     def play_next_track(self):
 
-        cv.playing_pl_tracks_count = cv.playing_pl_name.count() # use the latest track amount
+        cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
         if cv.queue_tracks_list:
             cv.playing_playlist = cv.paylist_list.index(cv.queue_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
