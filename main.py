@@ -346,6 +346,8 @@ button_settings.set_style_settings_button()
 ''' 
     PLAYLIST BUTTONS LIST
     used to add widgets to the layout
+    apart from button_queue and button_settings:
+    buttons style applied in the LAYOUTS section
 '''
 playlist_buttons_list = [
     button_add_track,

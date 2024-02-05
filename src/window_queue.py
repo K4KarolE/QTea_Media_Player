@@ -2,14 +2,15 @@
 WINDOW QUEUE
 '''
 
+
 from PyQt6.QtWidgets import (
     QWidget,
-    QPushButton,
-    QLineEdit,
-    QLabel,
+    QHBoxLayout,
+    QFrame,
     QTabWidget,
-    QScrollArea,
-    QScrollBar
+    QScrollBar,
+    QAbstractItemView,
+    QListWidget
     )
 
 from PyQt6.QtGui import QFont
@@ -17,10 +18,21 @@ from PyQt6.QtCore import Qt
 
 from pathlib import Path
 
-from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
-from .cons_and_vars import save_json
-from .func_coll import inactive_track_font_style
-from .message_box import MyMessageBoxError
+from .cons_and_vars import cv
+from .playlists_list_widget import MyListWidget
+from .func_coll import (
+    save_json,
+    update_active_playlist_vars_and_widgets,
+    generate_track_list_detail,
+    add_new_list_item,
+    add_queue_window_list_widgets_header,
+    generate_duration_to_display,
+    save_playing_last_track_index,
+    cur, # db
+    connection, # db
+    settings, # json dic
+    PATH_JSON_SETTINGS,
+    )
 from .icons import MyIcon
 
 
@@ -36,7 +48,7 @@ class MyQueueWindow(QWidget):
             WINDOW          
         ##############
         '''
-        WINDOW_WIDTH, WINDOW_HEIGHT = 500, 630
+        WINDOW_WIDTH, WINDOW_HEIGHT = 700, 500
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
@@ -85,55 +97,75 @@ class MyQueueWindow(QWidget):
                         )
         
     
-        tab_queue = QWidget() 
-        tab_search = QWidget()
+        
+        scroll_bar_name_ver = QScrollBar()
+        scroll_bar_name_hor = QScrollBar()
+        scroll_bar_duration_ver = QScrollBar()
+        scroll_bar_duration_hor = QScrollBar()
 
-        QLabel('test', tab_queue)
+        scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
+        scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
 
-
-
-
-        LINE_EDIT_HIGHT = 20
-        WIDGETS_POS_X=25
-        WIDGETS_POS_Y=20
-        WIDGETS_NEXT_LINE_POS_Y_DIFF = 25
-
-
-        def get_dic_values_before_widget_creation(dic_value):
-            item_text = dic_value['text']
-            item_value = dic_value['value']
-            return item_text, item_value
-
-        def get_dic_values_after_widget_creation(dic_value):
-            item_text = dic_value['text']
-            item_value = dic_value['value']
-            line_edit_text = dic_value['line_edit_widget'].text()
-            line_edit_text = line_edit_text.strip().title()
-            return item_text, item_value, line_edit_text
+        scroll_bar_name_ver.setStyleSheet(
+                        "QScrollBar::vertical"
+                            "{"
+                            "width: 0px;"
+                            "}"
+                        )
+        scroll_bar_name_hor.setStyleSheet(
+                        "QScrollBar::horizontal"
+                            "{"
+                            "height: 0px;"
+                            "}"
+                        )
+        
+        scroll_bar_duration_ver.setStyleSheet(
+                        "QScrollBar::vertical"
+                            "{"
+                            "width: 10px;"
+                            "}"               
+                        )
+        
+        scroll_bar_duration_hor.setStyleSheet(
+                        "QScrollBar::horizontal"
+                            "{"
+                            "height: 0px;"
+                            "}"
+                        )
         
 
-
-        '''
-        ######################
-            TAB - QUEUE        
-        ######################
-        '''
-        WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
-        widget_hotkey_pos_y = WIDGETS_POS_Y
-        HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 180
-
         
-
-
+        ''' LISTS CREATION '''
+        ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
+        layout = QHBoxLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         
-        '''
-        ######################
-            TAB - SEARCH         
-        ######################
-        '''
-        WIDGET_GENERAL_POS_X = WIDGETS_POS_X
-        widget_general_pos_y = WIDGETS_POS_Y
-        GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
+        for item in cv.queue_widget_dic:
+            title = cv.queue_widget_dic[item]['list_widget_title']
+            ratio = cv.queue_widget_dic[item]['list_widget_window_ratio']
+            cv.queue_widget_dic[item]['list_widget'] = QListWidget()
+            list_widget = cv.queue_widget_dic[item]['list_widget']
+            
+            add_queue_window_list_widgets_header(title, list_widget)
+            layout.addWidget(list_widget, ratio)
+
+
+
+
+
+        frame = QFrame()
+        frame.setStyleSheet(
+                        "QFrame"
+                            "{"
+                            "border: 0px;"
+                            "}"
+                        )
+        frame.setLayout(layout)
+
+        tabs.addTab(frame, 'Queue')
+
+
 
         
         
@@ -157,10 +189,11 @@ class MyQueueWindow(QWidget):
                                 "}"
                                 )
         
-        tab_queue.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        set_widgets_window_style(tab_queue)
-        tabs.addTab(tab_queue, 'Queue')
+        # tab_queue.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        # set_widgets_window_style(tab_queue)
+        # tabs.addTab(tab_queue, 'Queue')
 
+        tab_search = QWidget()
         tab_search.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         set_widgets_window_style(tab_search)
         tabs.addTab(tab_search, 'Search')

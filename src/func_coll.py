@@ -177,19 +177,38 @@ def add_record_grouped_actions(track_path, av_player_duration):
     add_new_list_item(duration, cv.active_pl_duration)
 
 
-def add_new_list_item(new_item, list_widget):
+def add_new_list_item(new_item, list_widget, align_center = None):
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
 
     list_item = QListWidgetItem(new_item, list_widget)
     list_item.setSizeHint(list_item_size)
-    list_item.setTextAlignment(Qt.AlignmentFlag.AlignVertical_Mask)
     list_item_style_update(
         list_item,
         inactive_track_font_style,
         'black',
-        'white')    
+        'white')
+    if align_center:
+        list_item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVertical_Mask)
+    else:
+        list_item.setTextAlignment(Qt.AlignmentFlag.AlignVertical_Mask)
+
+
+def add_queue_window_list_widgets_header(new_item, list_widget):
+    ''' Queue number | Title | Playlist | Duration '''
+    list_item_size = QSize()
+    list_item_size.setHeight(25)
+    list_item_size.setWidth(0)
+
+    list_item = QListWidgetItem(new_item, list_widget)
+    list_item.setSizeHint(list_item_size)
+    list_item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVertical_Mask)
+    list_item_style_update(
+        list_item,
+        inactive_track_font_style,
+        'black',
+        '#9AA2A3')      
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):
@@ -216,6 +235,25 @@ def update_duration_sum_var_after_track_remove():
     cv.active_pl_sum_duration -= raw_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
+
+def queue_window_add_track():
+    title = cv.active_pl_name.currentItem().text()
+    duration = cv.active_pl_duration.currentItem().text()
+    queue_number = f'{str(len(cv.queue_tracks_list))}.'
+    add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
+    add_new_list_item(title, cv.queue_widget_dic['name_list_widget']['list_widget'])
+    add_new_list_item(cv.active_pl_title, cv.queue_widget_dic['playlist_list_widget']['list_widget'])
+    add_new_list_item(duration, cv.queue_widget_dic['duration_list_widget']['list_widget'], True)
+
+def queue_window_remove_track(current_queue_index):
+    current_window_queue_index = current_queue_index + 1
+    for item in cv.queue_widget_dic:
+        cv.queue_widget_dic[item]['list_widget'].takeItem(current_window_queue_index)
+    
+    queue_list_widget = cv.queue_widget_dic['queue_list_widget']['list_widget']
+    for index in range(1, queue_list_widget.count()):
+        queue_number = f'{index}.'
+        queue_list_widget.item(index).setText(queue_number)
 
 
 def queue_add_remove_track():
@@ -248,10 +286,13 @@ def queue_add_remove_track():
 
             update_queued_track_style(cv.current_track_index)
         
+        queue_window_add_track()
+        
     
         ''' DEQUEUE / STANDARD TRACK '''
     else:
-
+        current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+        queue_window_remove_track(current_queue_index)
         cv.queue_tracks_list.remove(cv.queue_tracking_title)
         cv.queue_playlists_list.remove(cv.active_db_table)
         cv.active_pl_queue.item(cv.current_track_index).setText('')

@@ -476,4 +476,28 @@ class Data:
     paylist_settings_last_widget_pos_y = 0     # to calc. the parent widget height
 
 
+    ''' QUEUE WINDOW - QUEUE TRACKING '''
+    queue_widget_dic = {
+        'queue_list_widget': {
+            'list_widget': '',
+            'list_widget_title': '#',
+            'list_widget_window_ratio': 1
+        },
+        'name_list_widget':  {
+            'list_widget': '',
+            'list_widget_title': 'Title',
+            'list_widget_window_ratio': 70
+        },
+        'playlist_list_widget':  {
+            'list_widget': '',
+            'list_widget_title': 'Playlist',
+            'list_widget_window_ratio': 20
+        },
+        'duration_list_widget':  {
+            'list_widget': '',
+            'list_widget_title': 'Duration',
+            'list_widget_window_ratio': 5
+        }
+        }
+
 cv = Data()
