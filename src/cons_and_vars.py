@@ -481,22 +481,26 @@ class Data:
         'queue_list_widget': {
             'list_widget': '',
             'list_widget_title': '#',
-            'list_widget_window_ratio': 1
+            'list_widget_window_ratio': 1,
+            'fixed_width': 30
         },
         'name_list_widget':  {
             'list_widget': '',
             'list_widget_title': 'Title',
-            'list_widget_window_ratio': 70
+            'list_widget_window_ratio': 70,
+            'fixed_width': None
         },
         'playlist_list_widget':  {
             'list_widget': '',
             'list_widget_title': 'Playlist',
-            'list_widget_window_ratio': 20
+            'list_widget_window_ratio': 30,
+            'fixed_width': None
         },
         'duration_list_widget':  {
             'list_widget': '',
             'list_widget_title': 'Duration',
-            'list_widget_window_ratio': 5
+            'list_widget_window_ratio': 1,
+            'fixed_width': 80
         }
         }
 

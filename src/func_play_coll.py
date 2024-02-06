@@ -15,6 +15,7 @@ from .func_coll import (
     update_raw_current_duration_db,
     update_queued_tracks_order_number,
     update_queued_track_style,
+    queue_window_remove_track,
     inactive_track_font_style,  
     active_track_font_style
     )
@@ -42,6 +43,9 @@ class PlaysFunc():
         ''' QUEUE MANAGEMENT '''
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
         if cv.queue_tracking_title in cv.queue_tracks_list:
+            current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+            queue_window_remove_track(current_queue_index)
+            
             cv.queue_tracks_list.remove(cv.queue_tracking_title)
             cv.queue_playlists_list.remove(cv.playing_db_table)
             cv.playing_pl_queue.item(cv.playing_track_index).setText('')

@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QFrame,
     QTabWidget,
+    QVBoxLayout,
     QScrollBar,
     QAbstractItemView,
     QListWidget
@@ -19,10 +20,10 @@ from PyQt6.QtCore import Qt
 from pathlib import Path
 
 from .cons_and_vars import cv
-from .playlists_list_widget import MyListWidget
 from .func_coll import (
     save_json,
     update_active_playlist_vars_and_widgets,
+    update_playing_playlist_vars_and_widgets,
     generate_track_list_detail,
     add_new_list_item,
     add_queue_window_list_widgets_header,
@@ -38,23 +39,25 @@ from .icons import MyIcon
 
 class MyQueueWindow(QWidget):
     
-    def __init__(self, playlists_all, av_player):
+    def __init__(self, play_track):
         super().__init__()
-        self.playlists_all = playlists_all
-        self.av_player = av_player
+        self.play_track = play_track
 
         '''
         ##############
             WINDOW          
         ##############
         '''
-        WINDOW_WIDTH, WINDOW_HEIGHT = 700, 500
+        WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
+        WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 600, 400
         
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
-        self.setFixedWidth(WINDOW_WIDTH)
-        self.setFixedHeight(WINDOW_HEIGHT)
+        self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         self.setWindowIcon(MyIcon().queue)
         self.setWindowTitle("Queue")
+        
+        
 
 
         '''
@@ -66,7 +69,7 @@ class MyQueueWindow(QWidget):
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
         TABS_HEIGHT = int(WINDOW_HEIGHT - TABS_POS_Y *2)
 
-        tabs = QTabWidget(self)
+        tabs = QTabWidget()
         tabs.setFont(QFont('Verdana', 10, 500))
         tabs.resize(TABS_WIDTH, TABS_HEIGHT) 
         tabs.move(TABS_POS_X, TABS_POS_Y)
@@ -98,21 +101,18 @@ class MyQueueWindow(QWidget):
         
     
         
-        scroll_bar_name_ver = QScrollBar()
-        scroll_bar_name_hor = QScrollBar()
+        scroll_bar = QScrollBar()
         scroll_bar_duration_ver = QScrollBar()
         scroll_bar_duration_hor = QScrollBar()
 
-        scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
-        scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
+        scroll_bar.valueChanged.connect(scroll_bar_duration_ver.setValue)
+        scroll_bar_duration_ver.valueChanged.connect(scroll_bar.setValue)
 
-        scroll_bar_name_ver.setStyleSheet(
+        scroll_bar.setStyleSheet(
                         "QScrollBar::vertical"
                             "{"
                             "width: 0px;"
                             "}"
-                        )
-        scroll_bar_name_hor.setStyleSheet(
                         "QScrollBar::horizontal"
                             "{"
                             "height: 0px;"
@@ -123,8 +123,12 @@ class MyQueueWindow(QWidget):
                         "QScrollBar::vertical"
                             "{"
                             "width: 10px;"
-                            "}"               
-                        )
+                            "}"
+                        "QScrollBar::horizontal"
+                            "{"
+                            "height: 0px;"
+                            "}"
+                        )               
         
         scroll_bar_duration_hor.setStyleSheet(
                         "QScrollBar::horizontal"
@@ -133,9 +137,10 @@ class MyQueueWindow(QWidget):
                             "}"
                         )
         
+        
 
         
-        ''' LISTS CREATION '''
+        ''' QUEUE TAB '''
         ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
         layout = QHBoxLayout()
         layout.setSpacing(0)
@@ -144,14 +149,26 @@ class MyQueueWindow(QWidget):
         for item in cv.queue_widget_dic:
             title = cv.queue_widget_dic[item]['list_widget_title']
             ratio = cv.queue_widget_dic[item]['list_widget_window_ratio']
+            fixed_width = cv.queue_widget_dic[item]['fixed_width']
+            
             cv.queue_widget_dic[item]['list_widget'] = QListWidget()
             list_widget = cv.queue_widget_dic[item]['list_widget']
+            list_widget.itemDoubleClicked.connect(self.list_item_double_clicked)
             
+            if fixed_width:
+                list_widget.setFixedWidth(fixed_width)
+            
+            if item == 'duration_list_widget':
+                list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
+                list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
+            else:
+                list_widget.setVerticalScrollBar(scroll_bar)
+                list_widget.setHorizontalScrollBar(scroll_bar)
+            
+
             add_queue_window_list_widgets_header(title, list_widget)
             layout.addWidget(list_widget, ratio)
-
-
-
+        
 
 
         frame = QFrame()
@@ -170,31 +187,23 @@ class MyQueueWindow(QWidget):
         
         
 
-        ''' 
-        #####################
-            TABS COMPILING     
-        #####################
         
-        
-        '''
-        def set_widgets_window_style(widgets_window):
-            widgets_window.setStyleSheet(
-                            "QWidget"
-                                "{"
-                                "background-color: #F9F9F9;"
-                                "}"
-                            "QLineEdit"
-                                "{"
-                                "background-color: white;"
-                                "}"
-                                )
-        
-        # tab_queue.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        # set_widgets_window_style(tab_queue)
-        # tabs.addTab(tab_queue, 'Queue')
-
+        ''' SEARCH TAB '''
         tab_search = QWidget()
         tab_search.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        set_widgets_window_style(tab_search)
         tabs.addTab(tab_search, 'Search')
 
+
+        layout_window = QVBoxLayout(self)
+        layout_window.addWidget(tabs)
+
+
+
+    def list_item_double_clicked(self):
+        current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
+        queue_tracking_title = cv.queue_tracks_list[current_row_index]
+        playlist = queue_tracking_title[0]
+        track_index = queue_tracking_title[1]
+        cv.playing_playlist = cv.paylist_list.index(playlist)
+        update_playing_playlist_vars_and_widgets()
+        self.play_track(track_index)

@@ -19,7 +19,7 @@ seperation in the src / cons_and_vars.py
 '''
 def update_active_playlist_vars_and_widgets():
     ''' Used / update values after playlist change '''
-    cv.active_db_table = cv.paylist_list[cv.active_playlist] # playlist_1, playlist_2, ..
+    cv.active_db_table = cv.paylist_list[cv.active_playlist] # cv.active_db_table = playlist_3 / playlist_1 /  ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
@@ -34,7 +34,7 @@ def update_active_playlist_vars_and_widgets():
 
 def update_playing_playlist_vars_and_widgets():
     ''' Used / update values after a track started in a new playlist '''
-    cv.playing_db_table = cv.paylist_list[cv.playing_playlist] # playlist_1, playlist_2, ..
+    cv.playing_db_table = cv.paylist_list[cv.playing_playlist] # cv.playing_db_table = playlist_4 / playlist_2, ..
     cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
@@ -208,7 +208,7 @@ def add_queue_window_list_widgets_header(new_item, list_widget):
         list_item,
         inactive_track_font_style,
         'black',
-        '#9AA2A3')      
+        '#D5DFE2')    
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):
@@ -237,13 +237,15 @@ def update_duration_sum_var_after_track_remove():
 
 
 def queue_window_add_track():
-    title = cv.active_pl_name.currentItem().text()
+    title_order_number = f'{str(cv.active_pl_name.currentRow() + 1)}.'
+    title = cv.active_pl_name.currentItem().text().strip(title_order_number)
     duration = cv.active_pl_duration.currentItem().text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
     add_new_list_item(title, cv.queue_widget_dic['name_list_widget']['list_widget'])
-    add_new_list_item(cv.active_pl_title, cv.queue_widget_dic['playlist_list_widget']['list_widget'])
+    add_new_list_item(cv.active_pl_title, cv.queue_widget_dic['playlist_list_widget']['list_widget'], True)
     add_new_list_item(duration, cv.queue_widget_dic['duration_list_widget']['list_widget'], True)
+
 
 def queue_window_remove_track(current_queue_index):
     current_window_queue_index = current_queue_index + 1
@@ -337,8 +339,13 @@ def update_queued_tracks_after_track_deletion():
 
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
 
+        
+
         # DELETING A QUEUED TRACK
         if cv.queue_tracking_title in cv.queue_tracks_list:
+            current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+            queue_window_remove_track(current_queue_index)
+
             cv.queue_tracks_list.remove(cv.queue_tracking_title)
             cv.queue_playlists_list.remove(cv.active_db_table)
             update_queued_tracks_order_number()
@@ -359,8 +366,11 @@ def remove_queued_tracks_after_playlist_clear():
         for item in cv.queue_tracks_list:   # item = [playlist_3, 6]
             if cv.active_db_table == item[0]:
                 queue_tracks_list_item_to_remove.append(item)
-
+    
         for item in queue_tracks_list_item_to_remove: 
+            current_queue_index = cv.queue_tracks_list.index(item)
+            queue_window_remove_track(current_queue_index)
+
             cv.queue_tracks_list.remove(item)
             cv.queue_playlists_list.remove(item[0])        
         

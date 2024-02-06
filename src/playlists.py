@@ -84,10 +84,10 @@ class MyPlaylists(QTabWidget):
 
     ''' LEARNED '''
     ''' 
-        The last tab added to the TABS widget should NOT be hidden
-        it will make the right tab selection arrow inactive/unusable to
-        select the un-hidden tabs beyond the visible tabs
-        workaround --> we leave the last tab always visible and disabled
+    The last tab added to the TABS widget should NOT be hidden
+    it will make the right tab selection arrow inactive/unusable to
+    select the un-hidden tabs beyond the visible tabs
+    workaround --> we leave the last tab always visible and disabled
     '''
     def add_dummy_playlist(self):
         self.addTab(QWidget(), '')
