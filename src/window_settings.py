@@ -375,7 +375,7 @@ class MySettingsWindow(QWidget):
                 prev_playlist_title = settings[pl]['playlist_title']
 
                 if (not new_playlist_title and prev_playlist_title and
-                    playlist_index == cv.playing_playlist and
+                    playlist_index == cv.playing_playlist_index and
                     (self.av_player.player.isPlaying() or self.av_player.paused)):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
@@ -541,9 +541,9 @@ class MySettingsWindow(QWidget):
                     If the last used playlist removed 
                     at next start the new last playlist will active / displayed
                 '''
-                if  len(settings[cv.paylist_list[cv.active_playlist]]['playlist_title']) == 0:
-                    cv.active_playlist = settings[pl_list_with_title[-1]]['playlist_index']
-                    settings['last_used_playlist'] = cv.active_playlist
+                if  len(settings[cv.paylist_list[cv.active_playlist_index]]['playlist_title']) == 0:
+                    cv.active_playlist_index = settings[pl_list_with_title[-1]]['playlist_index']
+                    settings['last_used_playlist'] = cv.active_playlist_index
                     save_json(settings, PATH_JSON_SETTINGS)
                 
                 self.hide()

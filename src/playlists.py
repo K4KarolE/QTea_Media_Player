@@ -12,7 +12,7 @@ from PyQt6.QtGui import QFont
 
 
 from .cons_and_vars import cv
-from .playlists_list_widget import MyListWidget
+from .list_widget_playlists import MyListWidget
 from .func_coll import (
     save_json,
     update_active_playlist_vars_and_widgets,
@@ -44,10 +44,10 @@ class MyPlaylists(QTabWidget):
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
         self.playlists_creation()
-        self.setCurrentIndex(cv.playing_playlist)
+        self.setCurrentIndex(cv.playing_playlist_index)
         self.currentChanged.connect(self.active_playlist_changed)
         self.playlists_created_at_first_run = True
-        cv.active_playlist = self.currentIndex()
+        cv.active_playlist_index = self.currentIndex()
         update_active_playlist_vars_and_widgets()
         
         # IF ADD TO THE QUEUE WITHOUT ROW SELECTION AT THE STARTUP
@@ -99,8 +99,8 @@ class MyPlaylists(QTabWidget):
 
     def active_playlist_changed(self):
         if self.playlists_created_at_first_run:
-            cv.active_playlist = self.currentIndex()
-            settings['last_used_playlist'] = cv.active_playlist
+            cv.active_playlist_index = self.currentIndex()
+            settings['last_used_playlist'] = cv.active_playlist_index
             save_json(settings, PATH_JSON_SETTINGS)
             update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
@@ -109,9 +109,9 @@ class MyPlaylists(QTabWidget):
     ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
     def name_list_to_queue_and_duration_row_selection(self):
         cv.current_track_index = cv.active_pl_name.currentRow()
-        cv.active_pl_duration.setCurrentRow(cv.active_pl_name.currentRow())
-        cv.active_pl_queue.setCurrentRow(cv.active_pl_name.currentRow())
-        if cv.active_pl_name.currentRow() != cv.active_pl_last_track_index:
+        cv.active_pl_duration.setCurrentRow(cv.current_track_index)
+        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+        if cv.current_track_index != cv.playing_track_index:
             cv.active_pl_duration.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
@@ -127,11 +127,12 @@ class MyPlaylists(QTabWidget):
                                     "}"
                                 )
 
+
     def duration_list_to_name_and_queue_row_selection(self):
         cv.current_track_index = cv.active_pl_duration.currentRow()
-        cv.active_pl_name.setCurrentRow(cv.active_pl_duration.currentRow())
-        cv.active_pl_queue.setCurrentRow(cv.active_pl_duration.currentRow())
-        if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
+        cv.active_pl_name.setCurrentRow(cv.current_track_index)
+        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+        if cv.current_track_index != cv.playing_track_index:
             cv.active_pl_name.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
@@ -149,9 +150,9 @@ class MyPlaylists(QTabWidget):
 
     def queue_list_to_name_and_duration_row_selection(self):
         cv.current_track_index = cv.active_pl_queue.currentRow()
-        cv.active_pl_name.setCurrentRow(cv.active_pl_queue.currentRow())
-        cv.active_pl_queue.setCurrentRow(cv.active_pl_queue.currentRow())
-        if cv.active_pl_duration.currentRow() != cv.active_pl_last_track_index:
+        cv.active_pl_name.setCurrentRow(cv.current_track_index)
+        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+        if cv.current_track_index != cv.playing_track_index:
             cv.active_pl_name.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
@@ -312,7 +313,7 @@ class MyPlaylists(QTabWidget):
             '''
             if cv.play_at_startup == 'False':
                 set_last_played_row_style()
-            elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_playlist]:
+            elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_playlist_index]:
                 set_last_played_row_style()
             
 

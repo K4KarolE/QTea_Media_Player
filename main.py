@@ -724,7 +724,7 @@ playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, window
 layout_playlist.addWidget(playlists_all)
 
 ''' WINDOW QUEUE '''
-window_queue = MyQueueWindow(play_funcs.play_track)
+window_queue = MyQueueWindow(play_funcs.play_track, playlists_all)
 # window_queue.show()
 
 ''' WINDOW SETTINGS '''

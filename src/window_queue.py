@@ -10,8 +10,7 @@ from PyQt6.QtWidgets import (
     QTabWidget,
     QVBoxLayout,
     QScrollBar,
-    QAbstractItemView,
-    QListWidget
+    QAbstractItemView
     )
 
 from PyQt6.QtGui import QFont
@@ -19,16 +18,15 @@ from PyQt6.QtCore import Qt
 
 from pathlib import Path
 
+from .list_widget_queue_window import MyQueueListWidget
 from .cons_and_vars import cv
 from .func_coll import (
     save_json,
     update_active_playlist_vars_and_widgets,
     update_playing_playlist_vars_and_widgets,
-    generate_track_list_detail,
-    add_new_list_item,
+ 
     add_queue_window_list_widgets_header,
-    generate_duration_to_display,
-    save_playing_last_track_index,
+    get_playlist_details_from_queue_window_list,
     cur, # db
     connection, # db
     settings, # json dic
@@ -39,36 +37,24 @@ from .icons import MyIcon
 
 class MyQueueWindow(QWidget):
     
-    def __init__(self, play_track):
+    def __init__(self, play_track, playlists_all):
         super().__init__()
         self.play_track = play_track
-
-        '''
-        ##############
-            WINDOW          
-        ##############
-        '''
+        self.playlists_all = playlists_all
+       
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
         WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 600, 400
-        
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
-        self.setWindowIcon(MyIcon().queue)
+        self.setWindowIcon(MyIcon().queue_blue)
         self.setWindowTitle("Queue")
         
         
 
-
-        '''
-        ############
-            TABS         
-        ############
-        ''' 
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
         TABS_HEIGHT = int(WINDOW_HEIGHT - TABS_POS_Y *2)
-
         tabs = QTabWidget()
         tabs.setFont(QFont('Verdana', 10, 500))
         tabs.resize(TABS_WIDTH, TABS_HEIGHT) 
@@ -141,7 +127,10 @@ class MyQueueWindow(QWidget):
 
         
         ''' QUEUE TAB '''
-        ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
+        ''' 
+        Lists -> QHBoxLayout -> QFrame -> 
+        Add as a Tab --> Layout --> Window
+        '''
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -151,9 +140,9 @@ class MyQueueWindow(QWidget):
             ratio = cv.queue_widget_dic[item]['list_widget_window_ratio']
             fixed_width = cv.queue_widget_dic[item]['fixed_width']
             
-            cv.queue_widget_dic[item]['list_widget'] = QListWidget()
+            cv.queue_widget_dic[item]['list_widget'] = MyQueueListWidget(self.play_list_item, self.playlists_all)
             list_widget = cv.queue_widget_dic[item]['list_widget']
-            list_widget.itemDoubleClicked.connect(self.list_item_double_clicked)
+            list_widget.itemDoubleClicked.connect(self.play_list_item)
             
             if fixed_width:
                 list_widget.setFixedWidth(fixed_width)
@@ -169,7 +158,10 @@ class MyQueueWindow(QWidget):
             add_queue_window_list_widgets_header(title, list_widget)
             layout.addWidget(list_widget, ratio)
         
-
+        cv.queue_widget_dic['queue_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('queue_list_widget'))
+        cv.queue_widget_dic['name_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('name_list_widget'))
+        cv.queue_widget_dic['playlist_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('playlist_list_widget'))
+        cv.queue_widget_dic['duration_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('duration_list_widget'))
 
         frame = QFrame()
         frame.setStyleSheet(
@@ -199,11 +191,29 @@ class MyQueueWindow(QWidget):
 
 
 
-    def list_item_double_clicked(self):
+    def play_list_item(self):
         current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
-        queue_tracking_title = cv.queue_tracks_list[current_row_index]
-        playlist = queue_tracking_title[0]
-        track_index = queue_tracking_title[1]
-        cv.playing_playlist = cv.paylist_list.index(playlist)
+        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_window_list(current_row_index)
+        cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         self.play_track(track_index)
+    
+
+    def row_changed_sync(self, list_widget_row_changed):
+        current_row = cv.queue_widget_dic[list_widget_row_changed]['list_widget'].currentRow()
+        for item in cv.queue_widget_dic:
+            if item != list_widget_row_changed:
+                if current_row == 0:
+                    color = '#D5DFE2'
+                else:
+                    color = '#CCE8FF'
+                cv.queue_widget_dic[item]['list_widget'].setCurrentRow(current_row)
+                cv.queue_widget_dic[item]['list_widget'].setStyleSheet(
+                                                            "QListWidget::item:selected"
+                                                                "{"
+                                                                f"background: {color};" 
+                                                                "color: black;"   
+                                                                "}"
+                                                            )
+
+

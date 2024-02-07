@@ -1,3 +1,9 @@
+'''
+Class created to handle context menu (right click on 
+the list items) in the main window playlists
+Used it in the src / playlists.py 
+'''
+
 from PyQt6.QtWidgets import  QListWidget, QMenu
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
@@ -28,7 +34,7 @@ class MyListWidget(QListWidget):
         self.context_menu_dic = { 
             'Play / Pause': {'icon': icon.start},
             'Remove': {'icon': icon.remove},
-            'Queue / Dequeue': {'icon': icon.queue},
+            'Queue / Dequeue': {'icon': icon.queue_blue},
             'Open item`s folder': {'icon': icon.folder},
             }   
 

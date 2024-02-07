@@ -19,7 +19,7 @@ seperation in the src / cons_and_vars.py
 '''
 def update_active_playlist_vars_and_widgets():
     ''' Used / update values after playlist change '''
-    cv.active_db_table = cv.paylist_list[cv.active_playlist] # cv.active_db_table = playlist_3 / playlist_1 /  ..
+    cv.active_db_table = cv.paylist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
@@ -34,7 +34,7 @@ def update_active_playlist_vars_and_widgets():
 
 def update_playing_playlist_vars_and_widgets():
     ''' Used / update values after a track started in a new playlist '''
-    cv.playing_db_table = cv.paylist_list[cv.playing_playlist] # cv.playing_db_table = playlist_4 / playlist_2, ..
+    cv.playing_db_table = cv.paylist_list[cv.playing_playlist_index] # cv.playing_db_table = playlist_4 / playlist_2, ..
     cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
@@ -46,7 +46,7 @@ def update_playing_playlist_vars_and_widgets():
 
 
 def save_playing_playlist_and_playing_last_track_index():
-    settings['playing_playlist'] = cv.active_playlist
+    settings['playing_playlist'] = cv.active_playlist_index
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
@@ -314,6 +314,17 @@ def update_queued_track_style(current_track_index):
             '#D5DFE2'
             )
 
+def update_dequeued_track_style_from_queue_window(playlist, track_index):
+    ''' Dequeued track in queue window -> update playlist '''
+    for item in list(cv.playlist_widget_dic[playlist])[0:3]:
+        list_widget = cv.playlist_widget_dic[playlist][item]
+        list_item_style_update(
+            list_widget.item(track_index), 
+            inactive_track_font_style,
+            'black',
+            'white'
+            )
+
 
 def update_dequeued_track_style(current_track_index):
     for list_widget in cv.active_pl_list_widgets_list:
@@ -338,8 +349,6 @@ def update_queued_tracks_after_track_deletion():
     if cv.active_db_table in cv.queue_playlists_list:
 
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
-
-        
 
         # DELETING A QUEUED TRACK
         if cv.queue_tracking_title in cv.queue_tracks_list:
@@ -411,4 +420,11 @@ def remove_track_from_playlist():
         cv.active_pl_name.item(track_row_db-1).setText(list_name)
     
     cv.active_pl_tracks_count = cv.active_pl_name.count()
-    
+
+
+def get_playlist_details_from_queue_window_list(current_row_index):
+    queue_tracking_title = cv.queue_tracks_list[current_row_index]
+    playlist = queue_tracking_title[0]
+    playlist_index = cv.paylist_list.index(playlist)
+    track_index = queue_tracking_title[1]
+    return playlist, playlist_index, track_index, queue_tracking_title

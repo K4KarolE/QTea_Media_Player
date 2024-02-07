@@ -81,7 +81,7 @@ class Data:
     src / func_coll.py / update_active_playlist_vars_and_widgets()
     Updated after every playlist change
     '''
-    active_playlist= settings['last_used_playlist']
+    active_playlist_index = settings['last_used_playlist']
     active_db_table = None  
     active_pl_title = None
     active_pl_last_track_index = 0
@@ -95,7 +95,7 @@ class Data:
     PLAYING PLAYLIST UTILITY VALUES
     src / func_coll.py / update_playing_playlist_vars_and_widgets()
     '''
-    playing_playlist = settings['playing_playlist']
+    playing_playlist_index = settings['playing_playlist']
     playing_db_table = None  
     playing_pl_title = None
     playing_pl_last_track_index = 0

@@ -22,5 +22,7 @@ class MyIcon():
         self.speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
 
         self.queue = QIcon(f'skins/{cv.skin_selected}/queue.png')
+        self.queue_blue = QIcon(f'skins/{cv.skin_selected}/queue_blue.png')
+        self.de_queue = QIcon(f'skins/{cv.skin_selected}/de_queue.png')
         self.folder = QIcon(f'skins/{cv.skin_selected}/folder.png')
         self.remove = QIcon(f'skins/{cv.skin_selected}/remove.png')

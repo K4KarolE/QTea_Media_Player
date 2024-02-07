@@ -1,5 +1,6 @@
 '''
-src / playlists_list_widget.py  - is not listed, it is deployed in paylists.py
+src / list_widget_playlists.py  - is not listed, it is deployed in paylists.py
+src / list_widget_queue_window.py - is not listed, it is window_queue.py
 src / tables_and_playlists_guide.py  - is not listed / it can be reached outside the app only
 '''
 
