@@ -78,6 +78,9 @@ class PlaysFunc():
             cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
             self.play_slider.setMaximum(cv.track_full_duration)
             
+            # WINDOW TITLE
+            cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {Path(track_path).stem}'
+            self.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
 
             # PLAYER
             ''' 
@@ -113,8 +116,6 @@ class PlaysFunc():
             cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
             cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
             
-            # WINDOW TITLE
-            self.window.setWindowTitle(f'{cv.playing_pl_title}  |  {Path(track_path).stem} - QTea media player')
 
             # SCROLL TO PLAYING TRACK IF IT WOULD BE
             # OUT OF THE VISIBLE WINDOW/LIST
@@ -126,30 +127,6 @@ class PlaysFunc():
         except:
             print('ERROR - play_track()\n')
             # self.play_next_track()
-
-
-    def get_playing_track_index(self, playing_track_index):
-        ''' SCENARIO A - playing_track_index == None:
-                - Double-click on a track in a playlist
-                - Autoplay at startup
-
-            SCENARIO B - playing_track_index == row number:
-                - Play next/prev buttons
-        '''
-        if playing_track_index == None: # Scenario - A
-            cv.playing_playlist_index = cv.active_playlist_index
-            update_playing_playlist_vars_and_widgets()
-
-            if cv.playing_pl_tracks_count > 0:
-                if cv.playing_pl_name.currentRow() > -1: # When row selected
-                    cv.playing_track_index = cv.playing_pl_name.currentRow()
-                else:
-                    cv.playing_track_index = 0
-            else:   # empty playlist
-                return
-
-        else:   # Scenario - B
-            cv.playing_track_index = playing_track_index
 
 
     def play_next_track(self):
@@ -232,7 +209,30 @@ class PlaysFunc():
             cv.subtitle_track_played = sub_list[cv.subtitle_track_played + 1]
             self.av_player.player.setActiveSubtitleTrack(cv.subtitle_track_played)
     
-    
+
+    def get_playing_track_index(self, playing_track_index):
+        ''' SCENARIO A - playing_track_index == None:
+                - Double-click on a track in a playlist
+                - Autoplay at startup
+
+            SCENARIO B - playing_track_index == row number:
+                - Play next/prev buttons
+        '''
+        if playing_track_index == None: # Scenario - A
+            cv.playing_playlist_index = cv.active_playlist_index
+            update_playing_playlist_vars_and_widgets()
+
+            if cv.playing_pl_tracks_count > 0:
+                if cv.playing_pl_name.currentRow() > -1: # When row selected
+                    cv.playing_track_index = cv.playing_pl_name.currentRow()
+                else:
+                    cv.playing_track_index = 0
+            else:   # empty playlist
+                return
+
+        else:   # Scenario - B
+            cv.playing_track_index = playing_track_index
+
 
     def update_previous_track_style(self):
         list_item_style_update(

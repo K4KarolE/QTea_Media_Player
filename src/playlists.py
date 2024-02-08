@@ -19,7 +19,7 @@ from .func_coll import (
     generate_track_list_detail,
     add_new_list_item,
     generate_duration_to_display,
-    save_playing_last_track_index,
+    save_playing_pl_last_track_index,
     cur, # db
     connection, # db
     settings, # json dic
@@ -33,10 +33,11 @@ class MyPlaylists(QTabWidget):
     def __init__(self, play_track, window, duration_sum_widg=None):
         super().__init__()
 
-        ''' playlists_created_at_first_run variable
-            USED TO AVOID THE 
-            __.currentChanged.connect(self.active_playlist)
-            SIGNAL AT THE PLAYLISTS CREATION
+        '''
+        playlists_created_at_first_run variable
+        USED TO AVOID THE 
+         __.currentChanged.connect(self.active_playlist)
+        SIGNAL AT THE PLAYLISTS CREATION
         '''
         self.play_track = play_track
         self.window = window
@@ -106,69 +107,15 @@ class MyPlaylists(QTabWidget):
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     
 
-    ''' SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE '''
-    def name_list_to_queue_and_duration_row_selection(self):
-        cv.current_track_index = cv.active_pl_name.currentRow()
-        cv.active_pl_duration.setCurrentRow(cv.current_track_index)
-        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
-        if cv.current_track_index != cv.playing_track_index:
-            cv.active_pl_duration.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
-                                    "}"
-                                )
-            cv.active_pl_queue.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
-                                    "}"
-                                )
+    ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''
+    def row_changed_sync_pl(self, list_widget_row_changed):
+        current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
+        cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
+        for item in current_playlist_list_widgets_dic:
+                if item not in ['active_pl_sum_duration', 'line_edit']:
+                    current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
 
-
-    def duration_list_to_name_and_queue_row_selection(self):
-        cv.current_track_index = cv.active_pl_duration.currentRow()
-        cv.active_pl_name.setCurrentRow(cv.current_track_index)
-        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
-        if cv.current_track_index != cv.playing_track_index:
-            cv.active_pl_name.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   
-                                    "}"
-                                )
-            cv.active_pl_queue.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
-                                    "}"
-                                )
-
-    def queue_list_to_name_and_duration_row_selection(self):
-        cv.current_track_index = cv.active_pl_queue.currentRow()
-        cv.active_pl_name.setCurrentRow(cv.current_track_index)
-        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
-        if cv.current_track_index != cv.playing_track_index:
-            cv.active_pl_name.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   
-                                    "}"
-                                )
-            cv.active_pl_duration.setStyleSheet(
-                                "QListWidget::item:selected"
-                                    "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
-                                    "}"
-                                )
     
-
     def playlists_creation(self):
 
         playlist_index_counter = 0
@@ -321,9 +268,9 @@ class MyPlaylists(QTabWidget):
                 SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE
                 AFTER NEWLY SELECTED TRACK
             '''
-            name_list_widget.currentRowChanged.connect(self.name_list_to_queue_and_duration_row_selection)
-            duration_list_widget.currentRowChanged.connect(self.duration_list_to_name_and_queue_row_selection)
-            queue_list_widget.currentRowChanged.connect(self.queue_list_to_name_and_duration_row_selection)
+            name_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('name_list_widget'))
+            duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('duration_list_widget'))
+            queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('queue_list_widget'))
 
 
 
@@ -356,7 +303,7 @@ class MyPlaylists(QTabWidget):
             if cv.playing_pl_last_track_index == prev_row_id:
                 cv.playing_pl_last_track_index = new_row_id
                 cv.playing_track_index = cv.playing_pl_last_track_index
-                save_playing_last_track_index()
+                save_playing_pl_last_track_index()
                 return True
             else:
                 return False
@@ -389,7 +336,7 @@ class MyPlaylists(QTabWidget):
                 cv.playing_pl_last_track_index -= 1
                 cv.playing_track_index = cv.playing_pl_last_track_index
                 print(cv.playing_pl_last_track_index)
-                save_playing_last_track_index()
+                save_playing_pl_last_track_index()
         
         # MOVING TRACK UP
         else:
@@ -409,7 +356,7 @@ class MyPlaylists(QTabWidget):
             if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id, prev_row_id + 1):
                 cv.playing_pl_last_track_index += 1
                 cv.playing_track_index = cv.playing_pl_last_track_index
-                save_playing_last_track_index()
+                save_playing_pl_last_track_index()
         
 
 

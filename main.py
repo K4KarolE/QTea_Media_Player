@@ -217,7 +217,12 @@ def update_duration_info():
 
         button_duration_info.adjustSize()
 
+
+def update_title_window_queue():
+    window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
+
 av_player.player.positionChanged.connect(update_duration_info)
+av_player.player.sourceChanged.connect(lambda: update_title_window_queue())
 
 
 """ 

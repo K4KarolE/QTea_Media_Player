@@ -38,6 +38,7 @@ class Data:
     paylists_without_title_to_hide_index_list = []
     volume_slider_value = 0
     current_track_index = 0
+    currently_playing_track_info_in_window_title = ''
     # to disable current duration autosave while
     # files from directory are added
     adding_records_at_moment = False  
@@ -469,7 +470,8 @@ class Data:
             'name_list_widget': '',
             'queue_list_widget': '',
             'duration_list_widget': '',
-            'active_pl_sum_duration': 0
+            'active_pl_sum_duration': 0,
+            'line_edit': ''     # used in the settings window
             }
       
     paylist_list = list(playlist_widget_dic)

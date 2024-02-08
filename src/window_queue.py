@@ -1,5 +1,8 @@
 ''' 
-WINDOW QUEUE
+WINDOW QUEUE & SEARCH
+
+Window title update to display the current track details
+is declared in main / update_title_window_queue()
 '''
 
 
@@ -9,28 +12,21 @@ from PyQt6.QtWidgets import (
     QFrame,
     QTabWidget,
     QVBoxLayout,
-    QScrollBar,
-    QAbstractItemView
+    QScrollBar
     )
 
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-from pathlib import Path
-
 from .list_widget_queue_window import MyQueueListWidget
 from .cons_and_vars import cv
 from .func_coll import (
-    save_json,
-    update_active_playlist_vars_and_widgets,
+ 
     update_playing_playlist_vars_and_widgets,
  
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_window_list,
-    cur, # db
-    connection, # db
-    settings, # json dic
-    PATH_JSON_SETTINGS,
+
     )
 from .icons import MyIcon
 
@@ -203,7 +199,7 @@ class MyQueueWindow(QWidget):
         current_row = cv.queue_widget_dic[list_widget_row_changed]['list_widget'].currentRow()
         for item in cv.queue_widget_dic:
             if item != list_widget_row_changed:
-                if current_row == 0:
+                if current_row == 0:    # first row: Order number, Title, Queue, Duration
                     color = '#D5DFE2'
                 else:
                     color = '#CCE8FF'

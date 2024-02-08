@@ -51,8 +51,13 @@ def save_playing_playlist_and_playing_last_track_index():
     save_json(settings, PATH_JSON_SETTINGS)
 
 
-def save_playing_last_track_index():
+def save_playing_pl_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
+    save_json(settings, PATH_JSON_SETTINGS)
+
+
+def save_active_pl_last_track_index():
+    settings[cv.active_db_table]['last_track_index'] = cv.active_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
 
 
@@ -391,8 +396,9 @@ def remove_track_from_playlist():
     Remove actioned via Remove Track button or right click in the playlist / menu / Remove
     -> new sum duration = sum duration - removed track`s duration
     -> update queue order numbers if the removed tracked was queued
-    -> remove record from DB and update DB records row_id value where necessary
     -> remove the track's list widget items(name, queue, duration)
+    -> update track index values if necessary
+    -> remove record from DB and update DB records row_id value where necessary
     -> rename the remaining track's name where necessary (13.MMMBop -> 12.MMMBop )
     '''
 
@@ -401,16 +407,24 @@ def remove_track_from_playlist():
     update_queued_tracks_after_track_deletion()
     
     current_row_index = cv.active_pl_name.currentRow()
-    # LAST TRACK INDEX
-    if  current_row_index < cv.playing_pl_last_track_index:
-        cv.playing_pl_last_track_index -= 1
-        save_playing_last_track_index()
-    # DB
-    remove_record_db(current_row_index)
+    
     # PLAYLIST
     cv.active_pl_name.takeItem(current_row_index)
     cv.active_pl_queue.takeItem(current_row_index)
     cv.active_pl_duration.takeItem(current_row_index)
+    # TRACK INDEX UPDATE
+    if  cv.active_db_table == cv.playing_db_table:
+        if current_row_index < cv.playing_pl_last_track_index:
+            cv.playing_pl_last_track_index -= 1
+            cv.active_pl_last_track_index -=1
+            save_playing_pl_last_track_index()
+        if current_row_index < cv.playing_track_index:
+            cv.playing_track_index -= 1
+    elif cv.active_db_table != cv.playing_db_table and current_row_index < cv.playing_pl_last_track_index:
+        cv.active_pl_last_track_index -=1
+        save_active_pl_last_track_index()
+    # DB
+    remove_record_db(current_row_index)
     # RENAME TRACKS' NAME
     row_id_db = current_row_index + 1
     cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
