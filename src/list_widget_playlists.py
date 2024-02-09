@@ -40,7 +40,11 @@ class MyListWidget(QListWidget):
 
 
     def eventFilter(self, source, event):
-        if event.type() == QEvent.Type.ContextMenu:
+        '''
+        event.type() == QEvent.Type.ContextMenu <-- right click
+        self.itemAt(event.pos())    <-- clicked on listwidget item
+        '''
+        if event.type() == QEvent.Type.ContextMenu and self.itemAt(event.pos()):
 
             menu = QMenu()
 

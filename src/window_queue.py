@@ -12,7 +12,9 @@ from PyQt6.QtWidgets import (
     QFrame,
     QTabWidget,
     QVBoxLayout,
-    QScrollBar
+    QScrollBar,
+    QLineEdit,
+    QListWidget
     )
 
 from PyQt6.QtGui import QFont
@@ -39,7 +41,7 @@ class MyQueueWindow(QWidget):
         self.playlists_all = playlists_all
        
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
-        WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 600, 400
+        WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 400, 200
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
@@ -83,21 +85,30 @@ class MyQueueWindow(QWidget):
         
     
         
-        scroll_bar = QScrollBar()
+        ''' QUEUE TAB '''
+        ''' 
+        Lists -> QHBoxLayout -> QFrame -> 
+        Add as a Tab --> Layout --> Window
+        '''
+        scroll_bar_else_ver = QScrollBar()
+        scroll_bar_else_hor = QScrollBar()
         scroll_bar_duration_ver = QScrollBar()
         scroll_bar_duration_hor = QScrollBar()
 
-        scroll_bar.valueChanged.connect(scroll_bar_duration_ver.setValue)
-        scroll_bar_duration_ver.valueChanged.connect(scroll_bar.setValue)
+        scroll_bar_else_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
+        scroll_bar_duration_ver.valueChanged.connect(scroll_bar_else_ver.setValue)
 
-        scroll_bar.setStyleSheet(
+        scroll_bar_else_ver.setStyleSheet(
                         "QScrollBar::vertical"
                             "{"
                             "width: 0px;"
                             "}"
+                        )
+        
+        scroll_bar_else_hor.setStyleSheet(
                         "QScrollBar::horizontal"
                             "{"
-                            "height: 0px;"
+                            "width: 0px;"
                             "}"
                         )
         
@@ -105,10 +116,6 @@ class MyQueueWindow(QWidget):
                         "QScrollBar::vertical"
                             "{"
                             "width: 10px;"
-                            "}"
-                        "QScrollBar::horizontal"
-                            "{"
-                            "height: 0px;"
                             "}"
                         )               
         
@@ -120,13 +127,6 @@ class MyQueueWindow(QWidget):
                         )
         
         
-
-        
-        ''' QUEUE TAB '''
-        ''' 
-        Lists -> QHBoxLayout -> QFrame -> 
-        Add as a Tab --> Layout --> Window
-        '''
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -147,8 +147,8 @@ class MyQueueWindow(QWidget):
                 list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
                 list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             else:
-                list_widget.setVerticalScrollBar(scroll_bar)
-                list_widget.setHorizontalScrollBar(scroll_bar)
+                list_widget.setVerticalScrollBar(scroll_bar_else_ver)
+                list_widget.setHorizontalScrollBar(scroll_bar_else_hor)
             
 
             add_queue_window_list_widgets_header(title, list_widget)
@@ -176,12 +176,51 @@ class MyQueueWindow(QWidget):
         
 
         
-        ''' SEARCH TAB '''
-        tab_search = QWidget()
-        tab_search.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        tabs.addTab(tab_search, 'Search')
+        '''
+        ###################
+            SEARCH TAB     
+        ###################
+        '''
+        layout_search_base = QVBoxLayout()
+        layout_search_base.setSpacing(0)
+        layout_search_base.setContentsMargins(0, 0, 0, 0)
+
+        layout_search_top = QHBoxLayout()
+        layout_search_bottom = QHBoxLayout()
+
+        layout_search_base.addLayout(layout_search_top, 10)
+        layout_search_base.addLayout(layout_search_bottom, 90)
 
 
+        ''' TOP WIDGETS '''
+        search_line_edit = QLineEdit()
+
+
+
+        ''' BOTTOM WIDGETS '''
+        search_list_widget = QListWidget() #MyQueueListWidget(self.play_list_item, self.playlists_all)
+
+
+        layout_search_top.addWidget(search_line_edit)
+        layout_search_bottom.addWidget(search_list_widget)
+
+        frame_search = QFrame()
+        frame_search.setStyleSheet(
+                        "QFrame"
+                            "{"
+                            "border: 0px;"
+                            "}"
+                        )
+        frame_search.setLayout(layout_search_base)
+
+        tabs.addTab(frame_search, 'Search')
+
+
+        '''
+        #################################
+            TABS -> Layout -> Window
+        #################################
+        '''
         layout_window = QVBoxLayout(self)
         layout_window.addWidget(tabs)
 

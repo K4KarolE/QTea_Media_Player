@@ -42,8 +42,13 @@ class MyQueueListWidget(QListWidget):
 
 
     def eventFilter(self, source, event):
-        if event.type() == QEvent.Type.ContextMenu:
-
+        '''
+        event.type() == QEvent.Type.ContextMenu <-- right click
+        self.itemAt(event.pos())    <-- clicked on listwidget item
+        self.currentRow() !=0   <-- avoid the first / title row
+        '''
+        if event.type() == QEvent.Type.ContextMenu and self.itemAt(event.pos()) and self.currentRow() !=0:
+            
             menu = QMenu()
 
             for menu_title, menu_icon in self.context_menu_dic.items():

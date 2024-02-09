@@ -112,8 +112,15 @@ class MyPlaylists(QTabWidget):
         current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
         cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
         for item in current_playlist_list_widgets_dic:
-                if item not in ['active_pl_sum_duration', 'line_edit']:
+                if item not in [list_widget_row_changed, 'active_pl_sum_duration', 'line_edit']:
                     current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
+                    current_playlist_list_widgets_dic[item].setStyleSheet(
+                                                            "QListWidget::item:selected"
+                                                                "{"
+                                                                "background: #CCE8FF;" 
+                                                                "color: black;"   
+                                                                "}"
+                                                            )
 
     
     def playlists_creation(self):

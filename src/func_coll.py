@@ -285,7 +285,7 @@ def queue_add_remove_track():
         cv.queue_tracks_list.append(cv.queue_tracking_title)
         cv.queue_playlists_list.append(cv.active_db_table)
 
-        queue_order_number = f'[{cv.queue_tracks_list.index(cv.queue_tracking_title) + 1}]'
+        queue_order_number = f'[{len(cv.queue_tracks_list)}]'
         cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
         
         # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
