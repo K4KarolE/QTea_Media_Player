@@ -29,6 +29,13 @@ class MyListWidget(QListWidget):
         self.play_track = play_track
         self.window = window
         self.installEventFilter(self)
+        self.setStyleSheet(
+                            "QListWidget::item:selected"
+                                "{"
+                                "background: #CCE8FF;" 
+                                "color: black;"   
+                                "}"
+                            )
         
         icon = MyIcon()
         self.context_menu_dic = { 
