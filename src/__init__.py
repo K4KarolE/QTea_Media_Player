@@ -13,6 +13,6 @@ from .func_coll import *
 from .func_play_coll import *
 from .playlists import *
 from .buttons import *
-from .window_queue import *
+from .window_queue_and_search import *
 from .window_settings import *
 from .message_box import *

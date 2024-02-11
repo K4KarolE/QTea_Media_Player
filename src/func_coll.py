@@ -252,8 +252,19 @@ def queue_window_add_track():
     add_new_list_item(duration, cv.queue_widget_dic['duration_list_widget']['list_widget'], True)
 
 
+def queue_tab_add_track_from_search_tab(playlist, track_index, title):
+    playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
+    duration = cv.playlist_widget_dic[playlist]['duration_list_widget'].item(track_index).text()
+    queue_number = f'{str(len(cv.queue_tracks_list))}.'
+    add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
+    add_new_list_item(title, cv.queue_widget_dic['name_list_widget']['list_widget'])
+    add_new_list_item(playlist_title, cv.queue_widget_dic['playlist_list_widget']['list_widget'], True)
+    add_new_list_item(duration, cv.queue_widget_dic['duration_list_widget']['list_widget'], True)
+
+
 def queue_window_remove_track(current_queue_index):
-    current_window_queue_index = current_queue_index + 1
+    ''' +1: Queue playlist first row: Order Number, Title, Queue, Duration '''
+    current_window_queue_index = current_queue_index + 1    
     for item in cv.queue_widget_dic:
         cv.queue_widget_dic[item]['list_widget'].takeItem(current_window_queue_index)
     
@@ -328,6 +339,17 @@ def update_dequeued_track_style_from_queue_window(playlist, track_index):
             inactive_track_font_style,
             'black',
             'white'
+            )
+
+def update_queued_track_style_from_search_tab(playlist, track_index):
+    ''' Search tab - result -> add to queue -> update playlist '''
+    for item in list(cv.playlist_widget_dic[playlist])[0:3]:
+        list_widget = cv.playlist_widget_dic[playlist][item]
+        list_item_style_update(
+            list_widget.item(track_index), 
+            inactive_track_font_style,
+            'black',
+            '#D5DFE2'
             )
 
 
@@ -436,9 +458,16 @@ def remove_track_from_playlist():
     cv.active_pl_tracks_count = cv.active_pl_name.count()
 
 
-def get_playlist_details_from_queue_window_list(current_row_index):
+def get_playlist_details_from_queue_tab_list(current_row_index):
     queue_tracking_title = cv.queue_tracks_list[current_row_index]
     playlist = queue_tracking_title[0]
     playlist_index = cv.paylist_list.index(playlist)
     track_index = queue_tracking_title[1]
     return playlist, playlist_index, track_index, queue_tracking_title
+
+
+def get_playlist_details_from_seacrh_tab_list(current_row_index):
+    playlist = cv.search_result_dic[current_row_index]['playlist'] 
+    playlist_index = cv.paylist_list.index(playlist)
+    track_index = cv.search_result_dic[current_row_index]['track_index']
+    return playlist, playlist_index, track_index

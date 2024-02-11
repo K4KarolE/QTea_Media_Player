@@ -12,8 +12,11 @@ from .cons_and_vars import cv
 
 '''
 DURATION INFO UPDATE
-The positionChanged signal action declared in MAIN
-after the instance of the class is created
+- The positionChanged signal action declared in MAIN
+    after the instance of the class is created
+- The .av_player.player.mediaStatusChanged signal to
+    autoplay next track is declared in src / func_play_coll.py
+
 
 PLAY EMPTY SOUND WORKAROUND
 - At least one file needs to be played from start to finish
@@ -196,7 +199,7 @@ Adding small amount of new record/track:
 Adding big amount of new record/track:
     VIDEO frame lagging while the new tracks are loading:
         - No / minimal interruption while loading 10 seasons of a TV show
-        - It takes 8+ seconds while video cathes up after loading 400+ music library
+        - It takes 8+ seconds while video catches up after loading 400+ music library
     No interruption in the sound of the currently playing video or if only audio media is playing
 
 Message example when adding files:

@@ -21,12 +21,14 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
 from .icons import MyIcon
-from .list_widget_queue_window import MyQueueListWidget
+from .list_widget_queue_tab import MyQueueListWidget
+from .list_widget_search_tab import MySearchListWidget
 from .cons_and_vars import cv
 from .func_coll import (
     update_playing_playlist_vars_and_widgets,
     add_queue_window_list_widgets_header,
-    get_playlist_details_from_queue_window_list,
+    get_playlist_details_from_queue_tab_list,
+    get_playlist_details_from_seacrh_tab_list,
     add_new_list_item,
     inactive_track_font_style
     )
@@ -139,9 +141,9 @@ class MyQueueWindow(QWidget):
             ratio = cv.queue_widget_dic[item]['list_widget_window_ratio']
             fixed_width = cv.queue_widget_dic[item]['fixed_width']
             
-            cv.queue_widget_dic[item]['list_widget'] = MyQueueListWidget(self.play_list_item, self.playlists_all)
+            cv.queue_widget_dic[item]['list_widget'] = MyQueueListWidget(self.queue_play_list_item, self.playlists_all)
             list_widget = cv.queue_widget_dic[item]['list_widget']
-            list_widget.itemDoubleClicked.connect(self.play_list_item)
+            list_widget.itemDoubleClicked.connect(self.queue_play_list_item)
             
             if fixed_width:
                 list_widget.setFixedWidth(fixed_width)
@@ -157,10 +159,10 @@ class MyQueueWindow(QWidget):
             add_queue_window_list_widgets_header(title, list_widget)
             layout.addWidget(list_widget, ratio)
         
-        cv.queue_widget_dic['queue_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('queue_list_widget'))
-        cv.queue_widget_dic['name_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('name_list_widget'))
-        cv.queue_widget_dic['playlist_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('playlist_list_widget'))
-        cv.queue_widget_dic['duration_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.row_changed_sync('duration_list_widget'))
+        cv.queue_widget_dic['queue_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('queue_list_widget'))
+        cv.queue_widget_dic['name_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('name_list_widget'))
+        cv.queue_widget_dic['playlist_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('playlist_list_widget'))
+        cv.queue_widget_dic['duration_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('duration_list_widget'))
 
         frame = QFrame()
         frame.setStyleSheet(
@@ -175,10 +177,6 @@ class MyQueueWindow(QWidget):
 
 
 
-        
-        
-
-        
         '''
         ###################
             SEARCH TAB     
@@ -204,6 +202,8 @@ class MyQueueWindow(QWidget):
         self.search_line_edit = QLineEdit()
         self.search_line_edit.setFixedHeight(SEARCH_WIDGETS_HEIGHT)
         self.search_line_edit.setFont(inactive_track_font_style)
+        self.search_line_edit.returnPressed.connect(lambda: self.search_button_clicked())
+
 
         search_button = QPushButton()
         search_button.setIcon(MyIcon().search)
@@ -224,7 +224,6 @@ class MyQueueWindow(QWidget):
 
 
         ''' BOTTOM WIDGETS '''
-
         scroll_bar_search_ver = QScrollBar()
         scroll_bar_search_ver.setStyleSheet(
                         "QScrollBar::vertical"
@@ -233,8 +232,9 @@ class MyQueueWindow(QWidget):
                             "}"
                         )   
 
-        self.search_list_widget = MyQueueListWidget(self.play_list_item, self.playlists_all)
+        self.search_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
         self.search_list_widget.setVerticalScrollBar(scroll_bar_search_ver)
+        self.search_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
 
         layout_search_top.addWidget(search_button)
         layout_search_top.addWidget(self.search_line_edit)
@@ -262,15 +262,15 @@ class MyQueueWindow(QWidget):
 
 
 
-    def play_list_item(self):
+    def queue_play_list_item(self):
         current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
-        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_window_list(current_row_index)
+        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         self.play_track(track_index)
     
 
-    def row_changed_sync(self, list_widget_row_changed):
+    def queue_row_changed_sync(self, list_widget_row_changed):
         current_row = cv.queue_widget_dic[list_widget_row_changed]['list_widget'].currentRow()
         for item in cv.queue_widget_dic:
             if item != list_widget_row_changed:
@@ -286,28 +286,36 @@ class MyQueueWindow(QWidget):
                                                                 "color: black;"   
                                                                 "}"
                                                             )
+    
+    
+    def search_play_list_item(self):
+        current_row_index = self.search_list_widget.currentRow()
+        playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
+        cv.playing_playlist_index = playlist_index
+        update_playing_playlist_vars_and_widgets()
+        self.play_track(track_index)
+    
+
     def search_button_clicked(self):
 
         self.search_cretaria = self.search_line_edit.text().strip().lower()
         
         if len(self.search_cretaria) > 2:
 
-            self.create_search_result_dic()
-             
+            self.search_create_result_dic()
             self.search_list_widget.clear()
-
-            if self.search_result_dic:
-                self.display_search_result()
+            if cv.search_result_dic:
+                self.search_display_result()
         
         else:
             MyMessageBoxError('Invalid search', 'The search cretaria has to be more than 2 characters long.')
            
 
 
-    def create_search_result_dic(self):
+    def search_create_result_dic(self):
         
         result_counter = 0
-        self.search_result_dic = {}
+        cv.search_result_dic = {}
         
         for playlist in cv.playlist_widget_dic:
             playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
@@ -317,7 +325,7 @@ class MyQueueWindow(QWidget):
                     track_title = list_widget.item(track_index).text()
                     if self.search_cretaria in track_title.lower():
                         
-                        self.search_result_dic[result_counter] = {
+                        cv.search_result_dic[result_counter] = {
                             'track_title': track_title,
                             'playlist': playlist,
                             'track_index': track_index
@@ -325,10 +333,7 @@ class MyQueueWindow(QWidget):
                         result_counter += 1
     
 
-    def display_search_result(self):
-        for item in self.search_result_dic:
-            track_title = self.search_result_dic[item]['track_title']
+    def search_display_result(self):
+        for item in cv.search_result_dic:
+            track_title = cv.search_result_dic[item]['track_title']
             add_new_list_item(track_title, self.search_list_widget)
-
-
-

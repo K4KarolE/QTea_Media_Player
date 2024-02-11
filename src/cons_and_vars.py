@@ -478,7 +478,7 @@ class Data:
     paylist_settings_last_widget_pos_y = 0     # to calc. the parent widget height
 
 
-    ''' QUEUE WINDOW - QUEUE TRACKING '''
+    ''' QUEUE AND SEARCH WINDOW - QUEUE TAB '''
     queue_widget_dic = {
         'queue_list_widget': {
             'list_widget': '',
@@ -505,5 +505,13 @@ class Data:
             'fixed_width': 80
         }
         }
+    
+    '''
+    QUEUE AND SEARCH WINDOW - SEARCH TAB
+    Subdictionary generated for every track in the search result,
+    holding information from the main/mother playlists:
+    playlist,  track_title, track_index
+    '''
+    search_result_dic = {}
 
 cv = Data()

@@ -131,14 +131,21 @@ class PlaysFunc():
 
     def play_next_track(self):
 
-        cv.playing_pl_tracks_count = cv.playing_pl_name.count()
-
         if cv.queue_tracks_list:
-            cv.playing_playlist_index = cv.paylist_list.index(cv.queue_tracks_list[0][0]) #[[playlist_3, 5],[playlist_2, 3]..]
-            update_playing_playlist_vars_and_widgets()
-            self.play_track(cv.queue_tracks_list[0][1])
+            
+            # IF: THE CURRENTLY PLAYING TRACK ADDED TO THE QUEUE AS 1ST ONE
+            # cv.queue_tracks_list = [[playlist_3, 5],[playlist_2, 3]..]
+            if cv.queue_tracks_list[0] == [cv.playing_db_table, cv.playing_track_index]:
+                self.av_player.player.setPosition(0)
+                self.play_track(cv.queue_tracks_list[0][1]) # call the function with argument -> queue will be updated
+            else:
+                cv.playing_playlist_index = cv.paylist_list.index(cv.queue_tracks_list[0][0])
+                update_playing_playlist_vars_and_widgets()
+                self.play_track(cv.queue_tracks_list[0][1])
 
-        elif cv.playing_pl_tracks_count > 0:
+        elif cv.playing_pl_name.count() > 0:
+
+            cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
             # SHUFFLE
             if cv.shuffle_playlist_on and cv.playing_pl_tracks_count > 1:
@@ -169,6 +176,7 @@ class PlaysFunc():
 
     
     def auto_play_next_track(self):
+
         ''' AT STARTUP:
             - It first triggered once the based is played (main / AVPlayer())
             --> cv.played_at_startup_counter needed
@@ -176,6 +184,7 @@ class PlaysFunc():
             - The last playing playist will be set active/displayed (src/playlists.py)
             - If 'Play at startup' active (Settings / General), track will be played automatically
         '''
+
         if not cv.played_at_startup_counter:
             cv.active_playlist_index = cv.playing_playlist_index
 
