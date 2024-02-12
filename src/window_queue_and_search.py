@@ -30,6 +30,7 @@ from .func_coll import (
     get_playlist_details_from_queue_tab_list,
     get_playlist_details_from_seacrh_tab_list,
     add_new_list_item,
+    search_result_queue_number_update,
     inactive_track_font_style
     )
 from .message_box import MyMessageBoxError
@@ -96,22 +97,13 @@ class MyQueueWindow(QWidget):
         Add as a Tab --> Layout --> Window
         '''
         scroll_bar_else_ver = QScrollBar()
-        scroll_bar_else_hor = QScrollBar()
         scroll_bar_duration_ver = QScrollBar()
-        scroll_bar_duration_hor = QScrollBar()
-
+      
         scroll_bar_else_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
         scroll_bar_duration_ver.valueChanged.connect(scroll_bar_else_ver.setValue)
 
         scroll_bar_else_ver.setStyleSheet(
                         "QScrollBar::vertical"
-                            "{"
-                            "width: 0px;"
-                            "}"
-                        )
-        
-        scroll_bar_else_hor.setStyleSheet(
-                        "QScrollBar::horizontal"
                             "{"
                             "width: 0px;"
                             "}"
@@ -124,12 +116,6 @@ class MyQueueWindow(QWidget):
                             "}"
                         )               
         
-        scroll_bar_duration_hor.setStyleSheet(
-                        "QScrollBar::horizontal"
-                            "{"
-                            "height: 0px;"
-                            "}"
-                        )
         
         
         layout = QHBoxLayout()
@@ -150,10 +136,9 @@ class MyQueueWindow(QWidget):
             
             if item == 'duration_list_widget':
                 list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
-                list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             else:
                 list_widget.setVerticalScrollBar(scroll_bar_else_ver)
-                list_widget.setHorizontalScrollBar(scroll_bar_else_hor)
+
             
 
             add_queue_window_list_widgets_header(title, list_widget)
@@ -191,6 +176,7 @@ class MyQueueWindow(QWidget):
 
 
         layout_search_bottom = QHBoxLayout()
+        layout_search_bottom.setSpacing(0)
 
         layout_search_base.addLayout(layout_search_top, 10)
         layout_search_base.addLayout(layout_search_bottom, 90)
@@ -224,21 +210,57 @@ class MyQueueWindow(QWidget):
 
 
         ''' BOTTOM WIDGETS '''
-        scroll_bar_search_ver = QScrollBar()
-        scroll_bar_search_ver.setStyleSheet(
+        scroll_bar_search_title_ver = QScrollBar()
+        scroll_bar_search_queue_ver = QScrollBar()
+        
+        scroll_bar_search_title_ver.valueChanged.connect(scroll_bar_search_queue_ver.setValue)
+        scroll_bar_search_queue_ver.valueChanged.connect(scroll_bar_search_title_ver.setValue)
+        
+        scroll_bar_search_title_ver.setStyleSheet(
+                        "QScrollBar::vertical"
+                            "{"
+                            "width: 0px;"
+                            "}"
+                        )
+        
+        scroll_bar_search_queue_ver.setStyleSheet(
                         "QScrollBar::vertical"
                             "{"
                             "width: 10px;"
                             "}"
-                        )   
+                        )
+       
+        cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
+        cv.search_title_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
+        cv.search_title_list_widget.setVerticalScrollBar(scroll_bar_search_title_ver)
+        cv.search_title_list_widget.setStyleSheet(
+                                                "QListWidget::item:selected"
+                                                    "{"
+                                                    "background: #CCE8FF;" 
+                                                    "color: black;"   
+                                                    "}"
+                                                )
 
-        self.search_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
-        self.search_list_widget.setVerticalScrollBar(scroll_bar_search_ver)
-        self.search_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
+        cv.search_queue_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
+        cv.search_queue_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
+        cv.search_queue_list_widget.setVerticalScrollBar(scroll_bar_search_queue_ver)
+        cv.search_queue_list_widget.setFixedWidth(50)
+        cv.search_queue_list_widget.setStyleSheet(
+                                                "QListWidget::item:selected"
+                                                    "{"
+                                                    "background: #CCE8FF;" 
+                                                    "color: black;"   
+                                                    "}"
+                                                )
+        
+        cv.search_title_list_widget.currentRowChanged.connect(lambda: self.search_row_changed_sync(cv.search_title_list_widget))
+        cv.search_queue_list_widget.currentRowChanged.connect(lambda: self.search_row_changed_sync(cv.search_queue_list_widget))
+
 
         layout_search_top.addWidget(search_button)
         layout_search_top.addWidget(self.search_line_edit)
-        layout_search_bottom.addWidget(self.search_list_widget)
+        layout_search_bottom.addWidget(cv.search_title_list_widget, 99)
+        layout_search_bottom.addWidget(cv.search_queue_list_widget, 1)
 
         frame_search = QFrame()
         frame_search.setStyleSheet(
@@ -261,13 +283,14 @@ class MyQueueWindow(QWidget):
         layout_window.addWidget(tabs)
 
 
-
+    ''' QUEUE FUNCS '''
     def queue_play_list_item(self):
         current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
         playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         self.play_track(track_index)
+        search_result_queue_number_update()
     
 
     def queue_row_changed_sync(self, list_widget_row_changed):
@@ -287,23 +310,35 @@ class MyQueueWindow(QWidget):
                                                                 "}"
                                                             )
     
-    
+
+    ''' SEARCH FUNCS '''
+    def search_row_changed_sync(self, list_widget):
+        current_row = list_widget.currentRow()
+        if list_widget == cv.search_title_list_widget:
+            cv.search_queue_list_widget.setCurrentRow(current_row)
+        else:
+            cv.search_title_list_widget.setCurrentRow(current_row)
+            
+ 
     def search_play_list_item(self):
-        current_row_index = self.search_list_widget.currentRow()
+        current_row_index = cv.search_title_list_widget.currentRow()
         playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         self.play_track(track_index)
+        search_result_queue_number_update()
     
 
     def search_button_clicked(self):
-
+        
+        cv.track_change_on_main_playlist_new_search_needed = False
         self.search_cretaria = self.search_line_edit.text().strip().lower()
         
         if len(self.search_cretaria) > 2:
 
             self.search_create_result_dic()
-            self.search_list_widget.clear()
+            cv.search_title_list_widget.clear()
+            cv.search_queue_list_widget.clear()
             if cv.search_result_dic:
                 self.search_display_result()
         
@@ -320,15 +355,18 @@ class MyQueueWindow(QWidget):
         for playlist in cv.playlist_widget_dic:
             playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
             if playlist_title:  # avoiding hidden playlists
-                list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
-                for track_index in range(0, list_widget.count()):
-                    track_title = list_widget.item(track_index).text()
+                name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
+                for track_index in range(0, name_list_widget.count()):
+                    track_title = name_list_widget.item(track_index).text()
                     if self.search_cretaria in track_title.lower():
-                        
+                        queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
+                        queue_number = queue_list_widget.item(track_index).text()
+
                         cv.search_result_dic[result_counter] = {
                             'track_title': track_title,
                             'playlist': playlist,
-                            'track_index': track_index
+                            'track_index': track_index,
+                            'queue_number': queue_number
                             }
                         result_counter += 1
     
@@ -336,4 +374,12 @@ class MyQueueWindow(QWidget):
     def search_display_result(self):
         for item in cv.search_result_dic:
             track_title = cv.search_result_dic[item]['track_title']
-            add_new_list_item(track_title, self.search_list_widget)
+            add_new_list_item(track_title, cv.search_title_list_widget)
+            
+            playlist = cv.search_result_dic[item]['playlist']
+            track_index = cv.search_result_dic[item]['track_index']
+            queue_number = cv.search_result_dic[item]['queue_number']
+            if [playlist, track_index] in cv.queue_tracks_list:
+                add_new_list_item(queue_number, cv.search_queue_list_widget, True)
+            else:
+                add_new_list_item('', cv.search_queue_list_widget, True)

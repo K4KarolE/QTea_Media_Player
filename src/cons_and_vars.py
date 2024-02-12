@@ -510,8 +510,11 @@ class Data:
     QUEUE AND SEARCH WINDOW - SEARCH TAB
     Subdictionary generated for every track in the search result,
     holding information from the main/mother playlists:
-    playlist,  track_title, track_index
+    playlist,  track_title, track_index, queue_number
     '''
     search_result_dic = {}
+    search_title_list_widget = None   
+    search_queue_list_widget = None
+    track_change_on_main_playlist_new_search_needed = False
 
 cv = Data()

@@ -457,6 +457,8 @@ def remove_track_from_playlist():
     
     cv.active_pl_tracks_count = cv.active_pl_name.count()
 
+    cv.track_change_on_main_playlist_new_search_needed = True
+
 
 def get_playlist_details_from_queue_tab_list(current_row_index):
     queue_tracking_title = cv.queue_tracks_list[current_row_index]
@@ -471,3 +473,41 @@ def get_playlist_details_from_seacrh_tab_list(current_row_index):
     playlist_index = cv.paylist_list.index(playlist)
     track_index = cv.search_result_dic[current_row_index]['track_index']
     return playlist, playlist_index, track_index
+
+
+def search_result_queue_number_update():
+    '''
+    Updating the queue numbers in the Search tab
+    - cv.queue_tracks_list = [[playlist_3, 4], [playlist_4, 2], ..]
+    - playing a queued track: [2] 
+        -> queue number update -> [2] to ''
+        -> update the rest of the queue numbers
+    '''
+    
+    def search_result_queued_tracks_index_list():
+        queued_tracks_index_list = []
+        for index in range(0, cv.search_queue_list_widget.count()):
+            if cv.search_queue_list_widget.item(index).text() != '':
+                queued_tracks_index_list.append(index)
+        return queued_tracks_index_list
+    
+    if cv.search_result_dic:
+
+        search_tab_queued_tracks_index_list = search_result_queued_tracks_index_list()
+        index_for_remove_queue_number = search_tab_queued_tracks_index_list
+
+        for tracking_title in cv.queue_tracks_list:
+
+            for search_result_index in search_tab_queued_tracks_index_list:
+
+                playlist = cv.search_result_dic[search_result_index]['playlist']
+                track_index = cv.search_result_dic[search_result_index]['track_index']
+
+                if tracking_title == [playlist, track_index]:
+                        
+                        queue_number = f'[{cv.queue_tracks_list.index(tracking_title) + 1}]'
+                        cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
+                        index_for_remove_queue_number.remove(search_result_index)
+        
+        if index_for_remove_queue_number:
+            cv.search_queue_list_widget.item(index_for_remove_queue_number[0]).setText('')

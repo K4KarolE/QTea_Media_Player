@@ -138,6 +138,8 @@ class MyButtons(QPushButton):
         cv.active_pl_queue.clear()
         cv.active_pl_duration.clear()
 
+        cv.track_change_on_main_playlist_new_search_needed = True
+
 
     ''' BUTTON PLAYLIST - SET STYLE '''
     def set_style_playlist_buttons(self):

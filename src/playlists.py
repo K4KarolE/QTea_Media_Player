@@ -276,6 +276,8 @@ class MyPlaylists(QTabWidget):
 
     def drag_and_drop_list_item_action(self):
 
+        cv.track_change_on_main_playlist_new_search_needed = True
+
         prev_row_id = cv.active_pl_duration.currentRow()
         new_row_id = cv.active_pl_name.currentRow()
 

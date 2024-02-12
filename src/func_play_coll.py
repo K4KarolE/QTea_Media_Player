@@ -16,6 +16,7 @@ from .func_coll import (
     update_queued_tracks_order_number,
     update_queued_track_style,
     queue_window_remove_track,
+    search_result_queue_number_update,
     inactive_track_font_style,  
     active_track_font_style
     )
@@ -53,80 +54,86 @@ class PlaysFunc():
 
 
         ''' PLAY '''
-        try:
-            ''' AVOID SCENARIO:
-                1, last, played track in the playlist removed
-                2, another track started in the same playlist
-                3, failing last played track style update
-            '''
-            if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
-                
-                # PLAYING TRACK ADDED TO THE QUEUE VALUATION
-                if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
-                    self.update_previous_track_style()
-                else:
-                    update_queued_track_style(cv.playing_pl_last_track_index)
-                
-            self.update_new_track_style()
-             
+        ''' SCENARIOS TO AVOID:
+            1, last, played track in the playlist removed
+                -> next startup: start the 1st track in the playlist
+            2, playing track, clear playlist, restart app
+                -> next startup: empty playlist displayed, no autoplay
+        '''
+        if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
+         
+            # PLAYING TRACK ADDED TO THE QUEUE - VALUATION
+            if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
+                self.update_previous_track_style()
+                self.update_new_track_style()
+            else:
+                update_queued_track_style(cv.playing_pl_last_track_index)
             
             cv.playing_pl_last_track_index = cv.playing_track_index
             save_playing_playlist_and_playing_last_track_index()
-            
-            # PATH / DURATION / SLIDER
-            cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
-            cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-            self.play_slider.setMaximum(cv.track_full_duration)
-            
-            # WINDOW TITLE
-            cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {Path(track_path).stem}'
-            self.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
-
-            # PLAYER
-            ''' 
-                Why showing the previous vid's last frame in the
-                play vid -- play just audio / stop video -- play vid sequence? 
-                
-                Tried:
-                    - stop player before hiding
-                    - hide / show - setSource diff. variation
-                    - no video_output.hide() --> no problem
-            '''
-            if track_path[-4:] in cv.AUDIO_FILES:
-                self.image_logo.show()
-                self.av_player.video_output.hide()
-            else:
-                self.image_logo.hide()
-                self.av_player.video_output.show()
         
-            self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+        else:
+            if cv.playing_pl_tracks_count: # last played track index > playlist amount
+                cv.playing_pl_last_track_index = 0
+                save_playing_playlist_and_playing_last_track_index()
+                self.play_track()
+            else:   # empty playlist
+                return
+    
+        # PATH / DURATION / SLIDER
+        cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
+        cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+        self.play_slider.setMaximum(cv.track_full_duration)
+        
+        # WINDOW TITLE
+        cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {Path(track_path).stem}'
+        self.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
 
-            # FILE REMOVED / RENAMED
-            if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.InvalidMedia:
-                self.play_next_track()
-           
-            # PLAY FROM LAST POINT
-            if cv.track_current_duration > 0 and cv.continue_playback == 'True':
-                self.av_player.player.setPosition(cv.track_current_duration)
+        # PLAYER
+        ''' 
+            Why showing the previous vid's last frame in the
+            play vid -- play just audio / stop video -- play vid sequence? 
             
-            # PLAY
-            self.av_player.player.play()
-            
-            # AUDIO / SUBTITLE TRACKS
-            cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
-            cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
-            
+            Tried:
+                - stop player before hiding
+                - hide / show - setSource diff. variation
+                - no video_output.hide() --> no problem
+        '''
+        if track_path[-4:] in cv.AUDIO_FILES:
+            self.image_logo.show()
+            self.av_player.video_output.hide()
+        else:
+            self.image_logo.hide()
+            self.av_player.video_output.show()
+    
+        self.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
 
-            # SCROLL TO PLAYING TRACK IF IT WOULD BE
-            # OUT OF THE VISIBLE WINDOW/LIST
-            cv.playing_pl_name.scrollToItem(cv.playing_pl_name.item(cv.playing_track_index))
+        # FILE REMOVED / RENAMED
+        if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.InvalidMedia:
+            self.play_next_track()
+        
+        # PLAY FROM LAST POINT
+        if cv.track_current_duration > 0 and cv.continue_playback == 'True':
+            self.av_player.player.setPosition(cv.track_current_duration)
+        
+        # PLAY
+        self.av_player.player.play()
+        
+        # AUDIO / SUBTITLE TRACKS
+        cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
+        cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
+        
 
-            # SCREEN SAVER SETTINGS UPDATE
-            self.av_player.screen_saver_on_off()
+        # SCROLL TO PLAYING TRACK IF IT WOULD BE
+        # OUT OF THE VISIBLE WINDOW/LIST
+        cv.playing_pl_name.scrollToItem(cv.playing_pl_name.item(cv.playing_track_index))
 
-        except:
-            print('ERROR - play_track()\n')
-            # self.play_next_track()
+        # SCREEN SAVER SETTINGS UPDATE
+        self.av_player.screen_saver_on_off()
+
+        # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
+        search_result_queue_number_update()
+
 
 
     def play_next_track(self):
@@ -177,12 +184,13 @@ class PlaysFunc():
     
     def auto_play_next_track(self):
 
-        ''' AT STARTUP:
-            - It first triggered once the based is played (main / AVPlayer())
-            --> cv.played_at_startup_counter needed
-            - On every playlist the last/previously played row will be selected (src/playlists.py) 
-            - The last playing playist will be set active/displayed (src/playlists.py)
-            - If 'Play at startup' active (Settings / General), track will be played automatically
+        ''' 
+        AT STARTUP:
+        - It first triggered once the based is played (main / AVPlayer())
+        --> cv.played_at_startup_counter needed
+        - On every playlist the last/previously played row will be selected (src/playlists.py) 
+        - The last playing playist will be set active/displayed (src/playlists.py)
+        - If 'Play at startup' active (Settings / General), track will be played automatically
         '''
 
         if not cv.played_at_startup_counter:
@@ -220,12 +228,13 @@ class PlaysFunc():
     
 
     def get_playing_track_index(self, playing_track_index):
-        ''' SCENARIO A - playing_track_index == None:
-                - Double-click on a track in a playlist
-                - Autoplay at startup
+        ''' 
+        SCENARIO A - playing_track_index == None:
+        - Double-click on a track in a playlist
+        - Autoplay at startup
 
-            SCENARIO B - playing_track_index == row number:
-                - Play next/prev buttons
+        SCENARIO B - playing_track_index == row number:
+        - Play next/prev buttons
         '''
         if playing_track_index == None: # Scenario - A
             cv.playing_playlist_index = cv.active_playlist_index
