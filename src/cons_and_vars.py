@@ -516,5 +516,6 @@ class Data:
     search_title_list_widget = None   
     search_queue_list_widget = None
     track_change_on_main_playlist_new_search_needed = False
+    search_result_queued_tracks_index_list = []
 
 cv = Data()

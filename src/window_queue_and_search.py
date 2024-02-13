@@ -351,6 +351,7 @@ class MyQueueWindow(QWidget):
         
         result_counter = 0
         cv.search_result_dic = {}
+        cv.search_result_queued_tracks_index_list = []
         
         for playlist in cv.playlist_widget_dic:
             playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
@@ -361,6 +362,8 @@ class MyQueueWindow(QWidget):
                     if self.search_cretaria in track_title.lower():
                         queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
                         queue_number = queue_list_widget.item(track_index).text()
+                        if queue_number:
+                            cv.search_result_queued_tracks_index_list.append(result_counter)
 
                         cv.search_result_dic[result_counter] = {
                             'track_title': track_title,

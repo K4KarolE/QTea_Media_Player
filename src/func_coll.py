@@ -276,11 +276,11 @@ def queue_window_remove_track(current_queue_index):
 
 def queue_add_remove_track():
     ''' queue_tracking_title - unique value pair/list to track the queued records
-        queue_tracking_title = [current playlist, current row/track index]
+        queue_tracking_title = [current playlist, current row/track index] = [playlist_3, 6]
         queue_playlists_list = [queue_tracking_title 1, queue_tracking_title 2, ...]
 
         queue_playlists_list - collecting all the playlist where at least one track is queued
-        queue_playlists_list = [playlist title 1, playlist title 2, ..]
+        queue_playlists_list = [playlist_5, playlist_2, ..]
 
         add record to queue -> queue_tracking_title generated -> added to the queue_playlists_list
                             -> current playlist added to the queue_playlists_list
@@ -290,7 +290,7 @@ def queue_add_remove_track():
 
     cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
 
-    ''' QUEUED TRACK '''
+    # STABDARD -> QUEUED TRACK
     if not cv.queue_tracking_title in cv.queue_tracks_list:
 
         cv.queue_tracks_list.append(cv.queue_tracking_title)
@@ -307,7 +307,7 @@ def queue_add_remove_track():
         queue_window_add_track()
         
     
-        ''' DEQUEUE / STANDARD TRACK '''
+    # DEQUEUE -> STANDARD TRACK
     else:
         current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
         queue_window_remove_track(current_queue_index)
@@ -319,6 +319,8 @@ def queue_add_remove_track():
         if cv.current_track_index != cv.playing_pl_last_track_index:
         
             update_dequeued_track_style(cv.current_track_index)
+    
+    search_result_queue_number_update()
 
 
 def update_queued_track_style(current_track_index):
@@ -362,12 +364,15 @@ def update_dequeued_track_style(current_track_index):
             'white'
             )
 
-def update_queued_tracks_order_number():
+def update_queued_tracks_order_number(clear_queue = False):
     for index, item in enumerate(cv.queue_tracks_list):
         playlist = item[0]
         track_index = item[1]
         queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
-        queue_new_order_number = f'[{index + 1}]'
+        if clear_queue:
+            queue_new_order_number = ''
+        else:
+            queue_new_order_number = f'[{index + 1}]'
         queue_list_widget.item(track_index).setText(queue_new_order_number)
 
 
@@ -477,11 +482,15 @@ def get_playlist_details_from_seacrh_tab_list(current_row_index):
 
 def search_result_queue_number_update():
     '''
-    Updating the queue numbers in the Search tab
+    Paylists - queue/dequeue track --> Update the queue numbers in the Search tab
     - cv.queue_tracks_list = [[playlist_3, 4], [playlist_4, 2], ..]
     - playing a queued track: [2] 
         -> queue number update -> [2] to ''
-        -> update the rest of the queue numbers
+        -> update the rest of the queue numbers: [1], . , <-[3], <-[4], ..
+    
+    Why seperate the queue, dequeue number update as below?
+    - Dequeue: do not need to iterate through all the search results
+    - At least the dequeue part is efficient
     '''
     
     def search_result_queued_tracks_index_list():
@@ -491,23 +500,64 @@ def search_result_queue_number_update():
                 queued_tracks_index_list.append(index)
         return queued_tracks_index_list
     
+
     if cv.search_result_dic:
 
         search_tab_queued_tracks_index_list = search_result_queued_tracks_index_list()
         index_for_remove_queue_number = search_tab_queued_tracks_index_list
 
-        for tracking_title in cv.queue_tracks_list:
+        # DEQUEUE
+        if len(cv.queue_tracks_list) < len(search_tab_queued_tracks_index_list):
+            for tracking_title in cv.queue_tracks_list:
 
-            for search_result_index in search_tab_queued_tracks_index_list:
+                for search_result_index in search_tab_queued_tracks_index_list:
 
-                playlist = cv.search_result_dic[search_result_index]['playlist']
-                track_index = cv.search_result_dic[search_result_index]['track_index']
+                    playlist = cv.search_result_dic[search_result_index]['playlist']
+                    track_index = cv.search_result_dic[search_result_index]['track_index']
 
-                if tracking_title == [playlist, track_index]:
-                        
+                    if tracking_title == [playlist, track_index]:
+                            
+                            queue_number = f'[{cv.queue_tracks_list.index(tracking_title) + 1}]'
+                            cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
+                            index_for_remove_queue_number.remove(search_result_index)
+            
+            if index_for_remove_queue_number:
+                cv.search_queue_list_widget.item(index_for_remove_queue_number[0]).setText('')
+        
+        # QUEUE
+        else:
+            for tracking_title in cv.queue_tracks_list:
+                for search_result_index in cv.search_result_dic:
+                    playlist = cv.search_result_dic[search_result_index]['playlist']
+                    track_index = cv.search_result_dic[search_result_index]['track_index']
+
+                    if tracking_title == [playlist, track_index]:
+                            
                         queue_number = f'[{cv.queue_tracks_list.index(tracking_title) + 1}]'
                         cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
-                        index_for_remove_queue_number.remove(search_result_index)
-        
-        if index_for_remove_queue_number:
-            cv.search_queue_list_widget.item(index_for_remove_queue_number[0]).setText('')
+
+
+
+
+def clear_queue_update_all_occurrences():  
+    # SEARCH TAB
+    if cv.search_result_dic:
+        for index in cv.search_result_queued_tracks_index_list:
+            cv.search_queue_list_widget.item(index).setText('')
+    
+    # QUEUE TAB
+    for item in cv.queue_widget_dic:
+        title = cv.queue_widget_dic[item]['list_widget_title']
+        list_widget = cv.queue_widget_dic[item]['list_widget']
+        list_widget.clear()
+        add_queue_window_list_widgets_header(title, list_widget)
+    
+    # PLAYLISTS
+    for track_title in cv.queue_tracks_list:
+        playlist = track_title[0]
+        track_index = track_title[1]
+        update_dequeued_track_style_from_queue_window(playlist, track_index)
+
+    update_queued_tracks_order_number(clear_queue = True)
+    cv.queue_tracks_list.clear()
+    cv.queue_playlists_list.clear()

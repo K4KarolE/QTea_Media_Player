@@ -207,7 +207,7 @@ class PlaysFunc():
             self.av_player.base_played = True
 
             if cv.play_at_startup == 'True' and not cv.played_at_startup_counter:
-                time.sleep(0.1) # otherwise media loading error occurs / not mediastatus problem
+                time.sleep(0.01) # otherwise media loading error occurs / not a mediastatus problem
                 self.play_track()
 
         cv.played_at_startup_counter = True

@@ -1,12 +1,11 @@
 ## Main features
 - Thirty playlists supported by default. More can be generated.
 - Cross playlists queue management with dedicated window.
-- Start from the latest point.
+- Cross playlists search.
+- Start media from the latest point.
 - Start the last played media at startup.
 - Quick switch to alternative window mode / size.
 - Playlists saved by default.
-- Planned to add:
-    - Cross playlists search window
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
 
 <div align="left">
@@ -23,6 +22,11 @@
 <br>
 <div align="left">
     <img src="docs/promo/screenshot_3.png">
+</div>
+<br>
+<br>
+<div align="left">
+    <img src="docs/promo/screenshot_4.png">
 </div>
 <br>
 
@@ -134,3 +138,4 @@
 - Tested on Windows 11
 
 ## Thank you all who worked on the modules used in this project!
+## Thank you all Winamp and VLC player contributors!

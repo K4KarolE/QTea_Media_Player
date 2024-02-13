@@ -17,7 +17,8 @@ from .message_box import MyMessageBoxError
 from .func_coll import (
     get_path_db,
     queue_add_remove_track,
-    remove_track_from_playlist
+    remove_track_from_playlist,
+    clear_queue_update_all_occurrences
     )
 
 
@@ -40,8 +41,9 @@ class MyListWidget(QListWidget):
         icon = MyIcon()
         self.context_menu_dic = { 
             'Play / Pause': {'icon': icon.start},
-            'Remove': {'icon': icon.remove},
             'Queue / Dequeue': {'icon': icon.queue_blue},
+            'Clear queue': {'icon': icon.clear_queue},
+            'Remove': {'icon': icon.remove},
             'Open item`s folder': {'icon': icon.folder},
             }   
 
@@ -77,19 +79,30 @@ class MyListWidget(QListWidget):
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
         
-        # REMOVE TRACK
+
+        # QUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
+            queue_add_remove_track()
+        
+
+        # CLEAR QUEUE
+        elif q.text() == list(self.context_menu_dic)[2]:
+            try:
+                clear_queue_update_all_occurrences()
+            except:
+                MyMessageBoxError('Sorry, something went wrong.')
+        
+
+        # REMOVE TRACK
+        elif q.text() == list(self.context_menu_dic)[3]:
             try:
                 remove_track_from_playlist()
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
         
-        # QUEUE
-        elif q.text() == list(self.context_menu_dic)[2]:
-            queue_add_remove_track()
         
         # FOLDER
-        elif q.text() == list(self.context_menu_dic)[3]:
+        elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 file_path = get_path_db(self.currentRow(), cv.active_db_table)
                 webbrowser.open(Path(file_path).parent)

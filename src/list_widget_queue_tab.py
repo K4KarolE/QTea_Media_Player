@@ -19,7 +19,8 @@ from .func_coll import (
     update_queued_tracks_order_number,
     update_dequeued_track_style_from_queue_window,
     queue_window_remove_track,
-    get_playlist_details_from_queue_tab_list
+    get_playlist_details_from_queue_tab_list,
+    clear_queue_update_all_occurrences
     )
 
 
@@ -36,6 +37,7 @@ class MyQueueListWidget(QListWidget):
         self.context_menu_dic = { 
             'Play': {'icon': icon.start},
             'Dequeue': {'icon': icon.de_queue},
+            'Clear queue': {'icon': icon.clear_queue},
             'Jump to playlist': {'icon': icon.toggle_playlist},
             'Open item`s folder': {'icon': icon.folder},
             }   
@@ -78,17 +80,26 @@ class MyQueueListWidget(QListWidget):
                 self.dequeue_track()
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
+
+
+        # CLEAR QUEUE
+        elif q.text() == list(self.context_menu_dic)[2]:
+            try:
+                clear_queue_update_all_occurrences()
+            except:
+                MyMessageBoxError('Sorry, something went wrong.')
         
 
         # JUMP TO PLAYLIST
-        elif q.text() == list(self.context_menu_dic)[2]:
+        elif q.text() == list(self.context_menu_dic)[3]:
             try:
                 self.jump_to_playlist()
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
 
+
         # FOLDER
-        elif q.text() == list(self.context_menu_dic)[3]:
+        elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 self.open_track_folder()
             except:

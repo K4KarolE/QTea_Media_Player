@@ -28,3 +28,4 @@ class MyIcon():
         self.remove = QIcon(f'skins/{cv.skin_selected}/remove.png')
 
         self.search = QIcon(f'skins/{cv.skin_selected}/search.png')
+        self.clear_queue = QIcon(f'skins/{cv.skin_selected}/bin.png')
