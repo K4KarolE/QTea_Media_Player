@@ -22,7 +22,8 @@ from .func_coll import (
     get_playlist_details_from_seacrh_tab_list,
     update_queued_track_style_from_search_tab,
     queue_tab_add_track_from_search_tab,
-    search_result_queue_number_update
+    search_result_queue_number_update,
+    clear_queue_update_all_occurrences
     )
 
 
@@ -39,6 +40,7 @@ class MySearchListWidget(QListWidget):
         self.context_menu_dic = { 
             'Play': {'icon': icon.start},
             'Queue / Dequeue': {'icon': icon.queue_blue},
+            'Clear queue': {'icon': icon.clear_queue},
             'Jump to playlist': {'icon': icon.toggle_playlist},
             'Open item`s folder': {'icon': icon.folder},
             }   
@@ -87,15 +89,24 @@ class MySearchListWidget(QListWidget):
                 #     MyMessageBoxError('Queue / Dequeue', 'Sorry, something went wrong.')
             
 
-            # JUMP TO PLAYLIST
+            # CLEAR QUEUE
             elif q.text() == list(self.context_menu_dic)[2]:
+                try:
+                    clear_queue_update_all_occurrences()
+                except:
+                    MyMessageBoxError('Sorry, something went wrong.')
+            
+
+            # JUMP TO PLAYLIST
+            elif q.text() == list(self.context_menu_dic)[3]:
                 try:
                     self.jump_to_playlist()
                 except:
                     MyMessageBoxError('Finding playlist', 'Sorry, something went wrong.')
 
+
             # FOLDER
-            elif q.text() == list(self.context_menu_dic)[3]:
+            elif q.text() == list(self.context_menu_dic)[4]:
                 try:
                     self.open_track_folder()
                 except:

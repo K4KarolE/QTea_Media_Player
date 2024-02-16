@@ -20,7 +20,8 @@ from .func_coll import (
     update_dequeued_track_style_from_queue_window,
     queue_window_remove_track,
     get_playlist_details_from_queue_tab_list,
-    clear_queue_update_all_occurrences
+    clear_queue_update_all_occurrences,
+    search_result_queue_number_update
     )
 
 
@@ -120,8 +121,9 @@ class MyQueueListWidget(QListWidget):
         cv.queue_playlists_list.remove(playlist)
         cv.playlist_widget_dic[playlist]['queue_list_widget'].item(track_index).setText('')
         
-        update_queued_tracks_order_number()
         queue_window_remove_track(current_row_index)
+        update_queued_tracks_order_number()
+        search_result_queue_number_update()
 
         ''' Avoid currently playing track style update '''
         if queue_tracking_title != [cv.playing_db_table, cv.playing_track_index]:

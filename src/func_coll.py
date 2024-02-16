@@ -503,14 +503,15 @@ def search_result_queue_number_update():
 
     if cv.search_result_dic:
 
-        search_tab_queued_tracks_index_list = search_result_queued_tracks_index_list()
-        index_for_remove_queue_number = search_tab_queued_tracks_index_list
-
         # DEQUEUE
-        if len(cv.queue_tracks_list) < len(search_tab_queued_tracks_index_list):
+        if len(cv.queue_tracks_list) < len(cv.search_result_queued_tracks_index_list):
+
+            cv.search_result_queued_tracks_index_list = search_result_queued_tracks_index_list()
+            index_for_remove_queue_number = cv.search_result_queued_tracks_index_list
+            
             for tracking_title in cv.queue_tracks_list:
 
-                for search_result_index in search_tab_queued_tracks_index_list:
+                for search_result_index in cv.search_result_queued_tracks_index_list:
 
                     playlist = cv.search_result_dic[search_result_index]['playlist']
                     track_index = cv.search_result_dic[search_result_index]['track_index']
@@ -526,16 +527,19 @@ def search_result_queue_number_update():
         
         # QUEUE
         else:
+            cv.search_result_queued_tracks_index_list = []
+
             for tracking_title in cv.queue_tracks_list:
+
                 for search_result_index in cv.search_result_dic:
+
                     playlist = cv.search_result_dic[search_result_index]['playlist']
                     track_index = cv.search_result_dic[search_result_index]['track_index']
-
-                    if tracking_title == [playlist, track_index]:
-                            
+                    
+                    if tracking_title == [playlist, track_index]: 
                         queue_number = f'[{cv.queue_tracks_list.index(tracking_title) + 1}]'
                         cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
-
+                        cv.search_result_queued_tracks_index_list.append(search_result_index)
 
 
 
@@ -544,6 +548,7 @@ def clear_queue_update_all_occurrences():
     if cv.search_result_dic:
         for index in cv.search_result_queued_tracks_index_list:
             cv.search_queue_list_widget.item(index).setText('')
+    cv.search_result_queued_tracks_index_list.clear()
     
     # QUEUE TAB
     for item in cv.queue_widget_dic:
