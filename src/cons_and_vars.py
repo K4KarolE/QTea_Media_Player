@@ -99,7 +99,7 @@ class Data:
     playing_playlist_index = settings['playing_playlist']
     playing_db_table = None  
     playing_pl_title = None
-    playing_pl_last_track_index = 0
+    playing_pl_last_track_index = None
     playing_pl_name = None      # widget
     playing_pl_queue = None     # widget
     playing_pl_duration = None  # widget
@@ -510,7 +510,13 @@ class Data:
     QUEUE AND SEARCH WINDOW - SEARCH TAB
     Subdictionary generated for every track in the search result,
     holding information from the main/mother playlists:
-    playlist,  track_title, track_index, queue_number
+    First track:
+    cv.search_result_dic[0] = {
+                            'track_title': track_title,
+                            'playlist': playlist,
+                            'track_index': track_index,
+                            'queue_number': queue_number
+                            }
     '''
     search_result_dic = {}
     search_title_list_widget = None   

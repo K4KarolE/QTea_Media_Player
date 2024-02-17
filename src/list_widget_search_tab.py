@@ -130,7 +130,6 @@ class MySearchListWidget(QListWidget):
             # TRACKING
             cv.queue_tracks_list.append(queue_tracking_title)
             cv.queue_playlists_list.append(playlist)
-
             queue_order_number = f'[{len(cv.queue_tracks_list)}]'
             
             # MOTHER PLAYLIST UPDATE 
@@ -170,7 +169,8 @@ class MySearchListWidget(QListWidget):
                 if (cv.search_result_dic[item]['playlist'] == playlist and 
                     cv.search_result_dic[item]['track_index'] == track_index):
                     cv.search_queue_list_widget.item(item).setText('')
-            search_result_queue_number_update()
+        
+        search_result_queue_number_update()
 
     
     def open_track_folder(self):
