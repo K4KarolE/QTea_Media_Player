@@ -83,10 +83,10 @@ class MySearchListWidget(QListWidget):
         
             # QUEUE / DEQUEUE
             elif q.text() == list(self.context_menu_dic)[1]:
-                # try:
-                self.queue_dequeue_track()
-                # except:
-                #     MyMessageBoxError('Queue / Dequeue', 'Sorry, something went wrong.')
+                try:
+                    self.queue_dequeue_track()
+                except:
+                    MyMessageBoxError('Queue / Dequeue', 'Sorry, something went wrong.')
             
 
             # CLEAR QUEUE
