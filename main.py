@@ -46,7 +46,8 @@ from src import (
     update_raw_current_duration_db,
     queue_add_remove_track,
     logger_basic,
-    remove_track_from_playlist
+    remove_track_from_playlist,
+    update_window_size_vars_from_saved_values
     )
 
 
@@ -131,6 +132,8 @@ class MyWindow(QWidget):
 
     def window_size_toggle_action(self):
         cv.window_size_toggle_counter =  (cv.window_size_toggle_counter + 1) % 3
+        update_window_size_vars_from_saved_values()
+        
         # 1ST
         if cv.window_size_toggle_counter == 1:
             button_toggle_playlist_clicked()

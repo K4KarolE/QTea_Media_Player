@@ -58,7 +58,35 @@
         - The pop-up window title: ERROR - TAB'S NAME (where the invalid value occurred).
 
 ### General
-- Coming
+- `Always on top`: Keeps the player on top of other currently running applications
+- `Continue playback`:
+    - Saves the duration of the currently playing track every 5 seconds
+    - When revisiting the same track, the play continuous from the latest, saved position
+- `Play at startup`:
+    - Automatically plays the last played track at startup
+    - If the track was removed while playing, at the next startup it plays the track in the same row
+    - If the last play track removed and there is no track in the same row:
+        - If the playlist is not empty: It plays the first track of the playlist
+        - If the playlist is empty: No tracked played
+- `Small / Medium / Big jump`: 
+    - Seconds the player position will be moved (forward/backward)
+    - Hotkeys of the direction/jump type are in the `Hotkeys tab`
+- `Window width-height / alt. / 2nd alt.`:
+    - Values of the different window sizes
+    - To switch between the different window sizes use the `Window alt. size` hotkey (`Hotkeys tab`)
+    - `Window width-height`:
+        - The size of the window at startup or the window size toggle hotkey pressed thrice
+        - Both video and playlist section/window are visible
+    - `Window alt. width-height`: 
+        - The size of the window after the window size toggle hotkey pressed once
+        - Only the video window is visible, the playlist window is hidden
+    - `Window 2nd alt. width-height`: 
+        - The size of the window after the window size toggle hotkey pressed twice
+        - Only the video window is visible, the playlist window is hidden
+    - Ideas:
+        - Use the first alt. window size when the user is close to a wide screen (e.g.: having a lunch)
+        - Use the second alt. window size when player is secondary and it is placed in the right, bottom corner of the screen (e.g.: browsing)
+        - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars 
 
 ### Hotkeys
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`

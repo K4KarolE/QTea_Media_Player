@@ -576,3 +576,11 @@ def clear_queue_update_all_occurrences():
         update_queued_tracks_order_number(clear_queue = True)
         cv.queue_tracks_list.clear()
         cv.queue_playlists_list.clear()
+
+def update_window_size_vars_from_saved_values():
+    cv.window_width = settings['general_settings']['window_width']
+    cv.window_height = settings['general_settings']['window_height']
+    cv.window_alt_width = settings['general_settings']['window_alt_width']
+    cv.window_alt_height = settings['general_settings']['window_alt_height']
+    cv.window_second_alt_width = settings['general_settings']['window_second_alt_width']
+    cv.window_second_alt_height = settings['general_settings']['window_second_alt_height']
