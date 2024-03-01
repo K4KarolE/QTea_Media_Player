@@ -67,7 +67,7 @@
     - If the track was removed while playing, at the next startup it plays the track in the same row
     - If the last play track removed and there is no track in the same row:
         - If the playlist is not empty: It plays the first track of the playlist
-        - If the playlist is empty: No tracked played
+        - If the playlist is empty: No track played
 - `Small / Medium / Big jump`: 
     - Seconds the player position will be moved (forward/backward)
     - Hotkeys of the direction/jump type are in the `Hotkeys tab`
