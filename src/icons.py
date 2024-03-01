@@ -29,3 +29,6 @@ class MyIcon():
 
         self.search = QIcon(f'skins/{cv.skin_selected}/search.png')
         self.clear_queue = QIcon(f'skins/{cv.skin_selected}/bin.png')
+        
+        # FOR THE SELECTED AUDIO AND SUBTITLE TRACK - VIDEO CONTEXTMENU / RIGHT CLICK
+        self.selected = QIcon(f'skins/{cv.skin_selected}/dot.png')
