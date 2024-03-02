@@ -100,19 +100,21 @@ class AVPlayer(QWidget):
                         audio_track_title = audio_language
                     
                     if self.player.activeAudioTrack() == self.player.audioTracks().index(audio_track):
-                        self.context_menu_dic['Audio Track']['menu_sub'].addAction(QAction(self.icon.selected, audio_track_title, self))
+                        qaction_to_add = QAction(self.icon.selected, audio_track_title, self)
                     else:
-                        self.context_menu_dic['Audio Track']['menu_sub'].addAction(QAction(audio_track_title, self))
+                        qaction_to_add = QAction(audio_track_title, self)
+                    self.context_menu_dic['Audio Track']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Audio Track']['audio_tracks'].append(audio_track_title)
 
 
                 ''' SUBTITLE TRACKS '''
                 if self.player.activeSubtitleTrack() == -1:
-                    self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction(self.icon.selected, 'Disabled', self))
+                    qaction_to_add = QAction(self.icon.selected, 'Disabled', self)
                 else:
-                    self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction('Disable', self))
+                    qaction_to_add = QAction('Disable', self)
+                self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
 
-                
+
                 for sub_track in self.player.subtitleTracks():
                     title = sub_track.stringValue(sub_track.Key.Title)
                     subtitle_language = sub_track.stringValue(sub_track.Key.Language)
@@ -123,9 +125,11 @@ class AVPlayer(QWidget):
                         subtitle_track_title = f'{subtitle_language} - [sub]'
                     
                     if self.player.activeSubtitleTrack() == self.player.subtitleTracks().index(sub_track):
-                        self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction(self.icon.selected, subtitle_track_title, self))
+                        qaction_to_add = QAction(self.icon.selected, subtitle_track_title, self)
                     else:
-                        self.context_menu_dic['Subtitle']['menu_sub'].addAction(QAction(subtitle_track_title, self))
+                        qaction_to_add = QAction(subtitle_track_title, self)
+                        
+                    self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Subtitle']['subtitle_tracks'].append(subtitle_track_title)
 
 

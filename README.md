@@ -35,7 +35,15 @@
 - `Active playlist` = playlist which is currently selected / displayed.
 
 ## Play buttons
-- To come.
+- The `Play`, `Stop`, `Previous track`, `Next track` and `Shuffle` buttons behave as usual
+- The `Repeat playlist` button has 3 states:
+    - Disabled
+    - Repeat playlist - the button is flat.
+    - Repeat currently playing track - the button is flat and a square shape displayed in the middle of the icon.
+- `Toggle Video and Playlist` buttons show/hide the video or playlist section.
+    - Can not hide both the same time.
+    - At startup both the video and playlist section are visible as default.
+- Tooltip is displayed when the mouse moved over the current button.
 
 ## Playlist buttons (under playlists section)
 - `AT - Add Track`: add a single media/file to the playlist.
@@ -43,12 +51,12 @@
 - `RT - Remove Track`: removes the current/selected track.
 - `CP - Clear Playlist`: removes all the items from the current playlist.
 - `Settings button`: opens the `Settings window`.
-
+- Tooltip is displayed when the mouse moved over the current button.
 
 ## Settings window
 - To open the `Setting window` click on the `Cog/Settings icon` under the playlists section. 
 - `Playlists tab:`Able to update the playlists titles - hide/show the playlists.
-- `Genereal tab:` Adjust the shortcut keyboard values.
+- `General tab:` Adjust the shortcut keyboard values.
 - `Hotkeys tab:` Adjust the player's jump values.
 - Saving the `Settings window` values by clicking on the `Save button`:
     - Saves all the values from all the tabs if there is no invalid value.
@@ -73,7 +81,7 @@
     - Hotkeys of the direction/jump type are in the `Hotkeys tab`
 - `Window width-height / alt. / 2nd alt.`:
     - Values of the different window sizes
-    - To switch between the different window sizes use the `Window alt. size` hotkey (`Hotkeys tab`)
+    - To switch between the different window sizes, use the `Window alt. size` hotkey (`Hotkeys tab`)
     - `Window width-height`:
         - The size of the window at startup or the window size toggle hotkey pressed thrice
         - Both video and playlist section/window are visible
@@ -91,8 +99,21 @@
 ### Hotkeys
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
-- More to come.
-
+- `Small / Medium / Big jump - backward/forward`:
+    - The values of the jump types are defined in the `General tab`. 
+- `Volume - Increase / Decrease`: changes the volume with +/- 5%
+- `Audio track - use next`: toggles between the available audio channels, there is no disabled state
+- `Subtitle track - use next`: toggles between the available subtitles and a disabled state
+- `Toggle - Full screen`: next to the value set up in this field the `Escape` button is hard-coded to quick from the full screen mode
+- `Toogle - Window alt. size`:
+    - Toggles between the default / alt. / 2nd alt. window sizes defined in the `General tab`
+    - Default: both video and playlist sections are visible
+    - Alt. and 2nd alt.: only the video section is visible 
+- `Playlist - Select previous / next`: jumps between the playlists available
+- `Queue / Dequeue track`:
+    - Add to / removes track from the queue list.
+    - This hotkey can be used on the `playlists`, `Queue` and `Search window`s track list as well
+- The rest of the hotkeys are self-explanatory
 
 ### Playlists
 - In the `Settings window / Playlists` tab all playlists are listed.
@@ -102,7 +123,7 @@
         - If playlist had tracks before it was hidden: the records will be loaded automatically after restart.
     - To hide a playlist:
         - Remove the title of the playlist.
-        - At least one of the playlist remains visible:
+        - At least one of the playlists remains visible:
             - Not able to remove all the playlist titles: clicking on the `Save button`: pop-up window will be displayed with the error message.
         - The hidden playlist's records/media information remains in the database.
 - Able to add/remove tracks to any of playlists: the playlist is saved automatically
@@ -124,18 +145,17 @@
     - Play next track
     - Play next track in the playlist automatically after end of the current track
     - Shuffle / repeat functionalities
-    - All hotkeys functionalities: change audio/subtitle track
+    - All hotkey functionalities: change audio/subtitle track
 - Window title = Playing playlist title | Track title
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Close the app if it is running.
 2. Rename the current playlist database: `playlist.db`.
-3. In the `src / cons_and_vars.py` file change the `playlist_amount = 20` value to as many playlists you wish, save the file.
+3. In the `src / cons_and_vars.py` file change the `playlist_amount = 30` value to as many playlists you wish, save the file.
 4. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created.
 5. After the next start of the app, all the playlists will be visible with increasing numeric titles.
-6. Optional: Change the title of the playlists via the `Settings window / Playlists`
+6. Optional: Change the title of the playlists via the `Settings window / Playlists`.
 7. Optional: Remove the previous playlist database.
-
 
 ## Other Behavior
 - `Volume`
@@ -146,7 +166,6 @@
 - `Screen saver`
     - When video window is displayed and video is playing the screen saver is turned off.
         - Otherwise the screen saver is on as usual.
-
 
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg

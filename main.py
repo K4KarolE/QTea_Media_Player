@@ -327,7 +327,7 @@ def button_queue_clicked():
 
 button_queue = MyButtons(
     'Q',
-    'Queue',
+    'Queue and Search window',
     icon = icon.queue
     )
 button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
@@ -343,7 +343,7 @@ def button_settings_clicked():
 
 button_settings = MyButtons(
     'SE',
-    'Settings',
+    'Settings window',
     icon = icon.settings
     )
 button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
@@ -413,7 +413,7 @@ def button_stop_clicked():
 
 button_stop = MyButtons(
     'Stop',
-    'Stops playing',
+    'Stop playing',
     av_player,
     av_player_duration,
     play_funcs,
