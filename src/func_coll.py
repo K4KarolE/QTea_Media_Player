@@ -287,39 +287,41 @@ def queue_add_remove_track():
                             -> queue list widget text/order number update
                             -> list widgets style update
     '''
-
-    cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
-
-    # STABDARD -> QUEUED TRACK
-    if not cv.queue_tracking_title in cv.queue_tracks_list:
-
-        cv.queue_tracks_list.append(cv.queue_tracking_title)
-        cv.queue_playlists_list.append(cv.active_db_table)
-
-        queue_order_number = f'[{len(cv.queue_tracks_list)}]'
-        cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
-        
-        # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
-        if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
-
-            update_queued_track_style(cv.current_track_index)
-        
-        queue_window_add_track()
-        
     
-    # DEQUEUE -> STANDARD TRACK
-    else:
-        current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
-        queue_window_remove_track(current_queue_index)
-        cv.queue_tracks_list.remove(cv.queue_tracking_title)
-        cv.queue_playlists_list.remove(cv.active_db_table)
-        cv.active_pl_queue.item(cv.current_track_index).setText('')
-        update_queued_tracks_order_number()
+    if cv.active_pl_name.currentItem():    # to avoid action on playlist where no track is selected
+            
+        cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+        
+        # STABDARD -> QUEUED TRACK
+        if not cv.queue_tracking_title in cv.queue_tracks_list:
 
-        if cv.current_track_index != cv.playing_pl_last_track_index:        
-            update_dequeued_track_style(cv.current_track_index)
-    
-    search_result_queue_number_update()
+            cv.queue_tracks_list.append(cv.queue_tracking_title)
+            cv.queue_playlists_list.append(cv.active_db_table)
+
+            queue_order_number = f'[{len(cv.queue_tracks_list)}]'
+            cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
+            
+            # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
+            if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
+
+                update_queued_track_style(cv.current_track_index)
+            
+            queue_window_add_track()
+            
+        
+        # QUEUED TRACK -> STANDARD
+        else:
+            current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+            queue_window_remove_track(current_queue_index)
+            cv.queue_tracks_list.remove(cv.queue_tracking_title)
+            cv.queue_playlists_list.remove(cv.active_db_table)
+            cv.active_pl_queue.item(cv.current_track_index).setText('')
+            update_queued_tracks_order_number()
+
+            if cv.current_track_index != cv.playing_pl_last_track_index:        
+                update_dequeued_track_style(cv.current_track_index)
+        
+        search_result_queue_number_update()
 
 
 def update_queued_track_style(current_track_index):

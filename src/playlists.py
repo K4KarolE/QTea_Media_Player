@@ -105,6 +105,7 @@ class MyPlaylists(QTabWidget):
             save_json(settings, PATH_JSON_SETTINGS)
             update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
             self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+            cv.current_track_index = cv.active_pl_name.currentRow()
     
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''

@@ -111,9 +111,10 @@
     - Alt. and 2nd alt.: only the video section is visible 
 - `Playlist - Select previous / next`: jumps between the playlists available
 - `Queue / Dequeue track`:
-    - Add to / removes track from the queue list.
-    - This hotkey can be used on the `playlists`, `Queue` and `Search window`s track list as well
-- The rest of the hotkeys are self-explanatory
+    - Add track to / removes track from the queue list.
+    - This hotkey takes action on the `Active playlist`.
+    - On the `Queue and Search window`s track list the right-click / Queue-Dequeue should be used
+- The rest of the hotkeys are self-explanatory.
 
 ### Playlists
 - In the `Settings window / Playlists` tab all playlists are listed.
