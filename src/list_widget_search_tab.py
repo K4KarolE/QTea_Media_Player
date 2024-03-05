@@ -1,6 +1,6 @@
 '''
 Class created to handle context menu (right click on 
-the list items), in the Search tab playlist
+the list items), in the Search tab result list
 Used it in the src / window_queue_and_search.py
 '''
 

@@ -16,11 +16,8 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QScrollBar
     )
-
-from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
-
-from pathlib import Path
 
 from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
 from .cons_and_vars import save_json

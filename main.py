@@ -20,12 +20,11 @@ from PyQt6.QtWidgets import (
     QSplitter
     )
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QIcon, QKeySequence, QShortcut
+from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget
 
 import sys
-from pathlib import Path
 
 from src import (
     cv,
@@ -67,11 +66,17 @@ class MyWindow(QWidget):
 
         self.resize(cv.window_width, cv.window_height)
         self.setMinimumSize(cv.window_min_width, cv.window_min_height)
-        self.setWindowIcon(QIcon(str(Path(Path(__file__).parent, 'skins/window_icon.png'))))
+        self.setWindowIcon(MyIcon().window_icon)
         self.setWindowTitle("QTea media player")
         if cv.always_on_top == 'True':
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
+        '''
+        "Lambda:" and "self." used to differentiate:
+        lambda:function() - created int the MyButtons class or ..
+        self.function   - defined/created right after the dictionary
+                        - not all functions added to the dic.
+        ''' 
         hotkeys_action_dic = {
         'small_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.small_jump),
         'small_jump_forward': lambda: av_player.player.setPosition(av_player.player.position() + cv.small_jump),
@@ -95,7 +100,7 @@ class MyWindow(QWidget):
         'window_size_toggle': self.window_size_toggle_action,
         'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
-        'paylist_remove_track': lambda: button_remove_track.button_remove_track_clicked(),
+        'paylist_remove_track': lambda: button_remove_track_clicked(),
         'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
         'paylist_select_next_pl': self.paylist_select_next_pl_action,

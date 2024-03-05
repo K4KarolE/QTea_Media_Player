@@ -215,7 +215,7 @@ class AVPlayer(QWidget):
 Only used for duration calculation -->
 Adding small amount of new record/track:
     Able to add new tracks without interrupting the current playing
-Adding big amount of new record/track:
+Adding big amount of new record/track while playing video:
     VIDEO frame lagging while the new tracks are loading:
         - No / minimal interruption while loading 10 seasons of a TV show
         - It takes 8+ seconds while video catches up after loading 400+ music library

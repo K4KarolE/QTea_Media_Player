@@ -1,8 +1,7 @@
 from PyQt6.QtWidgets import QMessageBox
-from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
 
-from .cons_and_vars import Path, cv
+from .icons import MyIcon
 
 
 class MyMessageBoxError(QMessageBox):
@@ -10,7 +9,7 @@ class MyMessageBoxError(QMessageBox):
         super().__init__()
 
         self.setWindowTitle(f'ERROR - {tab_title}')
-        self.setWindowIcon(QIcon(str(Path(Path().resolve(), 'skins', cv.skin_selected, 'settings.png'))))
+        self.setWindowIcon(MyIcon().settings)
         self.setIcon(QMessageBox.Icon.Warning)
         # extra whitespace:
         # position the text more to the middle in the box

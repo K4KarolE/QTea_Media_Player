@@ -1,9 +1,8 @@
 '''
-    Slider jumps to the position of the mouse click 
+Slider jumps to the position of the mouse click 
 
-    Cheers mate!
-    https://python-forum.io/thread-10564.html
-
+Cheers mate!
+https://python-forum.io/thread-10564.html
 '''
 
 from PyQt6.QtWidgets import QSlider, QApplication, QMainWindow, QStyle

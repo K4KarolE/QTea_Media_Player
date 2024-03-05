@@ -1,7 +1,7 @@
 '''
-src / list_widget_playlists.py  - is not listed, it is deployed in paylists.py
-src / list_widget_queue_window.py - is not listed, it is window_queue.py
-src / tables_and_playlists_guide.py  - is not listed / it can be reached outside the app only
+src / list_widget_playlists.py  - is not listed, it is used in paylists.py
+src / list_widget_queue_tab.py and list_widget_search_tab.py - are not listed, they are used in window_queue_and_search.py
+src / tables_and_playlists_guide.py  - is not listed, it can be reached outside the app only
 '''
 
 from .icons import *

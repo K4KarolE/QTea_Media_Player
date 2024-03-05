@@ -30,13 +30,14 @@ BUTTON FUNCTIONS DECLARED IN MAIN:
 
 from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtGui import QFont
 
 import os
+from pathlib import Path
 
 from .icons import MyIcon
 from .logging import logger_runtime, logger_basic
-from .cons_and_vars import Path, save_json, cv, settings, PATH_JSON_SETTINGS
+from .cons_and_vars import save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     add_record_grouped_actions,
     save_db,

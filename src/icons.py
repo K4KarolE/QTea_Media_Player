@@ -1,10 +1,11 @@
-
 from PyQt6.QtGui import QIcon
 from .cons_and_vars import cv
 
 
 class MyIcon():
     def __init__(self):
+        self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.png')
+
         self.start = QIcon(f'skins/{cv.skin_selected}/start.png')
         self.pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
         self.stop = QIcon(f'skins/{cv.skin_selected}/stop.png')
