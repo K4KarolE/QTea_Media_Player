@@ -237,6 +237,11 @@ def save_volume_slider_value(new_value):
     save_json(settings, PATH_JSON_SETTINGS)
 
 
+def save_speaker_muted_value():
+    settings['is_speaker_muted'] = cv.is_speaker_muted
+    save_json(settings, PATH_JSON_SETTINGS)
+
+
 def update_duration_sum_var_after_track_remove():
     raw_duration = get_duration_db(cv.active_pl_name.currentRow(), cv.active_db_table)
     cv.active_pl_sum_duration -= raw_duration

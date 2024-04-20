@@ -29,7 +29,7 @@ class Data:
     shuffle_playlist_on = settings['shuffle_playlist_on']
     volume = settings['volume']
     icon_size = 20  # used for the buttons
-    is_speaker_muted = False
+    is_speaker_muted = settings['is_speaker_muted']
     audio_tracks_amount = 0
     audio_track_played = 0
     subtitle_tracks_amount = 0

@@ -46,7 +46,8 @@ from src import (
     queue_add_remove_track,
     logger_basic,
     remove_track_from_playlist,
-    update_window_size_vars_from_saved_values
+    update_window_size_vars_from_saved_values,
+    save_speaker_muted_value
     )
 
 
@@ -583,6 +584,8 @@ def button_speaker_clicked():
         cv.is_speaker_muted = True
         button_speaker.setIcon(icon.speaker_muted)
         av_player.audio_output.setVolume(0)
+    
+    save_speaker_muted_value()
 
 
 # USED WHEN CHANGING VOLUME WHILE MUTED
@@ -600,7 +603,9 @@ button_speaker = MyButtons(
     )
 button_speaker.setFlat(1)
 button_speaker.clicked.connect(button_speaker_clicked)
-
+if cv.is_speaker_muted:
+    button_speaker.setIcon(icon.speaker_muted)
+    av_player.audio_output.setVolume(0)
 
 
 ''' 
