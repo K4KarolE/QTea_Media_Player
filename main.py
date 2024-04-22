@@ -405,6 +405,13 @@ button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
 button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
 button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
+def button_play_pause_seticon_to_start():
+    '''
+    Used in the MyQueueWindow instance / QUEUE and SEARCH window-list 
+    play track -> update play button
+    '''
+    button_play_pause.setIcon(icon.pause)
+
 
 ''' BUTTON PLAY SECTION - STOP '''
 def button_stop_clicked():
@@ -741,9 +748,10 @@ layout_under_playlist_duration.addWidget(duration_sum_widg)
 playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, window, duration_sum_widg)
 layout_playlist.addWidget(playlists_all)
 
+
 ''' WINDOW QUEUE '''
-window_queue = MyQueueWindow(play_funcs.play_track, playlists_all)
-# window_queue.show()
+window_queue = MyQueueWindow(play_funcs.play_track, playlists_all, button_play_pause_seticon_to_start)
+
 
 ''' WINDOW SETTINGS '''
 window_settings = MySettingsWindow(playlists_all, av_player)

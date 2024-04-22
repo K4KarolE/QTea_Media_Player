@@ -39,10 +39,11 @@ from .icons import MyIcon
 
 class MyQueueWindow(QWidget):
     
-    def __init__(self, play_track, playlists_all):
+    def __init__(self, play_track, playlists_all, button_play_pause_seticon_to_start):
         super().__init__()
         self.play_track = play_track
         self.playlists_all = playlists_all
+        self.button_play_pause_seticon_to_start = button_play_pause_seticon_to_start
        
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
         WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 200
@@ -290,6 +291,7 @@ class MyQueueWindow(QWidget):
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         self.play_track(track_index)
+        self.button_play_pause_seticon_to_start()
         search_result_queue_number_update()
     
 
@@ -327,6 +329,7 @@ class MyQueueWindow(QWidget):
             cv.playing_playlist_index = playlist_index
             update_playing_playlist_vars_and_widgets()
             self.play_track(track_index)
+            self.button_play_pause_seticon_to_start()
             search_result_queue_number_update()
         else:
             MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
