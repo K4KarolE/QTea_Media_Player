@@ -24,9 +24,12 @@
     <img src="docs/promo/screenshot_3.png">
 </div>
 <br>
-<br>
 <div align="left">
     <img src="docs/promo/screenshot_4.png">
+</div>
+<br>
+<div align="left">
+    <img src="docs/promo/screenshot_right_click.png">
 </div>
 <br>
 
