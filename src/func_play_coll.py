@@ -36,6 +36,8 @@ class PlaysFunc():
 
     def play_track(self, playing_track_index=None):
 
+        cv.audio_track_played = 0   
+        # PyQt playing the first audio_track by default -> reset our variable
         cv.counter_for_duration = 0  # for iterate: saving the current duration
         update_active_playlist_vars_and_widgets()
         
