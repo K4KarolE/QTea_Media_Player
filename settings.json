@@ -1,18 +1,18 @@
 {
-  "last_used_playlist": 1,
-  "playing_playlist": 1,
+  "last_used_playlist": 0,
+  "playing_playlist": 0,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
-  "shuffle_playlist_on": true,
-  "volume": 0.38,
+  "shuffle_playlist_on": false,
+  "volume": 0.44,
   "is_speaker_muted": false,
   "skin_selected": "default",
   "general_settings": {
-    "always_on_top": "True",
-    "continue_playback": "True",
-    "play_at_startup": "True",
+    "always_on_top": true,
+    "continue_playback": true,
+    "play_at_startup": true,
     "small_jump": 3000,
-    "medium_jump": 60000,
+    "medium_jump": 25000,
     "big_jump": 180000,
     "window_width": 1200,
     "window_height": 700,
@@ -21,7 +21,8 @@
     "window_second_alt_width": 650,
     "window_second_alt_height": 450,
     "window_min_width": 650,
-    "window_min_height": 250
+    "window_min_height": 250,
+    "window_alt_size_repositioning": true
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",
@@ -67,17 +68,17 @@
   "playlist_0": {
     "playlist_title": "TV",
     "playlist_index": 0,
-    "last_track_index": 2
+    "last_track_index": 40
   },
   "playlist_1": {
     "playlist_title": "Music - DL",
     "playlist_index": 1,
-    "last_track_index": 15
+    "last_track_index": 5
   },
   "playlist_2": {
-    "playlist_title": "Scatman",
+    "playlist_title": "Film",
     "playlist_index": 2,
-    "last_track_index": 5
+    "last_track_index": 35
   },
   "playlist_3": {
     "playlist_title": "Afroman",
@@ -117,7 +118,7 @@
   "playlist_10": {
     "playlist_title": "PW",
     "playlist_index": 10,
-    "last_track_index": 119
+    "last_track_index": 181
   },
   "playlist_11": {
     "playlist_title": "",

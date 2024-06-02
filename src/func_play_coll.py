@@ -115,7 +115,7 @@ class PlaysFunc():
             self.play_next_track()
         
         # PLAY FROM LAST POINT
-        if cv.track_current_duration > 0 and cv.continue_playback == 'True':
+        if cv.track_current_duration > 0 and cv.continue_playback:
             self.av_player.player.setPosition(cv.track_current_duration)
         
         # PLAY
@@ -202,13 +202,13 @@ class PlaysFunc():
             if self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia:
                 # To play from the start at next time playing the same track
                 # Not from (duration - 5 sec) position
-                if cv.continue_playback == 'True' and not cv.adding_records_at_moment:
+                if cv.continue_playback and not cv.adding_records_at_moment:
                     update_raw_current_duration_db(0, cv.playing_track_index)
                 self.play_next_track()
         else:
             self.av_player.base_played = True
 
-            if cv.play_at_startup == 'True' and not cv.played_at_startup_counter:
+            if cv.play_at_startup and not cv.played_at_startup_counter:
                 time.sleep(0.01) # otherwise media loading error occurs / not a mediastatus problem
                 self.play_track()
 

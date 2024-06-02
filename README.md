@@ -94,10 +94,13 @@
     - `Window 2nd alt. width-height`: 
         - The size of the window after the window size toggle hotkey pressed twice
         - Only the video window is visible, the playlist window is hidden
+    - `Window alt. repositioning`:
+        - Repositioning the window depending on the selected size
+        - Default and 1st: middle of the screen / 2nd: right, bottom corner of the screen
     - Ideas:
         - Use the first alt. window size when the user is close to a wide screen (e.g.: having a lunch)
-        - Use the second alt. window size when player is secondary and it is placed in the right, bottom corner of the screen (e.g.: browsing)
-        - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars 
+        - Use the second alt. window size when player is secondary for you and it is placed in the right, bottom corner of the screen (e.g.: browsing)
+        - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars  
 
 ### Hotkeys
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`

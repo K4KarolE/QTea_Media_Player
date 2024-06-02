@@ -133,6 +133,7 @@ class Data:
     window_alt_height = settings['general_settings']['window_alt_height']
     window_second_alt_width = settings['general_settings']['window_second_alt_width']
     window_second_alt_height = settings['general_settings']['window_second_alt_height']
+    window_alt_size_repositioning = settings['general_settings']['window_alt_size_repositioning']
     # USED FOR VALIDATION
     window_min_width = settings['general_settings']['window_min_width']
     window_min_height = settings['general_settings']['window_min_height']
@@ -199,14 +200,20 @@ class Data:
             'text': 'Window 2nd alt. height',
             'value': window_second_alt_height,
             'line_edit_widget': ''
+        },
+        'window_alt_size_repositioning': {
+            'text': 'Window alt. repositioning',
+            'value': window_alt_size_repositioning,
+            'line_edit_widget': ''
         }
     }
-
+    
     # used in the src / settings_window.py / field validation - field save 
     gen_sett_boolean_text_list = [
         general_settings_dic['always_on_top']['text'],
         general_settings_dic['continue_playback']['text'],
-        general_settings_dic['play_at_startup']['text']
+        general_settings_dic['play_at_startup']['text'],
+        general_settings_dic['window_alt_size_repositioning']['text']
         ]
     
     gen_sett_window_width_text_list = [

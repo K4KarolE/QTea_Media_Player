@@ -289,7 +289,7 @@ class MySettingsWindow(QWidget):
    
                 elif item_text in cv.gen_sett_boolean_text_list:
                     if item_value != line_edit_text:
-                        settings['general_settings'][general_dic_key] = line_edit_text
+                        settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
                         to_save = True
    
                 else:
