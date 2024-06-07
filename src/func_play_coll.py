@@ -118,14 +118,14 @@ class PlaysFunc():
         if cv.track_current_duration > 0 and cv.continue_playback:
             self.av_player.player.setPosition(cv.track_current_duration)
         
-        # PLAY
-        self.av_player.player.play()
-        
         # AUDIO / SUBTITLE TRACKS
         cv.audio_tracks_amount = len(self.av_player.player.audioTracks())
         cv.subtitle_tracks_amount = len(self.av_player.player.subtitleTracks())
         
-
+        # PLAY
+        self.audio_tracks_use_default()
+        self.av_player.player.play()
+        
         # SCROLL TO PLAYING TRACK IF IT WOULD BE
         # OUT OF THE VISIBLE WINDOW/LIST
         cv.playing_pl_name.scrollToItem(cv.playing_pl_name.item(cv.playing_track_index))
@@ -219,6 +219,12 @@ class PlaysFunc():
         if cv.audio_tracks_amount:
             cv.audio_track_played = (cv.audio_track_played + 1) % cv.audio_tracks_amount
             self.av_player.player.setActiveAudioTrack(cv.audio_track_played)
+    
+
+    def audio_tracks_use_default(self):
+        if cv.audio_tracks_amount > 1 and 1 < cv.default_audio_track <= cv.audio_tracks_amount:
+            self.av_player.player.setActiveAudioTrack(cv.default_audio_track - 1)
+            cv.audio_track_played = cv.default_audio_track - 1
     
 
     def subtitle_tracks_play_next_one(self):

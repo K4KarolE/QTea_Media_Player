@@ -4,8 +4,9 @@
 - Cross playlists search.
 - Start media from the latest point.
 - Start the last played media at startup.
-- Quick switch to alternative window mode / size.
+- Quick switch to alternative window mode / size / position.
 - Playlists saved by default.
+- Set video's preferred audio track to default.
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
 
 <div align="left">
@@ -97,6 +98,9 @@
     - `Window alt. repositioning`:
         - Repositioning the window depending on the selected size
         - Default and 1st: middle of the screen / 2nd: right, bottom corner of the screen
+    - `Default audio track`:
+        - Video starts with the selected audio track
+        - Can be useful while watching multiple episodes of a tv show in one sitting where the preferred audio track is not the first/default one
     - Ideas:
         - Use the first alt. window size when the user is close to a wide screen (e.g.: having a lunch)
         - Use the second alt. window size when player is secondary for you and it is placed in the right, bottom corner of the screen (e.g.: browsing)

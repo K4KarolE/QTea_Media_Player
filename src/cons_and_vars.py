@@ -134,6 +134,7 @@ class Data:
     window_second_alt_width = settings['general_settings']['window_second_alt_width']
     window_second_alt_height = settings['general_settings']['window_second_alt_height']
     window_alt_size_repositioning = settings['general_settings']['window_alt_size_repositioning']
+    default_audio_track = settings['general_settings']['default_audio_track']
     # USED FOR VALIDATION
     window_min_width = settings['general_settings']['window_min_width']
     window_min_height = settings['general_settings']['window_min_height']
@@ -205,10 +206,17 @@ class Data:
             'text': 'Window alt. repositioning',
             'value': window_alt_size_repositioning,
             'line_edit_widget': ''
+        },
+        'default_audio_track': {
+            'text': 'Default audio track',
+            'value': default_audio_track,
+            'line_edit_widget': ''
         }
     }
     
-    # used in the src / settings_window.py / field validation - field save 
+    # used in the src / settings_window.py / field validation - field save
+    # integer values like small_jump, default_audio_track,.. validated
+    # in the src / settings_window.py / general_fields_validation() function
     gen_sett_boolean_text_list = [
         general_settings_dic['always_on_top']['text'],
         general_settings_dic['continue_playback']['text'],

@@ -4,7 +4,7 @@
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.44,
+  "volume": 1.0,
   "is_speaker_muted": false,
   "skin_selected": "default",
   "general_settings": {
@@ -22,7 +22,8 @@
     "window_second_alt_height": 450,
     "window_min_width": 650,
     "window_min_height": 250,
-    "window_alt_size_repositioning": true
+    "window_alt_size_repositioning": true,
+    "default_audio_track": 2
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",
@@ -68,12 +69,12 @@
   "playlist_0": {
     "playlist_title": "TV",
     "playlist_index": 0,
-    "last_track_index": 40
+    "last_track_index": 74
   },
   "playlist_1": {
     "playlist_title": "Music - DL",
     "playlist_index": 1,
-    "last_track_index": 5
+    "last_track_index": 13
   },
   "playlist_2": {
     "playlist_title": "Film",
@@ -118,7 +119,7 @@
   "playlist_10": {
     "playlist_title": "PW",
     "playlist_index": 10,
-    "last_track_index": 181
+    "last_track_index": 104
   },
   "playlist_11": {
     "playlist_title": "",
