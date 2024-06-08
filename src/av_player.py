@@ -187,8 +187,10 @@ class AVPlayer(QWidget):
         if self.video_output.isVisible():
             if self.video_output.isFullScreen():
                 self.video_output.setFullScreen(0)
+                self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
             else:
                 self.video_output.setFullScreen(1)
+                self.video_output.setCursor(Qt.CursorShape.BlankCursor)
 
 
     # SCREEN SAVER SETTINGS UPDATE USED IN:
