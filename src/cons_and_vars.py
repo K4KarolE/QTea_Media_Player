@@ -24,6 +24,7 @@ settings = open_json(PATH_JSON_SETTINGS)
 class Data:
 
     ''' SUPPORTING VARIABLES '''
+    track_title = None  # to display on video
     skin_selected = settings['skin_selected']
     repeat_playlist = settings['repeat_playlist']
     shuffle_playlist_on = settings['shuffle_playlist_on']

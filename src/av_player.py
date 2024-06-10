@@ -1,6 +1,6 @@
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
-from PyQt6.QtCore import QUrl, QEvent, Qt
+from PyQt6.QtCore import QUrl, QEvent, Qt, QTimer
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget, QMenu
 from PyQt6.QtGui import QAction
@@ -39,6 +39,7 @@ class AVPlayer(QWidget):
         self.video_output = QVideoWidget()
         self.video_output.installEventFilter(self)
         self.player.setVideoOutput(self.video_output)
+        self.timer = QTimer()   # used to display volume, track title on video
         # AUDIO
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
@@ -78,7 +79,7 @@ class AVPlayer(QWidget):
                 
                 menu = QMenu()
 
-                ''' MENU ITEMS '''
+                # MENU ITEMS
                 for menu_title, menu_icon in self.context_menu_dic.items():
 
                     icon = menu_icon['icon']
@@ -89,7 +90,7 @@ class AVPlayer(QWidget):
                         self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
 
 
-                ''' AUDIO TRACKS '''
+                # AUDIO TRACKS
                 for audio_track in self.player.audioTracks():
                     title = audio_track.stringValue(audio_track.Key.Title)
                     audio_language = audio_track.stringValue(audio_track.Key.Language)
@@ -107,7 +108,7 @@ class AVPlayer(QWidget):
                     self.context_menu_dic['Audio Track']['audio_tracks'].append(audio_track_title)
 
 
-                ''' SUBTITLE TRACKS '''
+                # SUBTITLE TRACKS
                 if self.player.activeSubtitleTrack() == -1:
                     qaction_to_add = QAction(self.icon.selected, 'Disabled', self)
                 else:
@@ -136,15 +137,27 @@ class AVPlayer(QWidget):
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
       
-            
+
+            # FULL SCREEN TOGGLE 
             elif event.type() == QEvent.Type.MouseButtonDblClick:
                 self.full_screen_toggle()
             
 
+            # VOLUME UPDATE
+            elif event.type() == QEvent.Type.Wheel:
+                if event.angleDelta().y() > 0:
+                    self.window.volume_up_action()
+                else:
+                    self.window.volume_down_action()
+                self.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")
+           
+
+            
+        # EXIT FULL SCREEN
         if event.type() == QEvent.Type.KeyRelease:
-            # EXIT FULL SCREEN
             if event.key() == Qt.Key.Key_Escape:
                 self.video_output.setFullScreen(0)
+                self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
                 
         return super().eventFilter(source, event)
 
@@ -182,7 +195,6 @@ class AVPlayer(QWidget):
             subtitle_tracks_list.clear()
 
 
-
     def full_screen_toggle(self):
         if self.video_output.isVisible():
             if self.video_output.isFullScreen():
@@ -191,6 +203,13 @@ class AVPlayer(QWidget):
             else:
                 self.video_output.setFullScreen(1)
                 self.video_output.setCursor(Qt.CursorShape.BlankCursor)
+    
+
+    def text_display_on_video(self, time, text):
+        if self.player.activeSubtitleTrack() == -1: # no active sub
+            self.video_output.videoSink().setSubtitleText(text)
+            self.timer.start(time)
+            self.timer.timeout.connect(lambda: self.video_output.videoSink().setSubtitleText(None))
 
 
     # SCREEN SAVER SETTINGS UPDATE USED IN:

@@ -88,7 +88,8 @@ class PlaysFunc():
         self.play_slider.setMaximum(cv.track_full_duration)
         
         # WINDOW TITLE
-        cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {Path(track_path).stem}'
+        cv.track_title = Path(track_path).stem
+        cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
         self.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
 
         # PLAYER
@@ -125,6 +126,10 @@ class PlaysFunc():
         # PLAY
         self.audio_tracks_use_default()
         self.av_player.player.play()
+
+        # DISPLAY TRACK TITLE ON VIDEO
+        if self.av_player.video_output.isVisible():
+            self.av_player.text_display_on_video(2000, cv.track_title)
         
         # SCROLL TO PLAYING TRACK IF IT WOULD BE
         # OUT OF THE VISIBLE WINDOW/LIST
