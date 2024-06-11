@@ -4,7 +4,7 @@
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 1.0,
+  "volume": 0.77,
   "is_speaker_muted": false,
   "skin_selected": "default",
   "general_settings": {
@@ -38,6 +38,7 @@
     "audio_tracks_rotate": "B",
     "subtitle_tracks_rotate": "V",
     "play_pause": "Space",
+    "play": "Enter",
     "stop": "U",
     "next_track": "N",
     "previous_track": "P",
@@ -69,17 +70,17 @@
   "playlist_0": {
     "playlist_title": "TV",
     "playlist_index": 0,
-    "last_track_index": 74
+    "last_track_index": 79
   },
   "playlist_1": {
     "playlist_title": "Music - DL",
     "playlist_index": 1,
-    "last_track_index": 13
+    "last_track_index": 8
   },
   "playlist_2": {
     "playlist_title": "Film",
     "playlist_index": 2,
-    "last_track_index": 35
+    "last_track_index": 7
   },
   "playlist_3": {
     "playlist_title": "Afroman",
@@ -89,7 +90,7 @@
   "playlist_4": {
     "playlist_title": "Britney",
     "playlist_index": 4,
-    "last_track_index": 1
+    "last_track_index": 4
   },
   "playlist_5": {
     "playlist_title": "Doors",
@@ -102,7 +103,7 @@
     "last_track_index": 4
   },
   "playlist_7": {
-    "playlist_title": "",
+    "playlist_title": "Abba",
     "playlist_index": 7,
     "last_track_index": 9
   },
@@ -117,9 +118,9 @@
     "last_track_index": 4
   },
   "playlist_10": {
-    "playlist_title": "PW",
+    "playlist_title": "",
     "playlist_index": 10,
-    "last_track_index": 104
+    "last_track_index": 79
   },
   "playlist_11": {
     "playlist_title": "",

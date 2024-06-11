@@ -73,10 +73,10 @@ class MyWindow(QWidget):
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
         '''
-        "Lambda:" and "self." used to differentiate:
-        lambda:function() - created int the MyButtons class or ..
-        self.function   - defined/created right after the dictionary
-                        - not all functions added to the dic.
+        "Lambda: function()" and "self.function" solutions used to differentiate:
+        lambda:function(): - created in the MyButtons class, ..
+        self.function:   - defined/created right after the hotkeys_action_dic dictionary
+                            - note: not all functions created for the hotkeys_action_dic
         ''' 
         hotkeys_action_dic = {
         'small_jump_backward': lambda: av_player.player.setPosition(av_player.player.position() - cv.small_jump),
@@ -91,6 +91,7 @@ class MyWindow(QWidget):
         'audio_tracks_rotate': lambda: play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: button_play_pause.button_play_pause_clicked(),
+        'play': lambda: play_funcs.play_track(), # play_pause vs. play: info in readme
         'stop': lambda: button_stop_clicked(),
         'previous_track': lambda: button_prev_track.button_prev_track_clicked(),
         'next_track': lambda: button_next_track.button_next_track_clicked(),
@@ -113,6 +114,12 @@ class MyWindow(QWidget):
             hotkey = QShortcut(QKeySequence(hotkey_value), self)
             hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
             hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+            # Sync Standard and NumPad Enter action
+            if hotkey_value == 'Enter':
+                hotkey = QShortcut(QKeySequence('Return'), self)
+                hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
+                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+
     
                 
     def volume_up_action(self):

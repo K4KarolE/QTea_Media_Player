@@ -110,11 +110,16 @@
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
 - `Small / Medium / Big jump - backward/forward`:
-    - The values of the jump types are defined in the `General tab`. 
+    - The values of the jump types are defined in the `General tab`.
+- `Play\pause` vs `Play`:
+    - `Play\pause`:
+        - If a track is in the playing/paused state: pauses or continues to play the track independently from the current active playlist
+        - If no track is in the playing/paused state: starts the selected track on the active playlist
+    - `Play`: starts the selected track on the active playlist even if there is a track in the playing/paused state from any playlist
 - `Volume - Increase / Decrease`: changes the volume with +/- 5%
 - `Audio track - use next`: toggles between the available audio channels, there is no disabled state
 - `Subtitle track - use next`: toggles between the available subtitles and a disabled state
-- `Toggle - Full screen`: next to the value set up in this field the `Escape` button is hard-coded to quick from the full screen mode
+- `Toggle - Full screen`: next to the value set up in this field the `Escape` button is hard-coded to quit from the full screen mode
 - `Toogle - Window alt. size`:
     - Toggles between the default / alt. / 2nd alt. window sizes defined in the `General tab`
     - Default: both video and playlist sections are visible

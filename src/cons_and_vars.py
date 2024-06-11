@@ -55,28 +55,19 @@ class Data:
     queue_playlists_list = []
     
     
-    ''' 
-    TO MANAGE THE PLAYLIST ACTIONS (PREV., NEXT, ..)
-    playing_track_index 
-
-    
-    TO SAVE THE PLAY AND SELECTION HISTORY:
-    From below and src / func_coll.py:
-    
-    ACTIVE PLAYLIST UTILITY
-    update_active_playlist_vars_and_widgets() -  cv.active_pl_last_track_index
-    
-    PLAYING PLAYLIST UTILITY
-    update_playing_playlist_vars_and_widgets() - cv.playing_pl_last_track_index
-    '''
+    ''' THE CURRENTLY PLAYING/PAUSED TRACK`S INDEX TRACKING '''
     playing_track_index = 0
-
 
     ''' 
     ACTIVE AND PLAYING PLAYLISTS SEPARATION
     Playing playlist = playlist where the current track is in the playing or paused state
                     / playlist where the last track was played
     Active playlist = playlist which is currently selected / displayed
+    
+
+    TO SAVE THE PLAY AND SELECTION HISTORY:
+        - ACTIVE PLAYLIST UTILITY
+        - PLAYING PLAYLIST UTILITY
     '''
     '''
     ACTIVE PLAYLIST UTILITY VALUES
@@ -260,6 +251,7 @@ class Data:
     audio_tracks_rotate = settings['hotkey_settings']['audio_tracks_rotate']
     subtitle_tracks_rotate = settings['hotkey_settings']['subtitle_tracks_rotate']
     play_pause = settings['hotkey_settings']['play_pause']
+    play = settings['hotkey_settings']['play']  # play vs play_pause: info in readme / Hotkeys
     stop = settings['hotkey_settings']['stop']
     next_track = settings['hotkey_settings']['next_track']
     previous_track = settings['hotkey_settings']['previous_track']
@@ -335,6 +327,11 @@ class Data:
         'play_pause': {
             'text': 'Play / Pause',
             'value': play_pause,
+            'line_edit_widget': ''
+        },
+        'play': {
+            'text': 'Play',
+            'value': play,
             'line_edit_widget': ''
         },
         'stop': {

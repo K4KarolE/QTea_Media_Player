@@ -51,7 +51,7 @@ while counter != counter_max:
 '''
 LEARNED
 The scrollbars visibility depends on the window_widgets window size,
-not the widgets the window_widgets window contains
+not on the widgets amount the window_widgets window contains
 - window_widgets.resize(WINDOW_WIDTH-20, (counter_max + 1)*30)
   - WINDOW_WIDTH - 20 --> the horizontal scrollbar invisible
   - or as above set a 0px horizontal scrollbar --> scrollbar invisible
