@@ -118,3 +118,5 @@ class MyVolumeSlider(QSlider):
         self.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)
         self.button_speaker_update() # if muted -> unmuted
+        # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
+        self.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")

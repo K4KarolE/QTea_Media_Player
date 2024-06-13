@@ -83,7 +83,7 @@ class MyPlaylists(QTabWidget):
                         )
 
 
-    ''' LEARNED '''
+    ''' WORKAROUND / LEARNED '''
     ''' 
     The last tab added to the TABS widget should NOT be hidden
     it will make the right tab selection arrow inactive/unusable to

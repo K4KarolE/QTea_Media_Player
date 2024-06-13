@@ -149,8 +149,6 @@ class AVPlayer(QWidget):
                     self.window.volume_up_action()
                 else:
                     self.window.volume_down_action()
-                self.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")
-           
 
             
         # EXIT FULL SCREEN
@@ -206,6 +204,12 @@ class AVPlayer(QWidget):
     
 
     def text_display_on_video(self, time, text):
+        ''' 
+            To display video title and updated volume information
+            as a subtitle when there is no active subtitle
+            Volume: src / sliders.py / MyVolumeSlider class / update_volume()
+            Title: src / func_play_coll.py / PlaysFunc class / play_track()
+        '''
         if self.player.activeSubtitleTrack() == -1: # no active sub
             self.video_output.videoSink().setSubtitleText(text)
             self.timer.start(time)

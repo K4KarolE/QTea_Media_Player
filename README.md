@@ -190,6 +190,30 @@
     - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button.
     - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button.
 
+## Workarounds
+### Dummy track
+- Issue: the first track has to be played from the start till the end before be able to switch to another track
+- Solution: dummy, empty track (< 1 second) played at startup
+- More info: `src / av_player.py`
+- Side-effect:
+    - no visible side-effect
+    - unlikely adding much to the launch time: 1.2 seconds on my rig
+
+### Dummy playlist tab
+- Issue: if the last playlist tab is hidden, the whole playlist tab list is not reachable via the arrow buttons 
+- Solution: The last, dummy, disabled playlist tab always visible
+    - More info: `src / playlists.py`
+    - Side-effect: disabled, not clickable, small pice is visible on the right side of the playlists bar
+
+### Extra info displayed as subtitle
+- Issue: the video scene composition not following the layout, frame size change
+    - Window <- QFrame <- Layout <- QGraphicsView() <- QGraphicsScene() <- QGraphicsVideoItem()
+- Solution: the volume information and video title displayed as subtitle on the video screen when there is no active subtitle via QVideoWidget
+    - Side-effect:
+        - when a subtitle is active and a video is playing, the updated volume information is not displayed on the video screen
+        - when the video is not playing, the updated volume information is not displayed on the video screen
+
+
 ## Requirements
 ### Python 3 - used: 3.11.5
 - https://www.python.org/

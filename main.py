@@ -142,7 +142,6 @@ class MyWindow(QWidget):
         av_player.audio_output.setVolume(new_volume)
         button_speaker_update()
         update_and_save_volume_slider_value(new_volume, volume_slider)
-        av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")
 
 
     def window_size_toggle_action(self):
