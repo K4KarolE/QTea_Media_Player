@@ -1,3 +1,5 @@
+''' DURATION SLIDER AND VOLUME SLIDER CLASSES '''
+
 from PyQt6.QtWidgets import QSlider, QStyle
 from PyQt6.QtCore import Qt
 
@@ -39,21 +41,20 @@ class MySlider(QSlider):
         av_player.player.positionChanged.connect(self.play_slider_set_value)
     
 
-    ''' PLAYER --> SLIDER '''
+    ''' PLAYER/DURATION --> SLIDER POSITION '''
     def play_slider_set_value(self):
         if self.av_player.base_played:
             self.setValue(self.av_player.player.position())
 
 
-    ''' CLICK, MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
+    ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mousePressEvent(self, event):
-        # JUMP TO CLICK POSITION
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
         self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
      
-     
+
+    ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION ''' 
     def mouseMoveEvent(self, event):
-        # JUMP TO POINTER POSITION WHILE MOVING
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
         self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
 
@@ -99,21 +100,25 @@ class MyVolumeSlider(QSlider):
                         )
     
 
-    ''' CLICK, MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
+    ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mousePressEvent(self, event):
-        # JUMP TO CLICK POSITION
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
         update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
 
+    ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mouseMoveEvent(self, event):
-        # JUMP TO POINTER POSITION WHILE MOVING
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
         update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
 
+    ''' 
+        ANY VOLUME CHANGE TRIGGERS:
+        SHORTCUT KEY, VOLUME SLIDER, SCROLL WHEEL OVER VIDEO SCREEN
+        -> UPDATES SLIDER -> UPDATE VOLUME
+    '''
     def update_volume(self):
         self.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)

@@ -94,8 +94,9 @@ class PlaysFunc():
 
         # PLAYER
         ''' 
+            ISSUE
             Why showing the previous vid's last frame in the
-            play vid -- play just audio / stop video -- play vid sequence? 
+            (play video --> play just audio OR stop video --> play vid) sequence? 
             
             Tried:
                 - stop player before hiding
@@ -183,9 +184,13 @@ class PlaysFunc():
                 cv.repeat_playlist == 2):
                     cv.playing_track_index = 0
                     self.play_track(cv.playing_track_index)
-            # CURRENT TRACK BACK TO START         
+            # SET THE CURRENT TRACK BACK TO STARTING POINT
+            # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
+            # -> HIDE BLACK SCREEN & DISPLAY LOGO         
             else:
                 self.av_player.player.setPosition(0)
+                self.av_player.video_output.hide()
+                self.image_logo.show()
 
 
     

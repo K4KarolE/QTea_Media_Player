@@ -19,9 +19,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QSplitter
     )
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget
 
 import sys
@@ -73,6 +72,8 @@ class MyWindow(QWidget):
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
 
         '''
+        HOTKEYS/SHORTCUTS CREATION
+
         "Lambda: function()" and "self.function" solutions used to differentiate:
         lambda:function(): - created in the MyButtons class, ..
         self.function:   - defined/created right after the hotkeys_action_dic dictionary
@@ -111,13 +112,21 @@ class MyWindow(QWidget):
 
         for index, hotkey in enumerate(cv.hotkeys_list):
             hotkey_value = cv.hotkey_settings_dic[hotkey]['value']
-            hotkey = QShortcut(QKeySequence(hotkey_value), self)
-            hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
-            hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
-            # Sync Standard and NumPad Enter action
-            if hotkey_value == 'Enter':
-                hotkey = QShortcut(QKeySequence('Return'), self)
+            if hotkey_value != 'Enter':
+                hotkey = QShortcut(QKeySequence(hotkey_value), self)
                 hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
+                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+            else:
+                ''' Make sure both enter keys(standard and return(numpad)) are in sync
+                    and the enter hotkey as "start track" only works in the main window
+                    -> be able to use it in the search window
+                '''
+                hotkey = QShortcut(QKeySequence(hotkey_value), self)
+                hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
+                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+                # Return
+                hotkey = QShortcut(QKeySequence('Return'), self)
+                hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
                 hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
 
     
