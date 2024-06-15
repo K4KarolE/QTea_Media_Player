@@ -108,7 +108,7 @@ class MyButtons(QPushButton):
             cv.adding_records_at_moment = True
             for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
                 for file in file_names:
-                    if file[-4:] in cv.MEDIA_FILES:
+                    if file.split('.')[-1] in cv.MEDIA_FILES:   # music_title.mp3 -> mp3
                         try:
                             add_record_grouped_actions(Path(dir_path, file), self.av_player_duration)
                         except:
@@ -246,12 +246,15 @@ class MyButtons(QPushButton):
         if cv.repeat_playlist == 1:
             self.setFlat(0)
             self.setIcon(self.icon_img.repeat)
+            self.av_player.text_display_on_video(1500, 'Repeat: OFF') 
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(1)
+            self.av_player.text_display_on_video(1500, 'Repeat: Playlist') 
         # REPEAT SINGLE TRACK
         else:
             self.setIcon(self.icon_img.repeat_single)
+            self.av_player.text_display_on_video(1500, 'Repeat: Single track') 
         
         settings['repeat_playlist'] = cv.repeat_playlist
         save_json(settings, PATH_JSON_SETTINGS)
@@ -262,9 +265,11 @@ class MyButtons(QPushButton):
         if cv.shuffle_playlist_on:
             cv.shuffle_playlist_on = False
             self.setFlat(0)
+            self.av_player.text_display_on_video(1500, 'Shuffle: OFF')            
         else:
             cv.shuffle_playlist_on = True
             self.setFlat(1)
+            self.av_player.text_display_on_video(1500, 'Shuffle: ON') 
         
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json(settings, PATH_JSON_SETTINGS)

@@ -1,3 +1,8 @@
+'''
+    Used to measure the time of 
+    - application launch: main.py
+    - add directory: src / buttons.py / button_add_dir_clicked()
+'''
 
 import logging
 from time import perf_counter

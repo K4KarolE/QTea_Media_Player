@@ -205,13 +205,18 @@
     - More info: `src / playlists.py`
     - Side-effect: disabled, not clickable, small pice is visible on the right side of the playlists bar
 
-### Extra info displayed as subtitle
+### Information displayed as subtitle
 - Issue: the video scene composition not following the layout, frame size change
     - Window <- QFrame <- Layout <- QGraphicsView() <- QGraphicsScene() <- QGraphicsVideoItem()
-- Solution: the volume information and video title displayed as subtitle on the video screen when there is no active subtitle via QVideoWidget
+- Solution: the information(track title, volume, ..) displayed as subtitle on the video screen when there is no active subtitle via QVideoWidget
     - Side-effect:
-        - when a subtitle is active and a video is playing, the updated volume information is not displayed on the video screen
-        - when the video is not playing, the updated volume information is not displayed on the video screen
+        - when a subtitle is active and a video is playing, the information is not displayed on the video screen
+        - when the video is not playing, the information is not displayed on the video screen
+
+### Could not find solution yet
+- Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
+    - More info: `src / func_play_coll.py / play_track()`
+- Issue: video`s full-screen surface always opens on/covers the primary screen, even when the app is on the secondary screen/display
 
 
 ## Requirements

@@ -205,10 +205,11 @@ class AVPlayer(QWidget):
 
     def text_display_on_video(self, time, text):
         ''' 
-            To display video title and updated volume information
+            To display text (video title, volume, toggle shuffle and repeat)
             as a subtitle when there is no active subtitle
             Volume: src / sliders.py / MyVolumeSlider class / update_volume()
             Title: src / func_play_coll.py / PlaysFunc class / play_track()
+            Shuffle/repeat: src / buttons.py / ..
         '''
         if self.player.activeSubtitleTrack() == -1: # no active sub
             self.video_output.videoSink().setSubtitleText(text)

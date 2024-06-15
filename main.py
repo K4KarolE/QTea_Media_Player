@@ -500,6 +500,7 @@ button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
 button_toggle_repeat_pl = MyButtons(
     'Tog Rep PL',
     'Toggle Repeat Playlist',
+    av_player=av_player,
     icon = icon.repeat
     )
 button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -516,6 +517,7 @@ elif cv.repeat_playlist == 0:
 button_toggle_shuffle_pl = MyButtons(
     'Shuffle PL',
     'Toggle Shuffle Playlist',
+    av_player=av_player,
     icon = icon.shuffle
     )
 button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)

@@ -95,15 +95,17 @@ class PlaysFunc():
         # PLAYER
         ''' 
             ISSUE
-            Why showing the previous vid's last frame in the
-            (play video --> play just audio OR stop video --> play vid) sequence? 
+            Showing the previous video's last frame in the scenario:
+            play video --> play just audio OR stop video --> play video
             
             Tried:
                 - stop player before hiding
-                - hide / show - setSource diff. variation
-                - no video_output.hide() --> no problem
+                - hide / show - setSource diff. variation including only 
+                showing video_output when it already plays the new video track
+                -  if no video_output.hide() --> no problem
+
         '''
-        if track_path[-4:] in cv.AUDIO_FILES:
+        if track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
             self.image_logo.show()
             self.av_player.video_output.hide()
         else:
