@@ -24,6 +24,7 @@ from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import QWidget
 
 import sys
+import os
 
 from src import (
     cv,
@@ -46,7 +47,9 @@ from src import (
     logger_basic,
     remove_track_from_playlist,
     update_window_size_vars_from_saved_values,
-    save_speaker_muted_value
+    save_speaker_muted_value,
+    add_record_grouped_actions,
+    walk_and_add_dir
     )
 
 
@@ -60,17 +63,19 @@ app = QApplication(sys.argv)
 WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 180
 
 class MyWindow(QWidget):
-
     def __init__(self):
         super().__init__()
-
         self.resize(cv.window_width, cv.window_height)
         self.setMinimumSize(cv.window_min_width, cv.window_min_height)
         self.setWindowIcon(MyIcon().window_icon)
         self.setWindowTitle("QTea media player")
+        self.setAcceptDrops(1)
         if cv.always_on_top:
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self.hotkeys_creation()
 
+    
+    def hotkeys_creation(self):
         '''
         HOTKEYS/SHORTCUTS CREATION
 
@@ -129,8 +134,49 @@ class MyWindow(QWidget):
                 hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
                 hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
 
+
+    '''
+        DRAG/DROP FILES, FOLDERS ON THE PLAYLISTS
+
+        The list widget items internal movement(drag/drop) defined in src / playlist.py
+        Could not use the below event management in the
+        src / list_widget_playlist.py / list widget class creation
+        because the internal and external drag/drop actions interfered
+
+        Thank you Jie Jenn:
+        https://youtu.be/KVEIW2htw0A?si=9XDIMz_2OfIjSRFQ
+    '''
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.DropAction.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
     
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.DropAction.CopyAction)
+            event.accept()
+            for url in event.mimeData().urls():
+                path = str(url.toLocalFile())
+                if os.path.isfile(path):
+                    extension =  path.split('.')[-1]
+                    if extension in cv.MEDIA_FILES:
+                        add_record_grouped_actions(path, av_player_duration)
+                else:
+                    walk_and_add_dir(path, av_player_duration)
                 
+            update_duration_sum_widg()
+            cv.active_pl_tracks_count = cv.active_pl_name.count()
+ 
+
+
     def volume_up_action(self):
         if cv.volume < 1:
             cv.volume = cv.volume + 0.05

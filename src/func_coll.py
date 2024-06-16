@@ -5,9 +5,11 @@ from PyQt6.QtGui import QFont, QColor
 
 from .cons_and_vars import save_json
 from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
+from .logging import logger_basic
 
 import sqlite3
 from pathlib import Path
+import os
 
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
@@ -61,6 +63,32 @@ def save_playing_pl_last_track_index():
 def save_active_pl_last_track_index():
     settings[cv.active_db_table]['last_track_index'] = cv.active_pl_last_track_index
     save_json(settings, PATH_JSON_SETTINGS)
+
+
+def walk_and_add_dir(dir_path, av_player_duration):
+    error_path_list = []
+    logger_basic('Adding directory: Loop - start')
+    cv.adding_records_at_moment = True
+    for dir_path_b, dir_names, file_names in os.walk(dir_path):
+        for file in file_names:
+            if file.split('.')[-1] in cv.MEDIA_FILES:   # music_title.mp3 -> mp3
+                try:
+                    add_record_grouped_actions(Path(dir_path_b, file), av_player_duration)
+                except:
+                    error_path_list.append(Path(dir_path_b, file))
+        if error_path_list:
+            for item in error_path_list:
+                logger_basic(f'ERROR: {item}')
+
+    cv.active_pl_tracks_count = cv.active_pl_name.count() # use the latest track amount
+    
+    try:
+        save_db()
+        logger_basic('Adding directory: DB Saved')
+    except:
+        logger_basic('ERROR: adding directory: Saving DB')
+    
+    cv.adding_records_at_moment = False
 
 
 def place_record_into_db(duration, path):

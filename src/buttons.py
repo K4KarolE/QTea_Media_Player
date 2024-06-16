@@ -32,15 +32,13 @@ from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 
-import os
-from pathlib import Path
 
 from .icons import MyIcon
 from .logging import logger_runtime, logger_basic
 from .cons_and_vars import save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     add_record_grouped_actions,
-    save_db,
+    walk_and_add_dir,
     remove_queued_tracks_after_playlist_clear,
     cur, # db
     connection, # db
@@ -93,39 +91,20 @@ class MyButtons(QPushButton):
         dialog_add_track.exec()
         if dialog_add_track.result():
             add_record_grouped_actions(dialog_add_track.selectedFiles()[0], self.av_player_duration)
+            # no DB save needed for 1 record
+            cv.active_pl_tracks_count = cv.active_pl_name.count()
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
     @logger_runtime
     def button_add_dir_clicked(self):
-        error_path_list = []
         dialog_add_dir = QFileDialog()
         dialog_add_dir.setWindowTitle("Select a directory")
         dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
         dialog_add_dir.exec()
         if dialog_add_dir.result():
-            logger_basic('button_add_dir_clicked: Loop - start')
-            cv.adding_records_at_moment = True
-            for dir_path, dir_names, file_names in os.walk(dialog_add_dir.selectedFiles()[0]):
-                for file in file_names:
-                    if file.split('.')[-1] in cv.MEDIA_FILES:   # music_title.mp3 -> mp3
-                        try:
-                            add_record_grouped_actions(Path(dir_path, file), self.av_player_duration)
-                        except:
-                            error_path_list.append(Path(dir_path, file))
-                if error_path_list:
-                    for item in error_path_list:
-                        logger_basic(f'ERROR: {item}')
-
-            cv.active_pl_tracks_count = cv.active_pl_name.count() # use the latest track amount
-            
-            try:
-                save_db()
-                logger_basic('button_add_dir_clicked: DB Saved')
-            except:
-                logger_basic('ERROR: button_add_dir_clicked: Saving DB')
-            cv.adding_records_at_moment = False
-
+            walk_and_add_dir(dialog_add_dir.selectedFiles()[0], self.av_player_duration)
+           
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track_clicked(self):

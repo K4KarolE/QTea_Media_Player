@@ -2,6 +2,7 @@
 - Thirty playlists supported by default. More can be generated.
 - Cross playlists queue management with dedicated window.
 - Cross playlists search.
+- Drag & drop - files, folders.
 - Start media from the latest point.
 - Start the last played media at startup.
 - Quick switch to alternative window mode / size / position.
@@ -178,10 +179,13 @@
     - Changing the volume after the app is muted:
         - It switches back to the un-muted state.
         - New volume = volume before muted -/+ the change.
-    - The volume range is less wide compare to `VLC media player`.
+    - The volume range is less wide compared to `VLC media player`.
 - `Screen saver`
     - When video window is displayed and video is playing the screen saver is turned off.
         - Otherwise the screen saver is on as usual.
+- `Drag & Drop`
+    - Internal: able to relocate/move a playlist item.
+    - External: selected files and/or folders can be grabbed and dropped on the active playlist from File Explorer, Desktop, .. . 
 
 ## File types
 - Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg
