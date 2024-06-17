@@ -92,13 +92,8 @@ class AVPlayer(QWidget):
 
                 # AUDIO TRACKS
                 for audio_track in self.player.audioTracks():
-                    title = audio_track.stringValue(audio_track.Key.Title)
-                    audio_language = audio_track.stringValue(audio_track.Key.Language)
-                    
-                    if title:
-                        audio_track_title = f'{audio_language} - {title}'
-                    else:
-                        audio_track_title = audio_language
+
+                    audio_track_title = self.generate_audio_track_title(audio_track)
                     
                     if self.player.activeAudioTrack() == self.player.audioTracks().index(audio_track):
                         qaction_to_add = QAction(self.icon.selected, audio_track_title, self)
@@ -117,14 +112,8 @@ class AVPlayer(QWidget):
 
 
                 for sub_track in self.player.subtitleTracks():
-                    title = sub_track.stringValue(sub_track.Key.Title)
-                    subtitle_language = sub_track.stringValue(sub_track.Key.Language)
-                    
-                    if title:
-                        subtitle_track_title = f'{subtitle_language} - {title} [sub]'
-                    else:
-                        subtitle_track_title = f'{subtitle_language} - [sub]'
-                    
+                    subtitle_track_title = self.generate_subtitle_track_title(sub_track)
+
                     if self.player.activeSubtitleTrack() == self.player.subtitleTracks().index(sub_track):
                         qaction_to_add = QAction(self.icon.selected, subtitle_track_title, self)
                     else:
@@ -132,7 +121,6 @@ class AVPlayer(QWidget):
                         
                     self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Subtitle']['subtitle_tracks'].append(subtitle_track_title)
-
 
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
@@ -193,6 +181,40 @@ class AVPlayer(QWidget):
             subtitle_tracks_list.clear()
 
 
+    def generate_subtitle_track_title(self, sub_track):
+        ''' QMediaMetaData --> Subtitle track info
+            Examples:
+                Hungarian - forced[sub]
+                Hungarian - [sub]
+                English - [sub]
+                English - SDH[sub]
+        '''
+        title = sub_track.stringValue(sub_track.Key.Title)
+        subtitle_language = sub_track.stringValue(sub_track.Key.Language)
+        
+        if title:
+            subtitle_track_title = f'{subtitle_language} - {title} [sub]'
+        else:
+            subtitle_track_title = f'{subtitle_language} - [sub]'
+        return subtitle_track_title
+
+
+    def generate_audio_track_title(self, audio_track):
+        ''' QMediaMetaData --> Audio track info
+            Examples:
+                Hungarian - AC3 5.1 @ 448 kbps
+                English - DTS 5.1 @ 1510 kbps
+        '''
+        title = audio_track.stringValue(audio_track.Key.Title)
+        audio_language = audio_track.stringValue(audio_track.Key.Language)
+        
+        if title:
+            audio_track_title = f'{audio_language} - {title}'
+        else:
+            audio_track_title = audio_language
+        return audio_track_title
+
+
     def full_screen_toggle(self):
         if self.video_output.isVisible():
             if self.video_output.isFullScreen():
@@ -203,7 +225,7 @@ class AVPlayer(QWidget):
                 self.video_output.setCursor(Qt.CursorShape.BlankCursor)
     
 
-    def text_display_on_video(self, time, text):
+    def text_display_on_video(self, time, text, ignore_act_subt=False):
         ''' 
             To display text (video title, volume, toggle shuffle and repeat)
             as a subtitle when there is no active subtitle
@@ -211,7 +233,7 @@ class AVPlayer(QWidget):
             Title: src / func_play_coll.py / PlaysFunc class / play_track()
             Shuffle/repeat: src / buttons.py / ..
         '''
-        if self.player.activeSubtitleTrack() == -1: # no active sub
+        if self.player.activeSubtitleTrack() == -1 or ignore_act_subt: # -1 = no active sub
             self.video_output.videoSink().setSubtitleText(text)
             self.timer.start(time)
             self.timer.timeout.connect(lambda: self.video_output.videoSink().setSubtitleText(None))

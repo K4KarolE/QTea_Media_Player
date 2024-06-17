@@ -147,9 +147,7 @@ class PlaysFunc():
 
 
     def play_next_track(self):
-
         if cv.queue_tracks_list:
-            
             # IF: THE CURRENTLY PLAYING TRACK ADDED TO THE QUEUE AS 1ST ONE
             # cv.queue_tracks_list = [[playlist_3, 5],[playlist_2, 3]..]
             if cv.queue_tracks_list[0] == [cv.playing_db_table, cv.playing_track_index]:
@@ -186,18 +184,10 @@ class PlaysFunc():
                 cv.repeat_playlist == 2):
                     cv.playing_track_index = 0
                     self.play_track(cv.playing_track_index)
-            # SET THE CURRENT TRACK BACK TO STARTING POINT
-            # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
-            # -> HIDE BLACK SCREEN & DISPLAY LOGO         
-            else:
-                self.av_player.player.setPosition(0)
-                self.av_player.video_output.hide()
-                self.image_logo.show()
 
 
-    
+
     def auto_play_next_track(self):
-
         ''' 
         AT STARTUP:
         - It first triggered once the based is played (main / AVPlayer())
@@ -206,7 +196,6 @@ class PlaysFunc():
         - The last playing playist will be set active/displayed (src/playlists.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically
         '''
-
         if not cv.played_at_startup_counter:
             cv.active_playlist_index = cv.playing_playlist_index
 
@@ -231,6 +220,10 @@ class PlaysFunc():
         if cv.audio_tracks_amount:
             cv.audio_track_played = (cv.audio_track_played + 1) % cv.audio_tracks_amount
             self.av_player.player.setActiveAudioTrack(cv.audio_track_played)
+            # Display the current audio track title on the screen
+            audio_track = self.av_player.player.audioTracks()[cv.audio_track_played]
+            audio_track_title = self.av_player.generate_audio_track_title(audio_track)
+            self.av_player.text_display_on_video(1500, audio_track_title)
     
 
     def audio_tracks_use_default(self):
@@ -245,6 +238,10 @@ class PlaysFunc():
             sub_list.append(-1) # -1: disable subtitle
             cv.subtitle_track_played = sub_list[cv.subtitle_track_played + 1]
             self.av_player.player.setActiveSubtitleTrack(cv.subtitle_track_played)
+            # Display the current subtitle name on the screen
+            subtitle_track = self.av_player.player.subtitleTracks()[cv.subtitle_track_played]
+            subtitle_track_title = self.av_player.generate_subtitle_track_title(subtitle_track)
+            self.av_player.text_display_on_video(1000, subtitle_track_title, ignore_act_subt=True)
     
 
     def get_playing_track_index(self, playing_track_index):

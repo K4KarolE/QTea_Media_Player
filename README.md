@@ -221,6 +221,7 @@
 - Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
     - More info: `src / func_play_coll.py / play_track()`
 - Issue: video`s full-screen surface always opens on/covers the primary screen, even when the app is on the secondary screen/display
+- Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 
 
 ## Requirements
