@@ -211,7 +211,7 @@
 
 ### Information displayed as subtitle
 - Issue: the video scene composition not following the layout, frame size change
-    - Window <- QFrame <- Layout <- QGraphicsView() <- QGraphicsScene() <- QGraphicsVideoItem()
+    - Window <- QFrame <- Layout <- QGraphicsView <- QGraphicsScene <- QGraphicsVideoItem
 - Solution: the information(track title, volume, ..) displayed as subtitle on the video screen when there is no active subtitle via QVideoWidget
     - Side-effect:
         - when a subtitle is active and a video is playing, the information is not displayed on the video screen

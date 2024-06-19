@@ -137,7 +137,6 @@ def get_all_from_db(playing_track_index, db_table):
 
 
 def generate_duration_to_display(raw_duration):
-
     try:
         # SECONDS
         float_seconds = float(raw_duration)/1000%60
@@ -194,7 +193,6 @@ def add_record_grouped_actions(track_path, av_player_duration):
     - add the values to the list widgets
         - the queue list widget value is just a placeholder           
     '''
-
     track_name = Path(track_path).stem
     av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     raw_duration = av_player_duration.player.duration()
@@ -231,7 +229,10 @@ def add_new_list_item(new_item, list_widget, align_center = None):
 
 
 def add_queue_window_list_widgets_header(new_item, list_widget):
-    ''' Queue number | Title | Playlist | Duration '''
+    '''
+        Used to generate the queue playlist first row, titles of the columns:
+        Order Number | Track title | Playlist | Duration
+    '''
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
@@ -279,8 +280,14 @@ def update_duration_sum_var_after_track_remove():
 
 
 def queue_window_add_track():
+    ''' 
+        On the (main window / any playlist) a track
+        added to the queue --> track`s information populating
+        on the Queue & Search window / Queue tab / queue list:
+        Order Number | Track title | Playlist | Duration
+    '''
     title_order_number = f'{str(cv.active_pl_name.currentRow() + 1)}.'
-    title = cv.active_pl_name.currentItem().text().strip(title_order_number)
+    title = cv.active_pl_name.currentItem().text().lstrip(title_order_number)
     duration = cv.active_pl_duration.currentItem().text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
@@ -290,6 +297,12 @@ def queue_window_add_track():
 
 
 def queue_tab_add_track_from_search_tab(playlist, track_index, title):
+    ''' 
+        On the Queue & Search window / Search tab / search result 
+        a track added to the queue --> track`s information
+        populating on the Queue tab / queue list:
+        Order Number | Track title | Playlist | Duration
+    '''
     playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
     duration = cv.playlist_widget_dic[playlist]['duration_list_widget'].item(track_index).text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
@@ -300,7 +313,13 @@ def queue_tab_add_track_from_search_tab(playlist, track_index, title):
 
 
 def queue_window_remove_track(current_queue_index):
-    ''' +1: Queue playlist first row: Order Number, Title, Queue, Duration '''
+    '''
+        Remove de-queued track from the
+        Queue & Search window / Queue tab / queue list
+    
+        +1: Queue playlist first row, titles of the columns:
+        Order Number | Track title | Playlist | Duration
+    '''
     current_window_queue_index = current_queue_index + 1    
     for item in cv.queue_widget_dic:
         cv.queue_widget_dic[item]['list_widget'].takeItem(current_window_queue_index)
@@ -324,7 +343,6 @@ def queue_add_remove_track():
                             -> queue list widget text/order number update
                             -> list widgets style update
     '''
-    
     if cv.active_pl_name.currentItem():    # to avoid action on playlist where no track is selected
             
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
@@ -340,12 +358,10 @@ def queue_add_remove_track():
             
             # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
             if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
-
                 update_queued_track_style(cv.current_track_index)
             
             queue_window_add_track()
-            
-        
+                   
         # QUEUED TRACK -> STANDARD
         else:
             current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
@@ -415,9 +431,7 @@ def update_queued_tracks_order_number(clear_queue = False):
 
 
 def update_queued_tracks_after_track_deletion():
-
     if cv.active_db_table in cv.queue_playlists_list:
-
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
 
         # DELETING A QUEUED TRACK
@@ -437,9 +451,7 @@ def update_queued_tracks_after_track_deletion():
         
 
 def remove_queued_tracks_after_playlist_clear():
-
     if cv.active_db_table in cv.queue_playlists_list:
-
         # COLLECTING QUEUED TRACKS AFFACTED BY THE CLEAR
         queue_tracks_list_item_to_remove = []
         for tracking_title in cv.queue_tracks_list:   # tracking_title = [playlist_3, 6]
@@ -472,11 +484,8 @@ def remove_track_from_playlist():
     -> remove record from DB and update DB records row_id value where necessary
     -> rename the remaining track's name where necessary (13.MMMBop -> 12.MMMBop )
     '''
-
     update_duration_sum_var_after_track_remove()
-
     update_queued_tracks_after_track_deletion()
-    
     current_row_index = cv.active_pl_name.currentRow()
     
     # PLAYLIST
@@ -536,7 +545,6 @@ def search_result_queue_number_update():
     - Dequeue: do not need to iterate through all the search results
     - At least the dequeue part is efficient
     '''
-    
     def search_result_queued_tracks_index_list():
         queued_tracks_index_list = []
         for index in range(0, cv.search_queue_list_widget.count()):
@@ -544,9 +552,7 @@ def search_result_queue_number_update():
                 queued_tracks_index_list.append(index)
         return queued_tracks_index_list
     
-
     if cv.search_result_dic:
-
         cv.search_result_queued_tracks_index_list = search_result_queued_tracks_index_list()
         index_for_remove_queue_number = cv.search_result_queued_tracks_index_list
         
@@ -590,9 +596,7 @@ def search_result_queue_number_update():
 
 
 def clear_queue_update_all_occurrences():
-
     if cv.queue_tracks_list:
-    
         # SEARCH TAB
         if cv.search_result_dic:
             for index in cv.search_result_dic:

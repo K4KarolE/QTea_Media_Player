@@ -49,7 +49,8 @@ from src import (
     update_window_size_vars_from_saved_values,
     save_speaker_muted_value,
     add_record_grouped_actions,
-    walk_and_add_dir
+    walk_and_add_dir,
+    save_db
     )
 
 
@@ -160,18 +161,25 @@ class MyWindow(QWidget):
             event.ignore()
     
     def dropEvent(self, event):
+        file_path_list = []
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
             for url in event.mimeData().urls():
                 path = str(url.toLocalFile())
+                # FILES - COLLECTING PATH
                 if os.path.isfile(path):
                     extension =  path.split('.')[-1]
                     if extension in cv.MEDIA_FILES:
-                        add_record_grouped_actions(path, av_player_duration)
+                        file_path_list.append(path)    
+                # DICTIONARY - ADD
                 else:
                     walk_and_add_dir(path, av_player_duration)
-                
+            # FILES - ADD
+            for path in file_path_list:
+                add_record_grouped_actions(path, av_player_duration)
+            save_db()
+
             update_duration_sum_widg()
             cv.active_pl_tracks_count = cv.active_pl_name.count()
  

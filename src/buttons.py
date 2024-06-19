@@ -40,6 +40,7 @@ from .func_coll import (
     add_record_grouped_actions,
     walk_and_add_dir,
     remove_queued_tracks_after_playlist_clear,
+    save_db,
     cur, # db
     connection, # db
     settings,   # json dic
@@ -91,7 +92,7 @@ class MyButtons(QPushButton):
         dialog_add_track.exec()
         if dialog_add_track.result():
             add_record_grouped_actions(dialog_add_track.selectedFiles()[0], self.av_player_duration)
-            # no DB save needed for 1 record
+            save_db()
             cv.active_pl_tracks_count = cv.active_pl_name.count()
 
 
