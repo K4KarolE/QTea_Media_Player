@@ -1,6 +1,6 @@
 '''
 The below is not used in this project - saving for later
-Layout <- QGraphicsView() <- QGraphicsScene() <- QGraphicsVideoItem()
+Layout <- QGraphicsView <- QGraphicsScene <- QGraphicsVideoItem
 '''
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer

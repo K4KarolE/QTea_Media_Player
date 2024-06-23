@@ -1,3 +1,10 @@
+'''
+    After placing test.mp4 file in the QTea_Media_Player
+    folder* and running the python file
+    --> the video should start automatically
+
+    *= or edit the self.path(full path)
+'''
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl

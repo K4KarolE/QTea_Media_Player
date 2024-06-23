@@ -3,7 +3,7 @@ BUTTON FUNCTIONS DECLARED BELOW:
 --------------------------------
 - Add track
 - Add directory
-- Remova all tracks (Clear playlist) - *more added/compiled in MAIN
+- Remove all tracks (Clear playlist) - *more added/compiled in MAIN
 
 - Set button style/stylesheet functions
 
@@ -34,7 +34,7 @@ from PyQt6.QtGui import QFont
 
 
 from .icons import MyIcon
-from .logging import logger_runtime, logger_basic
+from .logging import logger_runtime
 from .cons_and_vars import save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     add_record_grouped_actions,
@@ -51,7 +51,6 @@ ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
 
 
 class MyButtons(QPushButton):
-
     def __init__(
             self,
             title,
@@ -201,7 +200,6 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
-
         if cv.playing_track_index == None:
             cv.playing_track_index = cv.playing_pl_name.currentRow() 
         if cv.playing_pl_name.count() > 0:

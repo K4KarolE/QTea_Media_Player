@@ -1,3 +1,7 @@
+'''
+    Used this script to learn about widgets and scrollbars
+    placement in multiple tabs
+'''
 
 from PyQt6.QtWidgets import (
     QApplication,

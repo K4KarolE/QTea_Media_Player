@@ -2,6 +2,8 @@
 
 import re
 
+# this list used to learn / compile regex
+# it is not part of the media player
 list = ['bubuka@gmail.com','bubu.pa@gmail.com','bubu-ta@gmail.com','Hey snake! What is your email address? Yesss, bubuka@gmail.comssss.''4',
         'bubuka_long@gmaillll.com', 'bubuka@gma00il.com', 'bubuka616@gmail.com', 'bubuka@gmail@.com@'
         '077 566 5654','077_566_5654', '0775665654','077-566-123', '077-566-5654', '077K566K5654'

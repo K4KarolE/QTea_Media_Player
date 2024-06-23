@@ -7,6 +7,8 @@
 
     Below how the eventfilter was used in
     an early stage of the project
+
+    This script is not runnable by itself
 '''
 
 

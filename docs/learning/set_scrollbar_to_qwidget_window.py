@@ -1,3 +1,7 @@
+'''
+    Used this script to learn about widgets and scrollbars placement
+    More information below
+'''
 
 from PyQt6.QtWidgets import (
     QApplication,

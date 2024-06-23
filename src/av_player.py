@@ -1,3 +1,4 @@
+''' AVPlayer and TrackDuration classes creation '''
 
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl, QEvent, Qt, QTimer
@@ -81,9 +82,7 @@ class AVPlayer(QWidget):
 
                 # MENU ITEMS
                 for menu_title, menu_icon in self.context_menu_dic.items():
-
                     icon = menu_icon['icon']
-
                     if icon:
                         menu.addAction(QAction(icon, menu_title, self))
                     else:
@@ -110,7 +109,6 @@ class AVPlayer(QWidget):
                     qaction_to_add = QAction('Disable', self)
                 self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
 
-
                 for sub_track in self.player.subtitleTracks():
                     subtitle_track_title = self.generate_subtitle_track_title(sub_track)
 
@@ -125,12 +123,10 @@ class AVPlayer(QWidget):
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
       
-
             # FULL SCREEN TOGGLE 
             elif event.type() == QEvent.Type.MouseButtonDblClick:
                 self.full_screen_toggle()
             
-
             # VOLUME UPDATE
             elif event.type() == QEvent.Type.Wheel:
                 if event.angleDelta().y() > 0:
@@ -138,7 +134,6 @@ class AVPlayer(QWidget):
                 else:
                     self.window.volume_down_action()
 
-            
         # EXIT FULL SCREEN
         if event.type() == QEvent.Type.KeyRelease:
             if event.key() == Qt.Key.Key_Escape:
@@ -150,7 +145,6 @@ class AVPlayer(QWidget):
 
 
     def context_menu_clicked(self, q):
-
         audio_tracks_list = self.context_menu_dic['Audio Track']['audio_tracks']
         subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
 

@@ -292,9 +292,7 @@ icon = MyIcon()
 av_player = AVPlayer(window, icon)
 
 def update_duration_info():
-
     if av_player.base_played:
-
         track_current_duration = av_player.player.position()
 
         # SAVING THE CURRENT DURATION EVERY 5 SEC
@@ -476,10 +474,9 @@ def play_buttons_x_pos(num):
 
 ''' 
 BUTTON PLAY SECTION - PLAY/PAUSE
-Image/icon update after the main / playlists creation
-if 'Play at startup' enabled and the playlist is not empty
+The button`s icon update at startup is declared after
+the playlists creation (playlists_all = MyPlaylists(..))
 '''
-
 button_play_pause = MyButtons(
     'PLAY/PAUSE',
     'Start/stop playing',
@@ -582,7 +579,6 @@ if cv.shuffle_playlist_on:
 
 ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
 def button_toggle_playlist_clicked():
-
     if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_right_qframe.hide()
         av_player.playlist_visible = False
@@ -603,7 +599,6 @@ button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
 
 ''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
 def button_toggle_video_clicked():
-    
     if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_left_qframe.hide()
         av_player.video_area_visible = False
@@ -628,17 +623,16 @@ button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 ''' BUTTON PLAY SECTION - DURATION INFO '''
 def button_duration_info_clicked():
+    ''' 01:22 / 03:43 <--> -02:21 / 03:43 ''',
     if cv.track_full_duration_to_display:
         if cv.is_duration_to_display_straight:
             cv.is_duration_to_display_straight = False
             button_duration_info.setText(cv.duration_to_display_back)
-
         else:
             cv.is_duration_to_display_straight = True
             button_duration_info.setText(cv.duration_to_display_straight)
         
         button_duration_info.adjustSize()
-
 
 button_duration_info = MyButtons(
     '00:00 / 00:00',
@@ -651,8 +645,9 @@ button_duration_info.set_style_duration_info_button()
 
 ''' 
     PLAY BUTTONS LIST
-    without the speaker/mute button
     used to add widgets to the layout
+    the speaker/mute button is not
+    part of the list
 '''
 play_buttons_list = [
     button_play_pause,
@@ -670,17 +665,14 @@ play_buttons_list = [
 
 ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
 def button_speaker_clicked():
-
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
         button_speaker.setIcon(icon.speaker)
         av_player.audio_output.setVolume(cv.volume)
-
     else:
         cv.is_speaker_muted = True
         button_speaker.setIcon(icon.speaker_muted)
         av_player.audio_output.setVolume(0)
-    
     save_speaker_muted_value()
 
 
@@ -690,7 +682,6 @@ def button_speaker_update():
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
         button_speaker.setIcon(icon.speaker)
-
 
 button_speaker = MyButtons(
     'Speaker',
@@ -823,7 +814,6 @@ for button in playlist_buttons_list:
     if button not in [button_settings, button_queue]:
         button.set_style_playlist_buttons()
 
-
 layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
 
 # DURATION
@@ -874,7 +864,6 @@ play_buttons_list_wrapper= QFrame()
 play_buttons_list_wrapper.setFixedHeight(50)
 for button in play_buttons_list:
     button.setParent(play_buttons_list_wrapper)
-
 
 layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
 layout_bottom_volume.addWidget(button_speaker, alignment=Qt.AlignmentFlag.AlignRight)

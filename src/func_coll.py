@@ -66,6 +66,10 @@ def save_active_pl_last_track_index():
 
 
 def walk_and_add_dir(dir_path, av_player_duration):
+    ''' 
+        Used to add a directory and all it`s files
+        and subdirectories to the playlist and DB   
+    '''
     error_path_list = []
     logger_basic('Adding directory: Loop - start')
     cv.adding_records_at_moment = True
@@ -105,6 +109,14 @@ def save_db():
 
 
 def update_raw_current_duration_db(raw_current_duration, list_row_id):
+    '''
+        When the function is used:
+        If the `Continue playback` is enabled,
+        every 5 seconds the duration of the currently
+        playing track is saved, so the next startup
+        the track can be played from them latest point*
+        * = -(0-5) seconds
+    '''
     cur.execute("UPDATE {0} SET current_duration = {1} WHERE row_id = {2}".format(cv.playing_db_table, raw_current_duration, list_row_id+1))
     connection.commit()
 
