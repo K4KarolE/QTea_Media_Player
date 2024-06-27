@@ -229,7 +229,7 @@
 - https://www.python.org/
 
 ### Install dependencies
-``` pip install -r requirements_pyqt.txt ```
+``` pip install -r requirements.txt ```
 
 ### OS
 - Tested on Windows 11

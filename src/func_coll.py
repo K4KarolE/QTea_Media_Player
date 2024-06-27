@@ -195,9 +195,9 @@ def add_record_grouped_actions(track_path, av_player_duration):
     Generating
     ----------- 
     - file path -> track name -> track name to display 
-    - file path -> QMediaPlayer -> duration -> duration to display
-                                            -> SUM all files duration
-                                                in the playlist
+    - file path -> QMediaPlayer -> duration -> duration to display +
+    SUM all files duration in the playlist
+    
     Other
     -------                                      
     - place file`s path and file`s duration to the DB

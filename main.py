@@ -9,48 +9,46 @@ Playing playlist = playlist where the current track is in the playing or paused 
 Active playlist = playlist which is currently selected / displayed
 '''
 
-
-from PyQt6.QtWidgets import (
-    QApplication,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QFrame,
-    QPushButton,
-    QSplitter
-    )
-from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QKeySequence, QShortcut
-from PyQt6.QtWidgets import QWidget
-
 import sys
 import os
+
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QKeySequence, QShortcut
+from PyQt6.QtWidgets import (
+    QApplication,
+    QFrame,
+    QHBoxLayout,
+    QPushButton,
+    QSplitter,
+    QVBoxLayout,
+    QWidget
+    )
 
 from src import (
     cv,
     inactive_track_font_style,
     AVPlayer,
-    TrackDuration,
-    MySlider,
-    MyVolumeSlider,
+    MyButtons,
+    MyIcon,
+    MyImage,
+    MyPlaylists,
     MyQueueWindow,
     MySettingsWindow,
-    MyButtons,
+    MySlider,
+    MyVolumeSlider,
     PlaysFunc,
-    MyImage,
-    MyIcon,
-    MyPlaylists,
-    update_and_save_volume_slider_value,
-    generate_duration_to_display,
-    update_raw_current_duration_db,
-    queue_add_remove_track,
-    logger_basic,
-    remove_track_from_playlist,
-    update_window_size_vars_from_saved_values,
-    save_speaker_muted_value,
+    TrackDuration,
     add_record_grouped_actions,
-    walk_and_add_dir,
-    save_db
+    generate_duration_to_display,
+    logger_basic,
+    queue_add_remove_track,
+    remove_track_from_playlist,
+    save_db,
+    save_speaker_muted_value,
+    update_and_save_volume_slider_value,
+    update_raw_current_duration_db,
+    update_window_size_vars_from_saved_values,
+    walk_and_add_dir
     )
 
 
@@ -267,6 +265,16 @@ class MyWindow(QWidget):
         
         if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
             playlists_all.setCurrentIndex(next_playlist_index)
+
+
+    def button_play_pause_set_icon_to_start(self):
+        ''' 
+            Used in the src / func_play_coll / PlayFunc class
+            to update the play button, once the last track played
+            in the playlist and no repeat or shuffle is enabled
+        '''
+        button_play_pause.setIcon(icon.start)
+
 
     ''' FOR THE AV PLAYER - EVENT FILTER - CONTEXT MENU ACTIONS ''' 
     def play_pause(self):

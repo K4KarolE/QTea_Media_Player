@@ -184,6 +184,15 @@ class PlaysFunc():
                 cv.repeat_playlist == 2):
                     cv.playing_track_index = 0
                     self.play_track(cv.playing_track_index)
+            # SET THE CURRENT TRACK BACK TO STARTING POINT
+            # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
+            # -> HIDE BLACK SCREEN & DISPLAY LOGO         
+            elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
+                self.av_player.player.mediaStatus() == self.av_player.player.MediaStatus.EndOfMedia):
+                    self.av_player.player.setPosition(0)
+                    self.av_player.video_output.hide()
+                    self.image_logo.show()
+                    self.window.button_play_pause_set_icon_to_start()
 
 
 

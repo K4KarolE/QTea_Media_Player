@@ -6,28 +6,30 @@ TERMINOLOGY
 In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
 In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''
-
-from PyQt6.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QLineEdit,
-    QLabel,
-    QTabWidget,
-    QScrollArea,
-    QScrollBar
-    )
-from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QScrollBar,
+    QTabWidget,
+    QWidget
+    )
 
-from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
-from .cons_and_vars import save_json
+from .cons_and_vars import (
+    cv, 
+    PATH_JSON_SETTINGS,
+    settings,
+    save_json
+    )
 from .func_coll import inactive_track_font_style
-from .message_box import MyMessageBoxError
 from .icons import MyIcon
+from .message_box import MyMessageBoxError
 
 
 class MySettingsWindow(QWidget):
-    
     def __init__(self, playlists_all, av_player):
         super().__init__()
         self.playlists_all = playlists_all
@@ -39,7 +41,6 @@ class MySettingsWindow(QWidget):
         ##############
         '''
         WINDOW_WIDTH, WINDOW_HEIGHT = 400, 630
-        
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
         self.setFixedHeight(WINDOW_HEIGHT)
@@ -153,7 +154,6 @@ class MySettingsWindow(QWidget):
 
 
         def hotkey_fields_validation(pass_validation = True):
-            
             ''' EXPRESSION CHECK '''
             line_edit_text_all_values = []
 
@@ -168,7 +168,7 @@ class MySettingsWindow(QWidget):
                     MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.')
                     pass_validation = False
 
-             
+        
             ''' DUPLICATE CHECK '''
             if pass_validation:
                 for index, item in enumerate(line_edit_text_all_values):
@@ -181,13 +181,13 @@ class MySettingsWindow(QWidget):
         
 
         def hotkeys_fields_to_save(to_save = False):
-            
             for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(hotkey_dic_value)
 
                 if item_value != line_edit_text:
                     settings['hotkey_settings'][hotkey_dic_key] = line_edit_text
+                    cv.hotkey_settings_dic[hotkey_dic_key]['value'] = line_edit_text
                     to_save = True
                     
             if to_save:
@@ -243,9 +243,7 @@ class MySettingsWindow(QWidget):
                     -> no over-reaching or error would occur
                 Still feels good idea to cap the max window values
             '''
-
             MAX_WINDOW_SIZE_XY = 4500
-
             for general_dic_key, general_dic_value in cv.general_settings_dic.items():
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
@@ -277,26 +275,28 @@ class MySettingsWindow(QWidget):
         
 
         def general_fields_to_save(to_save = False):
-
             for general_dic_key, general_dic_value in cv.general_settings_dic.items():
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_jump_text_list:
-                    if item_value != int(line_edit_text)*1000:
-                        settings['general_settings'][general_dic_key] = int(line_edit_text)*1000
+                    time_to_jump = int(line_edit_text)*1000
+                    if item_value != time_to_jump:
+                        settings['general_settings'][general_dic_key] = time_to_jump
+                        cv.general_settings_dic[general_dic_key]['value'] = time_to_jump
                         to_save = True
    
                 elif item_text in cv.gen_sett_boolean_text_list:
-                    if item_value != line_edit_text:
+                    if item_value != eval(line_edit_text):
                         settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
+                        cv.general_settings_dic[general_dic_key]['value'] = eval(line_edit_text)
                         to_save = True
    
                 else:
                     if item_value != int(line_edit_text):
                         settings['general_settings'][general_dic_key] = int(line_edit_text)
+                        cv.general_settings_dic[general_dic_key]['value'] = int(line_edit_text)
                         to_save = True
-
             if to_save:
                 save_json(settings, PATH_JSON_SETTINGS)
             
@@ -345,11 +345,11 @@ class MySettingsWindow(QWidget):
         cv.paylist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
 
-        ''' 
-            Avoid removing all the playlist titles
-            Avoid saving playlist titles over 25 char.s
-        '''
-        def playlist_fields_validation_first():
+        def playlist_fields_validation_at_least_one_playlist():
+            ''' 
+                Avoid removing all the playlist titles
+                Avoid saving playlist titles over 25 char.s
+            '''
             pl_list_with_title = []
             for pl in cv.playlist_widget_dic:
                 playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
@@ -364,21 +364,45 @@ class MySettingsWindow(QWidget):
             return pl_list_with_title
         
 
-        ''' Avoid removing the playing playlist '''
-        def playlist_fields_validation_second(pass_validation = True):
+        def playlist_fields_validation_playing_playlist(pass_validation = True):
+            ''' Avoid removing the playing playlist '''
             for pl in cv.playlist_widget_dic:
                 playlist_index = cv.paylist_list.index(pl)
                 new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 prev_playlist_title = settings[pl]['playlist_title']
 
-                if (not new_playlist_title and prev_playlist_title and
+                if (
+                    not new_playlist_title and
+                    prev_playlist_title and
                     playlist_index == cv.playing_playlist_index and
-                    (self.av_player.player.isPlaying() or self.av_player.paused)):
+                    (self.av_player.player.isPlaying() or self.av_player.paused)
+                    ):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
                                         'PAYLISTS TAB',
-                                        f'Active playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
+                                        f'Playing playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                         pass_validation = False
+            return pass_validation
+        
+
+        def playlist_fields_validation_queued_track(pass_validation = True):
+            ''' Avoid removing playlists with queued track '''
+            if cv.queue_playlists_list:
+                for pl in cv.playlist_widget_dic:
+                    playlist_index = cv.paylist_list.index(pl)
+                    new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
+                    prev_playlist_title = settings[pl]['playlist_title']
+
+                    if (
+                        not new_playlist_title and
+                        prev_playlist_title and
+                        pl in cv.queue_playlists_list
+                        ):
+                            cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
+                            MyMessageBoxError(
+                                            'PAYLISTS TAB',
+                                            f'Playlist with queued track can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
+                            pass_validation = False
             return pass_validation
 
 
@@ -519,10 +543,13 @@ class MySettingsWindow(QWidget):
     
         def button_save_clicked():
                 
-            pl_list_with_title = playlist_fields_validation_first()
+            pl_list_with_title = playlist_fields_validation_at_least_one_playlist()
             
-            if (pl_list_with_title and playlist_fields_validation_second() and
-                general_fields_validation() and hotkey_fields_validation()):
+            if (pl_list_with_title and 
+                playlist_fields_validation_playing_playlist() and
+                playlist_fields_validation_queued_track() and
+                general_fields_validation() and
+                hotkey_fields_validation()):
                 
                 ''' GENERAL TAB FIELDS '''
                 hotkeys_fields_to_save()
