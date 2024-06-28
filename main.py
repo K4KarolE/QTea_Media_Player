@@ -108,7 +108,7 @@ class MyWindow(QWidget):
         'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
         'paylist_remove_track': lambda: button_remove_track_clicked(),
-        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track_clicked(),
+        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
         'paylist_select_next_pl': self.paylist_select_next_pl_action,
         'queue_toggle': lambda: queue_add_remove_track()
@@ -407,7 +407,7 @@ button_remove_track.clicked.connect(button_remove_track_clicked)
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
 def button_remove_all_track_clicked():
-    button_remove_all_track.button_remove_all_track_clicked()
+    button_remove_all_track.button_remove_all_track()
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
     cv.active_pl_sum_duration = 0
     update_duration_sum_widg()

@@ -1,30 +1,29 @@
 
-from PyQt6.QtCore import QUrl
-
-import random
 from pathlib import Path
+import time
+import random
+
+from PyQt6.QtCore import QUrl
 
 from .cons_and_vars import cv
 from .func_coll import (
-    save_playing_playlist_and_playing_last_track_index,
-    list_item_style_update,
-    generate_duration_to_display,
-    update_playing_playlist_vars_and_widgets,
-    update_active_playlist_vars_and_widgets,
-    get_all_from_db,
-    update_raw_current_duration_db,
-    update_queued_tracks_order_number,
-    update_queued_track_style,
-    queue_window_remove_track,
-    search_result_queue_number_update,
+    active_track_font_style,
     inactive_track_font_style,  
-    active_track_font_style
+    generate_duration_to_display,
+    get_all_from_db,
+    list_item_style_update,
+    queue_window_remove_track,
+    save_playing_playlist_and_playing_last_track_index,
+    search_result_queue_number_update,
+    update_active_playlist_vars_and_widgets,
+    update_playing_playlist_vars_and_widgets,
+    update_queued_track_style,
+    update_queued_tracks_order_number,
+    update_raw_current_duration_db
     )
 
-import time
 
 class PlaysFunc():
-
     def __init__(self, window, av_player, play_slider, image_logo, playing_track_index):
         self.window = window
         self.av_player = av_player
@@ -35,7 +34,6 @@ class PlaysFunc():
     
 
     def play_track(self, playing_track_index=None):
-
         cv.audio_track_played = 0   
         # PyQt playing the first audio_track by default -> reset our variable
         cv.counter_for_duration = 0  # for iterate: saving the current duration

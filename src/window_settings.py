@@ -115,7 +115,6 @@ class MySettingsWindow(QWidget):
             return item_text, item_value, line_edit_text
         
 
-
         '''
         ######################
             TAB - HOTKEYS          
@@ -194,7 +193,6 @@ class MySettingsWindow(QWidget):
                 save_json(settings, PATH_JSON_SETTINGS)
 
 
-        
         '''
         ######################
             TAB - GENEREAL          
@@ -528,8 +526,6 @@ class MySettingsWindow(QWidget):
             tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
 
 
-
-
         '''
         ####################
             BUTTON - SAVE      
@@ -541,8 +537,7 @@ class MySettingsWindow(QWidget):
         BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HIGHT
 
     
-        def button_save_clicked():
-                
+        def button_save_clicked():        
             pl_list_with_title = playlist_fields_validation_at_least_one_playlist()
             
             if (pl_list_with_title and 

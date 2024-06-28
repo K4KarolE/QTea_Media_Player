@@ -107,7 +107,7 @@ class MyButtons(QPushButton):
            
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
-    def button_remove_all_track_clicked(self):
+    def button_remove_all_track(self):
         # QUEUE
         remove_queued_tracks_after_playlist_clear()
         # DB

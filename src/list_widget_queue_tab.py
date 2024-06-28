@@ -3,33 +3,30 @@ Class created to handle context menu (right click on
 the list items), in the Queue tab tracklist
 Used it in the src / window_queue_and_search.py
 '''
+from pathlib import Path
+import webbrowser
 
-from PyQt6.QtWidgets import  QListWidget, QMenu
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import  QListWidget, QMenu
 
-import webbrowser
-from pathlib import Path
-
-from .icons import *
 from .cons_and_vars import cv
-from .message_box import MyMessageBoxError
 from .func_coll import (
-    get_path_db,
-    update_queued_tracks_order_number,
-    update_dequeued_track_style_from_queue_window,
-    queue_window_remove_track,
-    get_playlist_details_from_queue_tab_list,
     clear_queue_update_all_occurrences,
-    search_result_queue_number_update
+    get_path_db,
+    get_playlist_details_from_queue_tab_list,
+    queue_window_remove_track,
+    search_result_queue_number_update,
+    update_dequeued_track_style_from_queue_window,
+    update_queued_tracks_order_number
     )
+from .icons import *
+from .message_box import MyMessageBoxError
 
 
 class MyQueueListWidget(QListWidget):
-
     def __init__(self, play_track, playlists_all):
         super().__init__()
-        
         self.play_track = play_track    # queue_play_list_item()
         self.playlists_all = playlists_all
         self.installEventFilter(self)
@@ -66,7 +63,6 @@ class MyQueueListWidget(QListWidget):
 
 
     def context_menu_clicked(self, q):
-       
        # PLAY
         if q.text() == list(self.context_menu_dic)[0]:
             try:
@@ -74,14 +70,12 @@ class MyQueueListWidget(QListWidget):
             except:
                 MyMessageBoxError('File location', 'The file or the file`s home folder has been renamed / removed. ')
         
-       
         # DEQUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
             try:
                 self.dequeue_track()
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
-
 
         # CLEAR QUEUE
         elif q.text() == list(self.context_menu_dic)[2]:
@@ -90,14 +84,12 @@ class MyQueueListWidget(QListWidget):
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
         
-
         # JUMP TO PLAYLIST
         elif q.text() == list(self.context_menu_dic)[3]:
             try:
                 self.jump_to_playlist()
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
-
 
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:

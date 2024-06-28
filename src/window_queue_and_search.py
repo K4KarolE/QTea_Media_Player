@@ -5,7 +5,8 @@ Window title update to display the current track details
 is declared in main / update_title_window_queue()
 '''
 
-
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -17,28 +18,23 @@ from PyQt6.QtWidgets import (
     QPushButton
     )
 
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
-
-from .icons import MyIcon
-from .list_widget_queue_tab import MyQueueListWidget
-from .list_widget_search_tab import MySearchListWidget
 from .cons_and_vars import cv
 from .func_coll import (
-    update_playing_playlist_vars_and_widgets,
+    inactive_track_font_style,
+    add_new_list_item,
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_tab_list,
     get_playlist_details_from_seacrh_tab_list,
-    add_new_list_item,
     search_result_queue_number_update,
-    inactive_track_font_style
+    update_playing_playlist_vars_and_widgets
     )
-from .message_box import MyMessageBoxError
 from .icons import MyIcon
+from .list_widget_queue_tab import MyQueueListWidget
+from .list_widget_search_tab import MySearchListWidget
+from .message_box import MyMessageBoxError
 
 
 class MyQueueWindow(QWidget):
-    
     def __init__(self, play_track, playlists_all, button_play_pause_seticon_to_start):
         super().__init__()
         self.play_track = play_track
@@ -53,8 +49,6 @@ class MyQueueWindow(QWidget):
         self.setWindowIcon(MyIcon().queue_blue)
         self.setWindowTitle("Queue")
         
-        
-
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
         TABS_HEIGHT = int(WINDOW_HEIGHT - TABS_POS_Y *2)
@@ -88,8 +82,6 @@ class MyQueueWindow(QWidget):
                             "}"
                         )
         
-    
-        
         ''' 
         #################
             QUEUE TAB
@@ -118,7 +110,6 @@ class MyQueueWindow(QWidget):
                         )               
         
         
-        
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -140,8 +131,6 @@ class MyQueueWindow(QWidget):
             else:
                 list_widget.setVerticalScrollBar(scroll_bar_else_ver)
 
-            
-
             add_queue_window_list_widgets_header(title, list_widget)
             layout.addWidget(list_widget, ratio)
         
@@ -162,7 +151,6 @@ class MyQueueWindow(QWidget):
         tabs.addTab(frame, 'Queue')
 
 
-
         '''
         ###################
             SEARCH TAB     
@@ -175,7 +163,6 @@ class MyQueueWindow(QWidget):
         layout_search_top = QHBoxLayout()
         layout_search_top.setSpacing(10)    # button - line edit
 
-
         layout_search_bottom = QHBoxLayout()
         layout_search_bottom.setSpacing(0)
 
@@ -185,12 +172,10 @@ class MyQueueWindow(QWidget):
 
         ''' TOP WIDGETS '''
         SEARCH_WIDGETS_HEIGHT = 25
-
         self.search_line_edit = QLineEdit()
         self.search_line_edit.setFixedHeight(SEARCH_WIDGETS_HEIGHT)
         self.search_line_edit.setFont(inactive_track_font_style)
         self.search_line_edit.returnPressed.connect(lambda: self.search_button_clicked())
-
 
         search_button = QPushButton()
         search_button.setIcon(MyIcon().search)
@@ -336,29 +321,24 @@ class MyQueueWindow(QWidget):
 
     
     def search_button_clicked(self):
-        
         cv.track_change_on_main_playlist_new_search_needed = False
         self.search_cretaria = self.search_line_edit.text().strip().lower()
         
         if len(self.search_cretaria) > 2:
-
             self.search_create_result_dic()
             cv.search_title_list_widget.clear()
             cv.search_queue_list_widget.clear()
             if cv.search_result_dic:
                 self.search_display_result()
-        
         else:
             MyMessageBoxError('Invalid search', 'The search cretaria has to be more than 2 characters long.')
            
 
 
     def search_create_result_dic(self):
-        
         result_counter = 0
         cv.search_result_dic = {}
         cv.search_result_queued_tracks_index_list = []
-        
         for playlist in cv.playlist_widget_dic:
             playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
             if playlist_title:  # avoiding hidden playlists

@@ -1,44 +1,41 @@
 ''' PLAYLISTS/TABS CREATION '''
 
-from PyQt6.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-    QFrame,
-    QTabWidget,
-    QScrollBar,
-    QAbstractItemView
-    )
 from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QAbstractItemView,
+    QFrame,
+    QHBoxLayout,
+    QScrollBar,
+    QTabWidget,
+    QWidget
+    )
 
 
 from .cons_and_vars import cv
-from .list_widget_playlists import MyListWidget
 from .func_coll import (
-    save_json,
-    update_active_playlist_vars_and_widgets,
-    generate_track_list_detail,
+    connection, # db
+    cur, # db
+    settings, # json dic
+    PATH_JSON_SETTINGS,    
     add_new_list_item,
     generate_duration_to_display,
+    generate_track_list_detail,
+    save_json,
     save_playing_pl_last_track_index,
-    cur, # db
-    connection, # db
-    settings, # json dic
-    PATH_JSON_SETTINGS,
+    update_active_playlist_vars_and_widgets
     )
-
+from .list_widget_playlists import MyListWidget
 
 
 class MyPlaylists(QTabWidget):
-
+    '''
+    playlists_created_at_first_run variable
+    USED TO AVOID THE 
+        __.currentChanged.connect(self.active_playlist)
+    SIGNAL AT THE PLAYLISTS CREATION
+    '''
     def __init__(self, play_track, window, duration_sum_widg=None):
         super().__init__()
-
-        '''
-        playlists_created_at_first_run variable
-        USED TO AVOID THE 
-         __.currentChanged.connect(self.active_playlist)
-        SIGNAL AT THE PLAYLISTS CREATION
-        '''
         self.play_track = play_track
         self.window = window
         self.duration_sum_widg = duration_sum_widg
@@ -118,13 +115,10 @@ class MyPlaylists(QTabWidget):
      
     
     def playlists_creation(self):
-
         playlist_index_counter = 0
         
         for pl in cv.playlist_widget_dic:
-             
             playlist_title = settings[pl]['playlist_title']
-
             if not playlist_title:
                 cv.paylists_without_title_to_hide_index_list.append(playlist_index_counter)
             playlist_index_counter += 1
@@ -276,7 +270,6 @@ class MyPlaylists(QTabWidget):
 
 
     def drag_and_drop_list_item_action(self):
-
         cv.track_change_on_main_playlist_new_search_needed = True
 
         prev_row_id = cv.active_pl_duration.currentRow()
@@ -363,13 +356,9 @@ class MyPlaylists(QTabWidget):
         
 
 
-
     def update_queued_tracks_index(self, prev_row_id, new_row_id):
-        
         if cv.active_db_table in cv.queue_playlists_list:
-            
             for item in cv.queue_tracks_list:   # item = [playlist_3, 6]
-                
                 if cv.active_db_table == item[0]:
                     
                     # MOVING THE QUEUED TRACK

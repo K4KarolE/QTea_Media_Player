@@ -3,20 +3,24 @@ THIS FILE CAN BE REACHED OUTSIDE THE APP ONLY
 
 It contains supporting functions only,
 which can be actioned in this file for:
-    - Verify/print the tables availble in the DB
+    - Verify the tables availble in the DB
     - Creating new DB
     - Remove a table from the DB
 '''
 
-from cons_and_vars import cv, settings, PATH_JSON_SETTINGS, save_json
-
 import sqlite3
+from cons_and_vars import (
+    cv,
+    PATH_JSON_SETTINGS,
+    settings,
+    save_json
+    )
+
 
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
 
 
-''' CURRENT TABLES / PLAYLISTS '''
 def list_all_tables():
     cur.execute("""SELECT name FROM sqlite_master WHERE type='table'""")
     for playlist in cur.fetchall():
@@ -25,9 +29,8 @@ def list_all_tables():
 # list_all_tables()
 
 
-''' CREATE TABLES / PLAYLISTS '''
 def create_tables():
-
+    ''' Creates new DB and updates settings.json '''
     for i in range(0, cv.playlist_amount):
         table_name = f'playlist_{i}'
 
@@ -54,7 +57,7 @@ def create_tables():
 create_tables()
 
 
-''' REMOVE TABLE / PLAYLIST '''
+
 def remove_table(table_name):
     cur.execute("""DROP TABLE IF EXISTS {0}""".format(table_name))
     connection.close()

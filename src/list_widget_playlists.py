@@ -3,30 +3,27 @@ Class created to handle context menu (right click on
 the list items) in the main window playlists
 Used it in the src / playlists.py 
 '''
+from pathlib import Path
+import webbrowser
 
-from PyQt6.QtWidgets import  QListWidget, QMenu
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import  QListWidget, QMenu
 
-import webbrowser
-from pathlib import Path
-
-from .icons import *
 from .cons_and_vars import cv
-from .message_box import MyMessageBoxError
 from .func_coll import (
+    clear_queue_update_all_occurrences,
     get_path_db,
     queue_add_remove_track,
     remove_track_from_playlist,
-    clear_queue_update_all_occurrences
     )
+from .icons import *
+from .message_box import MyMessageBoxError
 
 
 class MyListWidget(QListWidget):
-
     def __init__(self, play_track, window):
         super().__init__()
-        
         self.play_track = play_track
         self.window = window
         self.installEventFilter(self)
@@ -79,12 +76,10 @@ class MyListWidget(QListWidget):
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
         
-
         # QUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
             queue_add_remove_track()
         
-
         # CLEAR QUEUE
         elif q.text() == list(self.context_menu_dic)[2]:
             try:
@@ -92,14 +87,12 @@ class MyListWidget(QListWidget):
             except:
                 MyMessageBoxError('Sorry, something went wrong.')
         
-
         # REMOVE TRACK
         elif q.text() == list(self.context_menu_dic)[3]:
             try:
                 remove_track_from_playlist()
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
-        
         
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:
@@ -108,6 +101,3 @@ class MyListWidget(QListWidget):
                 webbrowser.open(Path(file_path).parent)
             except:
                 MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
-
-        
-            

@@ -1,15 +1,13 @@
 ''' DURATION SLIDER AND VOLUME SLIDER CLASSES '''
 
-from PyQt6.QtWidgets import QSlider, QStyle
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QSlider, QStyle
 
 from .cons_and_vars import cv
-from .func_coll import update_and_save_volume_slider_value, save_volume_slider_value
-
+from .func_coll import save_volume_slider_value, update_and_save_volume_slider_value 
 
 
 class MySlider(QSlider):
-
     def __init__(self, av_player):
         super().__init__()
         self.av_player = av_player
@@ -41,33 +39,30 @@ class MySlider(QSlider):
         av_player.player.positionChanged.connect(self.play_slider_set_value)
     
 
-    ''' PLAYER/DURATION --> SLIDER POSITION '''
     def play_slider_set_value(self):
+        ''' PLAYER/DURATION --> SLIDER POSITION '''
         if self.av_player.base_played:
             self.setValue(self.av_player.player.position())
 
 
-    ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mousePressEvent(self, event):
+        ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
         self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
      
 
-    ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION ''' 
     def mouseMoveEvent(self, event):
+        ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION ''' 
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
         self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
 
     
 
-
 class MyVolumeSlider(QSlider):
-
     def __init__(self, av_player, button_speaker_update):
         super().__init__()
         self.av_player = av_player
         self.button_speaker_update = button_speaker_update
-
         self.setMinimum(0)
         self.setMaximum(100)
         self.resize(120, 20)
@@ -82,7 +77,6 @@ class MyVolumeSlider(QSlider):
                             "height: 8px;"
                             "border-radius: 3px;"
                             "}"
-
                         "QSlider::handle"
                             "{"
                             "border: 1px solid grey;"
@@ -91,7 +85,6 @@ class MyVolumeSlider(QSlider):
                             "width: 15px;"
                             "margin: 0 px;  /* expand outside the groove */"
                             "}"
-
                         "QSlider::sub-page"
                             "{"
                             "background: #287DCC;"
@@ -100,26 +93,26 @@ class MyVolumeSlider(QSlider):
                         )
     
 
-    ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mousePressEvent(self, event):
+        ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
         update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
 
-    ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
     def mouseMoveEvent(self, event):
+        ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
         update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
 
 
-    ''' 
-        ANY VOLUME CHANGE TRIGGERS:
-        SHORTCUT KEY, VOLUME SLIDER, SCROLL WHEEL OVER VIDEO SCREEN
-        -> UPDATES SLIDER -> UPDATE VOLUME
-    '''
     def update_volume(self):
+        ''' 
+            ANY VOLUME CHANGE TRIGGERS:
+            SHORTCUT KEY, VOLUME SLIDER, SCROLL WHEEL OVER VIDEO SCREEN
+            -> UPDATES SLIDER -> UPDATE VOLUME
+        '''
         self.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)
         self.button_speaker_update() # if muted -> unmuted

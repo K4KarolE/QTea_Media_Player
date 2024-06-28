@@ -22,11 +22,8 @@ def logger_runtime(func):
         func_actioned = func(*args, **kwargs)
         timer_stop = perf_counter()
         logger.info(f'{func.__name__} - runtime: {str(timer_stop-timer_start)[:4]}')
-
         return func_actioned
-
     return func_wrapper
-
 
 
 def logger_basic(msg):

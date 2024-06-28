@@ -8,30 +8,28 @@ from PyQt6.QtWidgets import  QListWidget, QMenu
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
 
-import webbrowser
 from pathlib import Path
+import webbrowser
 
-from .icons import *
 from .cons_and_vars import cv
-from .message_box import MyMessageBoxError
+from .icons import *
 from .func_coll import (
+    clear_queue_update_all_occurrences,
     get_path_db,
-    update_queued_tracks_order_number,
-    update_dequeued_track_style_from_queue_window,
-    queue_window_remove_track,
     get_playlist_details_from_seacrh_tab_list,
-    update_queued_track_style_from_search_tab,
     queue_tab_add_track_from_search_tab,
+    queue_window_remove_track,
     search_result_queue_number_update,
-    clear_queue_update_all_occurrences
+    update_dequeued_track_style_from_queue_window,
+    update_queued_track_style_from_search_tab,
+    update_queued_tracks_order_number
     )
+from .message_box import MyMessageBoxError
 
 
 class MySearchListWidget(QListWidget):
-
     def __init__(self, play_track, playlists_all):
-        super().__init__()
-        
+        super().__init__()    
         self.play_track = play_track    # search_play_list_item()
         self.playlists_all = playlists_all
         self.installEventFilter(self)
@@ -53,22 +51,16 @@ class MySearchListWidget(QListWidget):
         '''
         if event.type() == QEvent.Type.ContextMenu and self.itemAt(event.pos()):
             self.current_list_widget = self.itemAt(event.pos())
-            
             menu = QMenu()
-
             for menu_title, menu_icon in self.context_menu_dic.items():
-
                 icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
-   
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
-
         return super().eventFilter(source, event)
 
 
     def context_menu_clicked(self, q):
-
         if cv.track_change_on_main_playlist_new_search_needed:
             MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
 
@@ -80,7 +72,6 @@ class MySearchListWidget(QListWidget):
                 except:
                     MyMessageBoxError('File location', 'The file or the file`s home folder has been renamed / removed. ')
             
-        
             # QUEUE / DEQUEUE
             elif q.text() == list(self.context_menu_dic)[1]:
                 try:
@@ -88,7 +79,6 @@ class MySearchListWidget(QListWidget):
                 except:
                     MyMessageBoxError('Queue / Dequeue', 'Sorry, something went wrong.')
             
-
             # CLEAR QUEUE
             elif q.text() == list(self.context_menu_dic)[2]:
                 try:
@@ -96,14 +86,12 @@ class MySearchListWidget(QListWidget):
                 except:
                     MyMessageBoxError('Sorry, something went wrong.')
             
-
             # JUMP TO PLAYLIST
             elif q.text() == list(self.context_menu_dic)[3]:
                 try:
                     self.jump_to_playlist()
                 except:
                     MyMessageBoxError('Finding playlist', 'Sorry, something went wrong.')
-
 
             # FOLDER
             elif q.text() == list(self.context_menu_dic)[4]:
@@ -126,7 +114,6 @@ class MySearchListWidget(QListWidget):
 
         # QUEUE
         if not queue_tracking_title in cv.queue_tracks_list:
-
             # TRACKING
             cv.queue_tracks_list.append(queue_tracking_title)
             cv.queue_playlists_list.append(playlist)
@@ -149,7 +136,6 @@ class MySearchListWidget(QListWidget):
                     cv.search_result_dic[item]['track_index'] == track_index):
                     cv.search_queue_list_widget.item(item).setText(queue_order_number)
 
-        
         # DEQUEUE
         else:
             queue_window_list_index = cv.queue_tracks_list.index(queue_tracking_title)
@@ -169,7 +155,6 @@ class MySearchListWidget(QListWidget):
                 if (cv.search_result_dic[item]['playlist'] == playlist and 
                     cv.search_result_dic[item]['track_index'] == track_index):
                     cv.search_queue_list_widget.item(item).setText('')
-        
         search_result_queue_number_update()
 
     
