@@ -68,7 +68,7 @@ class MyWindow(QWidget):
         self.setMinimumSize(cv.window_min_width, cv.window_min_height)
         self.setWindowIcon(MyIcon().window_icon)
         self.setWindowTitle("QTea media player")
-        self.setAcceptDrops(1)
+        self.setAcceptDrops(1)  # for the external file, dictionary drag&drop
         if cv.always_on_top:
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()

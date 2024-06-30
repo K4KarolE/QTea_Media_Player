@@ -46,6 +46,8 @@ from .func_coll import (
     settings,   # json dic
     PATH_JSON_SETTINGS,
     )
+from .message_box import MyMessageBoxWarning
+
 
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
 
@@ -108,17 +110,28 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track(self):
-        # QUEUE
-        remove_queued_tracks_after_playlist_clear()
-        # DB
-        cur.execute("DELETE FROM {0}".format(cv.active_db_table))
-        connection.commit()
-        # PLAYLIST
-        cv.active_pl_name.clear()
-        cv.active_pl_queue.clear()
-        cv.active_pl_duration.clear()
+        
+        def clear_playlist():
+            # QUEUE
+            remove_queued_tracks_after_playlist_clear()
+            # DB
+            cur.execute("DELETE FROM {0}".format(cv.active_db_table))
+            connection.commit()
+            # PLAYLIST
+            cv.active_pl_name.clear()
+            cv.active_pl_queue.clear()
+            cv.active_pl_duration.clear()
+            # FOR SEARCH WINDOW
+            cv.track_change_on_main_playlist_new_search_needed = True
 
-        cv.track_change_on_main_playlist_new_search_needed = True
+        ''' Queued track in the playlist '''
+        if cv.active_db_table in cv.queue_playlists_list:
+            if MyMessageBoxWarning().clicked_continue():
+                clear_playlist()
+        else:
+            clear_playlist()
+        
+
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''

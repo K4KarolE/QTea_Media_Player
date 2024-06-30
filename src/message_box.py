@@ -16,3 +16,23 @@ class MyMessageBoxError(QMessageBox):
         self.setStandardButtons(QMessageBox.StandardButton.Close)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.exec()
+
+
+class MyMessageBoxWarning(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(f'Warning - Queued track')
+        self.setWindowIcon(MyIcon().settings)
+        self.setIcon(QMessageBox.Icon.Warning)
+        self.setText('There is a queued track in the playlist!  ' + 
+            'It will be removed from the queue list.\n\n' +
+            'Do you want to clear the playlist?')
+        self.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
+        self.clicked_value = self.exec()
+
+    def clicked_continue(self):
+        if self.clicked_value == 16384: #Yes
+            return True
+        else:
+            return False
