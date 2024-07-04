@@ -23,7 +23,7 @@ from .func_coll import (
     )
 
 
-class PlaysFunc():
+class PlaysFunc:
     def __init__(self, window, av_player, play_slider, image_logo, playing_track_index):
         self.window = window
         self.av_player = av_player

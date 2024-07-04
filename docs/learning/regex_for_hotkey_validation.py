@@ -38,7 +38,7 @@ exp_1 = exp_1 + f'^{keys_list[-1]}$'
 exp_2 = '('
 for item in keys_list[0:-1]:
     exp_2 = exp_2 + f'^{item}|'
-exp_2 = exp_2 + f'^{keys_list[-1]})\+('
+exp_2 = exp_2 + f'^{keys_list[-1]}' + r')\+('
 
 for item in keys_list[0:-1]:
     exp_2 = exp_2 + f'{item}$|'
@@ -48,11 +48,11 @@ exp_2 = exp_2 + f'{keys_list[-1]}$)'
 exp_3 = '('
 for item in keys_list[0:-1]:
     exp_3 = exp_3 + f'^{item}|'
-exp_3 = exp_3+ f'^{keys_list[-1]})\+('
+exp_3 = exp_3+ f'^{keys_list[-1]}' + r')\+('
 
 for item in keys_list[0:-1]:
     exp_3 = exp_3 + f'{item}|'
-exp_3 = exp_3+ f'{keys_list[-1]})\+('
+exp_3 = exp_3+ f'{keys_list[-1]}' + r')\+('
 
 for item in keys_list[0:-1]:
     exp_3 = exp_3 + f'{item}$|'

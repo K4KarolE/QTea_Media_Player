@@ -415,41 +415,33 @@ class Data:
     hotkey_settings_last_widget_pos_y = 0  # to calc. the parent widget height
 
 
-    ''' REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION '''
-    ''' More info in the docs / learning / regex_for_hotkey_validation.py '''
-    keys_list = ['', 'Shift', 'Alt', 'Enter', 'Space', 'Ctrl', 'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
+    ''' 
+    REGEX FOR SETTINGS WINDOW / HOTKEYS VALIDATION
+    More info in the docs / learning / regex_for_hotkey_validation.py
+    exp_1 = keys_list[any]
+    exp_2 = Shift / Ctrl / Alt + [rest of the keys_list]
+    Not able to use hotkeys with 3 components: 'Alt + M + K'
+    '''
+    keys_list = ['Shift', 'Ctrl', 'Alt', 'Enter', 'Space',  'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
 
     # ONE KEY
-    exp_1 = r''
+    exp_1 = r'('
     for item in keys_list[0:-1]:
         exp_1 = exp_1 + f'^{item}$|'
-    exp_1 = exp_1 + f'^{keys_list[-1]}$'
+    exp_1 = exp_1 + f'^{keys_list[-1]}$)'
 
     # TWO KEYS
     exp_2 = r'('
-    for item in keys_list[0:-1]:
+    for item in keys_list[:2]:
         exp_2 = exp_2 + f'^{item}|'
-    exp_2 = exp_2 + f'^{keys_list[-1]})\+('
+    exp_2 = exp_2 + f'^{keys_list[2]}' + r')\+('
 
-    for item in keys_list[0:-1]:
+    for item in keys_list[3:]:
         exp_2 = exp_2 + f'{item}$|'
     exp_2 = exp_2 + f'{keys_list[-1]}$)'
 
-    # THREE KEYS
-    exp_3 = r'('
-    for item in keys_list[0:-1]:
-        exp_3 = exp_3 + f'^{item}|'
-    exp_3 = exp_3 + f'^{keys_list[-1]})\+('
 
-    for item in keys_list[0:-1]:
-        exp_3 = exp_3 + f'{item}|'
-    exp_3 = exp_3 + f'{keys_list[-1]})\+('
-
-    for item in keys_list[0:-1]:
-        exp_3 = exp_3 + f'{item}$|'
-    exp_3 = exp_3 + f'{keys_list[-1]}$)'
-
-    search_regex = re.compile(f'{exp_1}|{exp_2}|{exp_3}')
+    search_regex = re.compile(f'{exp_1}|{exp_2}')
 
 
 
