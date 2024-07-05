@@ -18,14 +18,14 @@ from PyQt6.QtWidgets import (
     QWidget
     )
 
-from .cons_and_vars import (
+from .class_bridge import br
+from .class_data import (
     cv, 
     PATH_JSON_SETTINGS,
     settings,
     save_json
     )
 from .func_coll import inactive_track_font_style
-from .icons import MyIcon
 from .message_box import MyMessageBoxError
 
 
@@ -44,7 +44,7 @@ class MySettingsWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.setFixedWidth(WINDOW_WIDTH)
         self.setFixedHeight(WINDOW_HEIGHT)
-        self.setWindowIcon(MyIcon().settings)
+        self.setWindowIcon(br.icon.settings)
         self.setWindowTitle("Settings")
 
 

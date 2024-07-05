@@ -8,7 +8,8 @@ from PyQt6.QtGui import QAction
 
 import ctypes
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 
 
 '''
@@ -30,11 +31,8 @@ Tried to fix/test:
 '''
 class AVPlayer(QWidget):
 
-    def __init__(self, window, icon):
+    def __init__(self):
         super().__init__()
-        self.window = window
-        self.icon = icon
-
         self.player = QMediaPlayer()
         # VIDEO
         self.video_output = QVideoWidget()
@@ -54,11 +52,11 @@ class AVPlayer(QWidget):
         self.playlist_visible = True
         self.video_area_visible = True
         self.context_menu_dic = { 
-            'Play / Pause': {'icon': self.icon.start},
-            'Stop': {'icon': self.icon.stop},
-            'Previous':{'icon': self.icon.previous},
-            'Next':{'icon': self.icon.next},
-            'Mute - Toogle':{'icon': self.icon.speaker},
+            'Play / Pause': {'icon': br.icon.start},
+            'Stop': {'icon': br.icon.stop},
+            'Previous':{'icon': br.icon.previous},
+            'Next':{'icon': br.icon.next},
+            'Mute - Toogle':{'icon': br.icon.speaker},
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',
@@ -95,7 +93,7 @@ class AVPlayer(QWidget):
                     audio_track_title = self.generate_audio_track_title(audio_track)
                     
                     if self.player.activeAudioTrack() == self.player.audioTracks().index(audio_track):
-                        qaction_to_add = QAction(self.icon.selected, audio_track_title, self)
+                        qaction_to_add = QAction(br.icon.selected, audio_track_title, self)
                     else:
                         qaction_to_add = QAction(audio_track_title, self)
                     self.context_menu_dic['Audio Track']['menu_sub'].addAction(qaction_to_add)
@@ -104,7 +102,7 @@ class AVPlayer(QWidget):
 
                 # SUBTITLE TRACKS
                 if self.player.activeSubtitleTrack() == -1:
-                    qaction_to_add = QAction(self.icon.selected, 'Disabled', self)
+                    qaction_to_add = QAction(br.icon.selected, 'Disabled', self)
                 else:
                     qaction_to_add = QAction('Disable', self)
                 self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
@@ -113,7 +111,7 @@ class AVPlayer(QWidget):
                     subtitle_track_title = self.generate_subtitle_track_title(sub_track)
 
                     if self.player.activeSubtitleTrack() == self.player.subtitleTracks().index(sub_track):
-                        qaction_to_add = QAction(self.icon.selected, subtitle_track_title, self)
+                        qaction_to_add = QAction(br.icon.selected, subtitle_track_title, self)
                     else:
                         qaction_to_add = QAction(subtitle_track_title, self)
                         
@@ -130,9 +128,9 @@ class AVPlayer(QWidget):
             # VOLUME UPDATE
             elif event.type() == QEvent.Type.Wheel:
                 if event.angleDelta().y() > 0:
-                    self.window.volume_up_action()
+                    br.window.volume_up_action()
                 else:
-                    self.window.volume_down_action()
+                    br.window.volume_down_action()
 
         # EXIT FULL SCREEN
         if event.type() == QEvent.Type.KeyRelease:
@@ -149,15 +147,15 @@ class AVPlayer(QWidget):
         subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
 
         if q.text() == list(self.context_menu_dic)[0]:
-            self.window.play_pause()
+            br.window.play_pause()
         elif q.text() == list(self.context_menu_dic)[1]:
-            self.window.stop()
+            br.window.stop()
         elif q.text() == list(self.context_menu_dic)[2]:
-            self.window.previous_track()
+            br.window.previous_track()
         elif q.text() == list(self.context_menu_dic)[3]:
-            self.window.next_track()
+            br.window.next_track()
         elif q.text() == list(self.context_menu_dic)[4]:
-            self.window.mute()
+            br.window.mute()
         
         elif q.text() in audio_tracks_list:
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))

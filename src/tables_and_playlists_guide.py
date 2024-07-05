@@ -9,7 +9,7 @@ which can be actioned in this file for:
 '''
 
 import sqlite3
-from cons_and_vars import (
+from src.class_data import (
     cv,
     PATH_JSON_SETTINGS,
     settings,

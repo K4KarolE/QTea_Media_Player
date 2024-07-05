@@ -5,7 +5,8 @@ import random
 
 from PyQt6.QtCore import QUrl
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 from .func_coll import (
     active_track_font_style,
     inactive_track_font_style,  
@@ -24,8 +25,7 @@ from .func_coll import (
 
 
 class PlaysFunc:
-    def __init__(self, window, av_player, play_slider, image_logo, playing_track_index):
-        self.window = window
+    def __init__(self, av_player, play_slider, image_logo, playing_track_index):
         self.av_player = av_player
         self.av_player.player.mediaStatusChanged.connect(self.auto_play_next_track)
         self.play_slider = play_slider
@@ -88,7 +88,7 @@ class PlaysFunc:
         # WINDOW TITLE
         cv.track_title = Path(track_path).stem
         cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
-        self.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
+        br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
 
         # PLAYER
         ''' 
@@ -190,7 +190,7 @@ class PlaysFunc:
                     self.av_player.player.setPosition(0)
                     self.av_player.video_output.hide()
                     self.image_logo.show()
-                    self.window.button_play_pause_set_icon_to_start()
+                    br.window.button_play_pause_set_icon_to_start()
 
 
 

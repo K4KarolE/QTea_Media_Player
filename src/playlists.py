@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     )
 
 
-from .cons_and_vars import cv
+from .class_data import cv
 from .func_coll import (
     connection, # db
     cur, # db
@@ -34,10 +34,9 @@ class MyPlaylists(QTabWidget):
         __.currentChanged.connect(self.active_playlist)
     SIGNAL AT THE PLAYLISTS CREATION
     '''
-    def __init__(self, play_track, window, duration_sum_widg=None):
+    def __init__(self, play_track, duration_sum_widg=None):
         super().__init__()
         self.play_track = play_track
-        self.window = window
         self.duration_sum_widg = duration_sum_widg
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
@@ -190,7 +189,7 @@ class MyPlaylists(QTabWidget):
             ''' LISTS CREATION '''
             ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
             
-            cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track, self.window)
+            cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track)
             name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
             name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
@@ -200,14 +199,14 @@ class MyPlaylists(QTabWidget):
             name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
 
 
-            cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget(self.play_track, self.window)
+            cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget(self.play_track)
             queue_list_widget = cv.playlist_widget_dic[pl]['queue_list_widget']
             queue_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
             queue_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
             queue_list_widget.itemDoubleClicked.connect(self.play_track)
 
 
-            cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track, self.window)
+            cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track)
             duration_list_widget = cv.playlist_widget_dic[pl]['duration_list_widget']
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
             duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)

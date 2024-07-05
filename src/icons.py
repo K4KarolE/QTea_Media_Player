@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QIcon
-from .cons_and_vars import cv
+from .class_data import cv
 
 
 class MyIcon():

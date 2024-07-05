@@ -3,7 +3,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QSlider, QStyle
 
-from .cons_and_vars import cv
+from .class_data import cv
 from .func_coll import save_volume_slider_value, update_and_save_volume_slider_value 
 
 

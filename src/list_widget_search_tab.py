@@ -11,7 +11,8 @@ from PyQt6.QtGui import QAction
 from pathlib import Path
 import webbrowser
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 from .icons import *
 from .func_coll import (
     clear_queue_update_all_occurrences,
@@ -34,13 +35,12 @@ class MySearchListWidget(QListWidget):
         self.playlists_all = playlists_all
         self.installEventFilter(self)
         
-        icon = MyIcon()
         self.context_menu_dic = { 
-            'Play': {'icon': icon.start},
-            'Queue / Dequeue': {'icon': icon.queue_blue},
-            'Clear queue': {'icon': icon.clear_queue},
-            'Jump to playlist': {'icon': icon.toggle_playlist},
-            'Open item`s folder': {'icon': icon.folder},
+            'Play': {'icon': br.icon.start},
+            'Queue / Dequeue': {'icon': br.icon.queue_blue},
+            'Clear queue': {'icon': br.icon.clear_queue},
+            'Jump to playlist': {'icon': br.icon.toggle_playlist},
+            'Open item`s folder': {'icon': br.icon.folder},
             }   
 
 

@@ -1,14 +1,14 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMessageBox
 
-from .icons import MyIcon
+from .class_bridge import br
 
 
 class MyMessageBoxError(QMessageBox):
     def __init__(self, tab_title, message):
         super().__init__()
         self.setWindowTitle(f'ERROR - {tab_title}')
-        self.setWindowIcon(MyIcon().settings)
+        self.setWindowIcon(br.icon.settings)
         self.setIcon(QMessageBox.Icon.Warning)
         # extra whitespace:
         # position the text more to the middle in the box
@@ -22,7 +22,7 @@ class MyMessageBoxWarning(QMessageBox):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(f'Warning - Queued track')
-        self.setWindowIcon(MyIcon().settings)
+        self.setWindowIcon(br.icon.settings)
         self.setIcon(QMessageBox.Icon.Warning)
         self.setText('There is a queued track in the playlist!  ' + 
             'It will be removed from the queue list.\n\n' +

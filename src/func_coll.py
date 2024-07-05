@@ -3,8 +3,8 @@ from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
-from .cons_and_vars import save_json
-from .cons_and_vars import cv, settings, PATH_JSON_SETTINGS
+from .class_data import save_json
+from .class_data import cv, settings, PATH_JSON_SETTINGS
 from .logging import logger_basic
 
 import sqlite3

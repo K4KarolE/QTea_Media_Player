@@ -10,7 +10,8 @@ from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import  QListWidget, QMenu
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_path_db,
@@ -20,7 +21,6 @@ from .func_coll import (
     update_dequeued_track_style_from_queue_window,
     update_queued_tracks_order_number
     )
-from .icons import *
 from .message_box import MyMessageBoxError
 
 
@@ -31,13 +31,12 @@ class MyQueueListWidget(QListWidget):
         self.playlists_all = playlists_all
         self.installEventFilter(self)
         
-        icon = MyIcon()
         self.context_menu_dic = { 
-            'Play': {'icon': icon.start},
-            'Dequeue': {'icon': icon.de_queue},
-            'Clear queue': {'icon': icon.clear_queue},
-            'Jump to playlist': {'icon': icon.toggle_playlist},
-            'Open item`s folder': {'icon': icon.folder},
+            'Play': {'icon': br.icon.start},
+            'Dequeue': {'icon': br.icon.de_queue},
+            'Clear queue': {'icon': br.icon.clear_queue},
+            'Jump to playlist': {'icon': br.icon.toggle_playlist},
+            'Open item`s folder': {'icon': br.icon.folder},
             }   
 
 

@@ -5,8 +5,9 @@ src / tables_and_playlists_guide.py  - is not listed, it can be reached outside 
 '''
 
 from .icons import *
+from .class_bridge import *
+from .class_data import *
 from .av_player import *
-from .cons_and_vars import *
 from .images import *
 from .sliders import *
 from .func_coll import *

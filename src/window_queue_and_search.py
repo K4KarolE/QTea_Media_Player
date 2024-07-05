@@ -18,7 +18,8 @@ from PyQt6.QtWidgets import (
     QPushButton
     )
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 from .func_coll import (
     inactive_track_font_style,
     add_new_list_item,
@@ -28,7 +29,6 @@ from .func_coll import (
     search_result_queue_number_update,
     update_playing_playlist_vars_and_widgets
     )
-from .icons import MyIcon
 from .list_widget_queue_tab import MyQueueListWidget
 from .list_widget_search_tab import MySearchListWidget
 from .message_box import MyMessageBoxError
@@ -46,7 +46,7 @@ class MyQueueWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
-        self.setWindowIcon(MyIcon().queue_blue)
+        self.setWindowIcon(br.icon.queue_blue)
         self.setWindowTitle("Queue")
         
         TABS_POS_X, TABS_POS_Y  = 12, 12
@@ -178,7 +178,7 @@ class MyQueueWindow(QWidget):
         self.search_line_edit.returnPressed.connect(lambda: self.search_button_clicked())
 
         search_button = QPushButton()
-        search_button.setIcon(MyIcon().search)
+        search_button.setIcon(br.icon.search)
         search_button.setFixedSize(28, 28)
         search_button.clicked.connect(lambda: self.search_button_clicked())
         search_button.setStyleSheet(

@@ -10,22 +10,21 @@ from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import  QListWidget, QMenu
 
-from .cons_and_vars import cv
+from .class_bridge import br
+from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_path_db,
     queue_add_remove_track,
     remove_track_from_playlist,
     )
-from .icons import *
 from .message_box import MyMessageBoxError
 
 
 class MyListWidget(QListWidget):
-    def __init__(self, play_track, window):
+    def __init__(self, play_track):
         super().__init__()
         self.play_track = play_track
-        self.window = window
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -35,13 +34,12 @@ class MyListWidget(QListWidget):
                                 "}"
                             )
         
-        icon = MyIcon()
         self.context_menu_dic = { 
-            'Play / Pause': {'icon': icon.start},
-            'Queue / Dequeue': {'icon': icon.queue_blue},
-            'Clear queue': {'icon': icon.clear_queue},
-            'Remove': {'icon': icon.remove},
-            'Open item`s folder': {'icon': icon.folder},
+            'Play / Pause': {'icon': br.icon.start},
+            'Queue / Dequeue': {'icon': br.icon.queue_blue},
+            'Clear queue': {'icon': br.icon.clear_queue},
+            'Remove': {'icon': br.icon.remove},
+            'Open item`s folder': {'icon': br.icon.folder},
             }   
 
 
@@ -70,7 +68,7 @@ class MyListWidget(QListWidget):
         if q.text() == list(self.context_menu_dic)[0]:
             try:
                 if self.currentRow() == cv.playing_track_index:
-                    self.window.play_pause()
+                    br.window.play_pause()
                 else:
                     self.play_track()
             except:

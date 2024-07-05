@@ -26,6 +26,7 @@ from PyQt6.QtWidgets import (
 
 from src import (
     cv,
+    br,
     inactive_track_font_style,
     AVPlayer,
     MyButtons,
@@ -66,7 +67,7 @@ class MyWindow(QWidget):
         super().__init__()
         self.resize(cv.window_width, cv.window_height)
         self.setMinimumSize(cv.window_min_width, cv.window_min_height)
-        self.setWindowIcon(MyIcon().window_icon)
+        self.setWindowIcon(br.icon.window_icon)
         self.setWindowTitle("QTea media player")
         self.setAcceptDrops(1)  # for the external file, dictionary drag&drop
         if cv.always_on_top:
@@ -273,7 +274,7 @@ class MyWindow(QWidget):
             to update the play button, once the last track played
             in the playlist and no repeat or shuffle is enabled
         '''
-        button_play_pause.setIcon(icon.start)
+        button_play_pause.setIcon(br.icon.start)
 
 
     ''' FOR THE AV PLAYER - EVENT FILTER - CONTEXT MENU ACTIONS ''' 
@@ -293,11 +294,12 @@ class MyWindow(QWidget):
         button_speaker_clicked()
 
 
-window = MyWindow()
+br.icon = MyIcon()
 
-icon = MyIcon()
+br.window = MyWindow()
 
-av_player = AVPlayer(window, icon)
+av_player = AVPlayer()
+
 
 def update_duration_info():
     if av_player.base_played:
@@ -337,7 +339,7 @@ play_slider = MySlider(av_player)
 
 image_logo = MyImage('logo.png', 200)
 
-play_funcs = PlaysFunc(window, av_player, play_slider, image_logo, cv.playing_track_index)
+play_funcs = PlaysFunc(av_player, play_slider, image_logo, cv.playing_track_index)
 
 ''' 
 #######################
@@ -427,7 +429,7 @@ def button_queue_clicked():
 button_queue = MyButtons(
     'Q',
     'Queue and Search window',
-    icon = icon.queue
+    icon = br.icon.queue
     )
 button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_queue.clicked.connect(button_queue_clicked)
@@ -443,7 +445,7 @@ def button_settings_clicked():
 button_settings = MyButtons(
     'SE',
     'Settings window',
-    icon = icon.settings
+    icon = br.icon.settings
     )
 button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
 button_settings.clicked.connect(button_settings_clicked)
@@ -491,7 +493,7 @@ button_play_pause = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    icon.start,
+    br.icon.start,
     )
 button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
 button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
@@ -502,14 +504,14 @@ def button_play_pause_seticon_to_start():
     Used in the MyQueueWindow instance / QUEUE and SEARCH window-list 
     play track -> update play button
     '''
-    button_play_pause.setIcon(icon.pause)
+    button_play_pause.setIcon(br.icon.pause)
 
 
 ''' BUTTON PLAY SECTION - STOP '''
 def button_stop_clicked():
     av_player.player.stop()
     av_player.paused = False
-    button_play_pause.setIcon(icon.start)
+    button_play_pause.setIcon(br.icon.start)
     av_player.screen_saver_on()
     if av_player.video_output.isVisible():
         image_logo.show()
@@ -522,7 +524,7 @@ button_stop = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    icon.stop
+    br.icon.stop
     )
 button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_stop.clicked.connect(button_stop_clicked)
@@ -536,7 +538,7 @@ button_prev_track = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    icon.previous
+    br.icon.previous
     )
 button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_prev_track.clicked.connect(button_prev_track.button_prev_track_clicked)
@@ -549,7 +551,7 @@ button_next_track = MyButtons(
     av_player,
     av_player_duration,
     play_funcs,
-    icon.next
+    br.icon.next
     )
 button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
@@ -560,7 +562,7 @@ button_toggle_repeat_pl = MyButtons(
     'Tog Rep PL',
     'Toggle Repeat Playlist',
     av_player=av_player,
-    icon = icon.repeat
+    icon = br.icon.repeat
     )
 button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
@@ -569,7 +571,7 @@ if cv.repeat_playlist == 2:
     button_toggle_repeat_pl.setFlat(1)
 elif cv.repeat_playlist == 0:
     button_toggle_repeat_pl.setFlat(1)
-    button_toggle_repeat_pl.setIcon(icon.repeat_single)
+    button_toggle_repeat_pl.setIcon(br.icon.repeat_single)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
@@ -577,7 +579,7 @@ button_toggle_shuffle_pl = MyButtons(
     'Shuffle PL',
     'Toggle Shuffle Playlist',
     av_player=av_player,
-    icon = icon.shuffle
+    icon = br.icon.shuffle
     )
 button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
@@ -599,7 +601,7 @@ def button_toggle_playlist_clicked():
 button_toggle_playlist = MyButtons(
     'Shuffle PL',
     'Toggle Show Playlists',
-    icon = icon.toggle_playlist
+    icon = br.icon.toggle_playlist
     )
 button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
@@ -610,12 +612,12 @@ def button_toggle_video_clicked():
     if av_player.playlist_visible and av_player.video_area_visible:
         layout_vert_left_qframe.hide()
         av_player.video_area_visible = False
-        window.resize(int(cv.window_width/3), window.geometry().height())
-        window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
+        br.window.resize(int(cv.window_width/3), br.window.geometry().height())
+        br.window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
         button_toggle_playlist.setDisabled(1)
     else:
-        window.resize(cv.window_width, window.geometry().height())
-        window.setMinimumSize(cv.window_min_width, cv.window_min_height)
+        br.window.resize(cv.window_width, br.window.geometry().height())
+        br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
         layout_vert_left_qframe.show()
         av_player.video_area_visible = True
         button_toggle_playlist.setDisabled(0)
@@ -623,7 +625,7 @@ def button_toggle_video_clicked():
 button_toggle_video = MyButtons(
     'Shuffle PL',
     'Toggle Show Video Window',
-    icon = icon.toggle_video
+    icon = br.icon.toggle_video
     )
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
@@ -675,11 +677,11 @@ play_buttons_list = [
 def button_speaker_clicked():
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
-        button_speaker.setIcon(icon.speaker)
+        button_speaker.setIcon(br.icon.speaker)
         av_player.audio_output.setVolume(cv.volume)
     else:
         cv.is_speaker_muted = True
-        button_speaker.setIcon(icon.speaker_muted)
+        button_speaker.setIcon(br.icon.speaker_muted)
         av_player.audio_output.setVolume(0)
     save_speaker_muted_value()
 
@@ -689,17 +691,17 @@ def button_speaker_clicked():
 def button_speaker_update():
     if cv.is_speaker_muted:
         cv.is_speaker_muted = False
-        button_speaker.setIcon(icon.speaker)
+        button_speaker.setIcon(br.icon.speaker)
 
 button_speaker = MyButtons(
     'Speaker',
     'Toggle Mute',
-    icon = icon.speaker
+    icon = br.icon.speaker
     )
 button_speaker.setFlat(1)
 button_speaker.clicked.connect(button_speaker_clicked)
 if cv.is_speaker_muted:
-    button_speaker.setIcon(icon.speaker_muted)
+    button_speaker.setIcon(br.icon.speaker_muted)
     av_player.audio_output.setVolume(0)
 
 
@@ -734,7 +736,7 @@ GUIDE:
 '''
 
 
-layout_base = QVBoxLayout(window)
+layout_base = QVBoxLayout(br.window)
 layout_base.setContentsMargins(0, 0, 0, 0)
 
 layout_hor_top = QHBoxLayout()
@@ -832,7 +834,7 @@ layout_under_playlist_duration.addWidget(duration_sum_widg)
 
 
 ''' PAYLISTS '''
-playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, window, duration_sum_widg)
+playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, duration_sum_widg)
 layout_playlist.addWidget(playlists_all)
 
 
@@ -846,7 +848,7 @@ window_settings = MySettingsWindow(playlists_all, av_player)
 
 # PLAY BUTTON ICON UPDATE
 if cv.play_at_startup and cv.active_pl_tracks_count > 0:
-    button_play_pause.setIcon(icon.pause)
+    button_play_pause.setIcon(br.icon.pause)
 
 
 ''' BOTTOM '''
@@ -878,7 +880,7 @@ layout_bottom_volume.addWidget(button_speaker, alignment=Qt.AlignmentFlag.AlignR
 layout_bottom_volume.addWidget(volume_slider)
 
 
-window.show()
+br.window.show()
 logger_basic('Window displayed')
 
 sys.exit(app.exec())
