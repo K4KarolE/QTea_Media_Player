@@ -35,9 +35,8 @@ from .message_box import MyMessageBoxError
 
 
 class MyQueueWindow(QWidget):
-    def __init__(self, play_track, playlists_all, button_play_pause_seticon_to_start):
+    def __init__(self, playlists_all, button_play_pause_seticon_to_start):
         super().__init__()
-        self.play_track = play_track
         self.playlists_all = playlists_all
         self.button_play_pause_seticon_to_start = button_play_pause_seticon_to_start
        
@@ -275,7 +274,7 @@ class MyQueueWindow(QWidget):
         playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
-        self.play_track(track_index)
+        br.play_funcs.play_track(track_index)
         self.button_play_pause_seticon_to_start()
         search_result_queue_number_update()
     
@@ -313,7 +312,7 @@ class MyQueueWindow(QWidget):
             playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
             cv.playing_playlist_index = playlist_index
             update_playing_playlist_vars_and_widgets()
-            self.play_track(track_index)
+            br.play_funcs.play_track(track_index)
             self.button_play_pause_seticon_to_start()
             search_result_queue_number_update()
         else:

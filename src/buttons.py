@@ -57,9 +57,6 @@ class MyButtons(QPushButton):
             self,
             title,
             tooltip,
-            av_player=None,
-            av_player_duration=None,
-            play_funcs=None,
             icon = None):
         super().__init__()
 
@@ -72,9 +69,6 @@ class MyButtons(QPushButton):
             self.setIcon(icon)
             self.setText(None)
             self.setIconSize(QSize(cv.icon_size, cv.icon_size))
-        self.av_player = av_player
-        self.av_player_duration = av_player_duration
-        self.play_funcs = play_funcs
 
 
 
@@ -91,7 +85,7 @@ class MyButtons(QPushButton):
         dialog_add_track.setNameFilters(cv.FILE_TYPES_LIST)
         dialog_add_track.exec()
         if dialog_add_track.result():
-            add_record_grouped_actions(dialog_add_track.selectedFiles()[0], self.av_player_duration)
+            add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
             save_db()
             cv.active_pl_tracks_count = cv.active_pl_name.count()
 
@@ -104,7 +98,7 @@ class MyButtons(QPushButton):
         dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
         dialog_add_dir.exec()
         if dialog_add_dir.result():
-            walk_and_add_dir(dialog_add_dir.selectedFiles()[0], self.av_player_duration)
+            walk_and_add_dir(dialog_add_dir.selectedFiles()[0])
            
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
@@ -188,26 +182,26 @@ class MyButtons(QPushButton):
     '''
     ''' BUTTON PLAY SECTION - PLAY / PAUSE '''
     def button_play_pause_clicked(self):
-        if self.av_player.player.isPlaying():
-            self.av_player.player.pause()
-            self.av_player.paused = True
+        if br.av_player.player.isPlaying():
+            br.av_player.player.pause()
+            br.av_player.paused = True
             self.setIcon(br.icon.start)
-            self.av_player.screen_saver_on()
-        elif self.av_player.paused:
-            self.av_player.player.play()
-            self.av_player.paused = False
+            br.av_player.screen_saver_on()
+        elif br.av_player.paused:
+            br.av_player.player.play()
+            br.av_player.paused = False
             self.setIcon(br.icon.pause)
-            self.av_player.screen_saver_on_off()
-        elif not self.av_player.player.isPlaying() and not self.av_player.paused:
-            self.play_funcs.play_track()
-            if self.av_player.player.isPlaying(): # ignoring empty playlist
+            br.av_player.screen_saver_on_off()
+        elif not br.av_player.player.isPlaying() and not br.av_player.paused:
+            br.play_funcs.play_track()
+            if br.av_player.player.isPlaying(): # ignoring empty playlist
                 self.setIcon(br.icon.pause)
         
     
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
         self.setIcon(br.icon.pause)
-        self.play_funcs.play_track()
+        br.play_funcs.play_track()
     
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
@@ -217,15 +211,15 @@ class MyButtons(QPushButton):
         if cv.playing_pl_name.count() > 0:
             if cv.playing_track_index != 0:
                 cv.playing_track_index -= 1
-                self.play_funcs.play_track(cv.playing_track_index)
+                br.play_funcs.play_track(cv.playing_track_index)
             else:
                 cv.playing_track_index = cv.playing_pl_name.count() - 1
-                self.play_funcs.play_track(cv.playing_track_index)
+                br.play_funcs.play_track(cv.playing_track_index)
     
 
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
     def button_next_track_clicked(self):
-        self.play_funcs.play_next_track()
+        br.play_funcs.play_next_track()
     
 
     ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
@@ -236,15 +230,15 @@ class MyButtons(QPushButton):
         if cv.repeat_playlist == 1:
             self.setFlat(0)
             self.setIcon(br.icon.repeat)
-            self.av_player.text_display_on_video(1500, 'Repeat: OFF') 
+            br.av_player.text_display_on_video(1500, 'Repeat: OFF') 
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(1)
-            self.av_player.text_display_on_video(1500, 'Repeat: Playlist') 
+            br.av_player.text_display_on_video(1500, 'Repeat: Playlist') 
         # REPEAT SINGLE TRACK
         else:
             self.setIcon(br.icon.repeat_single)
-            self.av_player.text_display_on_video(1500, 'Repeat: Single track') 
+            br.av_player.text_display_on_video(1500, 'Repeat: Single track') 
         
         settings['repeat_playlist'] = cv.repeat_playlist
         save_json(settings, PATH_JSON_SETTINGS)
@@ -255,11 +249,11 @@ class MyButtons(QPushButton):
         if cv.shuffle_playlist_on:
             cv.shuffle_playlist_on = False
             self.setFlat(0)
-            self.av_player.text_display_on_video(1500, 'Shuffle: OFF')            
+            br.av_player.text_display_on_video(1500, 'Shuffle: OFF')            
         else:
             cv.shuffle_playlist_on = True
             self.setFlat(1)
-            self.av_player.text_display_on_video(1500, 'Shuffle: ON') 
+            br.av_player.text_display_on_video(1500, 'Shuffle: ON') 
         
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json(settings, PATH_JSON_SETTINGS)

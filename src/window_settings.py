@@ -30,10 +30,9 @@ from .message_box import MyMessageBoxError
 
 
 class MySettingsWindow(QWidget):
-    def __init__(self, playlists_all, av_player):
+    def __init__(self, playlists_all):
         super().__init__()
         self.playlists_all = playlists_all
-        self.av_player = av_player
 
         '''
         ##############
@@ -373,7 +372,7 @@ class MySettingsWindow(QWidget):
                     not new_playlist_title and
                     prev_playlist_title and
                     playlist_index == cv.playing_playlist_index and
-                    (self.av_player.player.isPlaying() or self.av_player.paused)
+                    (br.av_player.player.isPlaying() or br.av_player.paused)
                     ):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(

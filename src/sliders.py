@@ -3,14 +3,14 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QSlider, QStyle
 
+from .class_bridge import br
 from .class_data import cv
 from .func_coll import save_volume_slider_value, update_and_save_volume_slider_value 
 
 
 class MySlider(QSlider):
-    def __init__(self, av_player):
+    def __init__(self):
         super().__init__()
-        self.av_player = av_player
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(
@@ -36,32 +36,31 @@ class MySlider(QSlider):
                             "border-radius: 4px;"
                             "}"
                         )
-        av_player.player.positionChanged.connect(self.play_slider_set_value)
+        br.av_player.player.positionChanged.connect(self.play_slider_set_value)
     
 
     def play_slider_set_value(self):
         ''' PLAYER/DURATION --> SLIDER POSITION '''
-        if self.av_player.base_played:
-            self.setValue(self.av_player.player.position())
+        if br.av_player.base_played:
+            self.setValue(br.av_player.player.position())
 
 
     def mousePressEvent(self, event):
         ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+        br.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
      
 
     def mouseMoveEvent(self, event):
         ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION ''' 
         self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        self.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+        br.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
 
     
 
 class MyVolumeSlider(QSlider):
-    def __init__(self, av_player, button_speaker_update):
+    def __init__(self, button_speaker_update):
         super().__init__()
-        self.av_player = av_player
         self.button_speaker_update = button_speaker_update
         self.setMinimum(0)
         self.setMaximum(100)
@@ -113,8 +112,8 @@ class MyVolumeSlider(QSlider):
             SHORTCUT KEY, VOLUME SLIDER, SCROLL WHEEL OVER VIDEO SCREEN
             -> UPDATES SLIDER -> UPDATE VOLUME
         '''
-        self.av_player.audio_output.setVolume(self.sliderPosition()/100)
+        br.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)
         self.button_speaker_update() # if muted -> unmuted
         # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
-        self.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")
+        br.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")

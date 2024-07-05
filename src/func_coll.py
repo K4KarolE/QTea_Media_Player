@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
+from .class_bridge import br
 from .class_data import save_json
 from .class_data import cv, settings, PATH_JSON_SETTINGS
 from .logging import logger_basic
@@ -65,7 +66,7 @@ def save_active_pl_last_track_index():
     save_json(settings, PATH_JSON_SETTINGS)
 
 
-def walk_and_add_dir(dir_path, av_player_duration):
+def walk_and_add_dir(dir_path):
     ''' 
         Used to add a directory and all it`s files
         and subdirectories to the playlist and DB   
@@ -77,7 +78,7 @@ def walk_and_add_dir(dir_path, av_player_duration):
         for file in file_names:
             if file.split('.')[-1] in cv.MEDIA_FILES:   # music_title.mp3 -> mp3
                 try:
-                    add_record_grouped_actions(Path(dir_path_b, file), av_player_duration)
+                    add_record_grouped_actions(Path(dir_path_b, file))
                 except:
                     error_path_list.append(Path(dir_path_b, file))
         if error_path_list:
@@ -190,7 +191,7 @@ def generate_track_list_detail(db_track_record):
     return track_row_db, track_name, duration_to_display
 
 
-def add_record_grouped_actions(track_path, av_player_duration):
+def add_record_grouped_actions(track_path):
     ''' 
     Generating
     ----------- 
@@ -206,8 +207,8 @@ def add_record_grouped_actions(track_path, av_player_duration):
         - the queue list widget value is just a placeholder           
     '''
     track_name = Path(track_path).stem
-    av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-    raw_duration = av_player_duration.player.duration()
+    br.av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+    raw_duration = br.av_player_duration.player.duration()
     cv.active_pl_sum_duration += raw_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
