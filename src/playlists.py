@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QWidget
     )
 
-
+from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     connection, # db
@@ -34,10 +34,9 @@ class MyPlaylists(QTabWidget):
         __.currentChanged.connect(self.active_playlist)
     SIGNAL AT THE PLAYLISTS CREATION
     '''
-    def __init__(self, play_track, duration_sum_widg=None):
+    def __init__(self, play_track):
         super().__init__()
         self.play_track = play_track
-        self.duration_sum_widg = duration_sum_widg
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
         self.playlists_creation()
@@ -51,7 +50,7 @@ class MyPlaylists(QTabWidget):
         # GOING TO SELECT THE LAST PLAYED ROW
         cv.current_track_index = cv.active_pl_last_track_index
         
-        self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
         self.add_dummy_playlist()
         self.hide_playlists_with_no_title()
         self.setStyleSheet(
@@ -100,7 +99,7 @@ class MyPlaylists(QTabWidget):
             settings['last_used_playlist'] = cv.active_playlist_index
             save_json(settings, PATH_JSON_SETTINGS)
             update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
-            self.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
             cv.current_track_index = cv.active_pl_name.currentRow()
     
 

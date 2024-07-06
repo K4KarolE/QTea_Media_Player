@@ -29,10 +29,9 @@ from .message_box import MyMessageBoxError
 
 
 class MySearchListWidget(QListWidget):
-    def __init__(self, play_track, playlists_all):
+    def __init__(self, play_track):
         super().__init__()    
         self.play_track = play_track    # search_play_list_item()
-        self.playlists_all = playlists_all
         self.installEventFilter(self)
         
         self.context_menu_dic = { 
@@ -104,7 +103,7 @@ class MySearchListWidget(QListWidget):
     def jump_to_playlist(self):
         current_row_index = self.currentRow()
         playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
-        self.playlists_all.setCurrentIndex(playlist_index)
+        br.playlists_all.setCurrentIndex(playlist_index)
     
 
     def queue_dequeue_track(self):

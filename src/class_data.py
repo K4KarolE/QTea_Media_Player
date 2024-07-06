@@ -53,6 +53,7 @@ class Data:
     queue_tracking_title = []
     queue_tracks_list = []
     queue_playlists_list = []
+    queued_tracks_amount: int = 0
     
     
     ''' THE CURRENTLY PLAYING/PAUSED TRACK`S INDEX TRACKING '''

@@ -30,9 +30,8 @@ from .message_box import MyMessageBoxError
 
 
 class MySettingsWindow(QWidget):
-    def __init__(self, playlists_all):
+    def __init__(self):
         super().__init__()
-        self.playlists_all = playlists_all
 
         '''
         ##############
@@ -413,15 +412,15 @@ class MySettingsWindow(QWidget):
                     
                     # NEW TITLE, PREV: EMPTY - INVISIBLE
                     if new_playlist_title and not prev_playlist_title:
-                        self.playlists_all.setTabVisible(playlist_index, 1)
+                        br.playlists_all.setTabVisible(playlist_index, 1)
                         cv.paylists_without_title_to_hide_index_list.remove(playlist_index)
 
                     # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
                     elif not new_playlist_title and prev_playlist_title:
-                        self.playlists_all.setTabVisible(playlist_index, 0)
+                        br.playlists_all.setTabVisible(playlist_index, 0)
                         cv.paylists_without_title_to_hide_index_list.append(playlist_index)
                     
-                    self.playlists_all.setTabText(playlist_index, new_playlist_title)
+                    br.playlists_all.setTabText(playlist_index, new_playlist_title)
                     settings[pl]['playlist_title'] = new_playlist_title
                     to_save = True  
             

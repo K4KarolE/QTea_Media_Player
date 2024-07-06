@@ -26,7 +26,6 @@ from .func_coll import (
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_tab_list,
     get_playlist_details_from_seacrh_tab_list,
-    search_result_queue_number_update,
     update_playing_playlist_vars_and_widgets
     )
 from .list_widget_queue_tab import MyQueueListWidget
@@ -35,9 +34,8 @@ from .message_box import MyMessageBoxError
 
 
 class MyQueueWindow(QWidget):
-    def __init__(self, playlists_all, button_play_pause_seticon_to_start):
+    def __init__(self, button_play_pause_seticon_to_start):
         super().__init__()
-        self.playlists_all = playlists_all
         self.button_play_pause_seticon_to_start = button_play_pause_seticon_to_start
        
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
@@ -118,7 +116,7 @@ class MyQueueWindow(QWidget):
             ratio = cv.queue_widget_dic[item]['list_widget_window_ratio']
             fixed_width = cv.queue_widget_dic[item]['fixed_width']
             
-            cv.queue_widget_dic[item]['list_widget'] = MyQueueListWidget(self.queue_play_list_item, self.playlists_all)
+            cv.queue_widget_dic[item]['list_widget'] = MyQueueListWidget(self.queue_play_list_item)
             list_widget = cv.queue_widget_dic[item]['list_widget']
             list_widget.itemDoubleClicked.connect(self.queue_play_list_item)
             
@@ -215,7 +213,7 @@ class MyQueueWindow(QWidget):
                             "}"
                         )
        
-        cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
+        cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item)
         cv.search_title_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
         cv.search_title_list_widget.setVerticalScrollBar(scroll_bar_search_title_ver)
         cv.search_title_list_widget.setStyleSheet(
@@ -226,7 +224,7 @@ class MyQueueWindow(QWidget):
                                                     "}"
                                                 )
 
-        cv.search_queue_list_widget = MySearchListWidget(self.search_play_list_item, self.playlists_all)
+        cv.search_queue_list_widget = MySearchListWidget(self.search_play_list_item)
         cv.search_queue_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
         cv.search_queue_list_widget.setVerticalScrollBar(scroll_bar_search_queue_ver)
         cv.search_queue_list_widget.setFixedWidth(50)
@@ -276,7 +274,6 @@ class MyQueueWindow(QWidget):
         update_playing_playlist_vars_and_widgets()
         br.play_funcs.play_track(track_index)
         self.button_play_pause_seticon_to_start()
-        search_result_queue_number_update()
     
 
     def queue_row_changed_sync(self, list_widget_row_changed):
@@ -314,7 +311,6 @@ class MyQueueWindow(QWidget):
             update_playing_playlist_vars_and_widgets()
             br.play_funcs.play_track(track_index)
             self.button_play_pause_seticon_to_start()
-            search_result_queue_number_update()
         else:
             MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
 

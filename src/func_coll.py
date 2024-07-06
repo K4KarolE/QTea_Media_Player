@@ -6,7 +6,7 @@ from PyQt6.QtGui import QFont, QColor
 from .class_bridge import br
 from .class_data import save_json
 from .class_data import cv, settings, PATH_JSON_SETTINGS
-from .logging import logger_basic
+from .logger import logger_basic
 
 import sqlite3
 from pathlib import Path
@@ -431,6 +431,7 @@ def update_dequeued_track_style(current_track_index):
             'white'
             )
 
+
 def update_queued_tracks_order_number(clear_queue = False):
     for index, item in enumerate(cv.queue_tracks_list):
         playlist = item[0]
@@ -567,12 +568,11 @@ def search_result_queue_number_update():
     
     if cv.search_result_dic:
         cv.search_result_queued_tracks_index_list = search_result_queued_tracks_index_list()
-        index_for_remove_queue_number = cv.search_result_queued_tracks_index_list
+        index_for_remove_queue_number = cv.search_result_queued_tracks_index_list.copy()
         
         # DEQUEUE
-        if len(cv.queue_tracks_list) < len(cv.search_result_queued_tracks_index_list):
+        if len(cv.queue_tracks_list) < cv.queued_tracks_amount:
 
-            
             for tracking_title in cv.queue_tracks_list:
 
                 for search_result_index in cv.search_result_queued_tracks_index_list:
@@ -591,7 +591,7 @@ def search_result_queue_number_update():
                 cv.search_result_queued_tracks_index_list.remove(index_for_remove_queue_number[0])
         
         # QUEUE
-        else:
+        elif len(cv.queue_tracks_list) > cv.queued_tracks_amount:
             cv.search_result_queued_tracks_index_list = []
 
             for tracking_title in cv.queue_tracks_list:
@@ -606,7 +606,7 @@ def search_result_queue_number_update():
                         cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
                         cv.search_result_queued_tracks_index_list.append(search_result_index)
 
-
+    cv.queued_tracks_amount = len(cv.queue_tracks_list)
 
 def clear_queue_update_all_occurrences():
     if cv.queue_tracks_list:

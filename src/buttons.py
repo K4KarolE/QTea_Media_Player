@@ -33,12 +33,14 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 
 
-from .logging import logger_runtime
+from .logger import logger_runtime
 from .class_bridge import br
 from .class_data import save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
     add_record_grouped_actions,
+    generate_duration_to_display,
     walk_and_add_dir,
+    remove_track_from_playlist,
     remove_queued_tracks_after_playlist_clear,
     save_db,
     cur, # db
@@ -88,6 +90,7 @@ class MyButtons(QPushButton):
             add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
             save_db()
             cv.active_pl_tracks_count = cv.active_pl_name.count()
+        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
@@ -99,7 +102,15 @@ class MyButtons(QPushButton):
         dialog_add_dir.exec()
         if dialog_add_dir.result():
             walk_and_add_dir(dialog_add_dir.selectedFiles()[0])
-           
+        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))   
+
+
+    ''' BUTTON PLAYLIST - REMOVE SINGLE TRACK '''
+    def button_remove_single_track(self):
+        if cv.active_pl_name.currentRow() > -1:
+            remove_track_from_playlist()
+            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track(self):
@@ -123,6 +134,10 @@ class MyButtons(QPushButton):
                 clear_playlist()
         else:
             clear_playlist()
+        
+        cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
+        cv.active_pl_sum_duration = 0
+        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
         
 
 

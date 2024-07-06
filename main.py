@@ -43,7 +43,6 @@ from src import (
     generate_duration_to_display,
     logger_basic,
     queue_add_remove_track,
-    remove_track_from_playlist,
     save_db,
     save_speaker_muted_value,
     update_and_save_volume_slider_value,
@@ -108,7 +107,7 @@ class MyWindow(QWidget):
         'window_size_toggle': self.window_size_toggle_action,
         'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
-        'paylist_remove_track': lambda: button_remove_track_clicked(),
+        'paylist_remove_track': lambda: button_remove_track.button_remove_single_track(),
         'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
         'paylist_select_next_pl': self.paylist_select_next_pl_action,
@@ -179,7 +178,7 @@ class MyWindow(QWidget):
                 add_record_grouped_actions(path)
             save_db()
 
-            update_duration_sum_widg()
+            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
             cv.active_pl_tracks_count = cv.active_pl_name.count()
  
 
@@ -241,7 +240,7 @@ class MyWindow(QWidget):
 
 
     def paylist_select_prev_pl_action(self):
-        current_index = playlists_all.currentIndex()
+        current_index = br.playlists_all.currentIndex()
         index_counter = -1
         next_playlist_index = current_index + index_counter
 
@@ -250,12 +249,12 @@ class MyWindow(QWidget):
             next_playlist_index = current_index + index_counter
         
         if next_playlist_index >= 0 and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
-            playlists_all.setCurrentIndex(next_playlist_index)
+            br.playlists_all.setCurrentIndex(next_playlist_index)
         
         
 
     def paylist_select_next_pl_action(self):
-        current_index = playlists_all.currentIndex()
+        current_index = br.playlists_all.currentIndex()
         last_playlist_index = cv.playlist_amount-1
         index_counter = 1
         next_playlist_index = current_index + index_counter
@@ -265,7 +264,7 @@ class MyWindow(QWidget):
             next_playlist_index = current_index + index_counter
         
         if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
-            playlists_all.setCurrentIndex(next_playlist_index)
+            br.playlists_all.setCurrentIndex(next_playlist_index)
 
 
     def button_play_pause_set_icon_to_start(self):
@@ -323,10 +322,10 @@ def update_duration_info():
 
 
 def update_title_window_queue():
-    window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
+    br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
 
 br.av_player.player.positionChanged.connect(update_duration_info)
-br.av_player.player.sourceChanged.connect(lambda: update_title_window_queue())
+br.av_player.player.sourceChanged.connect(update_title_window_queue)
 
 
 """ 
@@ -359,92 +358,64 @@ PLIST_BUTTONS_Y = 3
 def button_x_pos(num):
     return int(PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 6) * num)
 
-def update_duration_sum_widg():
-    duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
-
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
-def button_add_track_clicked():
-    button_add_track.button_add_track_clicked()
-    update_duration_sum_widg()
-
 button_add_track = MyButtons(
     'AT',
     'Add Track'
     )
 button_add_track.setGeometry(button_x_pos(0), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_track.clicked.connect(button_add_track_clicked)
+button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
 
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
-def button_add_dir_clicked():
-    button_add_dir.button_add_dir_clicked()
-    update_duration_sum_widg()
-
 button_add_dir = MyButtons(
     'AD',
     'Add Directory',
     )
 button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_dir.clicked.connect(button_add_dir_clicked)
+button_add_dir.clicked.connect(lambda: button_add_dir.button_add_dir_clicked())
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
-def button_remove_track_clicked():
-    if cv.active_pl_name.currentRow() > -1:
-        remove_track_from_playlist()
-        update_duration_sum_widg()
-
 button_remove_track = MyButtons(
     'RT',
     'Remove track'
     )
 button_remove_track.setGeometry(button_x_pos(2), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_track.clicked.connect(button_remove_track_clicked)
+button_remove_track.clicked.connect(button_remove_track.button_remove_single_track)
 
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
-def button_remove_all_track_clicked():
-    button_remove_all_track.button_remove_all_track()
-    cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
-    cv.active_pl_sum_duration = 0
-    update_duration_sum_widg()
-
 button_remove_all_track = MyButtons(
     'CP',
     'Clear Playlist'
     )
 button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_all_track.clicked.connect(button_remove_all_track_clicked)
+button_remove_all_track.clicked.connect(button_remove_all_track.button_remove_all_track)
 
 
 ''' BUTTON PLAYLIST - QUEUE '''
-def button_queue_clicked():
-    window_queue.show()
-
 button_queue = MyButtons(
     'Q',
     'Queue and Search window',
-    icon = br.icon.queue
+    br.icon.queue
     )
 button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_queue.clicked.connect(button_queue_clicked)
+button_queue.clicked.connect(lambda: br.window_queue.show())
 button_queue.set_style_settings_button()
 button_queue.setIconSize(QSize(15, 15))
 
 
 
 ''' BUTTON PLAYLIST - SETTINGS '''
-def button_settings_clicked():
-    window_settings.show()
-
 button_settings = MyButtons(
     'SE',
     'Settings window',
-    icon = br.icon.settings
+    br.icon.settings
     )
 button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_settings.clicked.connect(button_settings_clicked)
+button_settings.clicked.connect(lambda: br.window_settings.show())
 button_settings.set_style_settings_button()
 
 
@@ -545,7 +516,7 @@ button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
 button_toggle_repeat_pl = MyButtons(
     'Tog Rep PL',
     'Toggle Repeat Playlist',
-    icon = br.icon.repeat
+    br.icon.repeat
     )
 button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
@@ -561,7 +532,7 @@ elif cv.repeat_playlist == 0:
 button_toggle_shuffle_pl = MyButtons(
     'Shuffle PL',
     'Toggle Shuffle Playlist',
-    icon = br.icon.shuffle
+    br.icon.shuffle
     )
 button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
@@ -583,7 +554,7 @@ def button_toggle_playlist_clicked():
 button_toggle_playlist = MyButtons(
     'Shuffle PL',
     'Toggle Show Playlists',
-    icon = br.icon.toggle_playlist
+    br.icon.toggle_playlist
     )
 button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
@@ -607,7 +578,7 @@ def button_toggle_video_clicked():
 button_toggle_video = MyButtons(
     'Shuffle PL',
     'Toggle Show Video Window',
-    icon = br.icon.toggle_video
+    br.icon.toggle_video
     )
 button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
 button_toggle_video.clicked.connect(button_toggle_video_clicked)
@@ -809,23 +780,23 @@ for button in playlist_buttons_list:
 layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
 
 # DURATION
-duration_sum_widg = QPushButton('DURATION')
-duration_sum_widg.setDisabled(1)
-duration_sum_widg.setFont(inactive_track_font_style)
-layout_under_playlist_duration.addWidget(duration_sum_widg)
+br.duration_sum_widg = QPushButton('DURATION')
+br.duration_sum_widg.setDisabled(1)
+br.duration_sum_widg.setFont(inactive_track_font_style)
+layout_under_playlist_duration.addWidget(br.duration_sum_widg)
 
 
 ''' PAYLISTS '''
-playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list, duration_sum_widg)
-layout_playlist.addWidget(playlists_all)
+br.playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list)
+layout_playlist.addWidget(br.playlists_all)
 
 
 ''' WINDOW QUEUE '''
-window_queue = MyQueueWindow(playlists_all, button_play_pause_seticon_to_start)
+br.window_queue = MyQueueWindow(button_play_pause_seticon_to_start)
 
 
 ''' WINDOW SETTINGS '''
-window_settings = MySettingsWindow(playlists_all)
+br.window_settings = MySettingsWindow()
 
 
 # PLAY BUTTON ICON UPDATE

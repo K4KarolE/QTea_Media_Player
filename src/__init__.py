@@ -17,3 +17,4 @@ from .buttons import *
 from .window_queue_and_search import *
 from .window_settings import *
 from .message_box import *
+from .logger import *

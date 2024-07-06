@@ -25,10 +25,9 @@ from .message_box import MyMessageBoxError
 
 
 class MyQueueListWidget(QListWidget):
-    def __init__(self, play_track, playlists_all):
+    def __init__(self, play_track):
         super().__init__()
         self.play_track = play_track    # queue_play_list_item()
-        self.playlists_all = playlists_all
         self.installEventFilter(self)
         
         self.context_menu_dic = { 
@@ -101,7 +100,7 @@ class MyQueueListWidget(QListWidget):
     def jump_to_playlist(self):
         current_row_index = self.currentRow() - 1
         playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
-        self.playlists_all.setCurrentIndex(playlist_index)
+        br.playlists_all.setCurrentIndex(playlist_index)
     
 
     def dequeue_track(self):

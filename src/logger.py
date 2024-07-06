@@ -2,6 +2,14 @@
     Used to measure the time of 
     - application launch: main.py
     - add directory: src / buttons.py / button_add_dir_clicked()
+    
+    LEARNED:
+    The function with the @logger_runtime decorator need to be called with lambda:
+        - button_add_dir.clicked.connect(lambda: button_add_dir.button_add_dir_clicked())
+        -   @logger_runtime
+            def button_add_dir_clicked(self):...
+        - otherwise:
+        TypeError: MyButtons.button_add_dir_clicked() takes 1 positional argument but 2 were given
 '''
 
 import logging
