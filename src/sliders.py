@@ -59,9 +59,8 @@ class MySlider(QSlider):
     
 
 class MyVolumeSlider(QSlider):
-    def __init__(self, button_speaker_update):
+    def __init__(self):
         super().__init__()
-        self.button_speaker_update = button_speaker_update
         self.setMinimum(0)
         self.setMaximum(100)
         self.resize(120, 20)
@@ -114,6 +113,6 @@ class MyVolumeSlider(QSlider):
         '''
         br.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)
-        self.button_speaker_update() # if muted -> unmuted
+        br.button_speaker.button_speaker_update() # if muted -> unmuted
         # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
         br.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")

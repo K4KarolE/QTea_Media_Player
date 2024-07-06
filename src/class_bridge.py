@@ -36,7 +36,7 @@ class Bridge:
     
     button_speaker: object = None
 
-    duration_sum_widg: object = None    ###
+    duration_sum_widg: object = None
     volume_slider: object = None
 
 

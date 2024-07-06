@@ -132,7 +132,8 @@ class Data:
     window_min_width = settings['general_settings']['window_min_width']
     window_min_height = settings['general_settings']['window_min_height']
     # COUNTER for play_at_startup
-    played_at_startup_counter = False
+    played_at_startup_counter: bool = False
+    settings_window_launched: bool = False
 
     general_settings_dic = {
         'always_on_top': {

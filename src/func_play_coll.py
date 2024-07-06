@@ -187,7 +187,7 @@ class PlaysFunc:
                     br.av_player.player.setPosition(0)
                     br.av_player.video_output.hide()
                     br.image_logo.show()
-                    br.window.button_play_pause_set_icon_to_start()
+                    br.button_play_pause.setIcon(br.icon.start)
 
 
 

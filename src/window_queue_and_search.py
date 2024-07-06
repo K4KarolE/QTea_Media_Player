@@ -34,10 +34,8 @@ from .message_box import MyMessageBoxError
 
 
 class MyQueueWindow(QWidget):
-    def __init__(self, button_play_pause_seticon_to_start):
+    def __init__(self):
         super().__init__()
-        self.button_play_pause_seticon_to_start = button_play_pause_seticon_to_start
-       
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400
         WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT = 500, 200
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
@@ -273,7 +271,7 @@ class MyQueueWindow(QWidget):
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         br.play_funcs.play_track(track_index)
-        self.button_play_pause_seticon_to_start()
+        br.button_play_pause.setIcon(br.icon.pause)
     
 
     def queue_row_changed_sync(self, list_widget_row_changed):
@@ -310,7 +308,7 @@ class MyQueueWindow(QWidget):
             cv.playing_playlist_index = playlist_index
             update_playing_playlist_vars_and_widgets()
             br.play_funcs.play_track(track_index)
-            self.button_play_pause_seticon_to_start()
+            br.button_play_pause.setIcon(br.icon.pause)
         else:
             MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
 

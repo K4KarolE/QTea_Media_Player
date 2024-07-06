@@ -34,7 +34,6 @@ from src import (
     MyImage,
     MyPlaylists,
     MyQueueWindow,
-    MySettingsWindow,
     MySlider,
     MyVolumeSlider,
     PlaysFunc,
@@ -44,7 +43,6 @@ from src import (
     logger_basic,
     queue_add_remove_track,
     save_db,
-    save_speaker_muted_value,
     update_and_save_volume_slider_value,
     update_raw_current_duration_db,
     update_window_size_vars_from_saved_values,
@@ -90,14 +88,14 @@ class MyWindow(QWidget):
         'medium_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.medium_jump),
         'big_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.big_jump),
         'big_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.big_jump),
-        'volume_mute': lambda: button_speaker_clicked(),
+        'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
         'volume_up': self.volume_up_action,
         'volume_down': self.volume_down_action,
         'audio_tracks_rotate': lambda: br.play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: br.play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: br.button_play_pause.button_play_pause_clicked(),
         'play': lambda: br.play_funcs.play_track(), # play_pause vs. play: info in readme
-        'stop': lambda: button_stop_clicked(),
+        'stop': lambda: br.button_stop.button_stop_clicked(),
         'previous_track': lambda: br.button_prev_track.button_prev_track_clicked(),
         'next_track': lambda: br.button_next_track.button_next_track_clicked(),
         'repeat_track_playlist_toggle': lambda: br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
@@ -201,7 +199,7 @@ class MyWindow(QWidget):
     def volume_update(self):
         new_volume = round(cv.volume, 4)
         br.av_player.audio_output.setVolume(new_volume)
-        button_speaker_update()
+        br.button_speaker.button_speaker_update()
         update_and_save_volume_slider_value(new_volume, volume_slider)
 
 
@@ -267,30 +265,6 @@ class MyWindow(QWidget):
             br.playlists_all.setCurrentIndex(next_playlist_index)
 
 
-    def button_play_pause_set_icon_to_start(self):
-        ''' 
-            Used in the src / func_play_coll / PlayFunc class
-            to update the play button, once the last track played
-            in the playlist and no repeat or shuffle is enabled
-        '''
-        br.button_play_pause.setIcon(br.icon.start)
-
-
-    ''' FOR THE AV PLAYER - EVENT FILTER - CONTEXT MENU ACTIONS ''' 
-    def play_pause(self):
-        br.button_play_pause.button_play_pause_clicked()
-    
-    def stop(self):
-        button_stop_clicked()
-    
-    def previous_track(self):
-        br.button_prev_track.button_prev_track_clicked()
-    
-    def next_track(self):
-        br.button_next_track.button_next_track_clicked()
-    
-    def mute(self):
-        button_speaker_clicked()
 
 
 br.icon = MyIcon()
@@ -374,7 +348,7 @@ br.button_add_dir = MyButtons(
     'Add Directory',
     )
 br.button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-br.button_add_dir.clicked.connect(lambda: br.button_add_dir.button_add_dir_clicked())
+br.button_add_dir.clicked.connect(lambda: br.button_add_dir.button_add_dir_clicked())   # logger decorator on func. -> lambda needed
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
@@ -415,7 +389,7 @@ br.button_settings = MyButtons(
     br.icon.settings
     )
 br.button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-br.button_settings.clicked.connect(lambda: br.window_settings.show())
+br.button_settings.clicked.connect(lambda: br.button_settings.button_settings_clicked())
 br.button_settings.set_style_settings_button()
 
 
@@ -463,32 +437,15 @@ br.button_play_pause.clicked.connect(br.button_play_pause.button_play_pause_clic
 br.button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
 br.button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
-def button_play_pause_seticon_to_start():
-    '''
-    Used in the MyQueueWindow instance / QUEUE and SEARCH window-list 
-    play track -> update play button
-    '''
-    br.button_play_pause.setIcon(br.icon.pause)
-
 
 ''' BUTTON PLAY SECTION - STOP '''
-def button_stop_clicked():
-    br.av_player.player.stop()
-    br.av_player.paused = False
-    br.button_play_pause.setIcon(br.icon.start)
-    br.av_player.screen_saver_on()
-    if br.av_player.video_output.isVisible():
-        br.image_logo.show()
-        br.av_player.video_output.hide()
-
-
 br.button_stop = MyButtons(
     'Stop',
     'Stop playing',
     br.icon.stop
     )
 br.button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-br.button_stop.clicked.connect(button_stop_clicked)
+br.button_stop.clicked.connect(br.button_stop.button_stop_clicked)
 br.button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 
@@ -627,34 +584,15 @@ play_buttons_list = [
 
 
 ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
-def button_speaker_clicked():
-    if cv.is_speaker_muted:
-        cv.is_speaker_muted = False
-        button_speaker.setIcon(br.icon.speaker)
-        br.av_player.audio_output.setVolume(cv.volume)
-    else:
-        cv.is_speaker_muted = True
-        button_speaker.setIcon(br.icon.speaker_muted)
-        br.av_player.audio_output.setVolume(0)
-    save_speaker_muted_value()
-
-
-# USED WHEN CHANGING VOLUME WHILE MUTED
-# WITHOUT THE SPEAKER BUTTON - SLIDER, HOTKEYS
-def button_speaker_update():
-    if cv.is_speaker_muted:
-        cv.is_speaker_muted = False
-        button_speaker.setIcon(br.icon.speaker)
-
-button_speaker = MyButtons(
+br.button_speaker = MyButtons(
     'Speaker',
     'Toggle Mute',
     icon = br.icon.speaker
     )
-button_speaker.setFlat(1)
-button_speaker.clicked.connect(button_speaker_clicked)
+br.button_speaker.setFlat(1)
+br.button_speaker.clicked.connect(br.button_speaker.button_speaker_clicked)
 if cv.is_speaker_muted:
-    button_speaker.setIcon(br.icon.speaker_muted)
+    br.button_speaker.setIcon(br.icon.speaker_muted)
     br.av_player.audio_output.setVolume(0)
 
 
@@ -792,11 +730,7 @@ layout_playlist.addWidget(br.playlists_all)
 
 
 ''' WINDOW QUEUE '''
-br.window_queue = MyQueueWindow(button_play_pause_seticon_to_start)
-
-
-''' WINDOW SETTINGS '''
-br.window_settings = MySettingsWindow()
+br.window_queue = MyQueueWindow()
 
 
 # PLAY BUTTON ICON UPDATE
@@ -818,7 +752,7 @@ layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
 
 # WIDGETS
 # SPEAKER/MUTE BUTTON CREATED EARLIER
-volume_slider = MyVolumeSlider(button_speaker_update)
+volume_slider = MyVolumeSlider()
 volume_slider.setFixedSize(100,30)
 
 
@@ -829,7 +763,7 @@ for button in play_buttons_list:
     button.setParent(play_buttons_list_wrapper)
 
 layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
-layout_bottom_volume.addWidget(button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
+layout_bottom_volume.addWidget(br.button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
 layout_bottom_volume.addWidget(volume_slider)
 
 

@@ -1,39 +1,8 @@
-'''
-BUTTON FUNCTIONS DECLARED BELOW:
---------------------------------
-- Add track
-- Add directory
-- Remove all tracks (Clear playlist) - *more added/compiled in MAIN
-
-- Set button style/stylesheet functions
-
-- Play/pause
-- Play/pause via list
-- Previous track
-- Next track
-- Toggle repeat
-- Toggle shuffle
-
-
-
-BUTTON FUNCTIONS DECLARED IN MAIN:
-----------------------------------
-- Remove track
-- Settings
-- Stop
-- Toggle playlist
-- Toogle video
-- Duration info (text)
-- Speaker / mute (picture)
-'''
-
-
 from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 
 
-from .logger import logger_runtime
 from .class_bridge import br
 from .class_data import save_json, cv, settings, PATH_JSON_SETTINGS
 from .func_coll import (
@@ -43,12 +12,15 @@ from .func_coll import (
     remove_track_from_playlist,
     remove_queued_tracks_after_playlist_clear,
     save_db,
+    save_speaker_muted_value,
     cur, # db
     connection, # db
     settings,   # json dic
     PATH_JSON_SETTINGS,
     )
+from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
+from .window_settings import MySettingsWindow
 
 
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
@@ -140,6 +112,14 @@ class MyButtons(QPushButton):
         br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
         
 
+    ''' BUTTON PLAYLIST - SETTINGS BUTTON / WINDOW '''
+    def button_settings_clicked(self):
+        if cv.settings_window_launched:
+            br.window_settings.show()
+        else:
+            br.window_settings = MySettingsWindow()
+            br.window_settings.show()
+            cv.settings_window_launched = True
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''
@@ -188,6 +168,8 @@ class MyButtons(QPushButton):
                             "color: grey;"   
                             "}"
                         )
+    
+
 
 
     ''' 
@@ -218,6 +200,18 @@ class MyButtons(QPushButton):
         self.setIcon(br.icon.pause)
         br.play_funcs.play_track()
     
+
+    ''' BUTTON PLAY SECTION - STOP '''
+    def button_stop_clicked(self):
+        br.av_player.player.stop()
+        br.av_player.paused = False
+        br.button_play_pause.setIcon(br.icon.start)
+        br.av_player.screen_saver_on()
+        if br.av_player.video_output.isVisible():
+            br.image_logo.show()
+            br.av_player.video_output.hide()
+
+
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
@@ -273,3 +267,22 @@ class MyButtons(QPushButton):
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json(settings, PATH_JSON_SETTINGS)
     
+
+    ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
+    def button_speaker_clicked(self):
+        if cv.is_speaker_muted:
+            cv.is_speaker_muted = False
+            br.button_speaker.setIcon(br.icon.speaker)
+            br.av_player.audio_output.setVolume(cv.volume)
+        else:
+            cv.is_speaker_muted = True
+            br.button_speaker.setIcon(br.icon.speaker_muted)
+            br.av_player.audio_output.setVolume(0)
+        save_speaker_muted_value()
+
+    # USED WHEN CHANGING VOLUME WHILE MUTED
+    # WITHOUT THE SPEAKER BUTTON - SLIDER, HOTKEYS
+    def button_speaker_update(self):
+        if cv.is_speaker_muted:
+            cv.is_speaker_muted = False
+            br.button_speaker.setIcon(br.icon.speaker)

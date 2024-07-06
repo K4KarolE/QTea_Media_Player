@@ -147,15 +147,15 @@ class AVPlayer(QWidget):
         subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
 
         if q.text() == list(self.context_menu_dic)[0]:
-            br.window.play_pause()
+            br.button_play_pause.button_play_pause_clicked()
         elif q.text() == list(self.context_menu_dic)[1]:
-            br.window.stop()
+            br.button_stop.button_stop_clicked()
         elif q.text() == list(self.context_menu_dic)[2]:
-            br.window.previous_track()
+            br.button_prev_track.button_prev_track_clicked()
         elif q.text() == list(self.context_menu_dic)[3]:
-            br.window.next_track()
+            br.button_next_track.button_next_track_clicked()
         elif q.text() == list(self.context_menu_dic)[4]:
-            br.window.mute()
+            br.button_queue.button_speaker_clicked()
         
         elif q.text() in audio_tracks_list:
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
