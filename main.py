@@ -787,7 +787,7 @@ layout_under_playlist_duration.addWidget(br.duration_sum_widg)
 
 
 ''' PAYLISTS '''
-br.playlists_all = MyPlaylists(br.button_play_pause.button_play_pause_via_list)
+br.playlists_all = MyPlaylists()
 layout_playlist.addWidget(br.playlists_all)
 
 

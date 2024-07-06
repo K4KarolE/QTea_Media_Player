@@ -34,9 +34,8 @@ class MyPlaylists(QTabWidget):
         __.currentChanged.connect(self.active_playlist)
     SIGNAL AT THE PLAYLISTS CREATION
     '''
-    def __init__(self, play_track):
+    def __init__(self):
         super().__init__()
-        self.play_track = play_track
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
         self.playlists_creation()
@@ -188,28 +187,25 @@ class MyPlaylists(QTabWidget):
             ''' LISTS CREATION '''
             ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
             
-            cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget(self.play_track)
+            cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget()
             name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
             name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
-            name_list_widget.itemDoubleClicked.connect(self.play_track)
             # MOVE TRACK UP / DOWN
             name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
             name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
 
 
-            cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget(self.play_track)
+            cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget()
             queue_list_widget = cv.playlist_widget_dic[pl]['queue_list_widget']
             queue_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
             queue_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
-            queue_list_widget.itemDoubleClicked.connect(self.play_track)
 
 
-            cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget(self.play_track)
+            cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget()
             duration_list_widget = cv.playlist_widget_dic[pl]['duration_list_widget']
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
             duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
-            duration_list_widget.itemDoubleClicked.connect(self.play_track)
             duration_list_widget.setFixedWidth(70)
             
         

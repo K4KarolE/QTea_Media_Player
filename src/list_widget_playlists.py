@@ -22,9 +22,10 @@ from .message_box import MyMessageBoxError
 
 
 class MyListWidget(QListWidget):
-    def __init__(self, play_track):
+    def __init__(self):
         super().__init__()
-        self.play_track = play_track
+        self.play_track = br.button_play_pause.button_play_pause_via_list
+        self.itemDoubleClicked.connect(self.play_track)
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
