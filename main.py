@@ -95,20 +95,20 @@ class MyWindow(QWidget):
         'volume_down': self.volume_down_action,
         'audio_tracks_rotate': lambda: br.play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: br.play_funcs.subtitle_tracks_play_next_one(),
-        'play_pause': lambda: button_play_pause.button_play_pause_clicked(),
+        'play_pause': lambda: br.button_play_pause.button_play_pause_clicked(),
         'play': lambda: br.play_funcs.play_track(), # play_pause vs. play: info in readme
         'stop': lambda: button_stop_clicked(),
-        'previous_track': lambda: button_prev_track.button_prev_track_clicked(),
-        'next_track': lambda: button_next_track.button_next_track_clicked(),
-        'repeat_track_playlist_toggle': lambda: button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
-        'shuffle_playlist_toggle': lambda: button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
+        'previous_track': lambda: br.button_prev_track.button_prev_track_clicked(),
+        'next_track': lambda: br.button_next_track.button_next_track_clicked(),
+        'repeat_track_playlist_toggle': lambda: br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
+        'shuffle_playlist_toggle': lambda: br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
         'full_screen_toggle': lambda: br.av_player.full_screen_toggle(),
         'playlist_toggle': lambda: button_toggle_playlist_clicked(),
         'window_size_toggle': self.window_size_toggle_action,
-        'paylist_add_track': lambda: button_add_track.button_add_track_clicked(),
-        'paylist_add_directory': lambda: button_add_dir.button_add_dir_clicked(),
-        'paylist_remove_track': lambda: button_remove_track.button_remove_single_track(),
-        'paylist_remove_all_track': lambda: button_remove_all_track.button_remove_all_track(),
+        'paylist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
+        'paylist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),
+        'paylist_remove_track': lambda: br.button_remove_track.button_remove_single_track(),
+        'paylist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
         'paylist_select_next_pl': self.paylist_select_next_pl_action,
         'queue_toggle': lambda: queue_add_remove_track()
@@ -273,21 +273,21 @@ class MyWindow(QWidget):
             to update the play button, once the last track played
             in the playlist and no repeat or shuffle is enabled
         '''
-        button_play_pause.setIcon(br.icon.start)
+        br.button_play_pause.setIcon(br.icon.start)
 
 
     ''' FOR THE AV PLAYER - EVENT FILTER - CONTEXT MENU ACTIONS ''' 
     def play_pause(self):
-        button_play_pause.button_play_pause_clicked()
+        br.button_play_pause.button_play_pause_clicked()
     
     def stop(self):
         button_stop_clicked()
     
     def previous_track(self):
-        button_prev_track.button_prev_track_clicked()
+        br.button_prev_track.button_prev_track_clicked()
     
     def next_track(self):
-        button_next_track.button_next_track_clicked()
+        br.button_next_track.button_next_track_clicked()
     
     def mute(self):
         button_speaker_clicked()
@@ -314,11 +314,11 @@ def update_duration_info():
         cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
 
         if cv.is_duration_to_display_straight:
-            button_duration_info.setText(cv.duration_to_display_straight)
+            br.button_duration_info.setText(cv.duration_to_display_straight)
         else:
-            button_duration_info.setText(cv.duration_to_display_back)
+            br.button_duration_info.setText(cv.duration_to_display_back)
 
-        button_duration_info.adjustSize()
+        br.button_duration_info.adjustSize()
 
 
 def update_title_window_queue():
@@ -360,63 +360,63 @@ def button_x_pos(num):
 
 
 ''' BUTTON PLAYLIST - ADD TRACK '''
-button_add_track = MyButtons(
+br.button_add_track = MyButtons(
     'AT',
     'Add Track'
     )
-button_add_track.setGeometry(button_x_pos(0), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_track.clicked.connect(button_add_track.button_add_track_clicked)
+br.button_add_track.setGeometry(button_x_pos(0), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_add_track.clicked.connect(br.button_add_track.button_add_track_clicked)
 
 
 ''' BUTTON PLAYLIST - ADD DIRECTORY '''
-button_add_dir = MyButtons(
+br.button_add_dir = MyButtons(
     'AD',
     'Add Directory',
     )
-button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_add_dir.clicked.connect(lambda: button_add_dir.button_add_dir_clicked())
+br.button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_add_dir.clicked.connect(lambda: br.button_add_dir.button_add_dir_clicked())
 
 
 ''' BUTTON PLAYLIST - REMOVE TRACK '''
-button_remove_track = MyButtons(
+br.button_remove_track = MyButtons(
     'RT',
     'Remove track'
     )
-button_remove_track.setGeometry(button_x_pos(2), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_track.clicked.connect(button_remove_track.button_remove_single_track)
+br.button_remove_track.setGeometry(button_x_pos(2), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_remove_track.clicked.connect(br.button_remove_track.button_remove_single_track)
 
 
 ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
-button_remove_all_track = MyButtons(
+br.button_remove_all_track = MyButtons(
     'CP',
     'Clear Playlist'
     )
-button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_remove_all_track.clicked.connect(button_remove_all_track.button_remove_all_track)
+br.button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_remove_all_track.clicked.connect(br.button_remove_all_track.button_remove_all_track)
 
 
 ''' BUTTON PLAYLIST - QUEUE '''
-button_queue = MyButtons(
+br.button_queue = MyButtons(
     'Q',
     'Queue and Search window',
     br.icon.queue
     )
-button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_queue.clicked.connect(lambda: br.window_queue.show())
-button_queue.set_style_settings_button()
-button_queue.setIconSize(QSize(15, 15))
+br.button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_queue.clicked.connect(lambda: br.window_queue.show())
+br.button_queue.set_style_settings_button()
+br.button_queue.setIconSize(QSize(15, 15))
 
 
 
 ''' BUTTON PLAYLIST - SETTINGS '''
-button_settings = MyButtons(
+br.button_settings = MyButtons(
     'SE',
     'Settings window',
     br.icon.settings
     )
-button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
-button_settings.clicked.connect(lambda: br.window_settings.show())
-button_settings.set_style_settings_button()
+br.button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, PLIST_BUTTONS_HEIGHT)
+br.button_settings.clicked.connect(lambda: br.window_settings.show())
+br.button_settings.set_style_settings_button()
 
 
 ''' 
@@ -426,12 +426,12 @@ button_settings.set_style_settings_button()
     buttons style applied in the LAYOUTS section
 '''
 playlist_buttons_list = [
-    button_add_track,
-    button_add_dir,
-    button_remove_track,
-    button_remove_all_track,
-    button_queue,
-    button_settings
+    br.button_add_track,
+    br.button_add_dir,
+    br.button_remove_track,
+    br.button_remove_all_track,
+    br.button_queue,
+    br.button_settings
                     ]
 
 
@@ -454,90 +454,90 @@ BUTTON PLAY SECTION - PLAY/PAUSE
 The button`s icon update at startup is declared after
 the playlists creation (playlists_all = MyPlaylists(..))
 '''
-button_play_pause = MyButtons(
+br.button_play_pause = MyButtons(
     'PLAY/PAUSE',
     'Start/stop playing',
     br.icon.start,
     )
-button_play_pause.clicked.connect(button_play_pause.button_play_pause_clicked)
-button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
-button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
+br.button_play_pause.clicked.connect(br.button_play_pause.button_play_pause_clicked)
+br.button_play_pause.setGeometry(0, 0, PLAY_BUTTONS_WIDTH+4, PLAY_BUTTONS_HEIGHT+4)
+br.button_play_pause.setIconSize(QSize(cv.icon_size + 5, cv.icon_size + 5))
 
 def button_play_pause_seticon_to_start():
     '''
     Used in the MyQueueWindow instance / QUEUE and SEARCH window-list 
     play track -> update play button
     '''
-    button_play_pause.setIcon(br.icon.pause)
+    br.button_play_pause.setIcon(br.icon.pause)
 
 
 ''' BUTTON PLAY SECTION - STOP '''
 def button_stop_clicked():
     br.av_player.player.stop()
     br.av_player.paused = False
-    button_play_pause.setIcon(br.icon.start)
+    br.button_play_pause.setIcon(br.icon.start)
     br.av_player.screen_saver_on()
     if br.av_player.video_output.isVisible():
         br.image_logo.show()
         br.av_player.video_output.hide()
 
 
-button_stop = MyButtons(
+br.button_stop = MyButtons(
     'Stop',
     'Stop playing',
     br.icon.stop
     )
-button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_stop.clicked.connect(button_stop_clicked)
-button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
+br.button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_stop.clicked.connect(button_stop_clicked)
+br.button_stop.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 
 ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
-button_prev_track = MyButtons(
+br.button_prev_track = MyButtons(
     'Prev',
     'Previous track',
     br.icon.previous
     )
-button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_prev_track.clicked.connect(button_prev_track.button_prev_track_clicked)
+br.button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_prev_track.clicked.connect(br.button_prev_track.button_prev_track_clicked)
 
 
 ''' BUTTON PLAY SECTION - NEXT TRACK '''
-button_next_track = MyButtons(
+br.button_next_track = MyButtons(
     'Next',
     'Next track',
     br.icon.next
     )
-button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_next_track.clicked.connect(button_next_track.button_next_track_clicked)
+br.button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_next_track.clicked.connect(br.button_next_track.button_next_track_clicked)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
-button_toggle_repeat_pl = MyButtons(
+br.button_toggle_repeat_pl = MyButtons(
     'Tog Rep PL',
     'Toggle Repeat Playlist',
     br.icon.repeat
     )
-button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_repeat_pl.clicked.connect(button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
+br.button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_toggle_repeat_pl.clicked.connect(br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
 
 if cv.repeat_playlist == 2:
-    button_toggle_repeat_pl.setFlat(1)
+    br.button_toggle_repeat_pl.setFlat(1)
 elif cv.repeat_playlist == 0:
-    button_toggle_repeat_pl.setFlat(1)
-    button_toggle_repeat_pl.setIcon(br.icon.repeat_single)
+    br.button_toggle_repeat_pl.setFlat(1)
+    br.button_toggle_repeat_pl.setIcon(br.icon.repeat_single)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
-button_toggle_shuffle_pl = MyButtons(
+br.button_toggle_shuffle_pl = MyButtons(
     'Shuffle PL',
     'Toggle Shuffle Playlist',
     br.icon.shuffle
     )
-button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_shuffle_pl.clicked.connect(button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
+br.button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_toggle_shuffle_pl.clicked.connect(br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
 if cv.shuffle_playlist_on:
-    button_toggle_shuffle_pl.setFlat(1)
+    br.button_toggle_shuffle_pl.setFlat(1)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
@@ -545,19 +545,19 @@ def button_toggle_playlist_clicked():
     if br.av_player.playlist_visible and br.av_player.video_area_visible:
         layout_vert_right_qframe.hide()
         br.av_player.playlist_visible = False
-        button_toggle_video.setDisabled(1)
+        br.button_toggle_video.setDisabled(1)
     else:
         layout_vert_right_qframe.show()
         br.av_player.playlist_visible = True
-        button_toggle_video.setDisabled(0)    
+        br.button_toggle_video.setDisabled(0)    
 
-button_toggle_playlist = MyButtons(
+br.button_toggle_playlist = MyButtons(
     'Shuffle PL',
     'Toggle Show Playlists',
     br.icon.toggle_playlist
     )
-button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
+br.button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
@@ -567,21 +567,21 @@ def button_toggle_video_clicked():
         br.av_player.video_area_visible = False
         br.window.resize(int(cv.window_width/3), br.window.geometry().height())
         br.window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
-        button_toggle_playlist.setDisabled(1)
+        br.button_toggle_playlist.setDisabled(1)
     else:
         br.window.resize(cv.window_width, br.window.geometry().height())
         br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
         layout_vert_left_qframe.show()
         br.av_player.video_area_visible = True
-        button_toggle_playlist.setDisabled(0)
+        br.button_toggle_playlist.setDisabled(0)
 
-button_toggle_video = MyButtons(
+br.button_toggle_video = MyButtons(
     'Shuffle PL',
     'Toggle Show Video Window',
     br.icon.toggle_video
     )
-button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-button_toggle_video.clicked.connect(button_toggle_video_clicked)
+br.button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
+br.button_toggle_video.clicked.connect(button_toggle_video_clicked)
 
 
 ''' BUTTON PLAY SECTION - DURATION INFO '''
@@ -590,20 +590,20 @@ def button_duration_info_clicked():
     if cv.track_full_duration_to_display:
         if cv.is_duration_to_display_straight:
             cv.is_duration_to_display_straight = False
-            button_duration_info.setText(cv.duration_to_display_back)
+            br.button_duration_info.setText(cv.duration_to_display_back)
         else:
             cv.is_duration_to_display_straight = True
-            button_duration_info.setText(cv.duration_to_display_straight)
+            br.button_duration_info.setText(cv.duration_to_display_straight)
         
-        button_duration_info.adjustSize()
+        br.button_duration_info.adjustSize()
 
-button_duration_info = MyButtons(
+br.button_duration_info = MyButtons(
     '00:00 / 00:00',
     'Click to switch',
     )
-button_duration_info.move(play_buttons_x_pos(9.5), 0)
-button_duration_info.clicked.connect(button_duration_info_clicked)
-button_duration_info.set_style_duration_info_button()
+br.button_duration_info.move(play_buttons_x_pos(9.5), 0)
+br.button_duration_info.clicked.connect(button_duration_info_clicked)
+br.button_duration_info.set_style_duration_info_button()
 
 
 ''' 
@@ -613,15 +613,15 @@ button_duration_info.set_style_duration_info_button()
     part of the list
 '''
 play_buttons_list = [
-    button_play_pause,
-    button_stop,
-    button_prev_track,
-    button_next_track,
-    button_toggle_repeat_pl,
-    button_toggle_shuffle_pl,
-    button_toggle_playlist,
-    button_toggle_video,
-    button_duration_info
+    br.button_play_pause,
+    br.button_stop,
+    br.button_prev_track,
+    br.button_next_track,
+    br.button_toggle_repeat_pl,
+    br.button_toggle_shuffle_pl,
+    br.button_toggle_playlist,
+    br.button_toggle_video,
+    br.button_duration_info
 ]
 
 
@@ -774,7 +774,7 @@ playlist_buttons_list_wrapper.setFixedSize(250, PLIST_BUTTONS_HEIGHT+5)
 
 for button in playlist_buttons_list:
     button.setParent(playlist_buttons_list_wrapper)
-    if button not in [button_settings, button_queue]:
+    if button not in [br.button_settings, br.button_queue]:
         button.set_style_playlist_buttons()
 
 layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
@@ -787,7 +787,7 @@ layout_under_playlist_duration.addWidget(br.duration_sum_widg)
 
 
 ''' PAYLISTS '''
-br.playlists_all = MyPlaylists(button_play_pause.button_play_pause_via_list)
+br.playlists_all = MyPlaylists(br.button_play_pause.button_play_pause_via_list)
 layout_playlist.addWidget(br.playlists_all)
 
 
@@ -801,7 +801,7 @@ br.window_settings = MySettingsWindow()
 
 # PLAY BUTTON ICON UPDATE
 if cv.play_at_startup and cv.active_pl_tracks_count > 0:
-    button_play_pause.setIcon(br.icon.pause)
+    br.button_play_pause.setIcon(br.icon.pause)
 
 
 ''' BOTTOM '''
