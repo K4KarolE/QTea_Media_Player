@@ -32,13 +32,6 @@ class MyWindow(QWidget):
 
     
     def hotkeys_creation(self):
-        '''
-        HOTKEYS/SHORTCUTS CREATION
-
-        "Lambda: function()" and "self.function" solutions used to differentiate:
-        lambda:function(): - created in the MyButtons class, ..
-        self.function:   - defined/created right after the hotkeys_action_dic dictionary
-        ''' 
         hotkeys_action_dic = {
         'small_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.small_jump),
         'small_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.small_jump),

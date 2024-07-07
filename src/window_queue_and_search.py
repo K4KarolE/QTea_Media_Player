@@ -1,8 +1,9 @@
 ''' 
-WINDOW QUEUE & SEARCH
+WINDOW QUEUE & SEARCH WINDOW is displayed once
+"Q" button clicked under the playlists section
 
 Window title update to display the current track details
-is declared in main / update_title_window_queue()
+is declared in src/av_player/update_title_window_queue()
 '''
 
 from PyQt6.QtCore import Qt

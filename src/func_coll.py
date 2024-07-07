@@ -1,4 +1,3 @@
-
 from PyQt6.QtWidgets import QListWidgetItem
 from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor

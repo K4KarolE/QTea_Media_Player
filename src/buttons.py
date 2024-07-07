@@ -22,8 +22,6 @@ from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
 
 
-ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
-
 
 class MyButtons(QPushButton):
     def __init__(

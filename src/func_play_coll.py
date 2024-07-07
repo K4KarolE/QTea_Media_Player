@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import time
 import random
@@ -27,8 +26,6 @@ from .func_coll import (
 class PlaysFunc:
     def __init__(self):
         br.av_player.player.mediaStatusChanged.connect(self.auto_play_next_track)
-        # self.playing_track_index = playing_track_index
-    
 
     def play_track(self, playing_track_index=None):
         cv.audio_track_played = 0   

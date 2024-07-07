@@ -17,11 +17,8 @@ from .func_coll import (
 
 
 '''
-DURATION INFO UPDATE
-- The positionChanged signal action declared in MAIN
-    after the instance of the class is created
-- The .av_player.player.mediaStatusChanged signal to
-    autoplay next track is declared in src / func_play_coll.py
+The .av_player.player.mediaStatusChanged signal to
+autoplay next track is declared in src / func_play_coll.py
 
 
 PLAY EMPTY SOUND WORKAROUND
@@ -301,17 +298,10 @@ qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is 
 [h264 @ 000001B93D732280] thread_get_buffer() failed
 [h264 @ 000001B93D732280] decode_slice_header error
 [h264 @ 000001B93D732280] no frame!
+
     
 LEARNED:
-QWidget can not be created earlier than the APP
---> instance can not be created in the SRC / any file
---> instead passed as a parameter from MAIN:
-    button_add_dir = MyButtons(
-                            'AD',
-                            'Add Directory',
-                            av_player,
-                        --> av_player_duration,
-                            )
+QWidget can not be created earlier than the app = QApplication(sys.argv)
 """
 class TrackDuration(QWidget):
 
