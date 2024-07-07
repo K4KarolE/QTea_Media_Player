@@ -266,9 +266,9 @@ def list_item_style_update(list_item, font_style, font_color, font_bg_color):
     list_item.setBackground(QColor(font_bg_color))
 
 
-def update_and_save_volume_slider_value(new_value, slider):
+def update_and_save_volume_slider_value(new_value):
     cv.volume = new_value
-    slider.setValue(int(new_value*100))
+    br.volume_slider.setValue(int(new_value*100))
     settings['volume'] = new_value
     if settings['is_speaker_muted']:
         settings['is_speaker_muted'] = False

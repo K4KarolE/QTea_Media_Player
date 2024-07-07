@@ -23,6 +23,7 @@ class Bridge:
     button_remove_all_track: object = None
     button_queue: object = None
     button_settings: object = None
+    playlist_buttons_list = []
 
     button_play_pause: object = None
     button_stop: object = None
@@ -33,6 +34,7 @@ class Bridge:
     button_toggle_playlist: object = None
     button_toggle_video: object = None
     button_duration_inf: object = None
+    play_buttons_list = []
     
     button_speaker: object = None
 

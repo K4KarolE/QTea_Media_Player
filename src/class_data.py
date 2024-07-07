@@ -42,7 +42,9 @@ class Data:
     currently_playing_track_info_in_window_title = ''
     # to disable current duration autosave while
     # files from directory are added
-    adding_records_at_moment = False  
+    adding_records_at_moment = False
+    PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
+
 
     '''
     QUEUE TRACKING

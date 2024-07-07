@@ -158,7 +158,7 @@ class MyWindow(QWidget):
         new_volume = round(cv.volume, 4)
         br.av_player.audio_output.setVolume(new_volume)
         br.button_speaker.button_speaker_update()
-        update_and_save_volume_slider_value(new_volume, volume_slider)
+        update_and_save_volume_slider_value(new_volume)
 
 
     def window_size_toggle_action(self):
