@@ -34,6 +34,7 @@ from src import (
     MyImage,
     MyPlaylists,
     MyQueueWindow,
+    MySettingsWindow,
     MySlider,
     MyVolumeSlider,
     PlaysFunc,
@@ -57,8 +58,6 @@ app = QApplication(sys.argv)
 
 
 ''' WINDOW '''
-WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID = 650, 180
-
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -79,7 +78,6 @@ class MyWindow(QWidget):
         "Lambda: function()" and "self.function" solutions used to differentiate:
         lambda:function(): - created in the MyButtons class, ..
         self.function:   - defined/created right after the hotkeys_action_dic dictionary
-                            - note: not all functions created for the hotkeys_action_dic
         ''' 
         hotkeys_action_dic = {
         'small_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.small_jump),
@@ -89,8 +87,8 @@ class MyWindow(QWidget):
         'big_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.big_jump),
         'big_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.big_jump),
         'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
-        'volume_up': self.volume_up_action,
-        'volume_down': self.volume_down_action,
+        'volume_up': self.volume_up_action, 
+        'volume_down': self.volume_down_action, 
         'audio_tracks_rotate': lambda: br.play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: br.play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: br.button_play_pause.button_play_pause_clicked(),
@@ -101,15 +99,15 @@ class MyWindow(QWidget):
         'repeat_track_playlist_toggle': lambda: br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
         'shuffle_playlist_toggle': lambda: br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
         'full_screen_toggle': lambda: br.av_player.full_screen_toggle(),
-        'playlist_toggle': lambda: button_toggle_playlist_clicked(),
-        'window_size_toggle': self.window_size_toggle_action,
+        'playlist_toggle': lambda: br.button_toggle_playlist.button_toggle_playlist_clicked(),
+        'window_size_toggle': self.window_size_toggle_action, 
         'paylist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),
         'paylist_remove_track': lambda: br.button_remove_track.button_remove_single_track(),
         'paylist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
-        'paylist_select_prev_pl': self.paylist_select_prev_pl_action,
-        'paylist_select_next_pl': self.paylist_select_next_pl_action,
-        'queue_toggle': lambda: queue_add_remove_track()
+        'paylist_select_prev_pl': self.paylist_select_prev_pl_action, 
+        'paylist_select_next_pl': self.paylist_select_next_pl_action, 
+        'queue_toggle': lambda: queue_add_remove_track() 
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -219,7 +217,7 @@ class MyWindow(QWidget):
         
         # 1ST - GREATER THAN MEDIUM SIZE WINDOW WITHOUT PLAYLIST
         if cv.window_size_toggle_counter == 1:
-            button_toggle_playlist_clicked()
+            br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_alt_width, cv.window_alt_height)
             move_window_to_middle()
             
@@ -231,7 +229,7 @@ class MyWindow(QWidget):
         
         # BACK TO STANDARD - MEDIUM SIZE WINDOW WITH PLAYLIST
         else:
-            button_toggle_playlist_clicked()
+            br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_width, cv.window_height)
             move_window_to_middle()
         
@@ -273,39 +271,8 @@ br.window = MyWindow()
 
 br.av_player = AVPlayer()
 
-
-def update_duration_info():
-    if br.av_player.base_played:
-        track_current_duration = br.av_player.player.position()
-
-        # SAVING THE CURRENT DURATION EVERY 5 SEC
-        if cv.continue_playback and (abs(track_current_duration - cv.counter_for_duration) / 5000) >= 1:
-            update_raw_current_duration_db(track_current_duration, cv.playing_track_index)
-            cv.counter_for_duration = track_current_duration
-
-        # DURATION TO DISPLAY
-        cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
-        cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
-
-        if cv.is_duration_to_display_straight:
-            br.button_duration_info.setText(cv.duration_to_display_straight)
-        else:
-            br.button_duration_info.setText(cv.duration_to_display_back)
-
-        br.button_duration_info.adjustSize()
-
-
-def update_title_window_queue():
-    br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
-
-br.av_player.player.positionChanged.connect(update_duration_info)
-br.av_player.player.sourceChanged.connect(update_title_window_queue)
-
-
-""" 
-Only used for duration calculation
-more info in src / av_player.py
-"""
+# Only used for duration calculation
+# more info in src / av_player.py
 br.av_player_duration = TrackDuration()   
 
 br.play_slider = MySlider()
@@ -498,47 +465,23 @@ if cv.shuffle_playlist_on:
 
 
 ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
-def button_toggle_playlist_clicked():
-    if br.av_player.playlist_visible and br.av_player.video_area_visible:
-        layout_vert_right_qframe.hide()
-        br.av_player.playlist_visible = False
-        br.button_toggle_video.setDisabled(1)
-    else:
-        layout_vert_right_qframe.show()
-        br.av_player.playlist_visible = True
-        br.button_toggle_video.setDisabled(0)    
-
 br.button_toggle_playlist = MyButtons(
     'Shuffle PL',
     'Toggle Show Playlists',
     br.icon.toggle_playlist
     )
 br.button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-br.button_toggle_playlist.clicked.connect(button_toggle_playlist_clicked)
+br.button_toggle_playlist.clicked.connect(br.button_toggle_playlist.button_toggle_playlist_clicked)
 
 
 ''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
-def button_toggle_video_clicked():
-    if br.av_player.playlist_visible and br.av_player.video_area_visible:
-        layout_vert_left_qframe.hide()
-        br.av_player.video_area_visible = False
-        br.window.resize(int(cv.window_width/3), br.window.geometry().height())
-        br.window.setMinimumSize(WINDOW_MIN_WIDTH_NO_VID, WINDOW_MIN_HEIGHT_NO_VID)
-        br.button_toggle_playlist.setDisabled(1)
-    else:
-        br.window.resize(cv.window_width, br.window.geometry().height())
-        br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
-        layout_vert_left_qframe.show()
-        br.av_player.video_area_visible = True
-        br.button_toggle_playlist.setDisabled(0)
-
 br.button_toggle_video = MyButtons(
     'Shuffle PL',
     'Toggle Show Video Window',
     br.icon.toggle_video
     )
 br.button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
-br.button_toggle_video.clicked.connect(button_toggle_video_clicked)
+br.button_toggle_video.clicked.connect(br.button_toggle_video.button_toggle_video_clicked)
 
 
 ''' BUTTON PLAY SECTION - DURATION INFO '''
@@ -652,19 +595,19 @@ layout_hor_top.addWidget(splitter_left_right)
 ''' TOP LEFT - VIDEO / QTEA LOGO '''
 layout_vert_left = QVBoxLayout() # here layout type is not relevant
 layout_vert_left.setContentsMargins(0, 0, 0, 0)
-layout_vert_left_qframe = QFrame()
-layout_vert_left_qframe.setLayout(layout_vert_left)
+br.layout_vert_left_qframe = QFrame()
+br.layout_vert_left_qframe.setLayout(layout_vert_left)
 
 ''' TOP RIGHT - PLAYLIST / BUTTONS / DURATION '''
 layout_vert_right = QVBoxLayout() # here layout type is not relevant
 layout_vert_right.setContentsMargins(5, 0, 4, 0)
-layout_vert_right_qframe = QFrame()
-layout_vert_right_qframe.setLayout(layout_vert_right)
-layout_vert_right_qframe.setMinimumWidth(cv.window_min_width-200)
+br.layout_vert_right_qframe = QFrame()
+br.layout_vert_right_qframe.setLayout(layout_vert_right)
+br.layout_vert_right_qframe.setMinimumWidth(cv.window_min_width-200)
 
 
-splitter_left_right.addWidget(layout_vert_left_qframe)
-splitter_left_right.addWidget(layout_vert_right_qframe)
+splitter_left_right.addWidget(br.layout_vert_left_qframe)
+splitter_left_right.addWidget(br.layout_vert_right_qframe)
 splitter_left_right.setStretchFactor(0, 3)
 splitter_left_right.setStretchFactor(1, 1)
 
@@ -729,8 +672,9 @@ br.playlists_all = MyPlaylists()
 layout_playlist.addWidget(br.playlists_all)
 
 
-''' WINDOW QUEUE '''
+''' WINDOW - QUEUE & SEARCH / SETTINGS '''
 br.window_queue = MyQueueWindow()
+br.window_settings = MySettingsWindow()
 
 
 # PLAY BUTTON ICON UPDATE
@@ -753,7 +697,6 @@ layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
 # WIDGETS
 # SPEAKER/MUTE BUTTON CREATED EARLIER
 volume_slider = MyVolumeSlider()
-volume_slider.setFixedSize(100,30)
 
 
 # BUTTONS WRAPPER

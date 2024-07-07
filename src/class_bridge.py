@@ -39,5 +39,8 @@ class Bridge:
     duration_sum_widg: object = None
     volume_slider: object = None
 
+    layout_vert_left_qframe: object = None
+    layout_vert_right_qframe: object = None
+
 
 br = Bridge()

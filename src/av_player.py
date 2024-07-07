@@ -10,6 +10,10 @@ import ctypes
 
 from .class_bridge import br
 from .class_data import cv
+from .func_coll import (
+    update_raw_current_duration_db,
+    generate_duration_to_display
+    )
 
 
 '''
@@ -45,6 +49,9 @@ class AVPlayer(QWidget):
         # BASE PLAY
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
         self.player.play()
+        # SIGNALS
+        self.player.positionChanged.connect(self.update_duration_info)
+        self.player.sourceChanged.connect(self.update_title_window_queue)
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.audio_output.setVolume(cv.volume)
@@ -249,6 +256,30 @@ class AVPlayer(QWidget):
     def screen_saver_off(self):
         ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
 
+
+    def update_duration_info(self):
+        if self.base_played:
+            track_current_duration = self.player.position()
+
+            # SAVING THE CURRENT DURATION EVERY 5 SEC
+            if cv.continue_playback and (abs(track_current_duration - cv.counter_for_duration) / 5000) >= 1:
+                update_raw_current_duration_db(track_current_duration, cv.playing_track_index)
+                cv.counter_for_duration = track_current_duration
+
+            # DURATION TO DISPLAY
+            cv.duration_to_display_straight = f'{generate_duration_to_display(track_current_duration)} / {cv.track_full_duration_to_display}'
+            cv.duration_to_display_back = f'-{generate_duration_to_display(cv.track_full_duration - track_current_duration)} / {cv.track_full_duration_to_display}'
+
+            if cv.is_duration_to_display_straight:
+                br.button_duration_info.setText(cv.duration_to_display_straight)
+            else:
+                br.button_duration_info.setText(cv.duration_to_display_back)
+
+            br.button_duration_info.adjustSize()
+
+
+    def update_title_window_queue(self):
+        br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
 
 
 """ 

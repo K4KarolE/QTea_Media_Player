@@ -20,7 +20,6 @@ from .func_coll import (
     )
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
-from .window_settings import MySettingsWindow
 
 
 ICON_SIZE = 20  # ICON/PICTURE IN THE BUTTONS
@@ -39,6 +38,8 @@ class MyButtons(QPushButton):
         self.setToolTip(tooltip)
         self.setToolTipDuration(2000)
         self.setFont(QFont('Times', 9, 600))
+        self._window_min_width_no_vid = 650
+        self._window_min_height_no_vid = 180
         if icon:
             self.setIcon(icon)
             self.setText(None)
@@ -81,7 +82,6 @@ class MyButtons(QPushButton):
     def button_remove_single_track(self):
         if cv.active_pl_name.currentRow() > -1:
             remove_track_from_playlist()
-            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
@@ -114,12 +114,7 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - SETTINGS BUTTON / WINDOW '''
     def button_settings_clicked(self):
-        if cv.settings_window_launched:
-            br.window_settings.show()
-        else:
-            br.window_settings = MySettingsWindow()
-            br.window_settings.show()
-            cv.settings_window_launched = True
+        br.window_settings.show()
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''
@@ -212,7 +207,6 @@ class MyButtons(QPushButton):
             br.av_player.video_output.hide()
 
 
-
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
         if cv.playing_track_index == None:
@@ -267,6 +261,34 @@ class MyButtons(QPushButton):
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json(settings, PATH_JSON_SETTINGS)
     
+
+    ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE PLAYLIST '''
+    def button_toggle_playlist_clicked(self):
+        if br.av_player.playlist_visible and br.av_player.video_area_visible:
+            br.layout_vert_right_qframe.hide()
+            br.av_player.playlist_visible = False
+            br.button_toggle_video.setDisabled(1)
+        else:
+            br.layout_vert_right_qframe.show()
+            br.av_player.playlist_visible = True
+            br.button_toggle_video.setDisabled(0) 
+
+
+    ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE VIDEO '''
+    def button_toggle_video_clicked(self):
+        if br.av_player.playlist_visible and br.av_player.video_area_visible:
+            br.layout_vert_left_qframe.hide()
+            br.av_player.video_area_visible = False
+            br.window.resize(int(cv.window_width/3), br.window.geometry().height())
+            br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
+            br.button_toggle_playlist.setDisabled(1)
+        else:
+            br.window.resize(cv.window_width, br.window.geometry().height())
+            br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
+            br.layout_vert_left_qframe.show()
+            br.av_player.video_area_visible = True
+            br.button_toggle_playlist.setDisabled(0)
+
 
     ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
     def button_speaker_clicked(self):

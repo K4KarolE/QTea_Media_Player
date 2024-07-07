@@ -63,7 +63,7 @@ class MyVolumeSlider(QSlider):
         super().__init__()
         self.setMinimum(0)
         self.setMaximum(100)
-        self.resize(120, 20)
+        self.setFixedSize(100,30)
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setSliderPosition(int(cv.volume*100))

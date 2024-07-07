@@ -499,6 +499,7 @@ def remove_track_from_playlist():
     -> rename the remaining track's name where necessary (13.MMMBop -> 12.MMMBop )
     '''
     update_duration_sum_var_after_track_remove()
+    br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     update_queued_tracks_after_track_deletion()
     current_row_index = cv.active_pl_name.currentRow()
     
