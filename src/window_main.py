@@ -53,6 +53,7 @@ class MyWindow(QWidget):
         'shuffle_playlist_toggle': lambda: br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
         'full_screen_toggle': lambda: br.av_player.full_screen_toggle(),
         'playlist_toggle': lambda: br.button_toggle_playlist.button_toggle_playlist_clicked(),
+        'video_toggle': lambda: br.button_toggle_video.button_toggle_video_clicked(),
         'window_size_toggle': self.window_size_toggle_action, 
         'paylist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
         'paylist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),

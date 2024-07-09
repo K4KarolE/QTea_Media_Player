@@ -95,14 +95,14 @@ class MyVolumeSlider(QSlider):
         ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
-        update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
+        update_and_save_volume_slider_value(cv.volume_slider_value/100)
 
 
     def mouseMoveEvent(self, event):
         ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
         cv.volume_slider_value = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
         self.setValue(cv.volume_slider_value)
-        update_and_save_volume_slider_value(cv.volume_slider_value/100, self)
+        update_and_save_volume_slider_value(cv.volume_slider_value/100)
 
 
     def update_volume(self):

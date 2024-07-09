@@ -1,3 +1,10 @@
+'''
+Used to display the logo image
+when the video area is not active:
+- playing music
+- player is in stopped state
+'''
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel

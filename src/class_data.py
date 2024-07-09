@@ -23,25 +23,25 @@ settings = open_json(PATH_JSON_SETTINGS)
 class Data:
 
     ''' SUPPORTING VARIABLES '''
-    track_title = None  # to display on video
-    skin_selected = settings['skin_selected']
-    repeat_playlist = settings['repeat_playlist']
-    shuffle_playlist_on = settings['shuffle_playlist_on']
-    volume = settings['volume']
-    icon_size = 20  # used for the buttons
-    is_speaker_muted = settings['is_speaker_muted']
-    audio_tracks_amount = 0
-    audio_track_played = 0
-    subtitle_tracks_amount = 0
-    subtitle_track_played = 0
-    window_size_toggle_counter = 0
+    track_title: str = None  # to display on video
+    skin_selected: str = settings['skin_selected']
+    repeat_playlist: int = settings['repeat_playlist']
+    shuffle_playlist_on: bool = settings['shuffle_playlist_on']
+    volume: float = settings['volume']
+    icon_size: int = 20  # used for the buttons
+    is_speaker_muted: bool = settings['is_speaker_muted']
+    audio_tracks_amount: int = 0
+    audio_track_played: int = 0
+    subtitle_tracks_amount: int = 0
+    subtitle_track_played: int = 0
+    window_size_toggle_counter: int = 0
     paylists_without_title_to_hide_index_list = []
-    volume_slider_value = 0
-    current_track_index = 0
-    currently_playing_track_info_in_window_title = ''
+    volume_slider_value: int = 0
+    current_track_index: int = 0
+    currently_playing_track_info_in_window_title: str = ''
     # to disable current duration autosave while
     # files from directory are added
-    adding_records_at_moment = False
+    adding_records_at_moment: bool = False
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
 
 
@@ -58,7 +58,7 @@ class Data:
     
     
     ''' THE CURRENTLY PLAYING/PAUSED TRACK`S INDEX TRACKING '''
-    playing_track_index = 0
+    playing_track_index: int = 0
 
     ''' 
     ACTIVE AND PLAYING PLAYLISTS SEPARATION
@@ -76,62 +76,84 @@ class Data:
     src / func_coll.py / update_active_playlist_vars_and_widgets()
     Updated after every playlist change
     '''
-    active_playlist_index = settings['last_used_playlist']
-    active_db_table = None  
-    active_pl_title = None
-    active_pl_last_track_index = 0
-    active_pl_name = None       # widget
-    playing_pl_queue = None     # widget
-    active_pl_duration = None   # widget
-    active_pl_sum_duration = 0
-    active_pl_tracks_count = 0
+    active_playlist_index: int = settings['last_used_playlist']
+    active_db_table: str = None  
+    active_pl_title: str = None
+    active_pl_last_track_index: int = 0
+    active_pl_name: object = None       # widget
+    playing_pl_queue: object = None     # widget
+    active_pl_duration: object = None   # widget
+    active_pl_sum_duration: int = 0
+    active_pl_tracks_count: int = 0
 
     '''
     PLAYING PLAYLIST UTILITY VALUES
     src / func_coll.py / update_playing_playlist_vars_and_widgets()
     '''
-    playing_playlist_index = settings['playing_playlist']
-    playing_db_table = None  
-    playing_pl_title = None
-    playing_pl_last_track_index = None
-    playing_pl_name = None      # widget
-    playing_pl_queue = None     # widget
-    playing_pl_duration = None  # widget
-    playing_pl_tracks_count = 0
+    playing_playlist_index: int = settings['playing_playlist']
+    playing_db_table: str = None  
+    playing_pl_title: str = None
+    playing_pl_last_track_index: int = None
+    playing_pl_name: object = None      # widget
+    playing_pl_queue: object = None     # widget
+    playing_pl_duration: object = None  # widget
+    playing_pl_tracks_count: int = 0
 
     
     ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
-    track_full_duration = 0
-    track_full_duration_to_display = 0
+    track_full_duration: int = 0
+    track_full_duration_to_display: int = 0
 
     ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
-    track_current_duration = 0
-    track_current_duration_to_display = 0
-    counter_for_duration = 0
+    track_current_duration: int = 0
+    track_current_duration_to_display: int = 0
+    counter_for_duration: int = 0
 
     ''' DISPLAYED DURATION COUNT DOWN TYPES '''
-    is_duration_to_display_straight = True
-    duration_to_display_straight = 0
-    duration_to_display_back = 0
+    is_duration_to_display_straight: bool = True
+    duration_to_display_straight: int = 0
+    duration_to_display_back: int = 0
 
-    ''' GENERAL TAB - SETTINGS WINDOW '''
-    always_on_top = settings['general_settings']['always_on_top']
-    continue_playback = settings['general_settings']['continue_playback']
-    play_at_startup = settings['general_settings']['play_at_startup']
-    small_jump = settings['general_settings']['small_jump']
-    medium_jump = settings['general_settings']['medium_jump']
-    big_jump = settings['general_settings']['big_jump']
-    window_width = settings['general_settings']['window_width']
-    window_height = settings['general_settings']['window_height']
-    window_alt_width = settings['general_settings']['window_alt_width']
-    window_alt_height = settings['general_settings']['window_alt_height']
-    window_second_alt_width = settings['general_settings']['window_second_alt_width']
-    window_second_alt_height = settings['general_settings']['window_second_alt_height']
-    window_alt_size_repositioning = settings['general_settings']['window_alt_size_repositioning']
-    default_audio_track = settings['general_settings']['default_audio_track']
+    '''
+    GENERAL TAB - SETTINGS WINDOW
+    
+    Steps to add new general field/value:
+    1, In settings.json create a new key-value pair in
+    the "general_settings" dictionary
+    2, In this file / just below:
+        a: declare the new "general" variable
+        b: add a new sub-dictionary in
+            the general_settings_dic dictionary
+        c**: if the new value matching with the already existing
+        ones` logic/type (boolean, int-window size,..) add a new
+        list item to one of the lists:
+            gen_sett_boolean_text_list
+            ...
+            gen_sett_jump_text_list
+    
+    No further steps needed, the validation will be automatically
+    applied at the next user input (Settings window / General tab)
+
+    ** else: visit src / window_settings.py / general_fields_validation()
+        to generate new validation rules
+    '''
+    always_on_top: bool = settings['general_settings']['always_on_top']
+    continue_playback: bool = settings['general_settings']['continue_playback']
+    play_at_startup: bool = settings['general_settings']['play_at_startup']
+    small_jump: int = settings['general_settings']['small_jump']
+    medium_jump: int = settings['general_settings']['medium_jump']
+    big_jump: int = settings['general_settings']['big_jump']
+    window_width: int = settings['general_settings']['window_width']
+    window_height: int = settings['general_settings']['window_height']
+    window_alt_width: int = settings['general_settings']['window_alt_width']
+    window_alt_height: int = settings['general_settings']['window_alt_height']
+    window_second_alt_width: int = settings['general_settings']['window_second_alt_width']
+    window_second_alt_height: int = settings['general_settings']['window_second_alt_height']
+    window_alt_size_repositioning: bool = settings['general_settings']['window_alt_size_repositioning']
+    default_audio_track: int = settings['general_settings']['default_audio_track']
     # USED FOR VALIDATION
-    window_min_width = settings['general_settings']['window_min_width']
-    window_min_height = settings['general_settings']['window_min_height']
+    window_min_width: int = settings['general_settings']['window_min_width']
+    window_min_height: int = settings['general_settings']['window_min_height']
     # COUNTER for play_at_startup
     played_at_startup_counter: bool = False
     settings_window_launched: bool = False
@@ -209,9 +231,9 @@ class Data:
         }
     }
     
-    # used in the src / settings_window.py / field validation - field save
-    # integer values like small_jump, default_audio_track,.. validated
-    # in the src / settings_window.py / general_fields_validation() function
+    '''
+    The below lists used in the src / window_settings.py / general_fields_validation()
+    '''
     gen_sett_boolean_text_list = [
         general_settings_dic['always_on_top']['text'],
         general_settings_dic['continue_playback']['text'],
@@ -234,42 +256,58 @@ class Data:
     gen_sett_jump_text_list = [
         general_settings_dic['small_jump']['text'],
         general_settings_dic['medium_jump']['text'],
-        general_settings_dic['big_jump']['text'],
+        general_settings_dic['big_jump']['text']
         ]
   
-    general_settings_amount = len(list(general_settings_dic))
-    general_settings_last_widget_pos_y = 0  # to calc. the parent widget height
+    general_settings_amount: int = len(list(general_settings_dic))
+    general_settings_last_widget_pos_y: int = 0  # to calc. the parent widget height
 
 
-    ''' HOTKEYS TAB - SETTINGS WINDOW '''
-    small_jump_backward = settings['hotkey_settings']['small_jump_backward']
-    small_jump_forward = settings['hotkey_settings']['small_jump_forward']
-    medium_jump_backward = settings['hotkey_settings']['medium_jump_backward']
-    medium_jump_forward = settings['hotkey_settings']['medium_jump_forward']
-    big_jump_backward = settings['hotkey_settings']['big_jump_backward']
-    big_jump_forward = settings['hotkey_settings']['big_jump_forward']
-    volume_mute = settings['hotkey_settings']['volume_mute']
-    volume_up = settings['hotkey_settings']['volume_up']
-    volume_down = settings['hotkey_settings']['volume_down']
-    audio_tracks_rotate = settings['hotkey_settings']['audio_tracks_rotate']
-    subtitle_tracks_rotate = settings['hotkey_settings']['subtitle_tracks_rotate']
-    play_pause = settings['hotkey_settings']['play_pause']
-    play = settings['hotkey_settings']['play']  # play vs play_pause: info in readme / Hotkeys
-    stop = settings['hotkey_settings']['stop']
-    next_track = settings['hotkey_settings']['next_track']
-    previous_track = settings['hotkey_settings']['previous_track']
-    repeat_track_playlist_toggle = settings['hotkey_settings']['repeat_track_playlist_toggle']
-    shuffle_playlist_toggle = settings['hotkey_settings']['shuffle_playlist_toggle']
-    full_screen_toggle = settings['hotkey_settings']['full_screen_toggle']
-    playlist_toggle = settings['hotkey_settings']['playlist_toggle']
-    window_size_toggle = settings['hotkey_settings']['window_size_toggle']
-    paylist_add_track = settings['hotkey_settings']['paylist_add_track']
-    paylist_add_directory = settings['hotkey_settings']['paylist_add_directory']
-    paylist_remove_track = settings['hotkey_settings']['paylist_remove_track']
-    paylist_remove_all_track = settings['hotkey_settings']['paylist_remove_all_track']
-    paylist_select_prev_pl = settings['hotkey_settings']['paylist_select_prev_pl']
-    paylist_select_next_pl = settings['hotkey_settings']['paylist_select_next_pl']
-    queue_toggle = settings['hotkey_settings']['queue_toggle']
+    '''
+    HOTKEYS TAB - SETTINGS WINDOW
+    
+    Steps to add new hotkey:
+    1, In settings.json create a new key-value pair in
+    the "hotkey_settings" dictionary
+    2, In this file / just below:
+        a: declare the new hotkey variable
+        b: add a new sub-dictionary in
+            the hotkey_settings_dic dictionary
+    3, In the window_main.py / hotkeys_creation() / hotkeys_action_dic
+        dictionary add a new key-value pair
+    
+    No further steps needed, the validation will be automatically
+    applied at the next user input (Settings window / Hotkeys tab)    
+    '''
+    small_jump_backward: str = settings['hotkey_settings']['small_jump_backward']
+    small_jump_forward: str = settings['hotkey_settings']['small_jump_forward']
+    medium_jump_backward: str = settings['hotkey_settings']['medium_jump_backward']
+    medium_jump_forward: str = settings['hotkey_settings']['medium_jump_forward']
+    big_jump_backward: str = settings['hotkey_settings']['big_jump_backward']
+    big_jump_forward: str = settings['hotkey_settings']['big_jump_forward']
+    volume_mute: str = settings['hotkey_settings']['volume_mute']
+    volume_up: str = settings['hotkey_settings']['volume_up']
+    volume_down: str = settings['hotkey_settings']['volume_down']
+    audio_tracks_rotate: str = settings['hotkey_settings']['audio_tracks_rotate']
+    subtitle_tracks_rotate: str = settings['hotkey_settings']['subtitle_tracks_rotate']
+    play_pause: str = settings['hotkey_settings']['play_pause']
+    play: str = settings['hotkey_settings']['play']  # play vs play_pause: info in readme / Hotkeys
+    stop: str = settings['hotkey_settings']['stop']
+    next_track: str = settings['hotkey_settings']['next_track']
+    previous_track: str = settings['hotkey_settings']['previous_track']
+    repeat_track_playlist_toggle: str = settings['hotkey_settings']['repeat_track_playlist_toggle']
+    shuffle_playlist_toggle: str = settings['hotkey_settings']['shuffle_playlist_toggle']
+    full_screen_toggle: str = settings['hotkey_settings']['full_screen_toggle']
+    playlist_toggle: str = settings['hotkey_settings']['playlist_toggle']
+    video_toggle: str = settings['hotkey_settings']['video_toggle']
+    window_size_toggle: str = settings['hotkey_settings']['window_size_toggle']
+    paylist_add_track: str = settings['hotkey_settings']['paylist_add_track']
+    paylist_add_directory: str = settings['hotkey_settings']['paylist_add_directory']
+    paylist_remove_track: str = settings['hotkey_settings']['paylist_remove_track']
+    paylist_remove_all_track: str = settings['hotkey_settings']['paylist_remove_all_track']
+    paylist_select_prev_pl: str = settings['hotkey_settings']['paylist_select_prev_pl']
+    paylist_select_next_pl: str = settings['hotkey_settings']['paylist_select_next_pl']
+    queue_toggle: str = settings['hotkey_settings']['queue_toggle']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -363,8 +401,13 @@ class Data:
             'line_edit_widget': ''
         },
         'playlist_toggle': {
-            'text': 'Toogle - Playlist',
+            'text': 'Toogle - Playlist area',
             'value': playlist_toggle,
+            'line_edit_widget': ''
+        },
+        'video_toggle': {
+            'text': 'Toogle - Video area',
+            'value': video_toggle,
             'line_edit_widget': ''
         },
         'full_screen_toggle': {
@@ -415,7 +458,7 @@ class Data:
     }
 
     hotkeys_list = list(hotkey_settings_dic)
-    hotkey_settings_last_widget_pos_y = 0  # to calc. the parent widget height
+    hotkey_settings_last_widget_pos_y: int = 0  # to calc. the parent widget height
 
 
     ''' 
@@ -471,7 +514,7 @@ class Data:
     '''
     playlist_widget_dic = {}
 
-    playlist_amount = 30
+    playlist_amount: int = 30
     for i in range(0, playlist_amount):
         pl_name = f'playlist_{i}'
         playlist_widget_dic[pl_name] = {
@@ -483,7 +526,7 @@ class Data:
             }
       
     paylist_list = list(playlist_widget_dic)
-    paylist_settings_last_widget_pos_y = 0     # to calc. the parent widget height
+    paylist_settings_last_widget_pos_y: int = 0     # to calc. the parent widget height
 
 
     ''' QUEUE AND SEARCH WINDOW - QUEUE TAB '''
@@ -527,9 +570,9 @@ class Data:
                             }
     '''
     search_result_dic = {}
-    search_title_list_widget = None   
-    search_queue_list_widget = None
-    track_change_on_main_playlist_new_search_needed = False
+    search_title_list_widget: str = None   
+    search_queue_list_widget: str = None
+    track_change_on_main_playlist_new_search_needed: bool = False
     search_result_queued_tracks_index_list = []
 
 cv = Data()

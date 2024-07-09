@@ -28,12 +28,18 @@ class PlaysFunc:
         br.av_player.player.mediaStatusChanged.connect(self.auto_play_next_track)
 
     def play_track(self, playing_track_index=None):
-        cv.audio_track_played = 0   
-        # PyQt playing the first audio_track by default -> reset our variable
-        cv.counter_for_duration = 0  # for iterate: saving the current duration
+        # PyQt playing the first audio_track of the video by default
+        #  -> reset our variable when playing new track
+        cv.audio_track_played = 0
+
+        # Saving the current duration in every 5 second
+        # -> reset our assist variable when playing new track   
+        cv.counter_for_duration = 0
+          
         update_active_playlist_vars_and_widgets()
         
-        self.get_playing_track_index(playing_track_index)
+        # playing_track_index --> cv.playing_track_index
+        self.get_playing_track_index(playing_track_index)  
         
         ''' QUEUE MANAGEMENT '''
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
