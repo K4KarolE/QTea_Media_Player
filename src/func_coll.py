@@ -4,7 +4,7 @@ from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
 from .class_data import save_json
-from .class_data import cv, settings, PATH_JSON_SETTINGS
+from .class_data import cv, settings
 from .logger import logger_basic
 
 import sqlite3
@@ -52,17 +52,17 @@ def update_playing_playlist_vars_and_widgets():
 def save_playing_playlist_and_playing_last_track_index():
     settings['playing_playlist'] = cv.active_playlist_index
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def save_playing_pl_last_track_index():
     settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def save_active_pl_last_track_index():
     settings[cv.active_db_table]['last_track_index'] = cv.active_pl_last_track_index
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def walk_and_add_dir(dir_path):
@@ -271,18 +271,18 @@ def update_and_save_volume_slider_value(new_value):
     settings['volume'] = new_value
     if settings['is_speaker_muted']:
         settings['is_speaker_muted'] = False
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def save_volume_slider_value(new_value):
     cv.volume = new_value
     settings['volume'] = new_value
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def save_speaker_muted_value():
     settings['is_speaker_muted'] = cv.is_speaker_muted
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 
 def update_duration_sum_var_after_track_remove():

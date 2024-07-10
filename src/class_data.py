@@ -4,19 +4,19 @@ from json import load, dump
 import re
 
 
-def open_json(path_json):
-    with open(path_json) as f:
+def open_json():
+    with open(PATH_JSON_SETTINGS) as f:
         json_dic = load(f)
     return json_dic
 
-def save_json(json_dic, path_json):
-    with open(path_json, 'w') as f:
-        dump(json_dic, f, indent=2)
+def save_json():
+    with open(PATH_JSON_SETTINGS, 'w') as f:
+        dump(settings, f, indent=2)
     return
 
 WORKING_DIRECTORY = Path().resolve()
 PATH_JSON_SETTINGS = Path(WORKING_DIRECTORY, 'settings.json')
-settings = open_json(PATH_JSON_SETTINGS)
+settings = open_json()
 
 
 @dataclass

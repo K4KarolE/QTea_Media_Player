@@ -11,7 +11,6 @@ which can be actioned in this file for:
 import sqlite3
 from src.class_data import (
     cv,
-    PATH_JSON_SETTINGS,
     settings,
     save_json
     )
@@ -52,7 +51,7 @@ def create_tables():
             }
         
     connection.close()
-    save_json(settings, PATH_JSON_SETTINGS)
+    save_json()
 
 create_tables()
 

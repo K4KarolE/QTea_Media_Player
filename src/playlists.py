@@ -16,7 +16,6 @@ from .func_coll import (
     connection, # db
     cur, # db
     settings, # json dic
-    PATH_JSON_SETTINGS,    
     add_new_list_item,
     generate_duration_to_display,
     generate_track_list_detail,
@@ -96,7 +95,7 @@ class MyPlaylists(QTabWidget):
         if self.playlists_created_at_first_run:
             cv.active_playlist_index = self.currentIndex()
             settings['last_used_playlist'] = cv.active_playlist_index
-            save_json(settings, PATH_JSON_SETTINGS)
+            save_json()
             update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
             br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
             cv.current_track_index = cv.active_pl_name.currentRow()

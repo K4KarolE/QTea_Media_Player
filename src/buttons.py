@@ -4,7 +4,7 @@ from PyQt6.QtGui import QFont
 
 
 from .class_bridge import br
-from .class_data import save_json, cv, settings, PATH_JSON_SETTINGS
+from .class_data import save_json, cv, settings
 from .func_coll import (
     add_record_grouped_actions,
     generate_duration_to_display,
@@ -15,8 +15,6 @@ from .func_coll import (
     save_speaker_muted_value,
     cur, # db
     connection, # db
-    settings,   # json dic
-    PATH_JSON_SETTINGS,
     )
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
@@ -30,7 +28,6 @@ class MyButtons(QPushButton):
             tooltip,
             icon = None):
         super().__init__()
-
         self.setText(title)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setToolTip(tooltip)
@@ -242,7 +239,7 @@ class MyButtons(QPushButton):
             br.av_player.text_display_on_video(1500, 'Repeat: Single track') 
         
         settings['repeat_playlist'] = cv.repeat_playlist
-        save_json(settings, PATH_JSON_SETTINGS)
+        save_json()
     
 
     ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
@@ -257,7 +254,7 @@ class MyButtons(QPushButton):
             br.av_player.text_display_on_video(1500, 'Shuffle: ON') 
         
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
-        save_json(settings, PATH_JSON_SETTINGS)
+        save_json()
     
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE PLAYLIST '''

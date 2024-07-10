@@ -20,8 +20,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import (
-    cv, 
-    PATH_JSON_SETTINGS,
+    cv,
     settings,
     save_json
     )
@@ -188,7 +187,7 @@ class MySettingsWindow(QWidget):
                     to_save = True
                     
             if to_save:
-                save_json(settings, PATH_JSON_SETTINGS)
+                save_json()
 
 
         '''
@@ -294,7 +293,7 @@ class MySettingsWindow(QWidget):
                         cv.general_settings_dic[general_dic_key]['value'] = int(line_edit_text)
                         to_save = True
             if to_save:
-                save_json(settings, PATH_JSON_SETTINGS)
+                save_json()
             
 
 
@@ -425,7 +424,7 @@ class MySettingsWindow(QWidget):
                     to_save = True  
             
             if to_save:
-                save_json(settings, PATH_JSON_SETTINGS)
+                save_json()
         
 
         ''' 
@@ -561,7 +560,7 @@ class MySettingsWindow(QWidget):
                 if  len(settings[cv.paylist_list[cv.active_playlist_index]]['playlist_title']) == 0:
                     cv.active_playlist_index = settings[pl_list_with_title[-1]]['playlist_index']
                     settings['last_used_playlist'] = cv.active_playlist_index
-                    save_json(settings, PATH_JSON_SETTINGS)
+                    save_json()
                 
                 self.hide()
 
