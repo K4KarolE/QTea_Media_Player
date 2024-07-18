@@ -61,6 +61,7 @@ class AVPlayer(QWidget):
             'Previous':{'icon': br.icon.previous},
             'Next':{'icon': br.icon.next},
             'Mute - Toogle':{'icon': br.icon.speaker},
+            'Alter - Toogle':{'icon': br.icon.alter},
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',
@@ -160,6 +161,8 @@ class AVPlayer(QWidget):
             br.button_next_track.button_next_track_clicked()
         elif q.text() == list(self.context_menu_dic)[4]:
             br.button_queue.button_speaker_clicked()
+        elif q.text() == list(self.context_menu_dic)[5]:
+            br.window.window_size_toggle_action()
         
         elif q.text() in audio_tracks_list:
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
