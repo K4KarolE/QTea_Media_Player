@@ -217,6 +217,11 @@
         - when a subtitle is active and a video is playing, the information is not displayed on the video screen
         - when the video is not playing, the information is not displayed on the video screen
 
+### Duration slider's handle
+- Issue: when the Windows' display scale is 150% or above, the duration slider's circle handle get truncated
+    - Looks like the issue is not DPI dependent, same result with different resolutions
+- Solution: if display scale is 150% or above -> square handle displayed which is not reaching over the groove -> no truncation
+
 ### Could not find solution yet
 - Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
     - More info: `src / func_play_coll.py / play_track()`
