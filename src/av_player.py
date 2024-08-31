@@ -60,8 +60,8 @@ class AVPlayer(QWidget):
             'Stop': {'icon': br.icon.stop},
             'Previous':{'icon': br.icon.previous},
             'Next':{'icon': br.icon.next},
-            'Mute - Toogle':{'icon': br.icon.speaker},
-            'Alter - Toogle':{'icon': br.icon.alter},
+            'Mute - Toggle':{'icon': br.icon.speaker},
+            'Alter - Toggle':{'icon': br.icon.alter},
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',

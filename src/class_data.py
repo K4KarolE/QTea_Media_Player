@@ -391,32 +391,32 @@ class Data:
             'line_edit_widget': ''
         },
         'repeat_track_playlist_toggle': {
-            'text': 'Toogle - Repeat',
+            'text': 'Toggle - Repeat',
             'value': repeat_track_playlist_toggle,
             'line_edit_widget': ''
         },
         'shuffle_playlist_toggle': {
-            'text': 'Toogle - Shuffle',
+            'text': 'Toggle - Shuffle',
             'value': shuffle_playlist_toggle,
             'line_edit_widget': ''
         },
         'playlist_toggle': {
-            'text': 'Toogle - Playlist area',
+            'text': 'Toggle - Playlist area',
             'value': playlist_toggle,
             'line_edit_widget': ''
         },
         'video_toggle': {
-            'text': 'Toogle - Video area',
+            'text': 'Toggle - Video area',
             'value': video_toggle,
             'line_edit_widget': ''
         },
         'full_screen_toggle': {
-            'text': 'Toogle - Full screen',
+            'text': 'Toggle - Full screen',
             'value': full_screen_toggle,
             'line_edit_widget': ''
         },
         'window_size_toggle': {
-            'text': 'Toogle - Window alt. size',
+            'text': 'Toggle - Window alt. size',
             'value': window_size_toggle,
             'line_edit_widget': ''
         },

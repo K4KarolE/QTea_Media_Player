@@ -46,6 +46,7 @@
     "shuffle_playlist_toggle": "S",
     "full_screen_toggle": "F",
     "playlist_toggle": "L",
+    "video_toggle": "O",
     "window_size_toggle": "W",
     "paylist_add_track": "A",
     "paylist_add_directory": "D",
