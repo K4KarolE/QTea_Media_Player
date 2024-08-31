@@ -32,7 +32,7 @@
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_right_click.png">
+    <img src="docs/promo/screenshot_right_click_S04E12.png">
 </div>
 <br>
 
