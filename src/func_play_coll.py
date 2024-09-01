@@ -85,11 +85,6 @@ class PlaysFunc:
         cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
         br.play_slider.setMaximum(cv.track_full_duration)
         
-        # WINDOW TITLE
-        cv.track_title = Path(track_path).stem
-        cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
-        br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
-
         # PLAYER
         ''' 
             ISSUE
@@ -101,21 +96,29 @@ class PlaysFunc:
                 - hide / show - setSource diff. variation including only 
                 showing video_output when it already plays the new video track
                 -  if no video_output.hide() --> no problem
-
         '''
+    
+        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+
+        # FILE REMOVED / RENAMED
+        if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.InvalidMedia:
+            br.play_slider.setEnabled(False)
+            br.image_logo.show()
+            br.av_player.video_output.hide()
+            self.update_window_title(track_path, False)
+            return
+        else:
+            br.play_slider.setEnabled(True)
+            self.update_window_title(track_path, True)
+        
+        # VIDEO AREA / LOGO DISPLAY
         if track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
             br.image_logo.show()
             br.av_player.video_output.hide()
         else:
             br.image_logo.hide()
             br.av_player.video_output.show()
-    
-        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
 
-        # FILE REMOVED / RENAMED
-        if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.InvalidMedia:
-            self.play_next_track()
-        
         # PLAY FROM LAST POINT
         if cv.track_current_duration > 0 and cv.continue_playback:
             br.av_player.player.setPosition(cv.track_current_duration)
@@ -142,6 +145,14 @@ class PlaysFunc:
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
 
+
+    def update_window_title(self, track_path, no_error):
+        cv.track_title = Path(track_path).stem
+        cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
+        if no_error:
+            br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
+        else:
+            br.window.setWindowTitle(f'### ERROR ### |  {cv.currently_playing_track_info_in_window_title} - QTea media player')
 
 
     def play_next_track(self):
