@@ -259,7 +259,7 @@ class PlaysFunc:
             # Display the current subtitle name on the screen
             subtitle_track = br.av_player.player.subtitleTracks()[cv.subtitle_track_played]
             subtitle_track_title = br.av_player.generate_subtitle_track_title(subtitle_track)
-            br.av_player.text_display_on_video(1000, subtitle_track_title, ignore_act_subt=True)
+            br.av_player.text_display_on_video(1000, subtitle_track_title)
     
 
     def get_playing_track_index(self, playing_track_index):

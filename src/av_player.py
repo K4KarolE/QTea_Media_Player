@@ -224,18 +224,16 @@ class AVPlayer(QWidget):
                 self.video_output.setCursor(Qt.CursorShape.BlankCursor)
     
 
-    def text_display_on_video(self, time, text, ignore_act_subt=False):
+    def text_display_on_video(self, time, text):
         ''' 
-            To display text (video title, volume, toggle shuffle and repeat)
-            as a subtitle when there is no active subtitle
+            To display text as a subtitle
+            Muted, Repeat, Shuffle: src / buttons.py
             Volume: src / sliders.py / MyVolumeSlider class / update_volume()
-            Title: src / func_play_coll.py / PlaysFunc class / play_track()
-            Shuffle/repeat: src / buttons.py / ..
+            Track title: src / func_play_coll.py / PlaysFunc class / play_track()
         '''
-        if self.player.activeSubtitleTrack() == -1 or ignore_act_subt: # -1 = no active sub
-            self.video_output.videoSink().setSubtitleText(text)
-            self.timer.start(time)
-            self.timer.timeout.connect(lambda: self.video_output.videoSink().setSubtitleText(None))
+        self.video_output.videoSink().setSubtitleText(text)
+        self.timer.start(time)
+        self.timer.timeout.connect(lambda: self.video_output.videoSink().setSubtitleText(None))
 
 
     # SCREEN SAVER SETTINGS UPDATE USED IN:

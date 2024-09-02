@@ -291,10 +291,12 @@ class MyButtons(QPushButton):
             cv.is_speaker_muted = False
             br.button_speaker.setIcon(br.icon.speaker)
             br.av_player.audio_output.setVolume(cv.volume)
+            br.av_player.text_display_on_video(1500, 'Muted: OFF') 
         else:
             cv.is_speaker_muted = True
             br.button_speaker.setIcon(br.icon.speaker_muted)
             br.av_player.audio_output.setVolume(0)
+            br.av_player.text_display_on_video(1500, 'Muted: ON') 
         save_speaker_muted_value()
 
     # USED WHEN CHANGING VOLUME WHILE MUTED

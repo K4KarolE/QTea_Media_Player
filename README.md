@@ -61,9 +61,9 @@
 
 ## Settings window
 - To open the `Setting window` click on the `Cog/Settings icon` under the playlists section. 
-- `Playlists tab:`Able to update the playlists titles - hide/show the playlists.
-- `General tab:` Adjust the media player's behaviour and hotkeys' keyboard values.
-- `Hotkeys tab:` Adjust the player's jump values.
+- `Playlists tab:` Able to update the playlists titles - hide/show the playlists.
+- `General tab:` Adjust the media player's and hotkeys' behaviour.
+- `Hotkeys tab:` Adjust the hotkeys' keybinds.
 - Saving the `Settings window` values by clicking on the `Save button`:
     - Saves all the values from all the tabs (Playlists, General, Hotkeys) if there is no invalid value.
     - Else: 
@@ -222,7 +222,7 @@
     - Window <- QFrame <- Layout <- QGraphicsView <- QGraphicsScene <- QGraphicsVideoItem
 - Solution: the information (track title, volume, ..) displayed as subtitle on the video screen when there is no active subtitle via QVideoWidget
     - Side-effect:
-        - when a subtitle is active and a video is playing, the information is not displayed on the video screen
+        - when a subtitle is active and a video is playing, the information may not be readable / will be overwritten by the next subtitle line
         - when the video is not playing, the information is not displayed on the video screen
 
 ### Duration slider's handle

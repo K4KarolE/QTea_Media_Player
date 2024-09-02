@@ -285,6 +285,7 @@ class Data:
     medium_jump_forward: str = settings['hotkey_settings']['medium_jump_forward']
     big_jump_backward: str = settings['hotkey_settings']['big_jump_backward']
     big_jump_forward: str = settings['hotkey_settings']['big_jump_forward']
+    display_track_title_on_video: str = settings['hotkey_settings']['display_track_title_on_video']
     volume_mute: str = settings['hotkey_settings']['volume_mute']
     volume_up: str = settings['hotkey_settings']['volume_up']
     volume_down: str = settings['hotkey_settings']['volume_down']
@@ -338,6 +339,11 @@ class Data:
         'big_jump_forward': {
             'text': 'Big jump forward',
             'value': big_jump_forward,
+            'line_edit_widget': ''
+        },
+        'display_track_title_on_video': {
+            'text': 'Display track title on video',
+            'value': display_track_title_on_video,
             'line_edit_widget': ''
         },
         'volume_mute': {

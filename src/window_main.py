@@ -39,6 +39,7 @@ class MyWindow(QWidget):
         'medium_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.medium_jump),
         'big_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.big_jump),
         'big_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.big_jump),
+        'display_track_title_on_video': lambda: br.av_player.text_display_on_video(2000, cv.track_title),
         'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
         'volume_up': self.volume_up_action, 
         'volume_down': self.volume_down_action, 
