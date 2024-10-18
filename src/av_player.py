@@ -48,7 +48,6 @@ class AVPlayer(QWidget):
         self.player.play()
         # SIGNALS
         self.player.positionChanged.connect(self.update_duration_info)
-        self.player.sourceChanged.connect(self.update_title_window_queue)
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.audio_output.setVolume(cv.volume)
@@ -276,8 +275,6 @@ class AVPlayer(QWidget):
             br.button_duration_info.adjustSize()
 
 
-    def update_title_window_queue(self):
-        br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
 
 
 """ 

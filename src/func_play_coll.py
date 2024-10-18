@@ -150,9 +150,12 @@ class PlaysFunc:
         cv.track_title = Path(track_path).stem
         cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
         if no_error:
-            br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea media player')
+            br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea Media Player')
+            br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
         else:
-            br.window.setWindowTitle(f'### ERROR ### |  {cv.currently_playing_track_info_in_window_title} - QTea media player')
+            base_window_title = f'### ERROR ### |  {cv.currently_playing_track_info_in_window_title}'
+            br.window.setWindowTitle(f'{base_window_title} - QTea Media Player')
+            br.window_queue.setWindowTitle(base_window_title)
 
 
     def play_next_track(self):

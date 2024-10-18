@@ -3,7 +3,7 @@ WINDOW QUEUE & SEARCH WINDOW is displayed once
 "Q" button clicked under the playlists section
 
 Window title update to display the current track details
-is declared in src/av_player/update_title_window_queue()
+is declared in src/func_play_coll/update_window_title()
 '''
 
 from PyQt6.QtCore import Qt
@@ -43,7 +43,7 @@ class MyQueueWindow(QWidget):
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         self.setWindowIcon(br.icon.queue_blue)
-        self.setWindowTitle("Queue")
+        self.setWindowTitle("Queue & Search")
         
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
