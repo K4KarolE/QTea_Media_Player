@@ -309,6 +309,7 @@ class Data:
     paylist_select_prev_pl: str = settings['hotkey_settings']['paylist_select_prev_pl']
     paylist_select_next_pl: str = settings['hotkey_settings']['paylist_select_next_pl']
     queue_toggle: str = settings['hotkey_settings']['queue_toggle']
+    queue_and_search_window: str = settings['hotkey_settings']['queue_and_search_window']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -459,6 +460,11 @@ class Data:
         'queue_toggle': {
             'text': 'Queue / Dequeue track',
             'value': queue_toggle,
+            'line_edit_widget': ''
+        },
+        'queue_and_search_window': {
+            'text': 'Queue & Search window',
+            'value': queue_and_search_window,
             'line_edit_widget': ''
         }
     }

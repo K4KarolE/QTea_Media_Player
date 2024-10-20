@@ -62,7 +62,8 @@ class MyWindow(QWidget):
         'paylist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
         'paylist_select_prev_pl': self.paylist_select_prev_pl_action, 
         'paylist_select_next_pl': self.paylist_select_next_pl_action, 
-        'queue_toggle': lambda: queue_add_remove_track() 
+        'queue_toggle': lambda: queue_add_remove_track(),
+        'queue_and_search_window': lambda: br.window_queue.show()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
