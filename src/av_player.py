@@ -1,6 +1,6 @@
 ''' AVPlayer and TrackDuration classes creation '''
 
-from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
+from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer, QMediaDevices
 from PyQt6.QtCore import QUrl, QEvent, Qt, QTimer
 from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtWidgets import QWidget, QMenu
@@ -35,22 +35,23 @@ class AVPlayer(QWidget):
     def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
+        self.media_devices = QMediaDevices()
         # VIDEO
         self.video_output = QVideoWidget()
         self.video_output.installEventFilter(self)
         self.player.setVideoOutput(self.video_output)
         self.timer = QTimer()   # used to display volume, track title on video
         # AUDIO
-        self.audio_output = QAudioOutput()
-        self.player.setAudioOutput(self.audio_output)
+        self.set_audio_output()
         # BASE PLAY
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
         self.player.play()
         # SIGNALS
         self.player.positionChanged.connect(self.update_duration_info)
+        self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
+        # self.
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
-        self.audio_output.setVolume(cv.volume)
         self.paused = False
         self.playlist_visible = True
         self.video_area_visible = True
@@ -73,6 +74,17 @@ class AVPlayer(QWidget):
                 }
             }    
 
+
+
+    def set_audio_output(self):
+        """
+        Actioned at startup and when
+        the output device changed
+        example: speaker >> headset
+        """
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(cv.volume)
 
 
     def eventFilter(self, source, event):
