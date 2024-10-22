@@ -49,7 +49,6 @@ class AVPlayer(QWidget):
         # SIGNALS
         self.player.positionChanged.connect(self.update_duration_info)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
-        # self.
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.paused = False
