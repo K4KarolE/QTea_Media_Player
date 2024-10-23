@@ -70,6 +70,12 @@ class AVPlayer(QWidget):
                 'icon': None,
                 'menu_sub': '',
                 'subtitle_tracks': [],
+                },
+            'Full Screen': {
+                'icon': None,
+                'menu_sub': '',
+                'screens': [],
+                'screens_pos_x': []
                 }
             }    
 
@@ -133,12 +139,34 @@ class AVPlayer(QWidget):
                     self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Subtitle']['subtitle_tracks'].append(subtitle_track_title)
 
+
+                # SCREENS
+                counter = 0
+                for screen in br.app.screens():
+                    screen_width = screen.availableSize().width()
+                    screen_height = screen.availableSize().height()
+                    screen_title = f'#{counter + 1} display - {screen_width} x {screen_height}'
+
+                    if counter == cv.screen_index_for_fullscreen:
+                        qaction_to_add = QAction(br.icon.selected, screen_title, self)
+                    else:
+                        qaction_to_add = QAction(screen_title, self)
+                    self.context_menu_dic['Full Screen']['menu_sub'].addAction(qaction_to_add)
+                    self.context_menu_dic['Full Screen']['screens'].append(screen_title)
+
+                    screen_pos_x = screen.availableGeometry().x()
+                    self.context_menu_dic['Full Screen']['screens_pos_x'].append(screen_pos_x)
+
+                    counter +=1
+                
+                
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
-      
+
+
             # FULL SCREEN TOGGLE 
             elif event.type() == QEvent.Type.MouseButtonDblClick:
-                self.full_screen_toggle()
+                self.full_screen_onoff_toggle()
             
             # VOLUME UPDATE
             elif event.type() == QEvent.Type.Wheel:
@@ -160,6 +188,7 @@ class AVPlayer(QWidget):
     def context_menu_clicked(self, q):
         audio_tracks_list = self.context_menu_dic['Audio Track']['audio_tracks']
         subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
+        screens_list = self.context_menu_dic['Full Screen']['screens']
 
         if q.text() == list(self.context_menu_dic)[0]:
             br.button_play_pause.button_play_pause_clicked()
@@ -188,6 +217,14 @@ class AVPlayer(QWidget):
             self.player.setActiveSubtitleTrack(subtitle_track_index)
             cv.subtitle_track_played = subtitle_track_index
             subtitle_tracks_list.clear()
+        
+        elif q.text() in screens_list:
+            screen_selected = screens_list.index(q.text())
+            if cv.screen_index_for_fullscreen != screen_selected:
+                cv.screen_index_for_fullscreen = screen_selected
+                cv.screen_pos_x_for_fullscreen = self.context_menu_dic['Full Screen']['screens_pos_x'][screen_selected]
+            screens_list.clear()
+            self.full_screen_to_screen_toggle()
 
 
     def generate_subtitle_track_title(self, sub_track):
@@ -224,14 +261,27 @@ class AVPlayer(QWidget):
         return audio_track_title
 
 
-    def full_screen_toggle(self):
+    def full_screen_onoff_toggle(self):
+        """ Used when double-clciked on the video area 
+        """
         if self.video_output.isVisible():
             if self.video_output.isFullScreen():
                 self.video_output.setFullScreen(0)
+                self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
             else:
+                self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
                 self.video_output.setFullScreen(1)
                 self.video_output.setCursor(Qt.CursorShape.BlankCursor)
+    
+
+    def full_screen_to_screen_toggle(self):
+        """ Used in the right-clicked on the
+            video area / Full Screen
+        """
+        self.video_output.setFullScreen(0)
+        self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
+        self.video_output.setFullScreen(1)
     
 
     def text_display_on_video(self, time, text):

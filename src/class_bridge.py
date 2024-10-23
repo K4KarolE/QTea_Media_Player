@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Bridge:
+    app: object = None
+
     icon: object = None
     window: object = None
     av_player: object = None

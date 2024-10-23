@@ -34,7 +34,7 @@ from src import (
 
 def main():
     logger_basic('App start')
-    app = QApplication(sys.argv)
+    br.app = QApplication(sys.argv)
 
     br.icon = MyIcon()
     br.window = MyWindow()
@@ -53,7 +53,7 @@ def main():
     br.window.show()
     logger_basic('Window displayed')
 
-    sys.exit(app.exec())
+    sys.exit(br.app.exec())
 
 
 if __name__ == "__main__":

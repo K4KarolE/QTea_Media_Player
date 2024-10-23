@@ -34,6 +34,8 @@ class Data:
     audio_track_played: int = 0
     subtitle_tracks_amount: int = 0
     subtitle_track_played: int = 0
+    screen_index_for_fullscreen: int = 0
+    screen_pos_x_for_fullscreen: int = 0
     window_size_toggle_counter: int = 0
     paylists_without_title_to_hide_index_list = []
     volume_slider_value: int = 0
