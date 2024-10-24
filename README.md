@@ -8,7 +8,9 @@
 - Quick switch to alternative window mode / size / position.
 - Playlists saved by default.
 - Set video's preferred audio track to default.
-- Hotkeys, right click menus.
+- Hotkeys, right click menus, selectables:
+    - Audio and subtitle tracks
+    - Displays for the video`s full screen mode
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
 
 <div align="left">

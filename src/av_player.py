@@ -54,6 +54,11 @@ class AVPlayer(QWidget):
         self.paused = False
         self.playlist_visible = True
         self.video_area_visible = True
+        # SCREEN UPDATE HANDLING
+        self.primary_screen_changed = False    
+        br.app.primaryScreenChanged.connect(lambda: self.screen_primary_changed())
+        br.app.screenRemoved.connect(lambda: self.screen_back_to_default())
+        # CONTEXT MENU
         self.context_menu_dic = { 
             'Play / Pause': {'icon': br.icon.start},
             'Stop': {'icon': br.icon.stop},
@@ -77,7 +82,7 @@ class AVPlayer(QWidget):
                 'screens': [],
                 'screens_pos_x': []
                 }
-            }    
+            }
 
 
 
@@ -262,8 +267,7 @@ class AVPlayer(QWidget):
 
 
     def full_screen_onoff_toggle(self):
-        """ Used when double-clciked on the video area 
-        """
+        """ Used when double-clicked on the video area """
         if self.video_output.isVisible():
             if self.video_output.isFullScreen():
                 self.video_output.setFullScreen(0)
@@ -282,6 +286,30 @@ class AVPlayer(QWidget):
         self.video_output.setFullScreen(0)
         self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
         self.video_output.setFullScreen(1)
+    
+
+    """
+        Covering screen updates like:
+        1: app on primary screen, full screen video on secondary screen
+            >> secondary screen removed
+        2: app on primary screen, full screen video on secondary screen
+            >> primary screen removed
+    """
+    def screen_primary_changed(self):
+        """ Triggered by the primaryScreenChanged signal """
+        br.av_player = AVPlayer()
+        self.primary_screen_changed = True
+      
+    def screen_back_to_default(self):
+        """ Triggered by the screenRemoved signal """
+        if not self.primary_screen_changed:
+            if self.video_output.isVisible():
+                if self.video_output.isFullScreen():
+                    self.video_output.setFullScreen(0)
+                    self.video_output.move(0, 0)
+                    self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+        else:
+            self.primary_screen_changed = False
     
 
     def text_display_on_video(self, time, text):
@@ -334,8 +362,9 @@ class AVPlayer(QWidget):
                 br.button_duration_info.setText(cv.duration_to_display_back)
 
             br.button_duration_info.adjustSize()
+    
 
-
+    
 
 
 """ 
