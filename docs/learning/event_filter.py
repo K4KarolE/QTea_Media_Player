@@ -1,6 +1,6 @@
 ''' 
     LEARNED:
-    - No eventFilter on the app(QApplication)
+    - No key related eventFilter on the app(QApplication)
       otherwise: keyRelease --> multiple trigger
     - Not every eventfilter keys trigger action
       with both: full / non full screen video

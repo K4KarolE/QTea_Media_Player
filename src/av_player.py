@@ -114,9 +114,13 @@ class AVPlayer(QWidget):
 
 
                 # AUDIO TRACKS
+                counter = 1
                 for audio_track in self.player.audioTracks():
 
                     audio_track_title = self.generate_audio_track_title(audio_track)
+                    if not audio_track_title:
+                        audio_track_title = f"Track {counter}"
+                        counter += 1
                     
                     if self.player.activeAudioTrack() == self.player.audioTracks().index(audio_track):
                         qaction_to_add = QAction(br.icon.selected, audio_track_title, self)
@@ -227,7 +231,7 @@ class AVPlayer(QWidget):
             screen_selected = screens_list.index(q.text())
             if cv.screen_index_for_fullscreen != screen_selected:
                 cv.screen_index_for_fullscreen = screen_selected
-                cv.screen_pos_x_for_fullscreen = self.context_menu_dic['Full Screen']['screens_pos_x'][screen_selected]
+                cv.screen_pos_x_for_fullscreen_via_menu = self.context_menu_dic['Full Screen']['screens_pos_x'][screen_selected]
             screens_list.clear()
             self.full_screen_to_screen_toggle()
 
@@ -273,6 +277,7 @@ class AVPlayer(QWidget):
                 self.video_output.setFullScreen(0)
                 self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+                cv.screen_index_for_fullscreen = -1
             else:
                 self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
                 self.video_output.setFullScreen(1)
@@ -281,10 +286,10 @@ class AVPlayer(QWidget):
 
     def full_screen_to_screen_toggle(self):
         """ Used in the right-clicked on the
-            video area / Full Screen
+            video area / Full Screen / available screen(s)
         """
         self.video_output.setFullScreen(0)
-        self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
+        self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
         self.video_output.setFullScreen(1)
     
 

@@ -1,3 +1,4 @@
+from .application import *
 from .icons import *
 from .class_bridge import *
 from .window_main import *

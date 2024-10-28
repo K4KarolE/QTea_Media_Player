@@ -11,11 +11,10 @@ Active playlist = playlist which is currently selected / displayed
 
 import sys
 
-from PyQt6.QtWidgets import QApplication
-
 from src import (
     br,
     AVPlayer,
+    MyApp,
     MyIcon,
     MyImage,
     MyPlaylists,
@@ -33,8 +32,8 @@ from src import (
 
 
 def main():
-    logger_basic('App start')
-    br.app = QApplication(sys.argv)
+    logger_basic('App started')
+    br.app = MyApp(sys.argv)
 
     br.icon = MyIcon()
     br.window = MyWindow()
