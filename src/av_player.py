@@ -187,6 +187,8 @@ class AVPlayer(QWidget):
         # EXIT FULL SCREEN
         if event.type() == QEvent.Type.KeyRelease:
             if event.key() == Qt.Key.Key_Escape:
+                if not self.video_area_visible:
+                    br.button_toggle_video.button_toggle_video_clicked()
                 self.video_output.setFullScreen(0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
                 
@@ -271,17 +273,25 @@ class AVPlayer(QWidget):
 
 
     def full_screen_onoff_toggle(self):
-        """ Used when double-clicked on the video area """
-        if self.video_output.isVisible():
-            if self.video_output.isFullScreen():
-                self.video_output.setFullScreen(0)
-                self.video_output.move(0, 0)
-                self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
-                cv.screen_index_for_fullscreen = -1
-            else:
-                self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
-                self.video_output.setFullScreen(1)
-                self.video_output.setCursor(Qt.CursorShape.BlankCursor)
+        """ 
+            Used when double-clicked on the video area
+            1st "if" scenario:
+                - full screen on another display
+                - video area hidden in the app
+            >> video area needs to be shown before
+            moving back the video output
+        """
+        if not self.video_area_visible:
+            br.button_toggle_video.button_toggle_video_clicked()
+        if self.video_output.isFullScreen():
+            self.video_output.setFullScreen(0)
+            self.video_output.move(0, 0)
+            self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+            cv.screen_index_for_fullscreen = -1
+        else:
+            self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
+            self.video_output.setFullScreen(1)
+            self.video_output.setCursor(Qt.CursorShape.BlankCursor)
     
 
     def full_screen_to_screen_toggle(self):
