@@ -190,6 +190,7 @@ class AVPlayer(QWidget):
                 if not self.video_area_visible:
                     br.button_toggle_video.button_toggle_video_clicked()
                 self.video_output.setFullScreen(0)
+                self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
                 
         return super().eventFilter(source, event)
