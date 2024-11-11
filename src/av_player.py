@@ -98,7 +98,7 @@ class AVPlayer(QWidget):
 
 
     def eventFilter(self, source, event):
-
+        
         if source == self.video_output:
             if event.type() == QEvent.Type.ContextMenu:
                 
@@ -114,20 +114,22 @@ class AVPlayer(QWidget):
 
 
                 # AUDIO TRACKS
-                counter = 1
+                counter = 0
                 for audio_track in self.player.audioTracks():
 
                     audio_track_title = self.generate_audio_track_title(audio_track)
                     if not audio_track_title:
-                        audio_track_title = f"Track {counter}"
-                        counter += 1
+                        audio_track_title = f"Track {counter + 1} - No information"
+                    else:
+                        audio_track_title = f"Track {counter + 1} - {audio_track_title}"
                     
-                    if self.player.activeAudioTrack() == self.player.audioTracks().index(audio_track):
+                    if cv.audio_track_played == counter:
                         qaction_to_add = QAction(br.icon.selected, audio_track_title, self)
                     else:
                         qaction_to_add = QAction(audio_track_title, self)
                     self.context_menu_dic['Audio Track']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Audio Track']['audio_tracks'].append(audio_track_title)
+                    counter += 1
 
 
                 # SUBTITLE TRACKS
