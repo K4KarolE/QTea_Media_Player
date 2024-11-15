@@ -46,9 +46,10 @@ class AVPlayer(QWidget):
         # BASE PLAY
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
         self.player.play()
-        # SIGNALS
-        self.player.positionChanged.connect(self.update_duration_info)
+        # SIGNALS (more signals below)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
+        self.player.positionChanged.connect(self.update_duration_info)
+        self.player.mediaStatusChanged.connect(lambda: self.set_player_to_latest_point())
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.paused = False
@@ -355,13 +356,16 @@ class AVPlayer(QWidget):
             self.screen_saver_on()
 
     def screen_saver_on(self):
-        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
+        if not cv.os_linux:
+            ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
     
     def screen_saver_off(self):
-        ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+        if not cv.os_linux:
+            ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
 
 
     def update_duration_info(self):
+
         if self.base_played:
             track_current_duration = self.player.position()
 
@@ -380,6 +384,20 @@ class AVPlayer(QWidget):
                 br.button_duration_info.setText(cv.duration_to_display_back)
 
             br.button_duration_info.adjustSize()
+    
+
+    def set_player_to_latest_point(self):
+        ''' cv.counter_for_duration: here used to make
+            sure the pause/play action not triggering this function
+            more info about the variable: src / func_play_coll / PlaysFunc
+        '''
+        if cv.counter_for_duration == 0:
+            if self.player.mediaStatus() == self.player.MediaStatus.BufferedMedia:
+                if cv.track_current_duration > 0 and cv.continue_playback:
+                    br.av_player.player.setPosition(cv.track_current_duration)
+                    
+
+
     
 
     

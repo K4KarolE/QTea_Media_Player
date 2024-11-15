@@ -171,10 +171,14 @@ class MyButtons(QPushButton):
     def button_play_pause_clicked(self):
         if br.av_player.player.isPlaying():
             br.av_player.player.pause()
+            if cv.os_linux: # workaround info in the readme
+                cv.player_paused_position = br.av_player.player.position()
             br.av_player.paused = True
             self.setIcon(br.icon.start)
             br.av_player.screen_saver_on()
         elif br.av_player.paused:
+            if cv.os_linux:
+                br.av_player.player.setPosition(cv.player_paused_position)
             br.av_player.player.play()
             br.av_player.paused = False
             self.setIcon(br.icon.pause)

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from json import load, dump
 import re
+import sys
 
 
 def open_json():
@@ -49,6 +50,9 @@ class Data:
     adding_records_at_moment: bool = False
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
 
+    # LINUX
+    player_paused_position: int = 0
+    os_linux: bool = (sys.platform == 'linux')
 
     '''
     QUEUE TRACKING

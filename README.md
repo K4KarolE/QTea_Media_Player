@@ -232,11 +232,18 @@
     - Looks like the issue is not DPI dependent, same result with different resolutions
 - Solution: if display scale is 150% or above -> square handle displayed which is not reaching over the groove -> no truncation
 
+### Audio delay - LINUX only
+- Issue: video or audio paused + continue playing
+    - Video continue normally
+    - Audio is not playing for a while (2-10s)
+- Solution: saving the current player`s position at pause and apply it at the continue phase
+
 ### Could not find solution yet
 - Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
     - More info: `src / func_play_coll.py / play_track()`
 - FIXED: video`s full-screen surface always opens on/covers the primary screen, even when the app is on the secondary screen/display
 - Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
+
 
 ## Requirements
 ### Python 3 - used: 3.11.5

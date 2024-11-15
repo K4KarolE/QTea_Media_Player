@@ -118,10 +118,6 @@ class PlaysFunc:
         else:
             br.image_logo.hide()
             br.av_player.video_output.show()
-
-        # PLAY FROM LAST POINT
-        if cv.track_current_duration > 0 and cv.continue_playback:
-            br.av_player.player.setPosition(cv.track_current_duration)
         
         # AUDIO / SUBTITLE TRACKS
         cv.audio_tracks_amount = len(br.av_player.player.audioTracks())

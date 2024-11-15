@@ -48,7 +48,7 @@ class MySlider(QSlider):
         round handle get truncated
         '''
         scale = QScreen.devicePixelRatio(br.window.screen())
-        if scale >= 1.5:
+        if scale >= 1.5 or cv.os_linux:
             margin = 0  # handle size = groove size
             border_radius = 2
         else:
