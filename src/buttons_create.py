@@ -7,6 +7,12 @@ from .class_data import cv
 from .func_coll import inactive_track_font_style
 
 
+''' Please note, the "button_speaker" and the "duration_sum_widg"
+    buttons do not appear as classic buttons on the UI   
+'''
+
+
+
 def generate_buttons():
     '''
     ########################
@@ -103,6 +109,8 @@ def generate_buttons():
     br.duration_sum_widg = QPushButton('DURATION')
     br.duration_sum_widg.setDisabled(1)
     br.duration_sum_widg.setFont(inactive_track_font_style)
+    if cv.os_linux:
+        br.duration_sum_widg.setStyleSheet("color: black;")
 
 
 

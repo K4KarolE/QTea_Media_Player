@@ -3,14 +3,25 @@ from PyQt6.QtWidgets import QApplication
 
 
 from .class_data import cv
+from .class_data_skin import sv
 from .class_bridge import br
+
+'''
+To avoid system theme >> qt app theme
+https://doc.qt.io/qt-6/qguiapplication.html#setDesktopSettingsAware
+'''
+QApplication.setDesktopSettingsAware(False)
+
+
 
 
 class MyApp(QApplication):
+
     def __init__(self, argv):
         super().__init__(argv)
         self.installEventFilter(self)
         self.app_moved_while_fullscreen_mode = False
+
 
     def eventFilter(self, source, event):
         """ 

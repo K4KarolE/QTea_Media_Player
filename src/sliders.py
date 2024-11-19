@@ -1,7 +1,6 @@
 ''' DURATION SLIDER AND VOLUME SLIDER CLASSES '''
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QScreen
 from PyQt6.QtWidgets import QSlider, QStyle
 
 from .class_bridge import br
@@ -10,11 +9,12 @@ from .func_coll import save_volume_slider_value, update_and_save_volume_slider_v
 
 
 class MySlider(QSlider):
+    ''' Duration slider '''
     def __init__(self):
         super().__init__()
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        margin, border_radius = self.generate_handle_properties()
+        self.setMinimumHeight(30)
         self.setStyleSheet(
                         "QSlider::groove"
                             "{"
@@ -26,10 +26,10 @@ class MySlider(QSlider):
                         "QSlider::handle"
                             "{"
                             "border: 1px solid grey;"
-                            f"border-radius: {border_radius}px;"
-                            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
+                            f"border-radius: 8px;"
+                            "background: QLinearGradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
                             "width: 15px;"
-                            f"margin: {margin} px;  /* if <0: expand outside the groove */"
+                            f"margin: -3 px;  /* if <0: expand outside the groove */"
                             "}"
 
                         "QSlider::sub-page"
@@ -40,21 +40,6 @@ class MySlider(QSlider):
                         )
         br.av_player.player.positionChanged.connect(self.play_slider_set_value)
     
-
-    def generate_handle_properties(self):
-        '''
-        Solving scaling issue:
-        high windows scale --> the original
-        round handle get truncated
-        '''
-        scale = QScreen.devicePixelRatio(br.window.screen())
-        if scale >= 1.5 or cv.os_linux:
-            margin = 0  # handle size = groove size
-            border_radius = 2
-        else:
-            margin = -3 # handle size > groove size
-            border_radius = 8 
-        return margin, border_radius
 
 
     def play_slider_set_value(self):
