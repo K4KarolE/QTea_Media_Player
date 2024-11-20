@@ -56,14 +56,14 @@ class MyWindow(QWidget):
         'playlist_toggle': lambda: br.button_toggle_playlist.button_toggle_playlist_clicked(),
         'video_toggle': lambda: br.button_toggle_video.button_toggle_video_clicked(),
         'window_size_toggle': self.window_size_toggle_action, 
-        'paylist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
-        'paylist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),
-        'paylist_remove_track': lambda: br.button_remove_track.button_remove_single_track(),
-        'paylist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
-        'paylist_select_prev_pl': self.paylist_select_prev_pl_action, 
-        'paylist_select_next_pl': self.paylist_select_next_pl_action, 
+        'playlist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
+        'playlist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),
+        'playlist_remove_track': lambda: br.button_remove_track.button_remove_single_track(),
+        'playlist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
+        'playlist_select_prev_pl': self.playlist_select_prev_pl_action, 
+        'playlist_select_next_pl': self.playlist_select_next_pl_action, 
         'queue_toggle': lambda: queue_add_remove_track(),
-        'queue_and_search_window': lambda: br.window_queue.show()
+        'queue_and_search_window': lambda: br.window_queue_and_search.show()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -191,29 +191,29 @@ class MyWindow(QWidget):
         
 
 
-    def paylist_select_prev_pl_action(self):
+    def playlist_select_prev_pl_action(self):
         current_index = br.playlists_all.currentIndex()
         index_counter = -1
         next_playlist_index = current_index + index_counter
 
-        while next_playlist_index in cv.paylists_without_title_to_hide_index_list and next_playlist_index > 0:
+        while next_playlist_index in cv.playlists_without_title_to_hide_index_list and next_playlist_index > 0:
             index_counter -=1
             next_playlist_index = current_index + index_counter
         
-        if next_playlist_index >= 0 and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
+        if next_playlist_index >= 0 and next_playlist_index not in cv.playlists_without_title_to_hide_index_list:
             br.playlists_all.setCurrentIndex(next_playlist_index)
         
         
 
-    def paylist_select_next_pl_action(self):
+    def playlist_select_next_pl_action(self):
         current_index = br.playlists_all.currentIndex()
         last_playlist_index = cv.playlist_amount-1
         index_counter = 1
         next_playlist_index = current_index + index_counter
 
-        while next_playlist_index in cv.paylists_without_title_to_hide_index_list and next_playlist_index < last_playlist_index:
+        while next_playlist_index in cv.playlists_without_title_to_hide_index_list and next_playlist_index < last_playlist_index:
             index_counter +=1
             next_playlist_index = current_index + index_counter
         
-        if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.paylists_without_title_to_hide_index_list:
+        if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.playlists_without_title_to_hide_index_list:
             br.playlists_all.setCurrentIndex(next_playlist_index)

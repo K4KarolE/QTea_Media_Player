@@ -16,7 +16,7 @@ class Bridge:
     play_funcs: object = None
 
     playlists_all: object = None
-    window_queue: object = None
+    window_queue_and_search: object = None
     window_settings: object = None
 
     button_add_track: object = None

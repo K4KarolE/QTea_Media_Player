@@ -3,7 +3,6 @@ from PyQt6.QtWidgets import QApplication
 
 
 from .class_data import cv
-from .class_data_skin import sv
 from .class_bridge import br
 
 '''

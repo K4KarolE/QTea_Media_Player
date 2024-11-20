@@ -147,11 +147,11 @@ class PlaysFunc:
         cv.currently_playing_track_info_in_window_title = f'{cv.playing_pl_title}  |  {cv.track_title}'
         if no_error:
             br.window.setWindowTitle(f'{cv.currently_playing_track_info_in_window_title} - QTea Media Player')
-            br.window_queue.setWindowTitle(cv.currently_playing_track_info_in_window_title)
+            br.window_queue_and_search.setWindowTitle(cv.currently_playing_track_info_in_window_title)
         else:
             base_window_title = f'### ERROR ### |  {cv.currently_playing_track_info_in_window_title}'
             br.window.setWindowTitle(f'{base_window_title} - QTea Media Player')
-            br.window_queue.setWindowTitle(base_window_title)
+            br.window_queue_and_search.setWindowTitle(base_window_title)
 
 
     def play_next_track(self):
@@ -162,7 +162,7 @@ class PlaysFunc:
                 br.av_player.player.setPosition(0)
                 self.play_track(cv.queue_tracks_list[0][1]) # call the function with argument -> queue will be updated
             else:
-                cv.playing_playlist_index = cv.paylist_list.index(cv.queue_tracks_list[0][0])
+                cv.playing_playlist_index = cv.playlist_list.index(cv.queue_tracks_list[0][0])
                 update_playing_playlist_vars_and_widgets()
                 self.play_track(cv.queue_tracks_list[0][1])
 

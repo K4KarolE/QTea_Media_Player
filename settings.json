@@ -1,14 +1,14 @@
 {
-  "last_used_playlist": 0,
-  "playing_playlist": 0,
+  "last_used_playlist": 3,
+  "playing_playlist": 2,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.8,
+  "volume": 0.14,
   "is_speaker_muted": false,
   "skin_selected": "default",
   "general_settings": {
-    "always_on_top": true,
+    "always_on_top": false,
     "continue_playback": true,
     "play_at_startup": true,
     "small_jump": 6000,
@@ -23,7 +23,7 @@
     "window_min_width": 650,
     "window_min_height": 250,
     "window_alt_size_repositioning": true,
-    "default_audio_track": 2
+    "default_audio_track": 1
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",
@@ -49,12 +49,12 @@
     "playlist_toggle": "L",
     "video_toggle": "O",
     "window_size_toggle": "W",
-    "paylist_add_track": "A",
-    "paylist_add_directory": "D",
-    "paylist_remove_track": "Del",
-    "paylist_remove_all_track": "Alt+C",
-    "paylist_select_prev_pl": "Shift+Left",
-    "paylist_select_next_pl": "Shift+Right",
+    "playlist_add_track": "A",
+    "playlist_add_directory": "D",
+    "playlist_remove_track": "Del",
+    "playlist_remove_all_track": "Alt+C",
+    "playlist_select_prev_pl": "Shift+Left",
+    "playlist_select_next_pl": "Shift+Right",
     "queue_toggle": "Q",
     "queue_and_search_window": "Alt+Q"
   },
@@ -73,27 +73,27 @@
   "playlist_0": {
     "playlist_title": "TV #1",
     "playlist_index": 0,
-    "last_track_index": 60
+    "last_track_index": 208
   },
   "playlist_1": {
     "playlist_title": "TV #2",
     "playlist_index": 1,
-    "last_track_index": 58
+    "last_track_index": 5
   },
   "playlist_2": {
     "playlist_title": "Music",
     "playlist_index": 2,
-    "last_track_index": 832
+    "last_track_index": 537
   },
   "playlist_3": {
     "playlist_title": "FILM",
     "playlist_index": 3,
-    "last_track_index": 0
+    "last_track_index": 19
   },
   "playlist_4": {
-    "playlist_title": "05",
+    "playlist_title": "",
     "playlist_index": 4,
-    "last_track_index": 115
+    "last_track_index": 175
   },
   "playlist_5": {
     "playlist_title": "",

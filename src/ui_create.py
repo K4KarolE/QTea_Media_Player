@@ -135,7 +135,7 @@ def generate_ui():
     layout_under_playlist_duration.addWidget(br.duration_sum_widg)
 
 
-    ''' PAYLISTS '''
+    ''' PLAYLISTS '''
     layout_playlist.addWidget(br.playlists_all)
 
 

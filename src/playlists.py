@@ -88,7 +88,7 @@ class MyPlaylists(QTabWidget):
         self.setTabEnabled(cv.playlist_amount, 0)
 
     def hide_playlists_with_no_title(self):
-        for index in cv.paylists_without_title_to_hide_index_list:
+        for index in cv.playlists_without_title_to_hide_index_list:
             self.setTabVisible(index, 0)
 
     def active_playlist_changed(self):
@@ -116,7 +116,7 @@ class MyPlaylists(QTabWidget):
         for pl in cv.playlist_widget_dic:
             playlist_title = settings[pl]['playlist_title']
             if not playlist_title:
-                cv.paylists_without_title_to_hide_index_list.append(playlist_index_counter)
+                cv.playlists_without_title_to_hide_index_list.append(playlist_index_counter)
             playlist_index_counter += 1
 
 
@@ -248,7 +248,7 @@ class MyPlaylists(QTabWidget):
             '''
             if cv.play_at_startup == 'False':
                 set_last_played_row_style()
-            elif cv.play_at_startup == 'True' and pl != cv.paylist_list[cv.playing_playlist_index]:
+            elif cv.play_at_startup == 'True' and pl != cv.playlist_list[cv.playing_playlist_index]:
                 set_last_played_row_style()
             
 

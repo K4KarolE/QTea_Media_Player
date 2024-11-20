@@ -3,7 +3,7 @@ SETTINGS WINDOW displayed once the settings button
 (cog icon) clicked under the playlists section
 
 TERMINOLOGY
-In the rest of the files the TABS(Playlists) has been referred as paylists, playlist_all, playlist_index, ..
+In the rest of the files the TABS(Playlists) has been referred as playlists, playlist_all, playlist_index, ..
 In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 '''
 from PyQt6.QtCore import Qt
@@ -337,7 +337,7 @@ class MySettingsWindow(QWidget):
             number_counter += 1
             widget_pl_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
         
-        cv.paylist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
+        cv.playlist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
 
         def playlist_fields_validation_at_least_one_playlist():
@@ -351,18 +351,18 @@ class MySettingsWindow(QWidget):
                 if len(playlist_title) > 25:
                     playlist_title = f'{playlist_title[0:23]}..'
                     cv.playlist_widget_dic[pl]['line_edit'].setText(playlist_title)
-                    MyMessageBoxError('PAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
+                    MyMessageBoxError('PLAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
                 if len(playlist_title) != 0:
                     pl_list_with_title.append(pl)
             if len(pl_list_with_title) == 0:
-                MyMessageBoxError('PAYLISTS TAB', 'At least one playlist title needed!')
+                MyMessageBoxError('PLAYLISTS TAB', 'At least one playlist title needed!')
             return pl_list_with_title
         
 
         def playlist_fields_validation_playing_playlist(pass_validation = True):
             ''' Avoid removing the playing playlist '''
             for pl in cv.playlist_widget_dic:
-                playlist_index = cv.paylist_list.index(pl)
+                playlist_index = cv.playlist_list.index(pl)
                 new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 prev_playlist_title = settings[pl]['playlist_title']
 
@@ -374,7 +374,7 @@ class MySettingsWindow(QWidget):
                     ):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
-                                        'PAYLISTS TAB',
+                                        'PLAYLISTS TAB',
                                         f'Playing playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                         pass_validation = False
             return pass_validation
@@ -384,7 +384,7 @@ class MySettingsWindow(QWidget):
             ''' Avoid removing playlists with queued track '''
             if cv.queue_playlists_list:
                 for pl in cv.playlist_widget_dic:
-                    playlist_index = cv.paylist_list.index(pl)
+                    playlist_index = cv.playlist_list.index(pl)
                     new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                     prev_playlist_title = settings[pl]['playlist_title']
 
@@ -395,15 +395,15 @@ class MySettingsWindow(QWidget):
                         ):
                             cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                             MyMessageBoxError(
-                                            'PAYLISTS TAB',
+                                            'PLAYLISTS TAB',
                                             f'Playlist with queued track can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                             pass_validation = False
             return pass_validation
 
 
-        def paylists_fields_to_save(to_save = False):
+        def playlists_fields_to_save(to_save = False):
             for pl in cv.playlist_widget_dic:
-                playlist_index = cv.paylist_list.index(pl)
+                playlist_index = cv.playlist_list.index(pl)
                 new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
                 prev_playlist_title = settings[pl]['playlist_title']
 
@@ -412,12 +412,12 @@ class MySettingsWindow(QWidget):
                     # NEW TITLE, PREV: EMPTY - INVISIBLE
                     if new_playlist_title and not prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 1)
-                        cv.paylists_without_title_to_hide_index_list.remove(playlist_index)
+                        cv.playlists_without_title_to_hide_index_list.remove(playlist_index)
 
                     # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
                     elif not new_playlist_title and prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 0)
-                        cv.paylists_without_title_to_hide_index_list.append(playlist_index)
+                        cv.playlists_without_title_to_hide_index_list.append(playlist_index)
                     
                     br.playlists_all.setTabText(playlist_index, new_playlist_title)
                     settings[pl]['playlist_title'] = new_playlist_title
@@ -472,13 +472,13 @@ class MySettingsWindow(QWidget):
                                     )
             
         tabs_dic = {
-            'Paylists': {
+            'Playlists': {
                 'text': 'Playlists',
                 'scroll_area': tab_playlist_scroll_area,
                 'scroll_bar_ver': '',
                 'scroll_bar_hor': '',
                 'widgets_window': tab_playlist,
-                'widgets_window_height': cv.paylist_settings_last_widget_pos_y
+                'widgets_window_height': cv.playlist_settings_last_widget_pos_y
             },
             'General': {
                 'text': 'General',
@@ -549,15 +549,15 @@ class MySettingsWindow(QWidget):
                 ''' GENERAL TAB FIELDS '''
                 general_fields_to_save()
 
-                ''' PAYLISTS TAB FIELDS '''
-                paylists_fields_to_save()
+                ''' PLAYLISTS TAB FIELDS '''
+                playlists_fields_to_save()
                 
 
                 ''' 
                     If the last used playlist removed 
                     at next start the new last playlist will active / displayed
                 '''
-                if  len(settings[cv.paylist_list[cv.active_playlist_index]]['playlist_title']) == 0:
+                if  len(settings[cv.playlist_list[cv.active_playlist_index]]['playlist_title']) == 0:
                     cv.active_playlist_index = settings[pl_list_with_title[-1]]['playlist_index']
                     settings['last_used_playlist'] = cv.active_playlist_index
                     save_json()

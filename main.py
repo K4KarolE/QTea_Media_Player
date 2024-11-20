@@ -18,7 +18,7 @@ from src import (
     MyIcon,
     MyImage,
     MyPlaylists,
-    MyQueueWindow,
+    MyQueueAndSearchWindow,
     MySettingsWindow,
     MySlider,
     MyVolumeSlider,
@@ -44,7 +44,7 @@ def main():
     br.play_funcs = PlaysFunc()
     generate_buttons()
     br.playlists_all = MyPlaylists()
-    br.window_queue = MyQueueWindow()
+    br.window_queue_and_search = MyQueueAndSearchWindow()
     br.window_settings = MySettingsWindow()
     br.volume_slider = MyVolumeSlider()
     generate_ui()

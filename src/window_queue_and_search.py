@@ -34,7 +34,7 @@ from .list_widget_search_tab import MySearchListWidget
 from .message_box import MyMessageBoxError
 
 
-class MyQueueWindow(QWidget):
+class MyQueueAndSearchWindow(QWidget):
     def __init__(self):
         super().__init__()
         WINDOW_WIDTH, WINDOW_HEIGHT = 700, 400

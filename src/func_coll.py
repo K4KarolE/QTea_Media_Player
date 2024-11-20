@@ -23,7 +23,7 @@ seperation in the src / cons_and_vars.py
 '''
 def update_active_playlist_vars_and_widgets():
     ''' Used / update values after playlist change '''
-    cv.active_db_table = cv.paylist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
+    cv.active_db_table = cv.playlist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
@@ -38,7 +38,7 @@ def update_active_playlist_vars_and_widgets():
 
 def update_playing_playlist_vars_and_widgets():
     ''' Used / update values after a track started in a new playlist '''
-    cv.playing_db_table = cv.paylist_list[cv.playing_playlist_index] # cv.playing_db_table = playlist_4 / playlist_2, ..
+    cv.playing_db_table = cv.playlist_list[cv.playing_playlist_index] # cv.playing_db_table = playlist_4 / playlist_2, ..
     cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
@@ -535,21 +535,21 @@ def remove_track_from_playlist():
 def get_playlist_details_from_queue_tab_list(current_row_index):
     queue_tracking_title = cv.queue_tracks_list[current_row_index]
     playlist = queue_tracking_title[0]
-    playlist_index = cv.paylist_list.index(playlist)
+    playlist_index = cv.playlist_list.index(playlist)
     track_index = queue_tracking_title[1]
     return playlist, playlist_index, track_index, queue_tracking_title
 
 
 def get_playlist_details_from_seacrh_tab_list(current_row_index):
     playlist = cv.search_result_dic[current_row_index]['playlist'] 
-    playlist_index = cv.paylist_list.index(playlist)
+    playlist_index = cv.playlist_list.index(playlist)
     track_index = cv.search_result_dic[current_row_index]['track_index']
     return playlist, playlist_index, track_index
 
 
 def search_result_queue_number_update():
     '''
-    Paylists - queue/dequeue track --> Update the queue numbers in the Search tab
+    Playlists - queue/dequeue track --> Update the queue numbers in the Search tab
     - cv.queue_tracks_list = [[playlist_3, 4], [playlist_4, 2], ..]
     - playing a queued track: [2] 
         -> queue number update -> [2] to ''

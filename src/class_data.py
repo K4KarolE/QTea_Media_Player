@@ -41,7 +41,7 @@ class Data:
     screen_pos_x_for_fullscreen_via_menu: int = -1
     
     window_size_toggle_counter: int = 0
-    paylists_without_title_to_hide_index_list = []
+    playlists_without_title_to_hide_index_list = []
     volume_slider_value: int = 0
     current_track_index: int = 0
     currently_playing_track_info_in_window_title: str = ''
@@ -311,12 +311,12 @@ class Data:
     playlist_toggle: str = settings['hotkey_settings']['playlist_toggle']
     video_toggle: str = settings['hotkey_settings']['video_toggle']
     window_size_toggle: str = settings['hotkey_settings']['window_size_toggle']
-    paylist_add_track: str = settings['hotkey_settings']['paylist_add_track']
-    paylist_add_directory: str = settings['hotkey_settings']['paylist_add_directory']
-    paylist_remove_track: str = settings['hotkey_settings']['paylist_remove_track']
-    paylist_remove_all_track: str = settings['hotkey_settings']['paylist_remove_all_track']
-    paylist_select_prev_pl: str = settings['hotkey_settings']['paylist_select_prev_pl']
-    paylist_select_next_pl: str = settings['hotkey_settings']['paylist_select_next_pl']
+    playlist_add_track: str = settings['hotkey_settings']['playlist_add_track']
+    playlist_add_directory: str = settings['hotkey_settings']['playlist_add_directory']
+    playlist_remove_track: str = settings['hotkey_settings']['playlist_remove_track']
+    playlist_remove_all_track: str = settings['hotkey_settings']['playlist_remove_all_track']
+    playlist_select_prev_pl: str = settings['hotkey_settings']['playlist_select_prev_pl']
+    playlist_select_next_pl: str = settings['hotkey_settings']['playlist_select_next_pl']
     queue_toggle: str = settings['hotkey_settings']['queue_toggle']
     queue_and_search_window: str = settings['hotkey_settings']['queue_and_search_window']
 
@@ -436,34 +436,34 @@ class Data:
             'value': window_size_toggle,
             'line_edit_widget': ''
         },
-        'paylist_add_track': {
-            'text': 'Paylist - Add track',
-            'value': paylist_add_track,
+        'playlist_add_track': {
+            'text': 'Playlist - Add track',
+            'value': playlist_add_track,
             'line_edit_widget': ''
         },
-        'paylist_add_directory': {
-            'text': 'Paylist - Add directory',
-            'value': paylist_add_directory,
+        'playlist_add_directory': {
+            'text': 'Playlist - Add directory',
+            'value': playlist_add_directory,
             'line_edit_widget': ''
         },
-        'paylist_remove_track': {
-            'text': 'Paylist - Remove track',
-            'value': paylist_remove_track,
+        'playlist_remove_track': {
+            'text': 'Playlist - Remove track',
+            'value': playlist_remove_track,
             'line_edit_widget': ''
         },
-        'paylist_remove_all_track': {
-            'text': 'Paylist - Clear playlist',
-            'value': paylist_remove_all_track,
+        'playlist_remove_all_track': {
+            'text': 'Playlist - Clear playlist',
+            'value': playlist_remove_all_track,
             'line_edit_widget': ''
         },
-        'paylist_select_prev_pl': {
-            'text': 'Paylist - Select previous',
-            'value': paylist_select_prev_pl,
+        'playlist_select_prev_pl': {
+            'text': 'Playlist - Select previous',
+            'value': playlist_select_prev_pl,
             'line_edit_widget': ''
         },
-        'paylist_select_next_pl': {
-            'text': 'Paylist - Select next',
-            'value': paylist_select_next_pl,
+        'playlist_select_next_pl': {
+            'text': 'Playlist - Select next',
+            'value': playlist_select_next_pl,
             'line_edit_widget': ''
         },
         'queue_toggle': {
@@ -546,8 +546,8 @@ class Data:
             'line_edit': ''     # used in the settings window
             }
       
-    paylist_list = list(playlist_widget_dic)
-    paylist_settings_last_widget_pos_y: int = 0     # to calc. the parent widget height
+    playlist_list = list(playlist_widget_dic)
+    playlist_settings_last_widget_pos_y: int = 0     # to calc. the parent widget height
 
 
     ''' QUEUE AND SEARCH WINDOW - QUEUE TAB '''
