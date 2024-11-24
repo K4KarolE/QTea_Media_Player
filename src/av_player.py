@@ -17,10 +17,6 @@ from .func_coll import (
 
 
 '''
-The .av_player.player.mediaStatusChanged signal to
-autoplay next track is declared in src / func_play_coll.py
-
-
 PLAY EMPTY SOUND WORKAROUND
 - At least one file needs to be played from start to finish
 before be able to switch tracks without crashing:
@@ -38,6 +34,10 @@ class AVPlayer(QWidget):
         self.media_devices = QMediaDevices()
         # VIDEO
         self.video_output = QVideoWidget()
+            # Window flag
+            # To make sure on Linux / full screen mode:
+            # the app is not visible, just the full-screened video
+        self.video_output.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.video_output.installEventFilter(self)
         self.player.setVideoOutput(self.video_output)
         self.timer = QTimer()   # used to display volume, track title on video
@@ -49,7 +49,7 @@ class AVPlayer(QWidget):
         # SIGNALS (more signals below)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
         self.player.positionChanged.connect(self.update_duration_info)
-        self.player.mediaStatusChanged.connect(lambda: self.set_player_to_latest_point())
+        self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.paused = False
@@ -365,7 +365,6 @@ class AVPlayer(QWidget):
 
 
     def update_duration_info(self):
-
         if self.base_played:
             track_current_duration = self.player.position()
 
@@ -386,8 +385,9 @@ class AVPlayer(QWidget):
             br.button_duration_info.adjustSize()
     
 
-    def set_player_to_latest_point(self):
-        ''' cv.counter_for_duration: here used to make
+    def media_status_changed_action(self):
+        ''' Set player to the latest point:
+            cv.counter_for_duration: here used to make
             sure the pause/play action not triggering this function
             more info about the variable: src / func_play_coll / PlaysFunc
         '''
@@ -395,10 +395,13 @@ class AVPlayer(QWidget):
             if self.player.mediaStatus() == self.player.MediaStatus.BufferedMedia:
                 if cv.track_current_duration > 0 and cv.continue_playback:
                     br.av_player.player.setPosition(cv.track_current_duration)
+        
+        ''' Auto play '''
+        br.play_funcs.auto_play_next_track()
+
                     
 
 
-    
 
     
 

@@ -10,7 +10,7 @@
 - Set video's preferred audio track to default.
 - Hotkeys, right click menus, selectables:
     - Audio and subtitle tracks
-    - Full screen on the current displayed or on the selected display
+    - Full screen on the current display or on the selected display
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
 
 <div align="left">
@@ -164,7 +164,7 @@
 ## Active and Playing playlist separation
 - It allows the user to control the `playing or queued tracks playlist` while browsing the rest of the playlist
 - If there is no track in the queue:
-    - All the below steps actioned on the `Playing playlist` even if the active and playing playists are different:
+    - All the below steps actioned on the `Playing playlist` even if the active and playing playlists are different:
         - Paused --> Play
         - Play previous track
         - Play next track
@@ -253,7 +253,7 @@
 ``` pip install -r requirements.txt ```
 
 ### OS
-- Tested on Windows 11
+- Tested on Windows 11, Linux Mint 22
 
 ## Thank you all who worked on the modules used in this project!
 ## Thank you all Winamp and VLC player contributors!

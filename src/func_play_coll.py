@@ -24,8 +24,6 @@ from .func_coll import (
 
 
 class PlaysFunc:
-    def __init__(self):
-        br.av_player.player.mediaStatusChanged.connect(self.auto_play_next_track)
 
     def play_track(self, playing_track_index=None):
         # PyQt playing the first audio_track of the video by default
