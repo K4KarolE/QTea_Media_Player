@@ -237,7 +237,12 @@ class AVPlayer(QWidget):
             screen_selected = screens_list.index(q.text())
             if cv.screen_index_for_fullscreen != screen_selected:
                 cv.screen_index_for_fullscreen = screen_selected
-                cv.screen_pos_x_for_fullscreen_via_menu = self.context_menu_dic['Full Screen']['screens_pos_x'][screen_selected]
+                screen_pos_x = self.context_menu_dic['Full Screen']['screens_pos_x'][screen_selected]
+                if cv.os_linux:
+                    app_pos_x = br.window.pos().x()
+                else:
+                    app_pos_x = 0
+                cv.screen_pos_x_for_fullscreen_via_menu = screen_pos_x - app_pos_x
             screens_list.clear()
             self.full_screen_to_screen_toggle()
 
