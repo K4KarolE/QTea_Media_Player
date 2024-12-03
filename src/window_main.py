@@ -161,15 +161,16 @@ class MyWindow(QWidget):
         cv.window_size_toggle_counter =  (cv.window_size_toggle_counter + 1) % 3
         update_window_size_vars_from_saved_values()
 
-        SCREEN = QApplication.primaryScreen()
-        SCREEN_RECT = SCREEN.availableGeometry()
+        current_screen = QApplication.screenAt(self.pos())
+        screen_rect = current_screen.availableGeometry()
         WIN_TASKBAR_HEIGHT = 30
-        
+
+
         def move_window_to_middle():
             if cv.window_alt_size_repositioning:
-                WINDOW_MAIN_POS_X = int((SCREEN_RECT.width() - self.width())/2)
-                WINDOW_MAIN_POS_Y = int((SCREEN_RECT.height() - self.height())/2)
-                self.move(WINDOW_MAIN_POS_X, WINDOW_MAIN_POS_Y)
+                pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width())/2)
+                pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height())/2)
+                self.move(pos_x_middle, pos_y_middle)
         
         # 1ST - GREATER THAN MEDIUM SIZE WINDOW WITHOUT PLAYLIST
         if cv.window_size_toggle_counter == 1:
@@ -181,7 +182,9 @@ class MyWindow(QWidget):
         elif cv.window_size_toggle_counter == 2:
             self.resize(cv.window_second_alt_width, cv.window_second_alt_height)
             if cv.window_alt_size_repositioning:
-                self.move(SCREEN_RECT.width() - self.width(), SCREEN_RECT.height() - self.height() - WIN_TASKBAR_HEIGHT)
+                pos_x_corner = screen_rect.x() + screen_rect.width() - self.width()
+                pos_y_corner = screen_rect.y() + screen_rect.height() - self.height() - WIN_TASKBAR_HEIGHT
+                self.move(pos_x_corner, pos_y_corner)
         
         # BACK TO STANDARD - MEDIUM SIZE WINDOW WITH PLAYLIST
         else:
