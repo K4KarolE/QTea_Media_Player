@@ -13,6 +13,32 @@
     - Full screen on the current display or on the selected display
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
 
+## Guide
+- [Screenshots](#screenshots)
+- [Terminology](#terminology)
+- [Buttons](#buttons)
+    - [Play buttons](#play-buttons)
+    - [Playlist buttons](#playlist-buttons-under-playlists-section)
+- [Settings window](#settings-window)
+   - [General](#general)
+   - [Hotkeys](#hotkeys)
+   - [Playlists](#playlists)
+- [Active and Playing playlists separation](#active-and-playing-playlists-separation)
+- [Increase the number of playlists beyond the default](#steps-to-increase-the-number-of-playlists-beyond-the-default--to-generate-new-playlist-database)
+- [Other Behaviour](#other-behaviour)
+    - Volume
+    - Screen saver
+    - Drag & Drop
+- [File types](#file-types)
+- [Workarounds](#workarounds)
+    - [Dummy track](#dummy-track)
+    - [Dummy playlist tab](#dummy-playlist-tab)
+    - [Information displayed as subtitle](#information-displayed-as-subtitle)
+    - [Audio delay - LINUX only](#audio-delay---linux-only)
+    - [No solution yet](#could-not-find-solution-yet)
+- [Requirements](#requirements)
+
+## Screenshots
 <div align="left">
     <img src="docs/promo/screenshot_0.png">
 </div>
@@ -38,11 +64,13 @@
 </div>
 <br>
 
+
 ## Terminology
 - `Playing playlist` = playlist where the current track is in the playing or paused state / playlist where the last track was played.
 - `Active playlist` = playlist which is currently selected / displayed.
 
-## Play buttons
+## Buttons
+### Play buttons
 - The `Play`, `Stop`, `Previous track`, `Next track` and `Shuffle` buttons behave as usual
 - The `Repeat playlist` button has 3 states:
     - Disabled
@@ -53,7 +81,7 @@
     - At startup both the video and playlist section are visible as default.
 - Tooltip is displayed when the mouse moved over the current button.
 
-## Playlist buttons (under playlists section)
+### Playlist buttons (under playlists section)
 - `AT - Add Track`: add a single media/file to the playlist.
 - `AD - Add Directory`: adding all the media files listed in the selected directory and subdirectories.
 - `RT - Remove Track`: removes the current/selected track.
@@ -161,8 +189,8 @@
     <img width="260" src="docs/promo/screenshot_sett_win_hotkeys.png">
 </div>
 
-## Active and Playing playlist separation
-- It allows the user to control the `playing or queued tracks playlist` while browsing the rest of the playlist
+## Active and Playing playlists separation
+- It allows the user to control the `playing or queued tracks playlist` while browsing the rest of the playlists
 - If there is no track in the queue:
     - All the below steps actioned on the `Playing playlist` even if the active and playing playlists are different:
         - Paused --> Play
@@ -226,11 +254,6 @@
     - Side-effect:
         - when a subtitle is active and a video is playing, the information may not be readable / will be overwritten by the next subtitle line
         - when the video is not playing, the information is not displayed on the video screen
-
-### Duration slider's handle
-- Issue: when the Windows' display scale is 150% or above, the duration slider's circle handle gets truncated
-    - Looks like the issue is not DPI dependent, same result with different resolutions
-- Solution: if display scale is 150% or above -> square handle displayed which is not reaching over the groove -> no truncation
 
 ### Audio delay - LINUX only
 - Issue: video or audio paused + continue playing
