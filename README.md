@@ -275,6 +275,9 @@
 ### Install dependencies
 ``` pip install -r requirements.txt ```
 
+### Additional dependency for Linux
+``` sudo apt install libxcb-cursor-dev ```
+
 ### OS
 - Tested on Windows 11, Linux Mint 22
 

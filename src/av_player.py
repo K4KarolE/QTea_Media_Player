@@ -321,7 +321,8 @@ class AVPlayer(QWidget):
     """
     def screen_primary_changed(self):
         """ Triggered by the primaryScreenChanged signal """
-        br.av_player = AVPlayer()
+        if not cv.os_linux:
+            br.av_player = AVPlayer()
         self.primary_screen_changed = True
       
     def screen_back_to_default(self):
