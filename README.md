@@ -155,7 +155,7 @@
 - `Audio track - use next`: toggles between the available audio channels, there is no disabled state
 - `Subtitle track - use next`: toggles between the available subtitles and a disabled state
 - `Toggle - Full screen`: next to the value set up in this field the `Escape` button is hard-coded to quit from the full screen mode
-- `Toogle - Window alt. size`:
+- `Toggle - Window alt. size`:
     - Toggles between the default / alt. / 2nd alt. window sizes defined in the `General tab`
     - Default: both video and playlist sections are visible
     - Alt. and 2nd alt.: only the video section is visible 
@@ -238,8 +238,10 @@
 - Solution: dummy, empty track (< 1 second) played at startup
 - More info: `src / av_player.py`
 - Side-effect:
-    - no visible side-effect
-    - unlikely adding much to the launch time: 1.2 seconds on my rig
+    - No visible side-effect
+    - Unlikely adding much to the launch time (Legion 5 laptop):
+        - Windows 11: 1.2 seconds
+        - Linux Mint 22: 0.4 seconds
 
 ### Dummy playlist tab
 - Issue: if the last playlist tab is hidden, the whole playlist tab list is not reachable via the arrow buttons 
@@ -264,7 +266,6 @@
 ### Could not find solution yet
 - Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
     - More info: `src / func_play_coll.py / play_track()`
-- FIXED: video`s full-screen surface always opens on/covers the primary screen, even when the app is on the secondary screen/display
 - Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 
 

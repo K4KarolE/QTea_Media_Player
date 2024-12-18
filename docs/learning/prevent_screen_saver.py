@@ -1,5 +1,5 @@
 '''
-Prevent the screen saver
+Prevent the screen saver - Windows
 
 Cheers mate!
 https://stackoverflow.com/questions/63076389/python-prevent-the-screen-saver

@@ -2,10 +2,10 @@
     LEARNED:
     - No key related eventFilter on the app(QApplication)
       otherwise: keyRelease --> multiple trigger
-    - Not every eventfilter keys trigger action
+    - Not every event filter keys trigger action
       with both: full / non full screen video
 
-    Below how the eventfilter was used in
+    Below how the event filter was used in
     an early stage of the project
 
     This script is not runnable by itself
@@ -47,7 +47,7 @@ class MyWindow(QWidget):
             elif event.key() == Qt.Key.Key_Right:
                 av_player.player.setPosition(av_player.player.position() + cv.small_jump)         
    
-            # SPEAKER MUTED TOOGLE
+            # SPEAKER MUTED TOGGLE
             elif event.key() == Qt.Key.Key_M:
                 button_speaker_clicked()
 

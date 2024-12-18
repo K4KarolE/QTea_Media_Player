@@ -1,4 +1,4 @@
-''' Learning how to mix static and dyanmic layouts/widgets '''
+''' Learning how to mix static and dynamic layouts/widgets '''
 
 from PyQt6.QtWidgets import (
     QApplication,

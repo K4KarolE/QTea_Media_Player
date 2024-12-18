@@ -192,7 +192,7 @@ class MySettingsWindow(QWidget):
 
         '''
         ######################
-            TAB - GENEREAL          
+            TAB - GENERAL          
         ######################
         '''
         WIDGET_GENERAL_POS_X = WIDGETS_POS_X
@@ -234,7 +234,7 @@ class MySettingsWindow(QWidget):
         
 
         def general_fields_validation(pass_validation = True):
-            ''' Sccreen values can be bigger than the display size:
+            ''' Screen values can be bigger than the display size:
                     -> no over-reaching or error would occur
                 Still feels good idea to cap the max window values
             '''
@@ -502,7 +502,7 @@ class MySettingsWindow(QWidget):
         '''
         WIDGET RESIZE 
             - If widget size > tab size -> scroll bar visible
-            - resize(WINDOW_WIDTH-50,.. -> no horisontal scroll bar
+            - resize(WINDOW_WIDTH-50,.. -> no horizontal scroll bar
             - widget amount -> vertical scroll bar visible / invisible
             - more info: docs / learning / set_scrollbar_to_tab_widget.py 
         '''
