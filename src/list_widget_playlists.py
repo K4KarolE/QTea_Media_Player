@@ -4,6 +4,7 @@ the list items) in the main window playlists
 Used it in the src / playlists.py 
 '''
 from pathlib import Path
+import subprocess
 import webbrowser
 
 from PyQt6.QtCore import QEvent
@@ -25,7 +26,7 @@ class MyListWidget(QListWidget):
     def __init__(self):
         super().__init__()
         self.play_track = br.button_play_pause.button_play_pause_via_list
-        self.itemDoubleClicked.connect(self.play_track)
+        self.itemDoubleClicked.connect(lambda: self.play_track())
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -69,11 +70,14 @@ class MyListWidget(QListWidget):
         if q.text() == list(self.context_menu_dic)[0]:
             try:
                 if self.currentRow() == cv.playing_track_index:
-                    br.window.play_pause()
+                    br.button_play_pause.button_play_pause_clicked()
                 else:
                     self.play_track()
             except:
-                MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
+                MyMessageBoxError(
+                    'File location',
+                    'The file or the file`s home folder has been renamed / removed. '
+                    )
         
         # QUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
@@ -91,12 +95,24 @@ class MyListWidget(QListWidget):
             try:
                 remove_track_from_playlist()
             except:
-                MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
+                MyMessageBoxError(
+                    'File location',
+                    'The file or the file`s home folder has been renamed / removed. '
+                    )
         
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 file_path = get_path_db(self.currentRow(), cv.active_db_table)
-                webbrowser.open(Path(file_path).parent)
+                file_dir_path = Path(file_path).parent
+
+                if cv.os_linux:
+                    subprocess.Popen(["xdg-open", file_dir_path])
+                else:
+                    webbrowser.open(file_dir_path)
+
             except:
-                MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
+                MyMessageBoxError(
+                    'File location',
+                    'The file or the file`s home folder has been renamed / removed. '
+                    )

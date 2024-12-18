@@ -207,14 +207,19 @@ class AVPlayer(QWidget):
 
         if q.text() == list(self.context_menu_dic)[0]:
             br.button_play_pause.button_play_pause_clicked()
+
         elif q.text() == list(self.context_menu_dic)[1]:
             br.button_stop.button_stop_clicked()
+
         elif q.text() == list(self.context_menu_dic)[2]:
             br.button_prev_track.button_prev_track_clicked()
+
         elif q.text() == list(self.context_menu_dic)[3]:
             br.button_next_track.button_next_track_clicked()
+
         elif q.text() == list(self.context_menu_dic)[4]:
             br.button_queue.button_speaker_clicked()
+            
         elif q.text() == list(self.context_menu_dic)[5]:
             br.window.window_size_toggle_action()
         
