@@ -84,18 +84,6 @@ class PlaysFunc:
         br.play_slider.setMaximum(cv.track_full_duration)
         
         # PLAYER
-        ''' 
-            ISSUE
-            Showing the previous video's last frame in the scenario:
-            play video --> play just audio OR stop video --> play video
-            
-            Tried:
-                - stop player before hiding
-                - hide / show - setSource diff. variation including only 
-                showing video_output when it already plays the new video track
-                -  if no video_output.hide() --> no problem
-        '''
-    
         br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
 
         # FILE REMOVED / RENAMED

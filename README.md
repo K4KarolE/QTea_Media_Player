@@ -264,8 +264,6 @@
 - Solution: saving the current player`s position at pause and apply it at the continue phase
 
 ### Could not find solution yet
-- Issue: the last frame of the previous video is displayed before a new video starts playing in the scenario: a video is playing --> stop the video or start playing a music track --> playing a new video
-    - More info: `src / func_play_coll.py / play_track()`
 - Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 
 
