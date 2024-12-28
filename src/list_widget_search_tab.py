@@ -17,7 +17,7 @@ from .icons import *
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_path_db,
-    get_playlist_details_from_seacrh_tab_list,
+    get_playlist_details_from_search_tab_list,
     queue_tab_add_track_from_search_tab,
     queue_window_remove_track,
     search_result_queue_number_update,
@@ -102,13 +102,13 @@ class MySearchListWidget(QListWidget):
 
     def jump_to_playlist(self):
         current_row_index = self.currentRow()
-        playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
+        playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         br.playlists_all.setCurrentIndex(playlist_index)
     
 
     def queue_dequeue_track(self):
         current_row_index = self.currentRow()
-        playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
+        playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         queue_tracking_title = [playlist, track_index]
 
         # QUEUE
@@ -159,6 +159,6 @@ class MySearchListWidget(QListWidget):
     
     def open_track_folder(self):
         current_row_index = self.currentRow()
-        playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
+        playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         file_path = get_path_db(current_row_index, playlist)
         webbrowser.open(Path(file_path).parent)

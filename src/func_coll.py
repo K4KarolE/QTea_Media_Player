@@ -19,7 +19,7 @@ active_track_font_style = QFont('Arial', 11, 600)
 
 '''
 More info about the ACTIVE and PLAYING playlist
-seperation in the src / cons_and_vars.py
+separation in the src / cons_and_vars.py
 '''
 def update_active_playlist_vars_and_widgets():
     ''' Used / update values after playlist change '''
@@ -359,7 +359,7 @@ def queue_add_remove_track():
             
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
         
-        # STABDARD -> QUEUED TRACK
+        # STANDARD -> QUEUED TRACK
         if not cv.queue_tracking_title in cv.queue_tracks_list:
 
             cv.queue_tracks_list.append(cv.queue_tracking_title)
@@ -465,7 +465,7 @@ def update_queued_tracks_after_track_deletion():
 
 def remove_queued_tracks_after_playlist_clear():
     if cv.active_db_table in cv.queue_playlists_list:
-        # COLLECTING QUEUED TRACKS AFFACTED BY THE CLEAR
+        # COLLECTING QUEUED TRACKS AFFECTED BY THE CLEAR
         queue_tracks_list_item_to_remove = []
         for tracking_title in cv.queue_tracks_list:   # tracking_title = [playlist_3, 6]
             
@@ -540,7 +540,7 @@ def get_playlist_details_from_queue_tab_list(current_row_index):
     return playlist, playlist_index, track_index, queue_tracking_title
 
 
-def get_playlist_details_from_seacrh_tab_list(current_row_index):
+def get_playlist_details_from_search_tab_list(current_row_index):
     playlist = cv.search_result_dic[current_row_index]['playlist'] 
     playlist_index = cv.playlist_list.index(playlist)
     track_index = cv.search_result_dic[current_row_index]['track_index']
@@ -555,7 +555,7 @@ def search_result_queue_number_update():
         -> queue number update -> [2] to ''
         -> update the rest of the queue numbers: [1], . , <-[3], <-[4], ..
     
-    Why seperate the queue, dequeue number update as below?
+    Why separate the queue, dequeue number update as below?
     - Dequeue: do not need to iterate through all the search results
     - At least the dequeue part is efficient
     '''

@@ -26,7 +26,7 @@ from .func_coll import (
     add_new_list_item,
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_tab_list,
-    get_playlist_details_from_seacrh_tab_list,
+    get_playlist_details_from_search_tab_list,
     update_playing_playlist_vars_and_widgets
     )
 from .list_widget_queue_tab import MyQueueListWidget
@@ -305,7 +305,7 @@ class MyQueueAndSearchWindow(QWidget):
     def search_play_list_item(self):
         if not cv.track_change_on_main_playlist_new_search_needed:
             current_row_index = cv.search_title_list_widget.currentRow()
-            playlist, playlist_index, track_index = get_playlist_details_from_seacrh_tab_list(current_row_index)
+            playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
             cv.playing_playlist_index = playlist_index
             update_playing_playlist_vars_and_widgets()
             br.play_funcs.play_track(track_index)
@@ -316,16 +316,16 @@ class MyQueueAndSearchWindow(QWidget):
     
     def search_button_clicked(self):
         cv.track_change_on_main_playlist_new_search_needed = False
-        self.search_cretaria = self.search_line_edit.text().strip().lower()
+        self.search_criteria = self.search_line_edit.text().strip().lower()
         
-        if len(self.search_cretaria) > 2:
+        if len(self.search_criteria) > 2:
             self.search_create_result_dic()
             cv.search_title_list_widget.clear()
             cv.search_queue_list_widget.clear()
             if cv.search_result_dic:
                 self.search_display_result()
         else:
-            MyMessageBoxError('Invalid search', 'The search cretaria has to be more than 2 characters long.')
+            MyMessageBoxError('Invalid search', 'The search criteria has to be more than 2 characters long.')
            
 
 
@@ -339,7 +339,7 @@ class MyQueueAndSearchWindow(QWidget):
                 name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
                 for track_index in range(0, name_list_widget.count()):
                     track_title = name_list_widget.item(track_index).text()
-                    if self.search_cretaria in track_title.lower():
+                    if self.search_criteria in track_title.lower():
                         queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
                         queue_number = queue_list_widget.item(track_index).text()
                         if queue_number:

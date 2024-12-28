@@ -58,7 +58,7 @@ class PlaysFunc:
             2, playing track, clear playlist, restart app
                 -> next startup: empty playlist displayed, no autoplay
         '''
-        if cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
+        if 0 <= cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
          
             # PLAYING TRACK ADDED TO THE QUEUE - VALUATION
             if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
@@ -208,7 +208,7 @@ class PlaysFunc:
         - It first triggered once the based is played (main / AVPlayer())
         --> cv.played_at_startup_counter needed
         - On every playlist the last/previously played row will be selected (src/playlists.py) 
-        - The last playing playist will be set active/displayed (src/playlists.py)
+        - The last playing playlist will be set active/displayed (src/playlists.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically
         '''
         if not cv.played_at_startup_counter:
