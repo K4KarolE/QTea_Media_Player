@@ -52,7 +52,7 @@ class MyWindow(QWidget):
         'next_track': lambda: br.button_next_track.button_next_track_clicked(),
         'repeat_track_playlist_toggle': lambda: br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked(),
         'shuffle_playlist_toggle': lambda: br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked(),
-        'full_screen_toggle': lambda: br.av_player.full_screen_toggle(),
+        'full_screen_toggle': lambda: br.av_player.full_screen_onoff_toggle(),
         'playlist_toggle': lambda: br.button_toggle_playlist.button_toggle_playlist_clicked(),
         'video_toggle': lambda: br.button_toggle_video.button_toggle_video_clicked(),
         'window_size_toggle': self.window_size_toggle_action, 

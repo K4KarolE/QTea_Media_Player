@@ -520,10 +520,14 @@ class Data:
         FILE_TYPES_LIST - used to sort the files in the file dialog window
                         - `AT - Add Track` button
     '''
-    MEDIA_FILES = "Media files (*.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-    AUDIO_FILES = "Audio files (*.mp3 *.wav *.flac *.midi *.aac)"
-    VIDEO_FILES = "Video files (*.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg)"
-    FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES]
+    AUDIO_FILES_EXTS = "*.aac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.wav"
+    AUDIO_FILES = f"Audio files ({AUDIO_FILES_EXTS})"
+
+    VIDEO_FILES_EXTS= "*.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.mts *.webm *.wmv"
+    VIDEO_FILES = f"Video files ({VIDEO_FILES_EXTS})"
+
+    MEDIA_FILES = f"Media files ({AUDIO_FILES_EXTS} {VIDEO_FILES_EXTS})"
+    FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, "All files (*.*)"]
     
 
 

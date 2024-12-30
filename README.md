@@ -226,11 +226,19 @@
     - External: selected files and/or folders can be grabbed and dropped on the active playlist from File Explorer, Desktop,  .. . 
 
 ## File types
-- Currently available: *.mp3 *.wav *.flac *.midi *.aac *.mp4 *.avi *.mkv *.mov *.flv *.wmv *.mpg
-- Not all the listed file types are tested.
-- To update to the file types lists, please see the `src / cons_and_vars.py / FILE TYPES` section.
-    - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button.
-    - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button.
+- "formats supported depend heavily on the codec packs installed on your system" - [link](https://forum.qt.io/topic/63110/)
+- Which files will be added to the playlist when I add a directory?
+    - Every file with the extensions listed in the `src / cons_and_vars.py / FILE TYPES` section will be added:
+        - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button.
+        - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button.
+    - Currently listed extensions:
+        - Audio: *.aac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.wav
+        - Video: *.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.mts *.webm *.wmv
+- To check if a file with unlisted extension is payable:
+    - Click `AT - Add Track` button
+    - In the pop-up window navigate to the file location
+    - At the bottom of the pop-up window change the `Files of type` to `All files (*.*)`
+    - Add the file to the playlist and try to play it
 
 ## Workarounds
 ### Dummy track
