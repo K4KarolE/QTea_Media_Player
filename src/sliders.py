@@ -110,12 +110,25 @@ class MyVolumeSlider(QSlider):
 
     def update_volume(self):
         ''' 
-            ANY VOLUME CHANGE TRIGGERS:
-            SHORTCUT KEY, VOLUME SLIDER, SCROLL WHEEL OVER VIDEO SCREEN
-            -> UPDATES SLIDER -> UPDATE VOLUME
+            VOLUME CHANGE CAN BE TRIGGERED BY:
+            - Shortcut key
+            - Volume slider
+            - Scroll wheel over video screen when available
+            >> which will update the volume slider
+            >> which will update the volume
+            --------------------------------------
+
+            TO DISPLAY THE VOLUME CHANGE ON THE VIDEO SCREEN:
+            When volume is already 0 or 100 and user tries
+            to go beyond:
+                volume_up_action() / volume_down_action()
+            
+            When volume in (0< <100), below:
+            br.av_player.text_display_on_video() 
         '''
         br.av_player.audio_output.setVolume(self.sliderPosition()/100)
         save_volume_slider_value(self.sliderPosition()/100)
         br.button_speaker.button_speaker_update() # if muted -> unmuted
         # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
+        # AND VOLUME CHANGE IS BETWEEN 0< <100
         br.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")

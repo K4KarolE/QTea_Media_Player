@@ -134,13 +134,31 @@ class MyWindow(QWidget):
             cv.active_pl_tracks_count = cv.active_pl_name.count()
  
 
+    ''' 
+        VOLUME CHANGE CAN BE TRIGGERED BY:
+        - Shortcut key
+        - Volume slider
+        - Scroll wheel over video screen when available
+        >> which will update the volume slider
+        >> which will update the volume
+        --------------------------------------
 
+        TO DISPLAY THE VOLUME CHANGE ON THE VIDEO SCREEN:
+        When volume in (0< <100): 
+            src/sliders/MyVolumeSlider/update_volume()
+    
+        When volume is already 0 or 100 and user tries
+        to go beyond, below:
+            volume_up_action() / volume_down_action()
+    '''
     def volume_up_action(self):
         if cv.volume < 1:
             cv.volume = cv.volume + 0.05
             if cv.volume > 1:
                 cv.volume = 1
             self.volume_update()
+        elif cv.volume == 1:
+            br.av_player.text_display_on_video(1000, "Volume:  100%")
             
     
     def volume_down_action(self):
@@ -149,6 +167,9 @@ class MyWindow(QWidget):
             if cv.volume < 0:
                 cv.volume = 0
             self.volume_update()
+        elif cv.volume == 0:
+            br.av_player.text_display_on_video(1000, "Volume:  0%")
+
 
     def volume_update(self):
         new_volume = round(cv.volume, 4)
