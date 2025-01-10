@@ -30,6 +30,7 @@ class PlaysFunc:
         #  -> reset our variable when playing new track
         cv.audio_track_played = 0
 
+        # If the "Start from the latest point" is enabled:
         # Saving the current duration in every 5 second
         # -> reset our assist variable when playing new track   
         cv.counter_for_duration = 0
@@ -37,7 +38,7 @@ class PlaysFunc:
         update_active_playlist_vars_and_widgets()
         
         # playing_track_index --> cv.playing_track_index
-        self.get_playing_track_index(playing_track_index)  
+        self.generate_playing_track_index(playing_track_index)
         
         ''' QUEUE MANAGEMENT '''
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
@@ -166,6 +167,7 @@ class PlaysFunc:
             # REPEAT SINGLE TRACK - NO BUTTON CLICK    
             elif (cv.repeat_playlist == 0 and 
                 br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+                    cv.track_current_duration = 0
                     br.av_player.player.setPosition(0)
                     br.av_player.player.play()
             # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
@@ -193,8 +195,8 @@ class PlaysFunc:
     def auto_play_next_track(self):
         ''' 
         AT STARTUP:
-        - It first triggered once the based is played (main / AVPlayer())
-        --> cv.played_at_startup_counter needed
+        - The function first triggered once the based is played (main / AVPlayer())
+            --> cv.played_at_startup_counter needed
         - On every playlist the last/previously played row will be selected (src/playlists.py) 
         - The last playing playlist will be set active/displayed (src/playlists.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically
@@ -213,7 +215,7 @@ class PlaysFunc:
             br.av_player.base_played = True
 
             if cv.play_at_startup and not cv.played_at_startup_counter:
-                time.sleep(0.01) # otherwise media loading error occurs / not a mediastatus problem
+                time.sleep(0.01) # otherwise media loading error occurs / not a MediaStatus problem
                 self.play_track()
 
         cv.played_at_startup_counter = True
@@ -247,7 +249,7 @@ class PlaysFunc:
             br.av_player.text_display_on_video(1000, subtitle_track_title)
     
 
-    def get_playing_track_index(self, playing_track_index):
+    def generate_playing_track_index(self, playing_track_index):
         ''' 
         SCENARIO A - playing_track_index == None:
         - Double-click on a track in a playlist
