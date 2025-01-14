@@ -34,7 +34,7 @@ class Data:
     audio_tracks_amount: int = 0
     audio_track_played: int = 0
     subtitle_tracks_amount: int = 0
-    subtitle_track_played: int = 0
+    subtitle_track_played: int = -1
 
     screen_index_for_fullscreen: int = -1
     screen_pos_x_for_fullscreen: int = 0

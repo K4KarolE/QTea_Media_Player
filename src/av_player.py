@@ -70,12 +70,12 @@ class AVPlayer(QWidget):
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',
-                'audio_tracks': [],
+                'audio_tracks': []
                 },
             'Subtitle': {
                 'icon': None,
                 'menu_sub': '',
-                'subtitle_tracks': [],
+                'subtitle_tracks': []
                 },
             'Full Screen': {
                 'icon': None,
@@ -135,7 +135,7 @@ class AVPlayer(QWidget):
 
                 # SUBTITLE TRACKS
                 if self.player.activeSubtitleTrack() == -1:
-                    qaction_to_add = QAction(br.icon.selected, 'Disabled', self)
+                    qaction_to_add = QAction(br.icon.selected, 'Disable', self)
                 else:
                     qaction_to_add = QAction('Disable', self)
                 self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
@@ -349,9 +349,15 @@ class AVPlayer(QWidget):
             Volume: src / sliders.py / MyVolumeSlider class / update_volume()
             Track title: src / func_play_coll.py / PlaysFunc class / play_track()
         '''
+        if cv.subtitle_tracks_amount: self.player.setActiveSubtitleTrack(-1)
         self.video_output.videoSink().setSubtitleText(text)
         self.timer.start(time)
-        self.timer.timeout.connect(lambda: self.video_output.videoSink().setSubtitleText(None))
+        self.timer.timeout.connect(lambda: self.text_display_on_video_time_out_action())
+
+    def text_display_on_video_time_out_action(self):
+        self.video_output.videoSink().setSubtitleText(None)
+        if cv.subtitle_tracks_amount: self.player.setActiveSubtitleTrack(cv.subtitle_track_played)
+
 
 
     # SCREEN SAVER SETTINGS UPDATE USED IN:
