@@ -44,6 +44,9 @@ class MyQueueAndSearchWindow(QWidget):
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         self.setWindowIcon(br.icon.queue_blue)
         self.setWindowTitle("Queue & Search")
+        self.search_criteria = ""
+        self.is_empty_search_result = False
+        self.empty_search_result_msg = ""
         
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
@@ -303,27 +306,33 @@ class MyQueueAndSearchWindow(QWidget):
             
  
     def search_play_list_item(self):
-        if not cv.track_change_on_main_playlist_new_search_needed:
-            current_row_index = cv.search_title_list_widget.currentRow()
-            playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
-            cv.playing_playlist_index = playlist_index
-            update_playing_playlist_vars_and_widgets()
-            br.play_funcs.play_track(track_index)
-            br.button_play_pause.setIcon(br.icon.pause)
-        else:
-            MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
+        if not self.is_empty_search_result:
+            if not cv.track_change_on_main_playlist_new_search_needed:
+                current_row_index = cv.search_title_list_widget.currentRow()
+                playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
+                cv.playing_playlist_index = playlist_index
+                update_playing_playlist_vars_and_widgets()
+                br.play_funcs.play_track(track_index)
+                br.button_play_pause.setIcon(br.icon.pause)
+            else:
+                MyMessageBoxError('New search needed', 'Playlists has been changed, please run the search again. ')
 
     
     def search_button_clicked(self):
         cv.track_change_on_main_playlist_new_search_needed = False
         self.search_criteria = self.search_line_edit.text().strip().lower()
-        
+        self.empty_search_result_msg = f'-- Could not find any matches for "{self.search_criteria}" --'
+
         if len(self.search_criteria) > 2:
             self.search_create_result_dic()
             cv.search_title_list_widget.clear()
             cv.search_queue_list_widget.clear()
             if cv.search_result_dic:
+                self.is_empty_search_result = False
                 self.search_display_result()
+            else:
+                self.is_empty_search_result = True
+                add_new_list_item(self.empty_search_result_msg, cv.search_title_list_widget, True)
         else:
             MyMessageBoxError('Invalid search', 'The search criteria has to be more than 2 characters long.')
            
