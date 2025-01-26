@@ -139,6 +139,8 @@ class Data:
             gen_sett_boolean_text_list
             ...
             gen_sett_jump_text_list
+    3, Add the new variable to the
+        window_settings.py / update_real_time_used_variables()
     
     No further steps needed, the validation will be automatically
     applied at the next user input (Settings window / General tab)

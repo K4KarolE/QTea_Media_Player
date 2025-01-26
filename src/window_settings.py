@@ -294,6 +294,30 @@ class MySettingsWindow(QWidget):
                         to_save = True
             if to_save:
                 save_json()
+                update_real_time_used_variables()
+
+
+        def update_real_time_used_variables():
+            """
+                Update values which can be used after
+                clicked on the "Save" button
+                without restarting the app
+            """
+            # GENERAL
+            sett_gen = settings['general_settings']
+            cv.always_on_top = sett_gen['always_on_top']
+            cv.continue_playback = sett_gen['continue_playback']
+            cv.small_jump = sett_gen['small_jump']
+            cv.medium_jump = sett_gen['medium_jump']
+            cv.big_jump = sett_gen['big_jump']
+            cv.window_width = sett_gen['window_width']
+            cv.window_height = sett_gen['window_height']
+            cv.window_alt_width = sett_gen['window_alt_width']
+            cv.window_alt_height = sett_gen['window_alt_height']
+            cv.window_second_alt_width = sett_gen['window_second_alt_width']
+            cv.window_second_alt_height = sett_gen['window_second_alt_height']
+            cv.window_alt_size_repositioning = sett_gen['window_alt_size_repositioning']
+            cv.default_audio_track = sett_gen['default_audio_track']
             
 
 

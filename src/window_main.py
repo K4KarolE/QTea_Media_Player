@@ -29,6 +29,7 @@ class MyWindow(QWidget):
         if cv.always_on_top:
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()
+        self.move_app_to_middle_at_startup()
 
     
     def hotkeys_creation(self):
@@ -176,6 +177,17 @@ class MyWindow(QWidget):
         br.av_player.audio_output.setVolume(new_volume)
         br.button_speaker.button_speaker_update()
         update_and_save_volume_slider_value(new_volume)
+
+
+    def move_app_to_middle_at_startup(self):
+        """ To make sure the app is displayed
+            in the middle of the screen at the startup
+        """
+        current_screen = QApplication.screenAt(self.pos())
+        screen_rect = current_screen.availableGeometry()
+        pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
+        pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
+        self.move(pos_x_middle, pos_y_middle)
 
 
     def window_size_toggle_action(self):
