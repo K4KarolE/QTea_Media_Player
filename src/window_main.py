@@ -191,6 +191,10 @@ class MyWindow(QWidget):
 
 
     def window_size_toggle_action(self):
+        if br.av_player.video_output.isFullScreen():
+            br.av_player.full_screen_onoff_toggle()
+            return
+
         cv.window_size_toggle_counter =  (cv.window_size_toggle_counter + 1) % 3
         update_window_size_vars_from_saved_values()
 

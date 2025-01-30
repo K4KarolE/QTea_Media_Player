@@ -492,7 +492,7 @@ class Data:
     exp_2 = Shift / Ctrl / Alt + [rest of the keys_list]
     Not able to use hotkeys with 3 components: 'Alt + M + K'
     '''
-    keys_list = ['Shift', 'Ctrl', 'Alt', 'Enter', 'Space',  'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', '[.+-]']
+    keys_list = ['Shift', 'Ctrl', 'Alt', 'Enter', 'Space',  'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', "[`=\/,;'#*.+-]"]
 
     # ONE KEY
     exp_1 = r'('
