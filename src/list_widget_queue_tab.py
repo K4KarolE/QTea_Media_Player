@@ -4,6 +4,7 @@ the list items), in the Queue tab tracklist
 Used it in the src / window_queue_and_search.py
 '''
 from pathlib import Path
+import subprocess
 import webbrowser
 
 from PyQt6.QtCore import QEvent
@@ -124,4 +125,8 @@ class MyQueueListWidget(QListWidget):
         current_row_index = self.currentRow() - 1
         playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
         file_path = get_path_db(current_row_index, playlist)
-        webbrowser.open(Path(file_path).parent)
+        file_dir_path = Path(file_path).parent
+        if cv.os_linux:
+            subprocess.Popen(["xdg-open", file_dir_path])
+        else:
+            webbrowser.open(str(file_dir_path))

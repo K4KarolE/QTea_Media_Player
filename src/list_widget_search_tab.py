@@ -9,6 +9,7 @@ from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
 
 from pathlib import Path
+import subprocess
 import webbrowser
 
 from .class_bridge import br
@@ -161,4 +162,8 @@ class MySearchListWidget(QListWidget):
         current_row_index = self.currentRow()
         playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         file_path = get_path_db(current_row_index, playlist)
-        webbrowser.open(Path(file_path).parent)
+        file_dir_path = Path(file_path).parent
+        if cv.os_linux:
+            subprocess.Popen(["xdg-open", file_dir_path])
+        else:
+            webbrowser.open(str(file_dir_path))

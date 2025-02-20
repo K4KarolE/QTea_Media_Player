@@ -105,11 +105,10 @@ class MyListWidget(QListWidget):
             try:
                 file_path = get_path_db(self.currentRow(), cv.active_db_table)
                 file_dir_path = Path(file_path).parent
-
                 if cv.os_linux:
                     subprocess.Popen(["xdg-open", file_dir_path])
                 else:
-                    webbrowser.open(file_dir_path)
+                    webbrowser.open(str(file_dir_path))
 
             except:
                 MyMessageBoxError(
