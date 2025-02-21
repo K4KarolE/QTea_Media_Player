@@ -6,10 +6,13 @@ from .class_bridge import br
 from .class_data import save_json
 from .class_data import cv, settings
 from .logger import logger_basic
+from .message_box import MyMessageBoxError
 
 import sqlite3
 from pathlib import Path
 import os
+import subprocess
+
 
 connection = sqlite3.connect('playlist.db')
 cur = connection.cursor()
@@ -640,3 +643,32 @@ def update_window_size_vars_from_saved_values():
     cv.window_alt_height = settings['general_settings']['window_alt_height']
     cv.window_second_alt_width = settings['general_settings']['window_second_alt_width']
     cv.window_second_alt_height = settings['general_settings']['window_second_alt_height']
+
+
+def open_track_folder_via_context_menu(current_row, db_table):
+    file_path = get_path_db(current_row, db_table)
+    file_dir_path = Path(file_path).parent
+    if Path(file_dir_path).is_dir():
+        if cv.os_linux:
+            subprocess.Popen(["xdg-open", file_dir_path])
+        else:
+            subprocess.Popen(["explorer", file_dir_path])
+    else:
+        MyMessageBoxError(
+            'File location',
+            'The file or the file`s home folder has been renamed / removed. '
+            )
+
+
+def play_track_with_default_player_via_context_menu(current_row, db_table):
+    file_path = get_path_db(current_row, db_table)
+    if Path(file_path).is_file():
+        if cv.os_linux:
+            subprocess.Popen(["xdg-open", file_path])
+        else:
+            subprocess.Popen(["explorer", file_path])
+    else:
+        MyMessageBoxError(
+            'Not able to play the file',
+            'The file or the file`s home folder has been renamed / removed. '
+            )

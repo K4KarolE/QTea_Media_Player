@@ -1,11 +1,8 @@
 '''
-Class created to handle context menu (right click on 
+Class created to handle context menu (right-click on
 the list items) in the main window playlists
 Used it in the src / playlists.py 
 '''
-from pathlib import Path
-import subprocess
-import webbrowser
 
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
@@ -15,7 +12,8 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
-    get_path_db,
+    open_track_folder_via_context_menu,
+    play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
     remove_track_from_playlist,
     )
@@ -42,6 +40,7 @@ class MyListWidget(QListWidget):
             'Clear queue': {'icon': br.icon.clear_queue},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
+            'Play track with default player': {'icon': br.icon.start_with_default_player}
             }   
 
 
@@ -88,7 +87,7 @@ class MyListWidget(QListWidget):
             try:
                 clear_queue_update_all_occurrences()
             except:
-                MyMessageBoxError('Sorry, something went wrong.')
+                MyMessageBoxError('Error','Sorry, something went wrong.')
         
         # REMOVE TRACK
         elif q.text() == list(self.context_menu_dic)[3]:
@@ -103,15 +102,19 @@ class MyListWidget(QListWidget):
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:
             try:
-                file_path = get_path_db(self.currentRow(), cv.active_db_table)
-                file_dir_path = Path(file_path).parent
-                if cv.os_linux:
-                    subprocess.Popen(["xdg-open", file_dir_path])
-                else:
-                    webbrowser.open(str(file_dir_path))
-
+                open_track_folder_via_context_menu(self.currentRow(), cv.active_db_table)
             except:
                 MyMessageBoxError(
                     'File location',
                     'The file or the file`s home folder has been renamed / removed. '
+                    )
+
+        # PLAY TRACK WITH DEFAULT PLAYER
+        elif q.text() == list(self.context_menu_dic)[5]:
+            try:
+                play_track_with_default_player_via_context_menu(self.currentRow(), cv.active_db_table)
+            except:
+                MyMessageBoxError(
+                    'Not able to play the file',
+                    'The file or the file`s home folder has been renamed / removed.  '
                     )
