@@ -232,7 +232,9 @@ class PlaysFunc:
     
 
     def audio_tracks_use_default(self):
-        if cv.audio_tracks_amount > 1 and 1 < cv.default_audio_track <= cv.audio_tracks_amount:
+        # Some video`s default audiotrack is not the 1st one >>
+        # make sure the 1st one playing when cv.default_audio_track = 1
+        if cv.audio_tracks_amount > 1 and 1 <= cv.default_audio_track <= cv.audio_tracks_amount:
             br.av_player.player.setActiveAudioTrack(cv.default_audio_track - 1)
             cv.audio_track_played = cv.default_audio_track - 1
     
