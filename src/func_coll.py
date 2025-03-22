@@ -211,6 +211,8 @@ def add_record_grouped_actions(track_path):
     track_name = Path(track_path).stem
     br.av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
     raw_duration = br.av_player_duration.player.duration()
+    # raw_duration same value as
+    # br.av_player_duration.player.metaData().value(br.av_player_duration.player.metaData().Key.Duration)
     cv.active_pl_sum_duration += raw_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
@@ -529,7 +531,7 @@ def remove_track_from_playlist():
     for item in playlist:
         track_row_db, list_name, duration = generate_track_list_detail(item)
         cv.active_pl_name.item(track_row_db-1).setText(list_name)
-    
+
     cv.active_pl_tracks_count = cv.active_pl_name.count()
 
     cv.track_change_on_main_playlist_new_search_needed = True

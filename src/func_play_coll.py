@@ -15,7 +15,6 @@ from .func_coll import (
     queue_window_remove_track,
     save_playing_playlist_and_playing_last_track_index,
     search_result_queue_number_update,
-    update_active_playlist_vars_and_widgets,
     update_playing_playlist_vars_and_widgets,
     update_queued_track_style,
     update_queued_tracks_order_number,
@@ -34,8 +33,8 @@ class PlaysFunc:
         # Saving the current duration in every 5 second
         # -> reset our assist variable when playing new track   
         cv.counter_for_duration = 0
-          
-        update_active_playlist_vars_and_widgets()
+
+        update_playing_playlist_vars_and_widgets()
         
         # playing_track_index --> cv.playing_track_index
         self.generate_playing_track_index(playing_track_index)
@@ -60,7 +59,7 @@ class PlaysFunc:
                 -> next startup: empty playlist displayed, no autoplay
         '''
         if 0 <= cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
-         
+
             # PLAYING TRACK ADDED TO THE QUEUE - VALUATION
             if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
                 self.update_previous_track_style()
@@ -78,7 +77,10 @@ class PlaysFunc:
                 self.play_track()
             else:   # empty playlist
                 return
-    
+
+        if cv.shuffle_playlist_on:
+            self.add_to_shuffle_played_list()
+
         # PATH / DURATION / SLIDER
         cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
         cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
@@ -127,6 +129,23 @@ class PlaysFunc:
 
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
+
+
+    def add_to_shuffle_played_list(self):
+        '''
+        "Shuffle playlist" is ON:
+        The currently playing tracks added to the "shuffle_played_tracks_list"
+        which is used when the "Play previous" button/hotkey is triggered
+        "Shuffle playlist" is OFF: the previous track played in playlist
+        '''
+        if (not cv.is_play_prev_track_clicked and
+                cv.playing_track_index not in cv.shuffle_played_tracks_list):
+            cv.shuffle_played_tracks_list.append(cv.playing_track_index)
+            if len(cv.shuffle_played_tracks_list) > 10:
+                cv.shuffle_played_tracks_list.pop(0)
+        else:
+            if cv.shuffle_played_tracks_list:
+                cv.shuffle_played_tracks_list.pop(-1)
 
 
     def update_window_title(self, track_path, no_error):

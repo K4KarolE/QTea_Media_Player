@@ -28,6 +28,11 @@ class Data:
     skin_selected: str = settings['skin_selected']
     repeat_playlist: int = settings['repeat_playlist']
     shuffle_playlist_on: bool = settings['shuffle_playlist_on']
+    shuffle_played_tracks_list = []
+    is_play_prev_track_clicked: bool = False
+    # is_play_prev_track_clicked:
+    # used to make sure not adding tracks to the
+    # shuffle_played_tracks_list when play prev track
     volume: float = settings['volume']
     icon_size: int = 20  # used for the buttons
     is_speaker_muted: bool = settings['is_speaker_muted']
@@ -90,7 +95,6 @@ class Data:
     active_pl_title: str = None
     active_pl_last_track_index: int = 0
     active_pl_name: object = None       # widget
-    playing_pl_queue: object = None     # widget
     active_pl_duration: object = None   # widget
     active_pl_sum_duration: int = 0
     active_pl_tracks_count: int = 0

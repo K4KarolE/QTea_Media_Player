@@ -85,11 +85,11 @@ class MyPlaylists(QTabWidget):
     '''
     def add_dummy_playlist(self):
         self.addTab(QWidget(), '')
-        self.setTabEnabled(cv.playlist_amount, 0)
+        self.setTabEnabled(cv.playlist_amount, False)
 
     def hide_playlists_with_no_title(self):
         for index in cv.playlists_without_title_to_hide_index_list:
-            self.setTabVisible(index, 0)
+            self.setTabVisible(index, False)
 
     def active_playlist_changed(self):
         if self.playlists_created_at_first_run:
@@ -99,6 +99,7 @@ class MyPlaylists(QTabWidget):
             update_active_playlist_vars_and_widgets()    # set the current lists(name, duration)
             br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
             cv.current_track_index = cv.active_pl_name.currentRow()
+            cv.shuffle_played_tracks_list.clear()
     
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''

@@ -72,6 +72,8 @@
 ## Buttons
 ### Play buttons
 - The `Play`, `Stop`, `Previous track`, `Next track` and `Shuffle` buttons behave as usual
+  - When `Shuffle` is on and no switch between playlists has been made, the last 10 tracks can be played back
+when the `Previous track` button/hotkey is triggered
 - The `Repeat playlist` button has 3 states:
     - Disabled
     - Repeat playlist - the button is flat.

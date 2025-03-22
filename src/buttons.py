@@ -151,7 +151,7 @@ class MyButtons(QPushButton):
     ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''
     def set_style_duration_info_button(self):
         self.setFont(QFont('Times', 14, 600))
-        self.setFlat(1)
+        self.setFlat(True)
         self.setStyleSheet(
                         "QPushButton"
                             "{"
@@ -208,16 +208,30 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     def button_prev_track_clicked(self):
-        if cv.playing_track_index == None:
-            cv.playing_track_index = cv.playing_pl_name.currentRow() 
-        if cv.playing_pl_name.count() > 0:
-            if cv.playing_track_index != 0:
+        if cv.playing_track_index is None:
+            cv.playing_track_index = cv.playing_pl_name.currentRow()
+
+        if cv.playing_pl_tracks_count > 0:
+            cv.is_play_prev_track_clicked = True
+            # TRACK IN SHUFFLE LIST
+            if cv.shuffle_playlist_on and len(cv.shuffle_played_tracks_list) > 1:
+                self.play_shuffle_played_list_track()
+            # STANDARD PREV TRACK / THE LAST TRACK IN PLAYLIST
+            elif cv.playing_track_index != 0:
                 cv.playing_track_index -= 1
-                br.play_funcs.play_track(cv.playing_track_index)
-            else:
-                cv.playing_track_index = cv.playing_pl_name.count() - 1
-                br.play_funcs.play_track(cv.playing_track_index)
-    
+                if cv.playing_pl_tracks_count - 1 > cv.playing_track_index:
+                    br.play_funcs.play_track(cv.playing_track_index)
+                else:
+                    cv.playing_track_index = cv.playing_pl_tracks_count - 1
+                    br.play_funcs.play_track(cv.playing_track_index)
+            cv.is_play_prev_track_clicked = False
+
+    def play_shuffle_played_list_track(self):
+        cv.playing_track_index = cv.shuffle_played_tracks_list[-2]
+        if cv.playing_pl_tracks_count > cv.playing_track_index + 1:
+            br.play_funcs.play_track(cv.playing_track_index)
+
+
 
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
     def button_next_track_clicked(self):
@@ -230,12 +244,12 @@ class MyButtons(QPushButton):
         
         # NO REPEAT
         if cv.repeat_playlist == 1:
-            self.setFlat(0)
+            self.setFlat(False)
             self.setIcon(br.icon.repeat)
             br.av_player.text_display_on_video(1500, 'Repeat: OFF') 
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
-            self.setFlat(1)
+            self.setFlat(True)
             br.av_player.text_display_on_video(1500, 'Repeat: Playlist') 
         # REPEAT SINGLE TRACK
         else:
@@ -250,11 +264,12 @@ class MyButtons(QPushButton):
     def button_toggle_shuffle_pl_clicked(self):
         if cv.shuffle_playlist_on:
             cv.shuffle_playlist_on = False
-            self.setFlat(0)
-            br.av_player.text_display_on_video(1500, 'Shuffle: OFF')            
+            self.setFlat(False)
+            br.av_player.text_display_on_video(1500, 'Shuffle: OFF')
+            cv.shuffle_played_tracks_list.clear()
         else:
             cv.shuffle_playlist_on = True
-            self.setFlat(1)
+            self.setFlat(True)
             br.av_player.text_display_on_video(1500, 'Shuffle: ON') 
         
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
@@ -266,11 +281,11 @@ class MyButtons(QPushButton):
         if br.av_player.playlist_visible and br.av_player.video_area_visible:
             br.layout_vert_right_qframe.hide()
             br.av_player.playlist_visible = False
-            br.button_toggle_video.setDisabled(1)
+            br.button_toggle_video.setDisabled(True)
         else:
             br.layout_vert_right_qframe.show()
             br.av_player.playlist_visible = True
-            br.button_toggle_video.setDisabled(0) 
+            br.button_toggle_video.setDisabled(False)
 
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE VIDEO '''
@@ -280,13 +295,13 @@ class MyButtons(QPushButton):
             br.av_player.video_area_visible = False
             br.window.resize(int(cv.window_width/3), br.window.geometry().height())
             br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
-            br.button_toggle_playlist.setDisabled(1)
+            br.button_toggle_playlist.setDisabled(True)
         else:
             br.window.resize(cv.window_width, br.window.geometry().height())
             br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
             br.layout_vert_left_qframe.show()
             br.av_player.video_area_visible = True
-            br.button_toggle_playlist.setDisabled(0)
+            br.button_toggle_playlist.setDisabled(False)
 
 
     ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
