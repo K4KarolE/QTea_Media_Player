@@ -141,13 +141,11 @@ def get_duration_db(playing_track_index, db_table):
 
 
 def get_all_from_db(playing_track_index, db_table):
-    duration = int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
-                           (playing_track_index + 1,)).fetchall()[0][1])
-    current_duration = int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
-                           (playing_track_index + 1,)).fetchall()[0][2])
-    path = cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
-                           (playing_track_index + 1,)).fetchall()[0][3]
-    
+    result_all = cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
+                           (playing_track_index + 1,)).fetchall()
+    duration = int(result_all[0][1])
+    current_duration = int(result_all[0][2])
+    path = result_all[0][3]
     return duration, current_duration, path
 
 
