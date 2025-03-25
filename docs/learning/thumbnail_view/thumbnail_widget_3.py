@@ -11,8 +11,15 @@ Note:
 """
 
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QScrollArea,
+    QScrollBar
+    )
 
 import sqlite3
 import sys
@@ -20,13 +27,13 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-playlist_n = "playlist_0"   # playlist_0 - playlist_29
+playlist_n = "playlist_8"   # playlist_0 - playlist_29
 path_thumbnails = '/BlackSweat/_DEV/test_vids/thumbnails'
 
 class Data:
-    window_width = 600
-    window_height = 400
-    thumbnail_img_size = 500
+    window_width = 1200
+    window_height = 900
+    thumbnail_img_size = 150
     widg_and_img_diff = 50
     thumbnail_width = thumbnail_img_size + widg_and_img_diff
     thumbnail_height = thumbnail_img_size + widg_and_img_diff
@@ -35,7 +42,8 @@ class Data:
     pos_base_x = 5
     pos_base_y = 5
     thumbnail_widget_dic = {}
-    at_seconds_raw = 60 # time at the frame img will be taken from
+    at_seconds_raw = 3 # time at the frame img will be taken from
+    scroll_bar_size = 10
 
 
 QApplication.setDesktopSettingsAware(False) # avoid OS auto coloring
@@ -45,7 +53,7 @@ class MyApp(QApplication):
         super().__init__(sys.argv)
 
 
-class MyWindow(QWidget):
+class MainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
         self.resize(cv.window_width, cv.window_height)
@@ -53,6 +61,17 @@ class MyWindow(QWidget):
         self.setWindowTitle("Thumbnails")
         self.timer = QTimer()
         self.timer.timeout.connect(lambda : self.timer_action())
+        self.scroll_bar_ver = QScrollBar()
+        self.scroll_bar_ver.setStyleSheet(
+            "QScrollBar::vertical"
+            "{"
+            f"width: {cv.scroll_bar_size}px;"
+            "}"
+            )
+        self.setVerticalScrollBar(self.scroll_bar_ver)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
 
     def timer_action(self):
         # Timer: For avoiding multiple trigger from resizeEvent
@@ -62,15 +81,21 @@ class MyWindow(QWidget):
     def resizeEvent(self, a0):
         if cv.window_width != self.width():
             cv.window_width = self.width()
+            cv.window_height = self.height()
             self.timer.start(500)
         return super().resizeEvent(a0)
 
+
+class WidgetsWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.resize(cv.window_width, cv.window_height)
 
 
 class ThumbnailWidget(QWidget):
     def __init__(self, file_name):
         super().__init__()
-        self.setParent(window)
+        self.setParent(window_widgets)
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setMinimumWidth(cv.thumbnail_width)
@@ -170,25 +195,38 @@ def thumbnail_widget_resize_and_move_to_pos():
             cv.thumbnail_widget_dic[thumbnail_index]["widget"].resize(cv.thumbnail_new_width, cv.thumbnail_height)
             thumbnail_counter += 1
 
+        update_window_widgets_size(thumbnail_pos_y)
+
+
+def update_window_widgets_size(last_thumbnail_pos_y):
+    window_widgets_height = last_thumbnail_pos_y + cv.thumbnail_height + cv.pos_base_y
+    window_widgets.resize(cv.window_width, window_widgets_height)
+
+
 
 def generate_thumbnail_widget_new_width():
-    available_space = cv.window_width - 2 * cv.pos_base_x + cv.thumbnail_pos_gap
+    available_space = cv.window_width - cv.scroll_bar_size - 2 * cv.pos_base_x + cv.thumbnail_pos_gap
     thumbnail_and_gap = cv.thumbnail_width + cv.thumbnail_pos_gap
     thumbnails_in_row_possible = int(available_space / thumbnail_and_gap)
     thumbnail_count = len(cv.thumbnail_widget_dic)
     if thumbnails_in_row_possible >= thumbnail_count:
         thumbnail_width_diff = int((available_space - thumbnail_count * thumbnail_and_gap) / thumbnail_count)
     else:
-        thumbnail_width_diff = int((available_space - thumbnails_in_row_possible * thumbnail_and_gap) / thumbnails_in_row_possible)
+        if thumbnails_in_row_possible:
+            thumbnail_width_diff = int((available_space - thumbnails_in_row_possible * thumbnail_and_gap) / thumbnails_in_row_possible)
+        else:
+            thumbnail_width_diff = 0
     cv.thumbnail_new_width = cv.thumbnail_width + thumbnail_width_diff
 
 
 cv = Data()
 app = MyApp()
-window = MyWindow()
+window_main = MainWindow()
+window_widgets = WidgetsWindow()
+window_main.setWidget(window_widgets)
 
 generate_thumbnail_dic(playlist_n)
 thumbnail_widget_resize_and_move_to_pos()
 
-window.show()
+window_main.show()
 sys.exit(app.exec())

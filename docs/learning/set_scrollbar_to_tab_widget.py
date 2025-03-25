@@ -44,6 +44,8 @@ scroll_bar_hor.setStyleSheet(
                                     "height: 0px;"  # -> not visible
                                     "}"
                                 )
+# may be a better approach:
+# window_scrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
 window_scrollarea.setVerticalScrollBar(scroll_bar_ver)
 window_scrollarea.setHorizontalScrollBar(scroll_bar_hor)
