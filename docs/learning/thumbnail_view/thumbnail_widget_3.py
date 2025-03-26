@@ -2,12 +2,10 @@
 > Get the list of the specific playlist files from sql db
     > The track order is the same as in the app/playlist
 > Generate thumbnail widgets with standard dummy icon
-> Once double-clicked one of the thumbnails
-    > Generate thumbnail images if needed
-    > Update the thumbnail widgets with the thumbnail images
+> Generate thumbnail images if needed
+> Update the thumbnail widgets with the thumbnail images
 Note:
     > the used playlist should have video tracks added to ("playlist_n")
-    > "path_thumbnails" should be existed/edited
 """
 
 from PyQt6.QtGui import QPixmap
@@ -23,18 +21,20 @@ from PyQt6.QtWidgets import (
 
 import sqlite3
 import sys
+import subprocess
 import os
 from pathlib import Path
 from datetime import timedelta
 
-playlist_n = "playlist_8"   # playlist_0 - playlist_29
-path_thumbnails = '/BlackSweat/_DEV/test_vids/thumbnails'
+playlist_n = "playlist_0"   # playlist_0 - playlist_29
+path_project = Path().resolve().parent.parent.parent
+path_thumbnails = str(Path(path_project, 'thumbnails'))
 
 class Data:
+    thumbnail_img_size = 300
     window_width = 1200
     window_height = 900
-    thumbnail_img_size = 150
-    widg_and_img_diff = 50
+    widg_and_img_diff = 0
     thumbnail_width = thumbnail_img_size + widg_and_img_diff
     thumbnail_height = thumbnail_img_size + widg_and_img_diff
     thumbnail_new_width = thumbnail_width
@@ -42,7 +42,6 @@ class Data:
     pos_base_x = 5
     pos_base_y = 5
     thumbnail_widget_dic = {}
-    at_seconds_raw = 3 # time at the frame img will be taken from
     scroll_bar_size = 10
 
 
@@ -57,7 +56,7 @@ class MainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
         self.resize(cv.window_width, cv.window_height)
-        self.setMinimumWidth(cv.thumbnail_width + cv.pos_base_x * 2)
+        self.setMinimumWidth(cv.thumbnail_width + cv.pos_base_x * 2 + cv.scroll_bar_size)
         self.setWindowTitle("Thumbnails")
         self.timer = QTimer()
         self.timer.timeout.connect(lambda : self.timer_action())
@@ -93,8 +92,9 @@ class WidgetsWindow(QWidget):
 
 
 class ThumbnailWidget(QWidget):
-    def __init__(self, file_name):
+    def __init__(self, file_name, index):
         super().__init__()
+        self.index = index
         self.setParent(window_widgets)
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -106,14 +106,15 @@ class ThumbnailWidget(QWidget):
             )
         self.layout = QVBoxLayout()
         self.label_image = QLabel()
-        self.label_image_pixmap = QPixmap('../../../skins/default/window_icon.png')
+        self.label_image_pixmap = QPixmap('../../../skins/default/window_icon.png').scaledToWidth(30, Qt.TransformationMode.SmoothTransformation)
         self.label_image.setPixmap(self.label_image_pixmap)
         self.label_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_image.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
             )
-        self.text = QLabel(file_name)
+        label_text = f'{index + 1}.{file_name}'
+        self.text = QLabel(label_text)
         self.text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         self.text.setStyleSheet(
             "border: 0px;"
@@ -129,12 +130,14 @@ class ThumbnailWidget(QWidget):
         self.setLayout(self.layout)
 
     def mousePressEvent(self, a0):
-        print("Clicked")
-        self.setStyleSheet(f"background-color: pink;")
+        self.setStyleSheet(f"background-color: light grey;")
 
     def mouseDoubleClickEvent(self, a0):
-        print("Double clicked")
-        create_thumbnails_update_widgets()
+        file_dir_path = cv.thumbnail_widget_dic[self.index]["vid_path"]
+        if sys.platform == 'linux':
+            subprocess.Popen(["xdg-open", file_dir_path])
+        else:
+            subprocess.Popen(["explorer", file_dir_path])
 
     def update_img(self, file_path):
         self.label_image_pixmap = QPixmap(file_path)
@@ -143,39 +146,57 @@ class ThumbnailWidget(QWidget):
 
 
 def get_all_playlist_path_from_db(playlist_n):
-    connection = sqlite3.connect('/BlackSweat/_DEV/Python/QTea_Media_Player/playlist.db')
+    connection = sqlite3.connect('../../../playlist.db')
     sql_cursor = connection.cursor()
-    result_list= [path[0] for path in sql_cursor.execute("SELECT path FROM {0}".format(playlist_n))]
+    result_all = sql_cursor.execute("SELECT * FROM {0}".format(playlist_n)).fetchall()
+    duration_list = [duration[1] for duration in result_all]
+    path_list = [path[3] for path in result_all]
     connection.close()
-    return result_list
+    return path_list, duration_list
 
 
 def generate_thumbnail_dic(playlist_n):
-    path_list = get_all_playlist_path_from_db(playlist_n)
+    path_list, duration_list = get_all_playlist_path_from_db(playlist_n)
     if path_list:
         for index, path in enumerate(path_list):
             file_name = Path(path).name
             cv.thumbnail_widget_dic[index] = {}
-            cv.thumbnail_widget_dic[index]["widget"] = ThumbnailWidget(file_name)
+            cv.thumbnail_widget_dic[index]["widget"] = ThumbnailWidget(file_name, index)
             cv.thumbnail_widget_dic[index]["vid_name"] = file_name
             cv.thumbnail_widget_dic[index]["vid_path"] = path
+            cv.thumbnail_widget_dic[index]["duration"] = duration_list[index]
 
 
 def create_thumbnails_update_widgets():
     if cv.thumbnail_widget_dic:
         for index in cv.thumbnail_widget_dic:
-            thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["vid_name"]}.{cv.thumbnail_img_size}.jpg'
-            thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
             vid_path = cv.thumbnail_widget_dic[index]["vid_path"]
+            vid_duration = cv.thumbnail_widget_dic[index]["duration"]
+            thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["vid_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
+            thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
             if Path(thumbnail_img_path).is_file():
                 cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
             else:
-                at_seconds = timedelta(seconds=cv.at_seconds_raw)
+                at_seconds = get_time_frame_taken_from(vid_duration)
                 target_path = Path(path_thumbnails, thumbnail_img_name)
                 ffmpeg_action = f'ffmpeg -ss {at_seconds} -i "{vid_path}" -vf "scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease" -vframes 1 "{target_path}"'
                 os.system(ffmpeg_action)
                 if Path(thumbnail_img_path).is_file():
                     cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+
+
+def get_time_frame_taken_from(vid_duration):
+    if vid_duration:
+        vid_duration = int(int(vid_duration)/1000)
+        if 600 < vid_duration:
+            at_seconds_raw = 120
+        elif 30 < vid_duration <= 600:
+            at_seconds_raw = 60
+        else:
+            at_seconds_raw = int(vid_duration/2)
+    else:
+        at_seconds_raw = 0
+    return timedelta(seconds=at_seconds_raw)
 
 
 def thumbnail_widget_resize_and_move_to_pos():
@@ -203,7 +224,6 @@ def update_window_widgets_size(last_thumbnail_pos_y):
     window_widgets.resize(cv.window_width, window_widgets_height)
 
 
-
 def generate_thumbnail_widget_new_width():
     available_space = cv.window_width - cv.scroll_bar_size - 2 * cv.pos_base_x + cv.thumbnail_pos_gap
     thumbnail_and_gap = cv.thumbnail_width + cv.thumbnail_pos_gap
@@ -227,6 +247,7 @@ window_main.setWidget(window_widgets)
 
 generate_thumbnail_dic(playlist_n)
 thumbnail_widget_resize_and_move_to_pos()
+create_thumbnails_update_widgets()
 
 window_main.show()
 sys.exit(app.exec())
