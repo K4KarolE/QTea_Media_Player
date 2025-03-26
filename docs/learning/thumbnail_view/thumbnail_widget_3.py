@@ -25,10 +25,15 @@ import subprocess
 import os
 from pathlib import Path
 from datetime import timedelta
+from json import dump, load
+from time import time
 
 playlist_n = "playlist_0"   # playlist_0 - playlist_29
 path_project = Path().resolve().parent.parent.parent
 path_thumbnails = str(Path(path_project, 'thumbnails'))
+current_time = int(time())
+path_thumbnail_history = Path(path_thumbnails, '_thumbnail_history.json')
+
 
 class Data:
     thumbnail_img_size = 300
@@ -145,6 +150,19 @@ class ThumbnailWidget(QWidget):
 
 
 
+def open_thumbnail_history_json():
+    with open(path_thumbnail_history) as f:
+        json_dic = load(f)
+    return json_dic
+
+def save_thumbnail_history_json():
+    with open(path_thumbnail_history, 'w') as f:
+        dump(thumbnail_history, f, indent=2)
+    return
+
+thumbnail_history = open_thumbnail_history_json()
+
+
 def get_all_playlist_path_from_db(playlist_n):
     connection = sqlite3.connect('../../../playlist.db')
     sql_cursor = connection.cursor()
@@ -167,15 +185,19 @@ def generate_thumbnail_dic(playlist_n):
             cv.thumbnail_widget_dic[index]["duration"] = duration_list[index]
 
 
-def create_thumbnails_update_widgets():
+def create_thumbnails_and_update_widgets():
     if cv.thumbnail_widget_dic:
         for index in cv.thumbnail_widget_dic:
             vid_path = cv.thumbnail_widget_dic[index]["vid_path"]
             vid_duration = cv.thumbnail_widget_dic[index]["duration"]
             thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["vid_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
             thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
-            if Path(thumbnail_img_path).is_file():
-                cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+            if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
+                if Path(thumbnail_img_path).is_file():
+                    cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+                    thumbnail_history["completed"][thumbnail_img_name] = current_time
+                else:
+                    thumbnail_history["failed"][thumbnail_img_name] = current_time
             else:
                 at_seconds = get_time_frame_taken_from(vid_duration)
                 target_path = Path(path_thumbnails, thumbnail_img_name)
@@ -183,6 +205,10 @@ def create_thumbnails_update_widgets():
                 os.system(ffmpeg_action)
                 if Path(thumbnail_img_path).is_file():
                     cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+                    thumbnail_history["completed"][thumbnail_img_name] = current_time
+                else:
+                    thumbnail_history["failed"][thumbnail_img_name] = current_time
+        save_thumbnail_history_json()
 
 
 def get_time_frame_taken_from(vid_duration):
@@ -247,7 +273,7 @@ window_main.setWidget(window_widgets)
 
 generate_thumbnail_dic(playlist_n)
 thumbnail_widget_resize_and_move_to_pos()
-create_thumbnails_update_widgets()
+create_thumbnails_and_update_widgets()
 
 window_main.show()
 sys.exit(app.exec())

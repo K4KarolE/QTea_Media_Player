@@ -1,3 +1,8 @@
 {
-  "file_name": 1742911284
+  "failed": {
+    "file_name_1": 1742911284
+  },
+  "completed": {
+    "file_name_2": 1742911284
+  }
 }
