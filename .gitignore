@@ -1,10 +1,11 @@
-# Mine
+# QTea
 *test*
 *virtual*
 *copy*
 settings.json
 *.db
 *.log
+thumbnails/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
