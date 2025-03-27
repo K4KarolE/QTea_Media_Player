@@ -111,8 +111,7 @@ class ThumbnailWidget(QWidget):
             )
         self.layout = QVBoxLayout()
         self.label_image = QLabel()
-        self.label_image_pixmap = QPixmap('../../../skins/default/window_icon.png').scaledToWidth(30, Qt.TransformationMode.SmoothTransformation)
-        self.label_image.setPixmap(self.label_image_pixmap)
+        self.label_image.setPixmap(default_thumbnail_img)
         self.label_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_image.setStyleSheet(
             "border: 0px;"
@@ -134,19 +133,21 @@ class ThumbnailWidget(QWidget):
         self.layout.addWidget(self.text, 5)
         self.setLayout(self.layout)
 
+
     def mousePressEvent(self, a0):
         self.setStyleSheet(f"background-color: light grey;")
 
     def mouseDoubleClickEvent(self, a0):
-        file_dir_path = cv.thumbnail_widget_dic[self.index]["vid_path"]
+        file_dir_path = cv.thumbnail_widget_dic[self.index]["file_path"]
         if sys.platform == 'linux':
             subprocess.Popen(["xdg-open", file_dir_path])
         else:
             subprocess.Popen(["explorer", file_dir_path])
 
-    def update_img(self, file_path):
-        self.label_image_pixmap = QPixmap(file_path)
-        self.label_image.setPixmap(self.label_image_pixmap)
+    def update_img(self, img_file_path):
+        self.label_image.setPixmap(QPixmap(img_file_path))
+
+
 
 
 
@@ -180,35 +181,43 @@ def generate_thumbnail_dic(playlist_n):
             file_name = Path(path).name
             cv.thumbnail_widget_dic[index] = {}
             cv.thumbnail_widget_dic[index]["widget"] = ThumbnailWidget(file_name, index)
-            cv.thumbnail_widget_dic[index]["vid_name"] = file_name
-            cv.thumbnail_widget_dic[index]["vid_path"] = path
+            cv.thumbnail_widget_dic[index]["file_name"] = file_name
+            cv.thumbnail_widget_dic[index]["file_path"] = path
             cv.thumbnail_widget_dic[index]["duration"] = duration_list[index]
 
 
 def create_thumbnails_and_update_widgets():
     if cv.thumbnail_widget_dic:
         for index in cv.thumbnail_widget_dic:
-            vid_path = cv.thumbnail_widget_dic[index]["vid_path"]
-            vid_duration = cv.thumbnail_widget_dic[index]["duration"]
-            thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["vid_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
-            thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
-            if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
-                if Path(thumbnail_img_path).is_file():
-                    cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
-                    thumbnail_history["completed"][thumbnail_img_name] = current_time
-                else:
-                    thumbnail_history["failed"][thumbnail_img_name] = current_time
+            file_path = cv.thumbnail_widget_dic[index]["file_path"]
+            # AUDIO
+            if Path(file_path).suffix in ['.mp3', '.flac']:
+                # cv.thumbnail_widget_dic[index]["widget"].update_img( music thumbnail path)
+                pass
+            # VIDEO
             else:
-                at_seconds = get_time_frame_taken_from(vid_duration)
-                target_path = Path(path_thumbnails, thumbnail_img_name)
-                ffmpeg_action = f'ffmpeg -ss {at_seconds} -i "{vid_path}" -vf "scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease" -vframes 1 "{target_path}"'
-                os.system(ffmpeg_action)
-                if Path(thumbnail_img_path).is_file():
-                    cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
-                    thumbnail_history["completed"][thumbnail_img_name] = current_time
+                vid_duration = cv.thumbnail_widget_dic[index]["duration"]
+                thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["file_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
+                thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
+
+                if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
+                    if Path(thumbnail_img_path).is_file():
+                        cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+                        thumbnail_history["completed"][thumbnail_img_name] = current_time
+                    else:
+                        thumbnail_history["failed"][thumbnail_img_name] = current_time
                 else:
-                    thumbnail_history["failed"][thumbnail_img_name] = current_time
-        save_thumbnail_history_json()
+                    at_seconds = get_time_frame_taken_from(vid_duration)
+                    target_path = Path(path_thumbnails, thumbnail_img_name)
+                    # "-n" - skip existing files
+                    ffmpeg_action = f'ffmpeg -n -ss {at_seconds} -i "{file_path}" -vf "scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease" -vframes 1 "{target_path}"'
+                    os.system(ffmpeg_action)
+                    if Path(thumbnail_img_path).is_file():
+                        cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
+                        thumbnail_history["completed"][thumbnail_img_name] = current_time
+                    else:
+                        thumbnail_history["failed"][thumbnail_img_name] = current_time
+            save_thumbnail_history_json()
 
 
 def get_time_frame_taken_from(vid_duration):
@@ -271,6 +280,8 @@ window_main = MainWindow()
 window_widgets = WidgetsWindow()
 window_main.setWidget(window_widgets)
 
+default_thumbnail_img = (QPixmap('../../../skins/default/window_icon.png')
+                         .scaledToWidth(30, Qt.TransformationMode.SmoothTransformation))
 generate_thumbnail_dic(playlist_n)
 thumbnail_widget_resize_and_move_to_pos()
 create_thumbnails_and_update_widgets()
