@@ -5,11 +5,12 @@
 > Generate thumbnail images if needed
 > Update the thumbnail widgets with the thumbnail images
 Note:
-    > the used playlist should have video tracks added to ("playlist_n")
+    > the used playlist should have video tracks added (playlist_n=)
 """
 
+# ffmpeg need to be installed or added to the system path
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,
@@ -36,7 +37,7 @@ path_thumbnail_history = Path(path_thumbnails, '_thumbnail_history.json')
 
 
 class Data:
-    thumbnail_img_size = 300
+    thumbnail_img_size = 270
     window_width = 1200
     window_height = 900
     widg_and_img_diff = 0
@@ -55,6 +56,7 @@ QApplication.setDesktopSettingsAware(False) # avoid OS auto coloring
 class MyApp(QApplication):
     def __init__(self):
         super().__init__(sys.argv)
+
 
 
 class MainWindow(QScrollArea):
@@ -76,7 +78,6 @@ class MainWindow(QScrollArea):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-
     def timer_action(self):
         # Timer: For avoiding multiple trigger from resizeEvent
         thumbnail_widget_resize_and_move_to_pos()
@@ -90,10 +91,22 @@ class MainWindow(QScrollArea):
         return super().resizeEvent(a0)
 
 
+
 class WidgetsWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.resize(cv.window_width, cv.window_height)
+        self.thread_thumbnails_update = MyThread()
+        self.thread_thumbnails_update.result_ready.connect(self.thumbnail_img_ready)
+
+    def thumbnail_img_ready(self, index: int, result: str):
+        if result == "audio":
+            pass # from default to audio img update
+        elif result == "failed":
+            pass    # from default to video img update
+        else: # thumbnail img update
+            cv.thumbnail_widget_dic[index]["widget"].update_img(result)
+
 
 
 class ThumbnailWidget(QWidget):
@@ -149,6 +162,20 @@ class ThumbnailWidget(QWidget):
 
 
 
+class MyThread(QThread):
+    result_ready = pyqtSignal(int, str)
+
+    def __init__(self):
+        super().__init__()
+
+    def run(self):
+        if cv.thumbnail_widget_dic:
+            for index in cv.thumbnail_widget_dic:
+                # result = "audio" / "failed" / thumbnail img path
+                result = create_thumbnails_and_update_widgets(index)
+                self.result_ready.emit(index, result)
+            save_thumbnail_history_json()
+
 
 
 def open_thumbnail_history_json():
@@ -186,38 +213,43 @@ def generate_thumbnail_dic(playlist_n):
             cv.thumbnail_widget_dic[index]["duration"] = duration_list[index]
 
 
-def create_thumbnails_and_update_widgets():
-    if cv.thumbnail_widget_dic:
-        for index in cv.thumbnail_widget_dic:
-            file_path = cv.thumbnail_widget_dic[index]["file_path"]
-            # AUDIO
-            if Path(file_path).suffix in ['.mp3', '.flac']:
-                # cv.thumbnail_widget_dic[index]["widget"].update_img( music thumbnail path)
-                pass
-            # VIDEO
-            else:
-                vid_duration = cv.thumbnail_widget_dic[index]["duration"]
-                thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["file_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
-                thumbnail_img_path = Path(path_thumbnails, thumbnail_img_name)
+def create_thumbnails_and_update_widgets(index):
+    """ Triggered / used via thread
+    ffmpeg: https://ffmpeg.org/ffmpeg.html
+    -vf: video filter
+    -n: skip existing files
+    -loglevel error: only error messages displayed
+    -frames:v number (output): Set the number of video frames to output.
+    -ss position: when used as an input option (before -i), seeks in this input file to position.
+    """
+    vid_scale = f"-vf scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease"
+    file_path = cv.thumbnail_widget_dic[index]["file_path"]
+    # AUDIO
+    if Path(file_path).suffix in ['.mp3', '.flac']:
+        result = "audio"
+    # VIDEO
+    else:
+        vid_duration = cv.thumbnail_widget_dic[index]["duration"]
+        thumbnail_img_name = f'{cv.thumbnail_widget_dic[index]["file_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
+        result = Path(path_thumbnails, thumbnail_img_name)
 
-                if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
-                    if Path(thumbnail_img_path).is_file():
-                        cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
-                        thumbnail_history["completed"][thumbnail_img_name] = current_time
-                    else:
-                        thumbnail_history["failed"][thumbnail_img_name] = current_time
-                else:
-                    at_seconds = get_time_frame_taken_from(vid_duration)
-                    target_path = Path(path_thumbnails, thumbnail_img_name)
-                    # "-n" - skip existing files
-                    ffmpeg_action = f'ffmpeg -n -ss {at_seconds} -i "{file_path}" -vf "scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease" -vframes 1 "{target_path}"'
-                    os.system(ffmpeg_action)
-                    if Path(thumbnail_img_path).is_file():
-                        cv.thumbnail_widget_dic[index]["widget"].update_img(str(thumbnail_img_path))
-                        thumbnail_history["completed"][thumbnail_img_name] = current_time
-                    else:
-                        thumbnail_history["failed"][thumbnail_img_name] = current_time
-            save_thumbnail_history_json()
+        if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
+            if Path(result).is_file():
+                thumbnail_history["completed"][thumbnail_img_name] = current_time
+            else:
+                thumbnail_history["failed"][thumbnail_img_name] = current_time
+                result = "failed"
+        else:
+            at_seconds = get_time_frame_taken_from(vid_duration)
+            target_path = Path(path_thumbnails, thumbnail_img_name)
+            ffmpeg_action = f'ffmpeg -n -loglevel error -ss {at_seconds} -i "{file_path}" {vid_scale} -frames:v 1 "{target_path}"'
+            os.system(ffmpeg_action)
+            if Path(result).is_file():
+                thumbnail_history["completed"][thumbnail_img_name] = current_time
+            else:
+                thumbnail_history["failed"][thumbnail_img_name] = current_time
+                result = "failed"
+    return str(result)
 
 
 def get_time_frame_taken_from(vid_duration):
@@ -284,7 +316,7 @@ default_thumbnail_img = (QPixmap('../../../skins/default/window_icon.png')
                          .scaledToWidth(30, Qt.TransformationMode.SmoothTransformation))
 generate_thumbnail_dic(playlist_n)
 thumbnail_widget_resize_and_move_to_pos()
-create_thumbnails_and_update_widgets()
+window_widgets.thread_thumbnails_update.start()
 
 window_main.show()
 sys.exit(app.exec())
