@@ -94,8 +94,9 @@ class Data:
     active_db_table: str = None  
     active_pl_title: str = None
     active_pl_last_track_index: int = 0
-    active_pl_name: object = None       # widget
-    active_pl_duration: object = None   # widget
+    active_pl_name: object = None       # list widget
+    active_pl_queue: object = None      # list widget
+    active_pl_duration: object = None   # list widget
     active_pl_sum_duration: int = 0
     active_pl_tracks_count: int = 0
 
@@ -107,12 +108,23 @@ class Data:
     playing_db_table: str = None  
     playing_pl_title: str = None
     playing_pl_last_track_index: int = None
-    playing_pl_name: object = None      # widget
-    playing_pl_queue: object = None     # widget
-    playing_pl_duration: object = None  # widget
+    playing_pl_name: object = None      # list widget
+    playing_pl_queue: object = None     # list widget
+    playing_pl_duration: object = None  # list widget
     playing_pl_tracks_count: int = 0
 
-    
+    '''
+    Used to carry the values from the active_pl_name, active_pl_queue, active_pl_duration vars.
+    when adding a directory with huge amount of media to the playlist, which can take a while
+    to process + switching playlist in the meanwhile 
+    >> avoid to add the rest of the media added to the new playlist
+    '''
+    add_track_to_db_table: str = None
+    add_track_to_pl_name: object = None      # list widget
+    add_track_to_pl_queue: object = None      # list widget
+    add_track_to_pl_duration: object = None      # list widget
+    add_track_to_pl_sum_duration: int = 0
+
     ''' DURATION FROM DB / DISPLAY READY DURATION VALUE '''
     track_full_duration: int = 0
     track_full_duration_to_display: int = 0

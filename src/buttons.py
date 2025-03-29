@@ -58,7 +58,7 @@ class MyButtons(QPushButton):
             add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
             save_db()
             cv.active_pl_tracks_count = cv.active_pl_name.count()
-        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+            br.duration_sum_widg.setText(generate_duration_to_display(cv.add_track_to_pl_sum_duration))
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
@@ -70,7 +70,7 @@ class MyButtons(QPushButton):
         dialog_add_dir.exec()
         if dialog_add_dir.result():
             walk_and_add_dir(dialog_add_dir.selectedFiles()[0])
-        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))   
+
 
 
     ''' BUTTON PLAYLIST - REMOVE SINGLE TRACK '''
