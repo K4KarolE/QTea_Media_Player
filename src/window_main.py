@@ -7,14 +7,12 @@ from PyQt6.QtWidgets import QApplication, QWidget
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import(
-    add_record_grouped_actions,
-    generate_duration_to_display,
+    add_media_grouped_actions,
     queue_add_remove_track,
-    save_db,
     update_and_save_volume_slider_value,
-    update_window_size_vars_from_saved_values,
-    walk_and_add_dir
+    update_window_size_vars_from_saved_values
     )
+from .thread_add_media import ThreadAddMedia
 
 
 
@@ -30,8 +28,14 @@ class MyWindow(QWidget):
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()
         self.move_app_to_middle_at_startup()
+        self.thread_add_media = ThreadAddMedia()
+        self.thread_add_media.result_ready.connect(self.add_track_to_playlist_via_thread)
 
-    
+
+    def add_track_to_playlist_via_thread(self, track_path, raw_duration):
+        add_media_grouped_actions(track_path, raw_duration)
+
+
     def hotkeys_creation(self):
         hotkeys_action_dic = {
         'small_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.small_jump),
@@ -42,8 +46,8 @@ class MyWindow(QWidget):
         'big_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.big_jump),
         'display_track_title_on_video': lambda: br.av_player.text_display_on_video(2000, cv.track_title),
         'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
-        'volume_up': self.volume_up_action, 
-        'volume_down': self.volume_down_action, 
+        'volume_up': self.volume_up_action,
+        'volume_down': self.volume_down_action,
         'audio_tracks_rotate': lambda: br.play_funcs.audio_tracks_play_next_one(),
         'subtitle_tracks_rotate': lambda: br.play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: br.button_play_pause.button_play_pause_clicked(),
@@ -56,13 +60,13 @@ class MyWindow(QWidget):
         'full_screen_toggle': lambda: br.av_player.full_screen_onoff_toggle(),
         'playlist_toggle': lambda: br.button_toggle_playlist.button_toggle_playlist_clicked(),
         'video_toggle': lambda: br.button_toggle_video.button_toggle_video_clicked(),
-        'window_size_toggle': self.window_size_toggle_action, 
+        'window_size_toggle': self.window_size_toggle_action,
         'playlist_add_track': lambda: br.button_add_track.button_add_track_clicked(),
         'playlist_add_directory': lambda: br.button_add_dir.button_add_dir_clicked(),
         'playlist_remove_track': lambda: br.button_remove_track.button_remove_single_track(),
         'playlist_remove_all_track': lambda: br.button_remove_all_track.button_remove_all_track(),
-        'playlist_select_prev_pl': self.playlist_select_prev_pl_action, 
-        'playlist_select_next_pl': self.playlist_select_next_pl_action, 
+        'playlist_select_prev_pl': self.playlist_select_prev_pl_action,
+        'playlist_select_next_pl': self.playlist_select_next_pl_action,
         'queue_toggle': lambda: queue_add_remove_track(),
         'queue_and_search_window': lambda: br.window_queue_and_search.show()
         }
@@ -110,30 +114,15 @@ class MyWindow(QWidget):
             event.accept()
         else:
             event.ignore()
-    
+
     def dropEvent(self, event):
-        file_path_list = []
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
-            for url in event.mimeData().urls():
-                path = str(url.toLocalFile())
-                # FILES - COLLECTING PATH
-                if os.path.isfile(path):
-                    extension =  path.split('.')[-1]
-                    if extension in cv.MEDIA_FILES:
-                        file_path_list.append(path)    
-                # DICTIONARY - ADD
-                else:
-                    walk_and_add_dir(path)
-            # FILES - ADD
-            for path in file_path_list:
-                add_record_grouped_actions(path)
-            save_db()
+            br.window.thread_add_media.source = event.mimeData().urls()
+            br.window.thread_add_media.start()
 
-            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
-            cv.active_pl_tracks_count = cv.active_pl_name.count()
- 
+
 
     ''' 
         VOLUME CHANGE CAN BE TRIGGERED BY:
@@ -160,8 +149,8 @@ class MyWindow(QWidget):
             self.volume_update()
         elif cv.volume == 1:
             br.av_player.text_display_on_video(1000, "Volume:  100%")
-            
-    
+
+
     def volume_down_action(self):
         if cv.volume > 0:
             cv.volume = cv.volume - 0.05
@@ -208,13 +197,13 @@ class MyWindow(QWidget):
                 pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width())/2)
                 pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height())/2)
                 self.move(pos_x_middle, pos_y_middle)
-        
+
         # 1ST - GREATER THAN MEDIUM SIZE WINDOW WITHOUT PLAYLIST
         if cv.window_size_toggle_counter == 1:
             br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_alt_width, cv.window_alt_height)
             move_window_to_middle()
-            
+
         # 2ND - SMALL WINDOW IN THE RIGHT-BOTTOM CORNER, NO PLAYLIST
         elif cv.window_size_toggle_counter == 2:
             self.resize(cv.window_second_alt_width, cv.window_second_alt_height)
@@ -222,13 +211,13 @@ class MyWindow(QWidget):
                 pos_x_corner = screen_rect.x() + screen_rect.width() - self.width()
                 pos_y_corner = screen_rect.y() + screen_rect.height() - self.height() - WIN_TASKBAR_HEIGHT
                 self.move(pos_x_corner, pos_y_corner)
-        
+
         # BACK TO STANDARD - MEDIUM SIZE WINDOW WITH PLAYLIST
         else:
             br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_width, cv.window_height)
             move_window_to_middle()
-        
+
 
 
     def playlist_select_prev_pl_action(self):
@@ -239,11 +228,11 @@ class MyWindow(QWidget):
         while next_playlist_index in cv.playlists_without_title_to_hide_index_list and next_playlist_index > 0:
             index_counter -=1
             next_playlist_index = current_index + index_counter
-        
+
         if next_playlist_index >= 0 and next_playlist_index not in cv.playlists_without_title_to_hide_index_list:
             br.playlists_all.setCurrentIndex(next_playlist_index)
-        
-        
+
+
 
     def playlist_select_next_pl_action(self):
         current_index = br.playlists_all.currentIndex()
@@ -254,6 +243,6 @@ class MyWindow(QWidget):
         while next_playlist_index in cv.playlists_without_title_to_hide_index_list and next_playlist_index < last_playlist_index:
             index_counter +=1
             next_playlist_index = current_index + index_counter
-        
+
         if next_playlist_index <= last_playlist_index and next_playlist_index not in cv.playlists_without_title_to_hide_index_list:
             br.playlists_all.setCurrentIndex(next_playlist_index)

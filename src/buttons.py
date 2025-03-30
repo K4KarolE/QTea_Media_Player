@@ -6,12 +6,9 @@ from PyQt6.QtGui import QFont
 from .class_bridge import br
 from .class_data import save_json, cv, settings
 from .func_coll import (
-    add_record_grouped_actions,
     generate_duration_to_display,
-    walk_and_add_dir,
     remove_track_from_playlist,
     remove_queued_tracks_after_playlist_clear,
-    save_db,
     save_speaker_muted_value,
     cur, # db
     connection, # db
@@ -55,10 +52,8 @@ class MyButtons(QPushButton):
         dialog_add_track.setNameFilters(cv.FILE_TYPES_LIST)
         dialog_add_track.exec()
         if dialog_add_track.result():
-            add_record_grouped_actions(dialog_add_track.selectedFiles()[0])
-            save_db()
-            cv.active_pl_tracks_count = cv.active_pl_name.count()
-            br.duration_sum_widg.setText(generate_duration_to_display(cv.add_track_to_pl_sum_duration))
+            br.window.thread_add_media.source = dialog_add_track.selectedFiles()[0]
+            br.window.thread_add_media.start()
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
@@ -69,7 +64,10 @@ class MyButtons(QPushButton):
         dialog_add_dir.setFileMode(QFileDialog.FileMode.Directory)
         dialog_add_dir.exec()
         if dialog_add_dir.result():
-            walk_and_add_dir(dialog_add_dir.selectedFiles()[0])
+            br.window.thread_add_media.source = dialog_add_dir.selectedFiles()[0]
+            br.window.thread_add_media.start()
+
+
 
 
 

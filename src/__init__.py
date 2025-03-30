@@ -13,3 +13,4 @@ from .window_queue_and_search import *
 from .window_settings import *
 from .logger import *
 from .ui_create import *
+from .thread_add_media import *
