@@ -11,7 +11,6 @@ from PyQt6.QtGui import QAction
 
 from .class_bridge import br
 from .class_data import cv
-from .icons import *
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_playlist_details_from_search_tab_list,

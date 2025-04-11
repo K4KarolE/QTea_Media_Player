@@ -44,7 +44,7 @@ class Data:
     screen_index_for_fullscreen: int = -1
     screen_pos_x_for_fullscreen: int = 0
     screen_pos_x_for_fullscreen_via_menu: int = -1
-    
+
     window_size_toggle_counter: int = 0
     playlists_without_title_to_hide_index_list = []
     volume_slider_value: int = 0
@@ -54,6 +54,19 @@ class Data:
     # files from directory are added
     adding_records_at_moment: bool = False
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
+
+    # THUMBNAIL VIEW
+    thumbnail_main_window_width: int = 0
+    thumbnail_main_window_height: int = 0
+    thumbnail_img_size: int = 275
+    widg_and_img_diff: int = 0
+    thumbnail_width: int = thumbnail_img_size + widg_and_img_diff
+    thumbnail_height: int = thumbnail_img_size + widg_and_img_diff
+    thumbnail_new_width: int = thumbnail_width
+    thumbnail_pos_gap: int = 1
+    thumbnail_pos_base_x: int = 5
+    thumbnail_pos_base_y: int = 5
+    scroll_bar_size: int = 10
 
     # LINUX
     player_paused_position: int = 0
@@ -566,6 +579,8 @@ class Data:
             'queue_list_widget': '',
             'duration_list_widget': '',
             'active_pl_sum_duration': 0,
+            'thumbnail_window': '',
+            'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': ''     # used in the settings window
             }
       

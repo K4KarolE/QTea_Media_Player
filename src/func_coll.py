@@ -154,7 +154,7 @@ def generate_duration_to_display(raw_duration):
             minutes = str(int_minutes % 60)
 
         # HOURS
-        if int_minutes > 60:
+        if int_minutes >= 60:
             str_hours = str(int((int_minutes - int_minutes%60)/60))
             duration = f'{str_hours}:{minutes}:{seconds}'
         else:

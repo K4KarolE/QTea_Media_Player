@@ -37,7 +37,7 @@ path_thumbnail_history = Path(path_thumbnails, '_thumbnail_history.json')
 
 
 class Data:
-    thumbnail_img_size = 270
+    thumbnail_img_size = 275
     window_width = 1200
     window_height = 900
     widg_and_img_diff = 0
@@ -138,9 +138,6 @@ class ThumbnailWidget(QWidget):
             "border-radius: 0px;"
             "font: arial 11px;"
             "color: black;"  # text color
-            # will be used after import from src/func_coll:
-            # inactive_track_font_style.pointSize()
-            # inactive_track_font_style.family()
             )
         self.layout.addWidget(self.label_image, 95)
         self.layout.addWidget(self.text, 5)
@@ -256,7 +253,7 @@ def get_time_frame_taken_from(vid_duration):
     if vid_duration:
         vid_duration = int(int(vid_duration)/1000)
         if 600 < vid_duration:
-            at_seconds_raw = 120
+            at_seconds_raw = 140
         elif 30 < vid_duration <= 600:
             at_seconds_raw = 60
         else:

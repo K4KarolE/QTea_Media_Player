@@ -89,6 +89,18 @@ def generate_buttons():
     br.button_settings.set_style_settings_button()
 
 
+    ''' BUTTON PLAYLIST - Thumbnail '''
+    br.button_thumbnail = MyButtons(
+        'T',
+        'Thumbnail View',
+        br.icon.thumbnail
+    )
+    br.button_thumbnail.setGeometry(button_x_pos(6.0) - PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH,
+                                   cv.PLIST_BUTTONS_HEIGHT)
+    br.button_thumbnail.clicked.connect(lambda: br.button_thumbnail.button_thumbnail_clicked())
+    br.button_thumbnail.set_style_settings_button()
+
+
     ''' 
         PLAYLIST BUTTONS LIST
         used to add widgets to the layout
@@ -101,7 +113,8 @@ def generate_buttons():
         br.button_remove_track,
         br.button_remove_all_track,
         br.button_queue,
-        br.button_settings
+        br.button_settings,
+        br.button_thumbnail
         ]
     
 

@@ -24,6 +24,8 @@ from .func_coll import (
     update_active_playlist_vars_and_widgets
     )
 from .list_widget_playlists import MyListWidget
+from .thumbnail_window import ThumbnailMainWindow
+from .func_thumbnail import generate_thumbnail_dic
 
 
 class MyPlaylists(QTabWidget):
@@ -107,7 +109,12 @@ class MyPlaylists(QTabWidget):
         current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
         cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
         for item in current_playlist_list_widgets_dic:
-                if item not in [list_widget_row_changed, 'active_pl_sum_duration', 'line_edit']:
+                if item not in [
+                    list_widget_row_changed,
+                    'active_pl_sum_duration',
+                    'thumbnail_window',
+                    'thumbnail_widgets_dic',
+                    'line_edit']:
                     current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
      
     
@@ -207,14 +214,20 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
             duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             duration_list_widget.setFixedWidth(70)
-            
-        
+
+            cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow()
+            thumbnail_window = cv.playlist_widget_dic[pl]['thumbnail_window']
+            thumbnail_window.hide()
+
+
             layout = QHBoxLayout()
             layout.setSpacing(0)
             layout.setContentsMargins(0, 0, 0, 0)
             layout.addWidget(name_list_widget, 84)
             layout.addWidget(queue_list_widget, 6)
             layout.addWidget(duration_list_widget, 10)
+            layout.addWidget(thumbnail_window)
+
 
             frame = QFrame()
             frame.setStyleSheet(

@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QFileDialog, QPushButton
+from PyQt6.QtWidgets import QFileDialog, QPushButton, QLabel
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 
@@ -13,6 +13,7 @@ from .func_coll import (
     cur, # db
     connection, # db
     )
+from .func_thumbnail import thumbnail_grouped_action
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
 
@@ -144,6 +145,22 @@ class MyButtons(QPushButton):
                             "background-color : #C2C2C2;"
                             "}"
                         )
+
+    ''' BUTTON PLAYLIST - THUMBNAIL '''
+    def button_thumbnail_clicked(self):
+        if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible():
+            cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
+            cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
+            cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()
+            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
+            thumbnail_grouped_action()
+        else:
+            cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].show()
+            cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].show()
+            cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].show()
+            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
+
+
     
 
     ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''

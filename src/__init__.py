@@ -14,3 +14,6 @@ from .window_settings import *
 from .logger import *
 from .ui_create import *
 from .thread_add_media import *
+from .thumbnail_widget import *
+from .thumbnail_window import *
+from .func_thumbnail import *
