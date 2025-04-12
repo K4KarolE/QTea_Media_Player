@@ -148,7 +148,7 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - THUMBNAIL '''
     def button_thumbnail_clicked(self):
-        if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible():
+        if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible() and cv.active_pl_tracks_count > 0:
             cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
             cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
             cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()

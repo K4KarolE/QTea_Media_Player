@@ -1,4 +1,7 @@
-""" Window holding the thumbnail widgets """
+"""
+    ThumbnailMainWindow(QScrollArea) << WidgetsWindow(QWidget) - Window holding the thumbnail widgets
+    Used in the src / playlists / playlists_creation()
+ """
 
 
 from PyQt6.QtCore import Qt, QTimer
@@ -9,16 +12,14 @@ from PyQt6.QtWidgets import (
     )
 
 from .class_data import cv
-from .class_bridge import br
 from .func_thumbnail import thumbnail_widget_resize_and_move_to_pos
+from .thread_thumbnail import ThreadThumbnail
 
 
 class ThumbnailMainWindow(QScrollArea):
     def __init__(self):
         super().__init__()
-        # self.resize(cv.window_width, cv.window_height)
-        self.setMinimumWidth(cv.thumbnail_width + cv.thumbnail_pos_base_x * 2 + cv.scroll_bar_size)
-        # self.setWindowTitle("Thumbnails")
+        # setMinimumWidth declared in ui_create / ''' TOP RIGHT - PLAYLIST / BUTTONS / DURATION ''' section
         self.timer = QTimer()
         self.timer.timeout.connect(lambda : self.timer_action())
         self.scroll_bar_ver = QScrollBar()
@@ -31,14 +32,25 @@ class ThumbnailMainWindow(QScrollArea):
         self.setVerticalScrollBar(self.scroll_bar_ver)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # self.setStyleSheet("background: grey;")
-        self.widgets_window = QWidget() # holding all the thumbnail widgets
+        self.setStyleSheet("QScrollArea"
+                           "{"
+                           "background: white;"
+                           "}"
+                           )
+        self.create_widgets_window()
+
+
+    def create_widgets_window(self):
+        self.widgets_window = WidgetsWindow()  # holding all the thumbnail widgets
         self.widgets_window.resize(self.width(), self.height())
         self.setWidget(self.widgets_window)
 
+
     def timer_action(self):
         # Timer: For avoiding multiple trigger from resizeEvent
-        thumbnail_widget_resize_and_move_to_pos()
+        if self.isVisible():
+            thumbnail_widget_resize_and_move_to_pos()
+            self.setMinimumWidth(cv.thumbnail_width + cv.thumbnail_pos_base_x * 2 + cv.scroll_bar_size)
         self.timer.stop()
 
     def resizeEvent(self, a0):
@@ -47,3 +59,26 @@ class ThumbnailMainWindow(QScrollArea):
             cv.thumbnail_main_window_height = self.height()
             self.timer.start(500)
         return super().resizeEvent(a0)
+
+
+
+class WidgetsWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.resize(cv.window_width, cv.window_height)
+        self.thread_thumbnails_update = ThreadThumbnail()
+        self.thread_thumbnails_update.result_ready.connect(self.thumbnail_img_ready)
+        self.setStyleSheet("QWidget"
+                           "{"
+                           "background: white;"
+                           "}"
+                           )
+
+    def thumbnail_img_ready(self, index: int, result: str):
+        if result == "audio":
+            pass # from default to audio img update
+        elif result == "failed":
+            pass    # from default to video img update
+        else: # thumbnail img update
+            thumbnail_widgets_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
+            thumbnail_widgets_dic[index]["widget"].update_img(result)

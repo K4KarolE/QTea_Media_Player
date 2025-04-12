@@ -265,6 +265,10 @@ class MySettingsWindow(QWidget):
                     if not line_edit_text.isdecimal():
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer.')
                         pass_validation = False
+                    elif item_text == 'Thumbnail image size':
+                        if int(line_edit_text) not in range(100, 501):
+                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
+                            pass_validation = False
 
             return pass_validation
         
@@ -318,7 +322,9 @@ class MySettingsWindow(QWidget):
             cv.window_second_alt_height = sett_gen['window_second_alt_height']
             cv.window_alt_size_repositioning = sett_gen['window_alt_size_repositioning']
             cv.default_audio_track = sett_gen['default_audio_track']
-            
+            cv.thumbnail_img_size = sett_gen['thumbnail_img_size']
+            cv.thumbnail_width = cv.thumbnail_img_size + cv.widg_and_img_diff
+            cv.thumbnail_height = cv.thumbnail_img_size + cv.widg_and_img_diff
 
 
         '''

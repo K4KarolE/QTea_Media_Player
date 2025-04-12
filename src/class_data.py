@@ -15,9 +15,24 @@ def save_json():
         dump(settings, f, indent=2)
     return
 
+
+def open_thumbnail_history_json():
+    with open(PATH_THUMBNAIL_HISTORY) as f:
+        json_dic = load(f)
+    return json_dic
+
+def save_thumbnail_history_json():
+    with open(PATH_THUMBNAIL_HISTORY, 'w') as f:
+        dump(thumbnail_history, f, indent=2)
+    return
+
 WORKING_DIRECTORY = Path().resolve()
 PATH_JSON_SETTINGS = Path(WORKING_DIRECTORY, 'settings.json')
 settings = open_json()
+
+PATH_THUMBNAILS = str(Path(WORKING_DIRECTORY, 'thumbnails'))
+PATH_THUMBNAIL_HISTORY = Path(PATH_THUMBNAILS, '_thumbnail_history.json')
+thumbnail_history = open_thumbnail_history_json()
 
 
 @dataclass
@@ -56,9 +71,11 @@ class Data:
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
 
     # THUMBNAIL VIEW
+    thumbnail_db_table: str = None  # take over the value of active_db_table
+    # >> avoid error while generating thumbnails + switching playlists
+    thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
     thumbnail_main_window_width: int = 0
     thumbnail_main_window_height: int = 0
-    thumbnail_img_size: int = 275
     widg_and_img_diff: int = 0
     thumbnail_width: int = thumbnail_img_size + widg_and_img_diff
     thumbnail_height: int = thumbnail_img_size + widg_and_img_diff
@@ -191,6 +208,8 @@ class Data:
     window_second_alt_height: int = settings['general_settings']['window_second_alt_height']
     window_alt_size_repositioning: bool = settings['general_settings']['window_alt_size_repositioning']
     default_audio_track: int = settings['general_settings']['default_audio_track']
+    # thumbnail_img_size: declared in the "Thumbnail View" section above
+    # it`s validation in window_settings.py / general_fields_validation() / 100-500px
     # USED FOR VALIDATION
     window_min_width: int = settings['general_settings']['window_min_width']
     window_min_height: int = settings['general_settings']['window_min_height']
@@ -268,6 +287,11 @@ class Data:
         'default_audio_track': {
             'text': 'Default audio track',
             'value': default_audio_track,
+            'line_edit_widget': ''
+        },
+        'thumbnail_img_size': {
+            'text': 'Thumbnail image size',
+            'value': thumbnail_img_size,
             'line_edit_widget': ''
         }
     }
@@ -580,6 +604,11 @@ class Data:
             'duration_list_widget': '',
             'active_pl_sum_duration': 0,
             'thumbnail_window': '',
+            'thumbnail_window_validation': {
+                'tracks_count': 0,
+                'duration_sum': 0,
+                'thumbnail_img_size': 0
+            },
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': ''     # used in the settings window
             }

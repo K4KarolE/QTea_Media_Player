@@ -25,7 +25,6 @@ from .func_coll import (
     )
 from .list_widget_playlists import MyListWidget
 from .thumbnail_window import ThumbnailMainWindow
-from .func_thumbnail import generate_thumbnail_dic
 
 
 class MyPlaylists(QTabWidget):
@@ -114,6 +113,7 @@ class MyPlaylists(QTabWidget):
                     'active_pl_sum_duration',
                     'thumbnail_window',
                     'thumbnail_widgets_dic',
+                    'thumbnail_window_validation',
                     'line_edit']:
                     current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
      

@@ -1,5 +1,6 @@
 ## Main features
 - Thirty playlists supported by default. More can be generated.
+- Playlists` thumbnail view.
 - Cross playlists queue management with dedicated window.
 - Cross playlists search.
 - Drag & drop - files, folders.
@@ -286,6 +287,17 @@ when the `Previous track` button/hotkey is triggered
 
 ### Additional dependency for Linux
 ``` sudo apt install libxcb-cursor-dev ```
+
+### FFmpeg [(link)](https://ffmpeg.org/)
+- `FFmpeg` used to generate thumbnail images from the video media
+- Without `FFmpeg`
+  - The `Thumbnail View button` is disabled
+  - The media player is still fully functioning 
+- WINDOWS
+    - [Install FFmpeg on Windows 10/11](https://techtactician.com/how-to-install-ffmpeg-and-add-it-to-path-on-windows/)
+- LINUX
+    - Via `Software Manager`
+
 
 ### OS
 - Tested on Windows 11, Linux Mint 22

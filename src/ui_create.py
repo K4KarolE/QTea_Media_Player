@@ -74,7 +74,7 @@ def generate_ui():
     layout_vert_right.setContentsMargins(5, 0, 4, 0)
     br.layout_vert_right_qframe = QFrame()
     br.layout_vert_right_qframe.setLayout(layout_vert_right)
-    br.layout_vert_right_qframe.setMinimumWidth(cv.window_min_width-200)
+    br.layout_vert_right_qframe.setMinimumWidth(cv.window_min_width-100)
 
 
     splitter_left_right.addWidget(br.layout_vert_left_qframe)

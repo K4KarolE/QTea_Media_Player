@@ -17,3 +17,4 @@ from .thread_add_media import *
 from .thumbnail_widget import *
 from .thumbnail_window import *
 from .func_thumbnail import *
+from .thread_thumbnail import *

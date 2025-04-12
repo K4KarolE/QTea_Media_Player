@@ -1,11 +1,9 @@
-""" """
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
-    QWidget,
+    QLabel,
     QVBoxLayout,
-    QLabel
+    QWidget
     )
 
 from .class_data import cv
@@ -52,9 +50,10 @@ class ThumbnailWidget(QWidget):
 
     def mousePressEvent(self, a0):
         self.setStyleSheet(f"background-color: light grey;")
+        cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
-        br.play_funcs.play_track(self.index)
+        br.play_funcs.play_track()
 
     def update_img(self, img_file_path):
         self.label_image.setPixmap(QPixmap(img_file_path))

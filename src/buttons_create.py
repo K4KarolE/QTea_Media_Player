@@ -1,3 +1,5 @@
+import shutil
+
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QPushButton
 
@@ -11,6 +13,8 @@ from .func_coll import inactive_track_font_style
     buttons do not appear as classic buttons on the UI   
 '''
 
+def is_ffmpeg_installed():
+    return shutil.which("ffmpeg")
 
 
 def generate_buttons():
@@ -99,6 +103,9 @@ def generate_buttons():
                                    cv.PLIST_BUTTONS_HEIGHT)
     br.button_thumbnail.clicked.connect(lambda: br.button_thumbnail.button_thumbnail_clicked())
     br.button_thumbnail.set_style_settings_button()
+    if not is_ffmpeg_installed():
+        br.button_thumbnail.setDisabled(True)
+        br.button_thumbnail.setToolTip("Thumbnail View / Disabled / FFmpeg needs to be installed")
 
 
     ''' 
@@ -196,9 +203,9 @@ def generate_buttons():
     br.button_toggle_repeat_pl.clicked.connect(br.button_toggle_repeat_pl.button_toggle_repeat_pl_clicked)
 
     if cv.repeat_playlist == 2:
-        br.button_toggle_repeat_pl.setFlat(1)
+        br.button_toggle_repeat_pl.setFlat(True)
     elif cv.repeat_playlist == 0:
-        br.button_toggle_repeat_pl.setFlat(1)
+        br.button_toggle_repeat_pl.setFlat(True)
         br.button_toggle_repeat_pl.setIcon(br.icon.repeat_single)
 
 
@@ -211,7 +218,7 @@ def generate_buttons():
     br.button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
     br.button_toggle_shuffle_pl.clicked.connect(br.button_toggle_shuffle_pl.button_toggle_shuffle_pl_clicked)
     if cv.shuffle_playlist_on:
-        br.button_toggle_shuffle_pl.setFlat(1)
+        br.button_toggle_shuffle_pl.setFlat(True)
 
 
     ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
@@ -236,7 +243,7 @@ def generate_buttons():
 
     ''' BUTTON PLAY SECTION - DURATION INFO '''
     def button_duration_info_clicked():
-        ''' 01:22 / 03:43 <--> -02:21 / 03:43 ''',
+        """ 01:22 / 03:43 <--> -02:21 / 03:43 """
         if cv.track_full_duration_to_display:
             if cv.is_duration_to_display_straight:
                 cv.is_duration_to_display_straight = False
@@ -282,7 +289,7 @@ def generate_buttons():
         'Toggle Mute',
         icon = br.icon.speaker
         )
-    br.button_speaker.setFlat(1)
+    br.button_speaker.setFlat(True)
     br.button_speaker.clicked.connect(br.button_speaker.button_speaker_clicked)
     if cv.is_speaker_muted:
         br.button_speaker.setIcon(br.icon.speaker_muted)
