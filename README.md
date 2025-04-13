@@ -41,27 +41,31 @@
 
 ## Screenshots
 <div align="left">
-    <img src="docs/promo/screenshot_0.png">
+    <img src="https://github.com/user-attachments/assets/5f8abf75-7f97-48d8-a979-30550915a306">
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_1.png">
+    <img src="https://github.com/user-attachments/assets/d9334f75-d459-4354-8401-7b33b33fe25e">
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_2.png">
+    <img src="https://github.com/user-attachments/assets/7b956b27-5a1d-4c37-94a5-2e9a0a4905d0">
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_3.png">
+    <img src="https://github.com/user-attachments/assets/67521950-75c7-4767-924a-dbd16e31620c">
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_4.png">
+    <img src="https://github.com/user-attachments/assets/1acf7a47-ffd5-4586-ae63-c49a31b13c2d">
 </div>
 <br>
 <div align="left">
-    <img src="docs/promo/screenshot_right_click_S04E12.png">
+    <img src="https://github.com/user-attachments/assets/577c5064-e2ff-4789-9a0a-d63925c9153e">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/4c99a7c8-95f8-4281-b935-9c4c0fb3b4a2">
 </div>
 <br>
 
@@ -185,12 +189,13 @@ when the `Previous track` button/hotkey is triggered
         - All playlists loading automatically.
         - On all playlist the last played track is selected.
         - The `Playing playlist` is active/displayed.
-<br>
+
 <div align="left">
-    <img width="260" src="docs/promo/screenshot_sett_win_playlists.png">
-    <img width="260" src="docs/promo/screenshot_sett_win_general.png">
-    <img width="260" src="docs/promo/screenshot_sett_win_hotkeys.png">
+    <img width="260" src="https://github.com/user-attachments/assets/c46365e5-26af-4ad2-b6a3-837636aea9ab">
+    <img width="260" src="https://github.com/user-attachments/assets/9172c9ce-f762-4c24-9198-c4e0572ea880">
+    <img width="260" src="https://github.com/user-attachments/assets/f0140e2e-eef4-4ca0-8760-eeee17972184">
 </div>
+<br>
 
 ## Active and Playing playlists separation
 - It allows the user to control the `playing or queued tracks playlist` while browsing the rest of the playlists
