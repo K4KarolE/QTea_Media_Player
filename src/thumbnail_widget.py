@@ -57,3 +57,9 @@ class ThumbnailWidget(QWidget):
 
     def update_img(self, img_file_path):
         self.label_image.setPixmap(QPixmap(img_file_path))
+
+    def update_to_default_video_img(self):
+        self.label_image.setPixmap(br.icon.thumbnail_default_video)
+
+    def update_to_default_audio_img(self):
+        self.label_image.setPixmap(br.icon.thumbnail_default_audio)

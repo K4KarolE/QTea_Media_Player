@@ -41,7 +41,7 @@ def generate_thumbnail_dic():
 
 
 def thumbnail_widget_resize_and_move_to_pos():
-    thumbnail_widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
         thumbnail_counter = 0
         thumbnail_pos_y = cv.thumbnail_pos_base_y
@@ -63,7 +63,7 @@ def thumbnail_widget_resize_and_move_to_pos():
 
 def update_window_widgets_size(last_thumbnail_pos_y):
     window_widgets_height = last_thumbnail_pos_y + cv.thumbnail_height + cv.thumbnail_pos_base_y
-    thumbnail_widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
+    thumbnail_widgets_window = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window
     thumbnail_widgets_window.resize(cv.thumbnail_main_window_width, window_widgets_height)
 
 
@@ -160,6 +160,22 @@ def remove_previous_and_create_new_thumbnail_widgets_window():
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'] = {}
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window_validation'] = {}
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].create_widgets_window()
+
+
+def active_playlist_change_thumbnail_repositioning():
+    """ To make sure the active playlist thumbnail view
+        is following the current playlist size
+        Scenario:
+            thumbnail view is generated > active playlist change > playlist size change
+            > switch back to the playlist with thumbnail view > thumbnails resize & repositioning
+        Used: src / playlists / currentChanged signal
+    """
+    thumbnail_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+    if thumbnail_widgets_dic:
+        thumbnail_main_window = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window']
+        thumbnail_widgets_window = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window
+        if thumbnail_main_window.width() != thumbnail_widgets_window.width():
+            thumbnail_widget_resize_and_move_to_pos()
 
 
 def remove_all_thumbnails_and_history():

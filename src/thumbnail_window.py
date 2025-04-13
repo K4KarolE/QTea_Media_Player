@@ -75,10 +75,10 @@ class WidgetsWindow(QWidget):
                            )
 
     def thumbnail_img_ready(self, index: int, result: str):
+        thumbnail_widget = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["widget"]
         if result == "audio":
-            pass # from default to audio img update
+            thumbnail_widget.update_to_default_audio_img()
         elif result == "failed":
-            pass    # from default to video img update
-        else: # thumbnail img update
-            thumbnail_widgets_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
-            thumbnail_widgets_dic[index]["widget"].update_img(result)
+            thumbnail_widget.update_to_default_video_img()
+        else:
+            thumbnail_widget.update_img(result)

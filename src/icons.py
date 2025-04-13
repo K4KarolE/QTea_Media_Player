@@ -20,9 +20,15 @@ class MyIcon():
         self.toggle_video = QIcon(f'skins/{cv.skin_selected}/toggle_vid.png')
         self.toggle_playlist = QIcon(f'skins/{cv.skin_selected}/toggle_playlist.png')
         self.settings = QIcon(f'skins/{cv.skin_selected}/settings.png')
+
         self.thumbnail = QIcon(f'skins/{cv.skin_selected}/thumbnail.png')
+        default_thumbnail_img_size = 50
         self.thumbnail_default = (QPixmap(f'skins/{cv.skin_selected}/window_icon.png')
-                                  .scaledToWidth(30, Qt.TransformationMode.SmoothTransformation))
+                                  .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+        self.thumbnail_default_video = (QPixmap(f'skins/{cv.skin_selected}/video.png')
+                                  .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+        self.thumbnail_default_audio= (QPixmap(f'skins/{cv.skin_selected}/audio.png')
+                                        .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
 
         self.speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
         self.speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
