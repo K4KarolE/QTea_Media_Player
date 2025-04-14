@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from json import load, dump
 import re
+import shutil
 import sys
 
 
@@ -71,6 +72,7 @@ class Data:
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
 
     # THUMBNAIL VIEW
+    is_ffmpeg_installed: bool = shutil.which("ffmpeg")
     thumbnail_db_table: str = None  # take over the value of active_db_table
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
@@ -607,7 +609,8 @@ class Data:
             'thumbnail_window_validation': {
                 'tracks_count': 0,
                 'duration_sum': 0,
-                'thumbnail_img_size': 0
+                'thumbnail_img_size': 0,
+                'thumbnail_generation_completed': False
             },
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': ''     # used in the settings window

@@ -13,7 +13,10 @@ from .func_coll import (
     cur, # db
     connection, # db
     )
-from .func_thumbnail import thumbnail_grouped_action
+from .func_thumbnail import (
+    start_thumbnail_thread_grouped_action,
+    stop_thumbnail_thread
+    )
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
 
@@ -153,12 +156,32 @@ class MyButtons(QPushButton):
             cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
             cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()
             cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
-            thumbnail_grouped_action()
+            start_thumbnail_thread_grouped_action()
+            self.set_style_thumbnail_button_active()
         else:
             cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].show()
             cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].show()
             cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].show()
             cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
+            self.set_style_settings_button()
+            stop_thumbnail_thread()
+
+
+    ''' BUTTON PLAYLIST - THUMBNAIL VIEW - SET STYLE '''
+    def set_style_thumbnail_button_active(self):
+        self.setStyleSheet(
+            "QPushButton"
+            "{"
+            "color: grey;"
+            "border: none;"
+            "border-radius: 4px;"
+            "margin: 3px;"  # 3 px != 3px, diff. pre. style sheet
+            "}"
+            "QPushButton::pressed"
+            "{"
+            "background-color : #C2C2C2;"
+            "}"
+        )
 
 
     

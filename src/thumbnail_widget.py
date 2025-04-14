@@ -53,7 +53,10 @@ class ThumbnailWidget(QWidget):
         cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
-        br.play_funcs.play_track()
+        """ mousePressEvent() / setCurrentRow() + mouseDoubleClickEvent()
+            >> using the standard playlist to play the track via thumbnail
+        """
+        br.button_play_pause.button_play_pause_via_list()
 
     def update_img(self, img_file_path):
         self.label_image.setPixmap(QPixmap(img_file_path))

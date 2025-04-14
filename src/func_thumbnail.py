@@ -4,6 +4,7 @@ from time import time
 import glob
 import os
 
+from .class_bridge import br
 from .class_data import (
     cv,
     PATH_THUMBNAILS,
@@ -38,6 +39,7 @@ def generate_thumbnail_dic():
         thumbnail_window_validation['tracks_count'] = cv.active_pl_tracks_count
         thumbnail_window_validation['duration_sum'] = cv.active_pl_sum_duration
         thumbnail_window_validation['thumbnail_img_size'] = cv.thumbnail_img_size
+        thumbnail_window_validation['thumbnail_generation_completed'] = False
 
 
 def thumbnail_widget_resize_and_move_to_pos():
@@ -135,7 +137,7 @@ def get_time_frame_taken_from(vid_duration):
     return timedelta(seconds=at_seconds_raw)
 
 
-def thumbnail_grouped_action():
+def start_thumbnail_thread_grouped_action():
     if is_new_thumbnail_generation_needed():
         remove_previous_and_create_new_thumbnail_widgets_window()
         generate_thumbnail_dic()
@@ -148,11 +150,29 @@ def is_new_thumbnail_generation_needed():
     thumbnail_window_validation = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window_validation']
     if (thumbnail_window_validation['tracks_count'] != cv.active_pl_tracks_count or
         thumbnail_window_validation['duration_sum'] != cv.active_pl_sum_duration or
-        thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size
+        thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
+        not thumbnail_window_validation['thumbnail_generation_completed']
         ):
+        stop_another_playlist_thumbnail_thread()
+        thumbnail_window_validation['thumbnail_generation_completed'] = False
         cv.thumbnail_db_table = cv.active_db_table
         return True
     else: return False
+
+
+def stop_thumbnail_thread():
+    widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
+    if widgets_window.thread_thumbnails_update.isRunning():
+        widgets_window.thread_thumbnails_update.terminate()
+        save_thumbnail_history_json()
+
+
+def stop_another_playlist_thumbnail_thread():
+    if cv.thumbnail_db_table:
+        widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
+        if widgets_window.thread_thumbnails_update.isRunning() and cv.thumbnail_db_table != cv.active_db_table:
+            widgets_window.thread_thumbnails_update.terminate()
+            save_thumbnail_history_json()
 
 
 def remove_previous_and_create_new_thumbnail_widgets_window():
@@ -162,7 +182,7 @@ def remove_previous_and_create_new_thumbnail_widgets_window():
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].create_widgets_window()
 
 
-def active_playlist_change_thumbnail_repositioning():
+def thumbnail_repositioning_after_playlist_change():
     """ To make sure the active playlist thumbnail view
         is following the current playlist size
         Scenario:
@@ -178,6 +198,14 @@ def active_playlist_change_thumbnail_repositioning():
             thumbnail_widget_resize_and_move_to_pos()
 
 
+def update_thumbnail_view_button_style_after_playlist_change():
+    if cv.is_ffmpeg_installed:
+        if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].isVisible():
+            br.button_thumbnail.set_style_thumbnail_button_active()
+        else:
+            br.button_thumbnail.set_style_settings_button()
+
+
 def remove_all_thumbnails_and_history():
     files = glob.glob(f'{PATH_THUMBNAILS}/*')
     for file in files:
@@ -187,5 +215,3 @@ def remove_all_thumbnails_and_history():
     thumbnail_history["failed"] = {}
     thumbnail_history["completed"] = {}
     save_thumbnail_history_json()
-
-

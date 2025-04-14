@@ -5,7 +5,6 @@ from PyQt6.QtGui import QFont, QColor
 from .class_bridge import br
 from .class_data import save_json
 from .class_data import cv, settings
-from .logger import logger_basic
 from .message_box import MyMessageBoxError
 
 import sqlite3
@@ -33,7 +32,7 @@ def update_active_playlist_vars_and_widgets():
     cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']
     cv.active_pl_queue = cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget']
     cv.active_pl_duration = cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget']
-    
+
     cv.active_pl_tracks_count = cv.active_pl_name.count()
     cv.active_pl_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
 
@@ -159,10 +158,10 @@ def generate_duration_to_display(raw_duration):
             duration = f'{str_hours}:{minutes}:{seconds}'
         else:
             duration = f'{minutes}:{seconds}'
+
+        return duration
     except:
         print('ERROR - generate_duration_to_display(raw_duration)')
-
-    return duration
 
 
 def generate_track_list_detail(db_track_record):

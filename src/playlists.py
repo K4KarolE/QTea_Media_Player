@@ -23,7 +23,10 @@ from .func_coll import (
     save_playing_pl_last_track_index,
     update_active_playlist_vars_and_widgets
     )
-from .func_thumbnail import active_playlist_change_thumbnail_repositioning
+from .func_thumbnail import (
+    thumbnail_repositioning_after_playlist_change,
+    update_thumbnail_view_button_style_after_playlist_change
+    )
 from .list_widget_playlists import MyListWidget
 from .thumbnail_window import ThumbnailMainWindow
 
@@ -102,7 +105,8 @@ class MyPlaylists(QTabWidget):
             br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
             cv.current_track_index = cv.active_pl_name.currentRow()
             cv.shuffle_played_tracks_list.clear()
-            active_playlist_change_thumbnail_repositioning()
+            thumbnail_repositioning_after_playlist_change()
+            update_thumbnail_view_button_style_after_playlist_change()
     
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''

@@ -1,5 +1,3 @@
-import shutil
-
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import QPushButton
 
@@ -12,9 +10,6 @@ from .func_coll import inactive_track_font_style
 ''' Please note, the "button_speaker" and the "duration_sum_widg"
     buttons do not appear as classic buttons on the UI   
 '''
-
-def is_ffmpeg_installed():
-    return shutil.which("ffmpeg")
 
 
 def generate_buttons():
@@ -77,9 +72,7 @@ def generate_buttons():
         )
     br.button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_queue.clicked.connect(lambda: br.window_queue_and_search.show())
-    br.button_queue.set_style_settings_button()
     br.button_queue.setIconSize(QSize(15, 15))
-
 
 
     ''' BUTTON PLAYLIST - SETTINGS '''
@@ -90,7 +83,6 @@ def generate_buttons():
         )
     br.button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_settings.clicked.connect(lambda: br.button_settings.button_settings_clicked())
-    br.button_settings.set_style_settings_button()
 
 
     ''' BUTTON PLAYLIST - Thumbnail '''
@@ -102,8 +94,7 @@ def generate_buttons():
     br.button_thumbnail.setGeometry(button_x_pos(6.0) - PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH,
                                    cv.PLIST_BUTTONS_HEIGHT)
     br.button_thumbnail.clicked.connect(lambda: br.button_thumbnail.button_thumbnail_clicked())
-    br.button_thumbnail.set_style_settings_button()
-    if not is_ffmpeg_installed():
+    if not cv.is_ffmpeg_installed:
         br.button_thumbnail.setDisabled(True)
         br.button_thumbnail.setToolTip("Thumbnail View / Disabled / FFmpeg needs to be installed")
 

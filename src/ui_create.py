@@ -126,9 +126,10 @@ def generate_ui():
 
     for button in br.playlist_buttons_list:
         button.setParent(playlist_buttons_list_wrapper)
-        if button not in [br.button_settings, br.button_queue, br.button_thumbnail]:
+        if button in [br.button_settings, br.button_queue, br.button_thumbnail]:
+            button.set_style_settings_button()
+        else:
             button.set_style_playlist_buttons()
-
     layout_under_playlist_buttons.addWidget(playlist_buttons_list_wrapper)
 
     # DURATION
