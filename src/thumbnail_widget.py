@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
 
 from .class_data import cv
 from .class_bridge import br
-from .func_coll import inactive_track_font_style
+from .func_coll import active_track_font_style, inactive_track_font_style
 
 
 class ThumbnailWidget(QWidget):
@@ -19,37 +19,23 @@ class ThumbnailWidget(QWidget):
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setMinimumWidth(cv.thumbnail_width)
-        self.setStyleSheet(
-            f"background-color: white;"
-            "border: 1px solid grey;"
-            "border-radius: 2px;"
-            )
         self.layout = QVBoxLayout()
+
         self.label_image = QLabel()
         self.label_image.setPixmap(br.icon.thumbnail_default)
         self.label_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_image.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-            )
+
         label_text = f'{index + 1}.{file_name}'
         self.text = QLabel(label_text)
         self.text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
-        self.text.setFont(inactive_track_font_style)
-        self.text.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-            # f"font: arial 18px;"
-            # "color: black;"  # text color
-            )
+
         self.layout.addWidget(self.label_image, 95)
         self.layout.addWidget(self.text, 5)
         self.setLayout(self.layout)
+        self.set_default_thumbnail_style()
         self.show()
 
-
     def mousePressEvent(self, a0):
-        self.setStyleSheet(f"background-color: light grey;")
         cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
@@ -66,3 +52,55 @@ class ThumbnailWidget(QWidget):
 
     def update_to_default_audio_img(self):
         self.label_image.setPixmap(br.icon.thumbnail_default_audio)
+
+
+    def set_default_thumbnail_style(self):
+        self.setStyleSheet(
+            "background-color: white;"
+            "border: 1px solid grey;"
+            "border-radius: 2px;"
+            )
+        self.label_image.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            )
+        self.text.setFont(inactive_track_font_style)
+        self.text.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            )
+
+
+    def set_selected_thumbnail_style(self):
+        self.setStyleSheet(
+            "background-color: #CCE8FF;"
+            "border: 1px solid grey;"
+            "border-radius: 2px;"
+            )
+        self.label_image.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            )
+        self.text.setFont(active_track_font_style)
+        self.text.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            )
+
+
+    def set_playing_thumbnail_style(self):
+        self.setStyleSheet(
+            "background-color: #287DCC;"
+            "border: 2px solid grey;"
+            "border-radius: 2px;"
+            )
+        self.label_image.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            )
+        self.text.setFont(active_track_font_style)
+        self.text.setStyleSheet(
+            "border: 0px;"
+            "border-radius: 0px;"
+            "color: white;"
+            )

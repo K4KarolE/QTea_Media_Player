@@ -73,7 +73,9 @@ class Data:
 
     # THUMBNAIL VIEW
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")
-    thumbnail_db_table: str = None  # take over the value of active_db_table
+    thumbnail_db_table: str = None
+    thumbnail_last_track_index: int = 0
+    # take over the value of active_db_table, active_pl_last_track_index
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
     thumbnail_main_window_width: int = 0
@@ -126,6 +128,7 @@ class Data:
     active_db_table: str = None  
     active_pl_title: str = None
     active_pl_last_track_index: int = 0
+    # active_pl_last_selected_track_index: int = 0
     active_pl_name: object = None       # list widget
     active_pl_queue: object = None      # list widget
     active_pl_duration: object = None   # list widget

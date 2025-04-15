@@ -73,7 +73,7 @@ def generate_thumbnail_widget_new_width():
     available_space = cv.thumbnail_main_window_width - cv.scroll_bar_size - 2 * cv.thumbnail_pos_base_x + cv.thumbnail_pos_gap
     thumbnail_and_gap = cv.thumbnail_width + cv.thumbnail_pos_gap
     thumbnails_in_row_possible = int(available_space / thumbnail_and_gap)
-    thumbnail_count = len(cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'])
+    thumbnail_count = len(cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'])
     if thumbnails_in_row_possible >= thumbnail_count:
         thumbnail_width_diff = int((available_space - thumbnail_count * thumbnail_and_gap) / thumbnail_count)
     else:
@@ -139,11 +139,21 @@ def get_time_frame_taken_from(vid_duration):
 
 def start_thumbnail_thread_grouped_action():
     if is_new_thumbnail_generation_needed():
+        stop_another_playlist_thumbnail_thread()
+        cv.thumbnail_db_table = cv.active_db_table
+        cv.thumbnail_last_track_index = cv.active_pl_last_track_index
         remove_previous_and_create_new_thumbnail_widgets_window()
         generate_thumbnail_dic()
         thumbnail_widget_resize_and_move_to_pos()
+        # THREAD
         widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
         widgets_window.thread_thumbnails_update.start()
+        # THUMBNAIL STYLE
+        widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
+        if cv.playing_db_table == cv.thumbnail_db_table:
+            widget_dic[cv.thumbnail_last_track_index]['widget'].set_playing_thumbnail_style()
+        else:
+            widget_dic[cv.thumbnail_last_track_index]['widget'].set_selected_thumbnail_style()
 
 
 def is_new_thumbnail_generation_needed():
@@ -153,9 +163,7 @@ def is_new_thumbnail_generation_needed():
         thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
         not thumbnail_window_validation['thumbnail_generation_completed']
         ):
-        stop_another_playlist_thumbnail_thread()
         thumbnail_window_validation['thumbnail_generation_completed'] = False
-        cv.thumbnail_db_table = cv.active_db_table
         return True
     else: return False
 
@@ -206,12 +214,18 @@ def update_thumbnail_view_button_style_after_playlist_change():
             br.button_thumbnail.set_style_settings_button()
 
 
+def update_playing_and_previous_thumbnail_style():
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
+    if thumbnail_widget_dic:
+        thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
+        thumbnail_widget_dic[cv.playing_pl_last_track_index]['widget'].set_default_thumbnail_style()
+
+
 def remove_all_thumbnails_and_history():
     files = glob.glob(f'{PATH_THUMBNAILS}/*')
     for file in files:
         if Path(file).suffix != '.json':
             os.remove(file)
-
     thumbnail_history["failed"] = {}
     thumbnail_history["completed"] = {}
     save_thumbnail_history_json()

@@ -20,6 +20,7 @@ from .func_coll import (
     update_queued_tracks_order_number,
     update_raw_current_duration_db
     )
+from .func_thumbnail import update_playing_and_previous_thumbnail_style
 
 
 class PlaysFunc:
@@ -66,7 +67,8 @@ class PlaysFunc:
                 self.update_new_track_style()
             else:
                 update_queued_track_style(cv.playing_pl_last_track_index)
-            
+            update_playing_and_previous_thumbnail_style()
+
             cv.playing_pl_last_track_index = cv.playing_track_index
             save_playing_playlist_and_playing_last_track_index()
         

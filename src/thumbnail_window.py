@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     )
 
 from .class_data import cv
-from .func_thumbnail import thumbnail_widget_resize_and_move_to_pos
+from .func_thumbnail import thumbnail_widget_resize_and_move_to_pos, save_thumbnail_history_json
 from .thread_thumbnail import ThreadThumbnail
 
 
@@ -60,6 +60,13 @@ class ThumbnailMainWindow(QScrollArea):
             self.timer.start(500)
         return super().resizeEvent(a0)
 
+    def scroll_to_current_item(self):
+        if self.isVisible():
+            index = cv.active_pl_name.currentRow()
+            if index:
+                thumbnail_widget = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'][index]['widget']
+                self.scroll_bar_ver.setValue(thumbnail_widget.pos().y() - cv.thumbnail_height)
+
 
 
 class WidgetsWindow(QWidget):
@@ -82,3 +89,6 @@ class WidgetsWindow(QWidget):
             thumbnail_widget.update_to_default_video_img()
         else:
             thumbnail_widget.update_img(result)
+
+        if index > 0 and index % 20 == 0:
+            save_thumbnail_history_json()
