@@ -221,6 +221,22 @@ def update_playing_and_previous_thumbnail_style():
         thumbnail_widget_dic[cv.playing_pl_last_track_index]['widget'].set_default_thumbnail_style()
 
 
+def update_selected_and_previous_thumbnail_style():
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+    if thumbnail_widget_dic:
+        thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
+        if cv.active_pl_last_selected_track_index != cv.playing_track_index:
+            thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
+        else:
+            thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
+    update_last_selected_track_dic_and_vars()
+
+
+def update_last_selected_track_dic_and_vars():
+    cv.playlist_widget_dic[cv.active_db_table]['last_selected_track_index'] = cv.current_track_index
+    cv.active_pl_last_selected_track_index = cv.current_track_index
+
+
 def remove_all_thumbnails_and_history():
     files = glob.glob(f'{PATH_THUMBNAILS}/*')
     for file in files:

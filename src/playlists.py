@@ -25,6 +25,7 @@ from .func_coll import (
     )
 from .func_thumbnail import (
     thumbnail_repositioning_after_playlist_change,
+    update_selected_and_previous_thumbnail_style,
     update_thumbnail_view_button_style_after_playlist_change
     )
 from .list_widget_playlists import MyListWidget
@@ -48,7 +49,7 @@ class MyPlaylists(QTabWidget):
         self.playlists_created_at_first_run = True
         cv.active_playlist_index = self.currentIndex()
         update_active_playlist_vars_and_widgets()
-        
+
         # IF ADD TO THE QUEUE WITHOUT ROW SELECTION AT THE STARTUP
         # GOING TO SELECT THE LAST PLAYED ROW
         cv.current_track_index = cv.active_pl_last_track_index
@@ -116,13 +117,14 @@ class MyPlaylists(QTabWidget):
         for item in current_playlist_list_widgets_dic:
                 if item not in [
                     list_widget_row_changed,
+                    'last_selected_track_index',
                     'active_pl_sum_duration',
                     'thumbnail_window',
                     'thumbnail_widgets_dic',
                     'thumbnail_window_validation',
                     'line_edit']:
                     current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
-     
+
     
     def playlists_creation(self):
         playlist_index_counter = 0
@@ -276,7 +278,11 @@ class MyPlaylists(QTabWidget):
                 SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE
                 AFTER NEWLY SELECTED TRACK
             '''
-            name_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('name_list_widget'))
+            def name_list_widget_row_changed():
+                self.row_changed_sync_pl('name_list_widget')
+                update_selected_and_previous_thumbnail_style()
+
+            name_list_widget.currentRowChanged.connect(lambda: name_list_widget_row_changed())
             duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('duration_list_widget'))
             queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('queue_list_widget'))
 

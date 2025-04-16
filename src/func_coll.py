@@ -27,6 +27,7 @@ def update_active_playlist_vars_and_widgets():
     cv.active_db_table = cv.playlist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
     cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
+    cv.active_pl_last_selected_track_index = cv.playlist_widget_dic[cv.active_db_table]['last_selected_track_index']
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
     # LIST WIDGETS
     cv.active_pl_name = cv.playlist_widget_dic[cv.active_db_table]['name_list_widget']

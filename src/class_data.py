@@ -39,7 +39,7 @@ thumbnail_history = open_thumbnail_history_json()
 @dataclass
 class Data:
 
-    ''' SUPPORTING VARIABLES '''
+    """ SUPPORTING VARIABLES """
     track_title: str = None  # to display on video
     skin_selected: str = settings['skin_selected']
     repeat_playlist: int = settings['repeat_playlist']
@@ -70,8 +70,11 @@ class Data:
     # files from directory are added
     adding_records_at_moment: bool = False
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
+    # LINUX
+    player_paused_position: int = 0
+    os_linux: bool = (sys.platform == 'linux')
 
-    # THUMBNAIL VIEW
+    """ THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")
     thumbnail_db_table: str = None
     thumbnail_last_track_index: int = 0
@@ -89,9 +92,6 @@ class Data:
     thumbnail_pos_base_y: int = 5
     scroll_bar_size: int = 10
 
-    # LINUX
-    player_paused_position: int = 0
-    os_linux: bool = (sys.platform == 'linux')
 
     '''
     QUEUE TRACKING
@@ -128,6 +128,7 @@ class Data:
     active_db_table: str = None  
     active_pl_title: str = None
     active_pl_last_track_index: int = 0
+    active_pl_last_selected_track_index: int = 0
     # active_pl_last_selected_track_index: int = 0
     active_pl_name: object = None       # list widget
     active_pl_queue: object = None      # list widget
@@ -607,6 +608,7 @@ class Data:
             'name_list_widget': '',
             'queue_list_widget': '',
             'duration_list_widget': '',
+            'last_selected_track_index': settings[pl_name]['last_track_index'],
             'active_pl_sum_duration': 0,
             'thumbnail_window': '',
             'thumbnail_window_validation': {

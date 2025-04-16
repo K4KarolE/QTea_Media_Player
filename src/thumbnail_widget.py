@@ -81,7 +81,7 @@ class ThumbnailWidget(QWidget):
             "border: 0px;"
             "border-radius: 0px;"
             )
-        self.text.setFont(active_track_font_style)
+        self.text.setFont(inactive_track_font_style)
         self.text.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
