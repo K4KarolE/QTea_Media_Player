@@ -36,3 +36,26 @@ class MyMessageBoxWarning(QMessageBox):
             return True
         else:
             return False
+
+
+class MyMessageBoxConfReq(QMessageBox):
+    def __init__(self, question, function):
+        super().__init__()
+        self.setWindowTitle('Confirmation needed')
+        self.setWindowIcon(br.icon.settings)
+        self.setIcon(QMessageBox.Icon.Question)
+        self.setText(question)
+        self.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
+        self.accepted.connect(function)
+        self.exec()
+
+
+class MyMessageBoxConfirmation(QMessageBox):
+    def __init__(self, message):
+        super().__init__()
+        self.setWindowTitle('All set')
+        self.setWindowIcon(br.icon.settings)
+        self.setIcon(QMessageBox.Icon.Information)
+        self.setText(message)
+        self.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.exec()

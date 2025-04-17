@@ -74,10 +74,12 @@ class Data:
     player_paused_position: int = 0
     os_linux: bool = (sys.platform == 'linux')
 
-    """ THUMBNAIL VIEW """
+    """ THUMBNAILS / THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")
     thumbnail_db_table: str = None
-    thumbnail_last_track_index: int = 0
+    thumbnail_last_played_track_index: int = 0
+    thumbnail_last_selected_track_index: int = 0
+    thumbnail_pl_tracks_count: int = 0
     # take over the value of active_db_table, active_pl_last_track_index
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
@@ -90,6 +92,7 @@ class Data:
     thumbnail_pos_gap: int = 1
     thumbnail_pos_base_x: int = 5
     thumbnail_pos_base_y: int = 5
+    thumbnail_remove_older_than: int = settings['general_settings']['thumbnail_remove_older_than']
     scroll_bar_size: int = 10
 
 
@@ -129,7 +132,6 @@ class Data:
     active_pl_title: str = None
     active_pl_last_track_index: int = 0
     active_pl_last_selected_track_index: int = 0
-    # active_pl_last_selected_track_index: int = 0
     active_pl_name: object = None       # list widget
     active_pl_queue: object = None      # list widget
     active_pl_duration: object = None   # list widget
@@ -214,7 +216,7 @@ class Data:
     window_second_alt_height: int = settings['general_settings']['window_second_alt_height']
     window_alt_size_repositioning: bool = settings['general_settings']['window_alt_size_repositioning']
     default_audio_track: int = settings['general_settings']['default_audio_track']
-    # thumbnail_img_size: declared in the "Thumbnail View" section above
+    # thumbnail_img_size, remove_thumbnails_older_than: declared in the "Thumbnails" section above
     # it`s validation in window_settings.py / general_fields_validation() / 100-500px
     # USED FOR VALIDATION
     window_min_width: int = settings['general_settings']['window_min_width']
@@ -299,9 +301,14 @@ class Data:
             'text': 'Thumbnail image size',
             'value': thumbnail_img_size,
             'line_edit_widget': ''
+        },
+        'thumbnail_remove_older_than': {
+            'text': 'Remove unused thumbnails\nolder than (days)',
+            'value': thumbnail_remove_older_than,
+            'line_edit_widget': ''
         }
     }
-    
+
     '''
     The below lists used in the src / window_settings.py / general_fields_validation()
     '''
@@ -551,7 +558,8 @@ class Data:
     exp_2 = Shift / Ctrl / Alt + [rest of the keys_list]
     Not able to use hotkeys with 3 components: 'Alt + M + K'
     '''
-    keys_list = ['Shift', 'Ctrl', 'Alt', 'Enter', 'Space',  'Del', 'Left', 'Right', 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', "[`=\/,;'#*.+-]"]
+    keys_list = ['Shift', 'Ctrl', 'Alt', 'Enter', 'Space',  'Del', 'Left', 'Right',
+                 'Up', 'Down', 'Backspace', '[a-zA-Z0-9]', "[`=/,;'#*.+-]"]
 
     # ONE KEY
     exp_1 = r'('

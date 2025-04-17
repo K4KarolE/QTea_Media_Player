@@ -151,21 +151,22 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - THUMBNAIL '''
     def button_thumbnail_clicked(self):
-        if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible() and cv.active_pl_tracks_count > 0:
-            cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
-            cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
-            cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()
-            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
-            start_thumbnail_thread_grouped_action()
-            self.set_style_thumbnail_button_active()
-            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item()
-        else:
-            cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].show()
-            cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].show()
-            cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].show()
-            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
-            self.set_style_settings_button()
-            stop_thumbnail_thread()
+        if cv.active_pl_tracks_count > 0:
+            if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible():
+                cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
+                cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
+                cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()
+                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
+                start_thumbnail_thread_grouped_action()
+                self.set_style_thumbnail_button_active()
+                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item()
+            else:
+                cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].show()
+                cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].show()
+                cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].show()
+                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
+                self.set_style_settings_button()
+                stop_thumbnail_thread()
 
 
     ''' BUTTON PLAYLIST - THUMBNAIL VIEW - SET STYLE '''

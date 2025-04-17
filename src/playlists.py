@@ -25,7 +25,7 @@ from .func_coll import (
     )
 from .func_thumbnail import (
     thumbnail_repositioning_after_playlist_change,
-    update_selected_and_previous_thumbnail_style,
+    update_selected_and_played_and_previous_thumbnail_style,
     update_thumbnail_view_button_style_after_playlist_change
     )
 from .list_widget_playlists import MyListWidget
@@ -280,7 +280,7 @@ class MyPlaylists(QTabWidget):
             '''
             def name_list_widget_row_changed():
                 self.row_changed_sync_pl('name_list_widget')
-                update_selected_and_previous_thumbnail_style()
+                update_selected_and_played_and_previous_thumbnail_style()
 
             name_list_widget.currentRowChanged.connect(lambda: name_list_widget_row_changed())
             duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('duration_list_widget'))

@@ -26,6 +26,7 @@ from .class_data import (
     )
 from .func_coll import inactive_track_font_style
 from .message_box import MyMessageBoxError
+from .func_thumbnail import msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
 
 
 class MySettingsWindow(QWidget):
@@ -197,7 +198,7 @@ class MySettingsWindow(QWidget):
         '''
         WIDGET_GENERAL_POS_X = WIDGETS_POS_X
         widget_general_pos_y = WIDGETS_POS_Y
-        GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 170
+        GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 195
 
         for item, dic_value in cv.general_settings_dic.items():
 
@@ -263,11 +264,19 @@ class MySettingsWindow(QWidget):
                             pass_validation = False
                 else:
                     if not line_edit_text.isdecimal():
+                        if "Remove unused" in item_text:
+                            item_text = "Remove unused thumbnails"  # avoid line break in text
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer.')
                         pass_validation = False
-                    elif item_text == 'Thumbnail image size':
+
+                    elif item_text == cv.general_settings_dic['thumbnail_img_size']['text']:
                         if int(line_edit_text) not in range(100, 501):
                             MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
+                            pass_validation = False
+
+                    elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
+                        if int(line_edit_text) not in range(1, 365):
+                            MyMessageBoxError('GENERAL TAB', f'The "Remove unused thumbnails" value should be between 1 and 365.')
                             pass_validation = False
 
             return pass_validation
@@ -325,6 +334,7 @@ class MySettingsWindow(QWidget):
             cv.thumbnail_img_size = sett_gen['thumbnail_img_size']
             cv.thumbnail_width = cv.thumbnail_img_size + cv.widg_and_img_diff
             cv.thumbnail_height = cv.thumbnail_img_size + cv.widg_and_img_diff
+            cv.thumbnail_remove_older_than = sett_gen['thumbnail_remove_older_than']
 
 
         '''
@@ -559,9 +569,9 @@ class MySettingsWindow(QWidget):
         ####################
         '''
         BUTTON_SAVE_WIDTH = 50
-        BUTTON_SAVE_HIGHT = 25
+        BUTTON_SAVE_HEIGHT = 25
         BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
-        BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HIGHT
+        BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HEIGHT
 
     
         def button_save_clicked():        
@@ -595,6 +605,28 @@ class MySettingsWindow(QWidget):
                 self.hide()
 
 
-        button_save = QPushButton(self, text='SAVE')
-        button_save.setGeometry(BUTTON_SAVE_POS_X, BUTTON_SAVE_POS_Y, BUTTON_SAVE_WIDTH, BUTTON_SAVE_HIGHT)    
+        button_save = QPushButton(self, text='Save')
+        button_save.setGeometry(BUTTON_SAVE_POS_X, BUTTON_SAVE_POS_Y, BUTTON_SAVE_WIDTH, BUTTON_SAVE_HEIGHT)
         button_save.clicked.connect(button_save_clicked)
+
+
+        '''
+        #################################
+            BUTTON - PURGE THUMBNAILS     
+        #################################
+        '''
+        BUTTON_PURGE_THUMBNAILS_WIDTH = 130
+        BUTTON_PURGE_THUMBNAILS_HEIGHT = BUTTON_SAVE_HEIGHT
+        BUTTON_PURGE_THUMBNAILS_POS_X = BUTTON_SAVE_POS_X - BUTTON_PURGE_THUMBNAILS_WIDTH - 5
+        BUTTONP_PURGE_THUMBNAILS_POS_Y = BUTTON_SAVE_POS_Y
+
+        button_purge_thumbnails = QPushButton(self, text='Purge Thumbnails')
+        button_purge_thumbnails.setGeometry(
+            BUTTON_PURGE_THUMBNAILS_POS_X,
+            BUTTONP_PURGE_THUMBNAILS_POS_Y,
+            BUTTON_PURGE_THUMBNAILS_WIDTH,
+            BUTTON_PURGE_THUMBNAILS_HEIGHT
+            )
+        button_purge_thumbnails.clicked.connect(
+            msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
+            )

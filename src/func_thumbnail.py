@@ -13,6 +13,11 @@ from .class_data import (
     )
 from .func_coll import cur as sql_cursor
 from .thumbnail_widget import ThumbnailWidget
+from .message_box import (
+    MyMessageBoxConfirmation,
+    MyMessageBoxConfReq,
+    MyMessageBoxError
+    )
 
 current_time = int(time())
 
@@ -140,8 +145,7 @@ def get_time_frame_taken_from(vid_duration):
 def start_thumbnail_thread_grouped_action():
     if is_new_thumbnail_generation_needed():
         stop_another_playlist_thumbnail_thread()
-        cv.thumbnail_db_table = cv.active_db_table
-        cv.thumbnail_last_track_index = cv.active_pl_last_track_index
+        update_thumbnail_support_vars()
         remove_previous_and_create_new_thumbnail_widgets_window()
         generate_thumbnail_dic()
         thumbnail_widget_resize_and_move_to_pos()
@@ -149,11 +153,30 @@ def start_thumbnail_thread_grouped_action():
         widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
         widgets_window.thread_thumbnails_update.start()
         # THUMBNAIL STYLE
-        widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
-        if cv.playing_db_table == cv.thumbnail_db_table:
-            widget_dic[cv.thumbnail_last_track_index]['widget'].set_playing_thumbnail_style()
-        else:
-            widget_dic[cv.thumbnail_last_track_index]['widget'].set_selected_thumbnail_style()
+        update_thumbnail_style_after_thumbnail_generation()
+
+
+def update_thumbnail_support_vars():
+    """ Once the thumbnail generation triggered,
+        snapshot the crucial vars to make sure
+        switching playlist is not causing any issue
+        while the thumb. gen. is still in progress
+    """
+    cv.thumbnail_db_table = cv.active_db_table
+    cv.thumbnail_last_played_track_index = cv.active_pl_last_track_index
+    cv.thumbnail_last_selected_track_index = cv.current_track_index
+    cv.thumbnail_pl_tracks_count = cv.active_pl_tracks_count
+
+
+def update_thumbnail_style_after_thumbnail_generation():
+    widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
+    # PLAYED TRACK
+    if cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
+        widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
+    # SELECTED TRACK
+    if cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
+        widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_selected_thumbnail_style()
+
 
 
 def is_new_thumbnail_generation_needed():
@@ -169,10 +192,11 @@ def is_new_thumbnail_generation_needed():
 
 
 def stop_thumbnail_thread():
-    widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
-    if widgets_window.thread_thumbnails_update.isRunning():
-        widgets_window.thread_thumbnails_update.terminate()
-        save_thumbnail_history_json()
+    if cv.thumbnail_db_table:
+        widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
+        if widgets_window.thread_thumbnails_update.isRunning():
+            widgets_window.thread_thumbnails_update.terminate()
+            save_thumbnail_history_json()
 
 
 def stop_another_playlist_thumbnail_thread():
@@ -215,19 +239,26 @@ def update_thumbnail_view_button_style_after_playlist_change():
 
 
 def update_playing_and_previous_thumbnail_style():
+    """ Updating thumbnail style after new track is started """
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
         thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
         thumbnail_widget_dic[cv.playing_pl_last_track_index]['widget'].set_default_thumbnail_style()
 
 
-def update_selected_and_previous_thumbnail_style():
+def update_selected_and_played_and_previous_thumbnail_style():
+    """ Updating thumbnail style after new track/row is selected
+        Scenarios:
+        - Standard playlist change >> thumbnail playlist style update
+        - Thumbnail playlist change (new widget selected / double-clicked) >>
+            standard playlist change >> thumbnail playlist style update
+    """
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
         thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
-        if cv.active_pl_last_selected_track_index != cv.playing_track_index:
+        if cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
             thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
-        else:
+        if cv.playing_track_index <= cv.active_pl_tracks_count-1 and cv.playing_track_index != cv.current_track_index:
             thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
     update_last_selected_track_dic_and_vars()
 
@@ -237,11 +268,28 @@ def update_last_selected_track_dic_and_vars():
     cv.active_pl_last_selected_track_index = cv.current_track_index
 
 
-def remove_all_thumbnails_and_history():
-    files = glob.glob(f'{PATH_THUMBNAILS}/*')
-    for file in files:
-        if Path(file).suffix != '.json':
-            os.remove(file)
-    thumbnail_history["failed"] = {}
-    thumbnail_history["completed"] = {}
-    save_thumbnail_history_json()
+def remove_all_thumbnails_and_clear_history():
+    stop_thumbnail_thread()
+    try:
+        files = glob.glob(f'{PATH_THUMBNAILS}/*')
+        for file in files:
+            if Path(file).suffix != '.json':
+                os.remove(file)
+        thumbnail_history["failed"] = {}
+        thumbnail_history["completed"] = {}
+        save_thumbnail_history_json()
+        MyMessageBoxConfirmation(
+            'Thumbnails have been removed successfully.')
+    except:
+        MyMessageBoxError(
+            'Settings Window',
+            'Sorry, something went wrong.'
+            )
+
+
+def msg_box_wrapper_for_remove_all_thumbnails_and_clear_history():
+    MyMessageBoxConfReq(
+        "Are you sure you want to delete all the thumbnails\n"
+        "and clear the thumbnail history?",
+        remove_all_thumbnails_and_clear_history,
+        )
