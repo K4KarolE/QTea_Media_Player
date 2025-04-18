@@ -47,6 +47,13 @@ def generate_thumbnail_dic():
         thumbnail_window_validation['thumbnail_generation_completed'] = False
 
 
+        cv.thumbnail_widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
+        if cv.thumbnail_last_played_track_index_is_valid:
+            cv.thumbnail_widget_last_played = cv.thumbnail_widget_dic[cv.thumbnail_last_played_track_index]['widget']
+        if cv.thumbnail_last_selected_track_index_is_valid:
+            cv.thumbnail_widget_last_selected = cv.thumbnail_widget_dic[cv.thumbnail_last_selected_track_index]['widget']
+
+
 def thumbnail_widget_resize_and_move_to_pos():
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
@@ -145,8 +152,9 @@ def get_time_frame_taken_from(vid_duration):
 def start_thumbnail_thread_grouped_action():
     if is_new_thumbnail_generation_needed():
         stop_another_playlist_thumbnail_thread()
-        update_thumbnail_support_vars()
-        remove_previous_and_create_new_thumbnail_widgets_window()
+        update_thumbnail_support_vars_before_thumbnail_thread()
+        remove_thumbnail_widgets_window_and_thumbnail_dic()
+        create_new_thumbnail_widgets_window()
         generate_thumbnail_dic()
         thumbnail_widget_resize_and_move_to_pos()
         # THREAD
@@ -156,36 +164,51 @@ def start_thumbnail_thread_grouped_action():
         update_thumbnail_style_after_thumbnail_generation()
 
 
-def update_thumbnail_support_vars():
+def update_thumbnail_support_vars_before_thumbnail_thread():
     """ Once the thumbnail generation triggered,
         snapshot the crucial vars to make sure
         switching playlist is not causing any issue
         while the thumb. gen. is still in progress
     """
     cv.thumbnail_db_table = cv.active_db_table
+    cv.thumbnail_pl_tracks_count = cv.active_pl_name.count()
+
     cv.thumbnail_last_played_track_index = cv.active_pl_last_track_index
-    cv.thumbnail_last_selected_track_index = cv.current_track_index
-    cv.thumbnail_pl_tracks_count = cv.active_pl_tracks_count
+    cv.thumbnail_last_played_track_index_is_valid = -1 < cv.thumbnail_last_played_track_index <=cv.thumbnail_pl_tracks_count-1
+
+    cv.thumbnail_last_selected_track_index = cv.active_pl_name.currentRow()
+    cv.thumbnail_last_selected_track_index_is_valid = -1 < cv.thumbnail_last_selected_track_index <=cv.thumbnail_pl_tracks_count-1
+
+
+def update_thumbnail_support_vars_before_pl_change(clear_playlist_triggered=False):
+    if clear_playlist_triggered:
+        cv.active_pl_tracks_count = 0
+        cv.current_track_index = -1
+        cv.active_pl_last_track_index = -1
+    cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'] = {}
 
 
 def update_thumbnail_style_after_thumbnail_generation():
     widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
-    # PLAYED TRACK
-    if cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
-        widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
-    # SELECTED TRACK
-    if cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
-        widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_selected_thumbnail_style()
-
+    if widget_dic:
+        # PLAYED TRACK
+        if -1 < cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
+            widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
+        # SELECTED TRACK
+        if -1 < cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
+            widget_dic[cv.thumbnail_last_selected_track_index]['widget'].set_selected_thumbnail_style()
 
 
 def is_new_thumbnail_generation_needed():
     thumbnail_window_validation = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window_validation']
-    if (thumbnail_window_validation['tracks_count'] != cv.active_pl_tracks_count or
-        thumbnail_window_validation['duration_sum'] != cv.active_pl_sum_duration or
-        thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
-        not thumbnail_window_validation['thumbnail_generation_completed']
-        ):
+    if not cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']:
+        return True
+    elif (thumbnail_window_validation['tracks_count'] != cv.active_pl_tracks_count or
+          thumbnail_window_validation['duration_sum'] != cv.active_pl_sum_duration or
+          thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
+          not thumbnail_window_validation['thumbnail_generation_completed']):
+        # thumbnail_generation_completed value will be set True
+        # after a full completion of the thumbnail gen. thread
         thumbnail_window_validation['thumbnail_generation_completed'] = False
         return True
     else: return False
@@ -207,10 +230,13 @@ def stop_another_playlist_thumbnail_thread():
             save_thumbnail_history_json()
 
 
-def remove_previous_and_create_new_thumbnail_widgets_window():
-    cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window.deleteLater()
-    cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'] = {}
-    cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window_validation'] = {}
+def remove_thumbnail_widgets_window_and_thumbnail_dic():
+    if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window']:
+        cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window.deleteLater()
+        cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'] = {}
+
+
+def create_new_thumbnail_widgets_window():
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].create_widgets_window()
 
 
@@ -253,14 +279,18 @@ def update_selected_and_played_and_previous_thumbnail_style():
         - Thumbnail playlist change (new widget selected / double-clicked) >>
             standard playlist change >> thumbnail playlist style update
     """
-    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
-    if thumbnail_widget_dic:
-        thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
-        if cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
-            thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
-        if cv.playing_track_index <= cv.active_pl_tracks_count-1 and cv.playing_track_index != cv.current_track_index:
-            thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
-    update_last_selected_track_dic_and_vars()
+    if cv.active_pl_tracks_count > 0:
+        thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+        if thumbnail_widget_dic:
+            # CURRENT
+            thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
+            # PREVIOUS
+            if -1 < cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
+                thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
+            # PLAYING
+            if cv.playing_track_index <= cv.active_pl_tracks_count-1 and cv.playing_track_index != cv.current_track_index:
+                thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
+        update_last_selected_track_dic_and_vars()
 
 
 def update_last_selected_track_dic_and_vars():

@@ -15,7 +15,8 @@ from .func_coll import (
     )
 from .func_thumbnail import (
     start_thumbnail_thread_grouped_action,
-    stop_thumbnail_thread
+    stop_thumbnail_thread,
+    update_thumbnail_support_vars_before_pl_change
     )
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
@@ -97,11 +98,14 @@ class MyButtons(QPushButton):
             # FOR SEARCH WINDOW
             cv.track_change_on_main_playlist_new_search_needed = True
 
+
         ''' Queued track in the playlist '''
         if cv.active_db_table in cv.queue_playlists_list:
             if MyMessageBoxWarning().clicked_continue():
+                update_thumbnail_support_vars_before_pl_change(True)
                 clear_playlist()
         else:
+            update_thumbnail_support_vars_before_pl_change(True)
             clear_playlist()
         
         cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
@@ -151,7 +155,7 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - THUMBNAIL '''
     def button_thumbnail_clicked(self):
-        if cv.active_pl_tracks_count > 0:
+        if cv.active_pl_name.count() > 0:
             if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible():
                 cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
                 cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()

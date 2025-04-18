@@ -61,10 +61,9 @@ class ThumbnailMainWindow(QScrollArea):
         return super().resizeEvent(a0)
 
     def scroll_to_current_item(self):
-        if self.isVisible():
-            if cv.current_track_index != -1:
-                thumbnail_widget = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'][cv.current_track_index]['widget']
-                self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
+        if self.isVisible() and cv.current_track_index != -1:
+            thumbnail_widget = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'][cv.current_track_index]['widget']
+            self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
 
 
 

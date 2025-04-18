@@ -350,7 +350,6 @@ class MyPlaylists(QTabWidget):
             if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(prev_row_id, new_row_id + 1):
                 cv.playing_pl_last_track_index -= 1
                 cv.playing_track_index = cv.playing_pl_last_track_index
-                print(cv.playing_pl_last_track_index)
                 save_playing_pl_last_track_index()
         
         # MOVING TRACK UP

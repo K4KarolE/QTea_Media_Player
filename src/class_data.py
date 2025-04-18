@@ -33,7 +33,15 @@ settings = open_json()
 
 PATH_THUMBNAILS = str(Path(WORKING_DIRECTORY, 'thumbnails'))
 PATH_THUMBNAIL_HISTORY = Path(PATH_THUMBNAILS, '_thumbnail_history.json')
-thumbnail_history = open_thumbnail_history_json()
+
+""" 
+    To make sure if the thumbnail_history json saving is interrupted 
+    the app starts next time without any issue / necessary json fix
+"""
+try:
+    thumbnail_history = open_thumbnail_history_json()
+except:
+    thumbnail_history = {"failed": {}, "completed": {}}
 
 
 @dataclass
@@ -76,10 +84,17 @@ class Data:
 
     """ THUMBNAILS / THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")
+
     thumbnail_db_table: str = None
     thumbnail_last_played_track_index: int = 0
+    thumbnail_last_played_track_index_is_valid: bool = False
     thumbnail_last_selected_track_index: int = 0
+    thumbnail_last_selected_track_index_is_valid: bool = False
     thumbnail_pl_tracks_count: int = 0
+    thumbnail_widget_dic = {}
+    thumbnail_widget_last_selected: object = None
+    thumbnail_widget_last_played: object = None
+
     # take over the value of active_db_table, active_pl_last_track_index
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
