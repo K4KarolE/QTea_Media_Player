@@ -16,7 +16,8 @@ from .func_coll import (
 from .func_thumbnail import (
     start_thumbnail_thread_grouped_action,
     stop_thumbnail_thread,
-    update_thumbnail_support_vars_before_pl_change
+    switch_to_standard_active_playlist_from_thumbnail_pl,
+    update_thumbnail_support_vars_before_playlist_clear
     )
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
@@ -102,10 +103,12 @@ class MyButtons(QPushButton):
         ''' Queued track in the playlist '''
         if cv.active_db_table in cv.queue_playlists_list:
             if MyMessageBoxWarning().clicked_continue():
-                update_thumbnail_support_vars_before_pl_change(True)
+                switch_to_standard_active_playlist_from_thumbnail_pl()
+                update_thumbnail_support_vars_before_playlist_clear()
                 clear_playlist()
         else:
-            update_thumbnail_support_vars_before_pl_change(True)
+            switch_to_standard_active_playlist_from_thumbnail_pl()
+            update_thumbnail_support_vars_before_playlist_clear()
             clear_playlist()
         
         cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
@@ -156,18 +159,18 @@ class MyButtons(QPushButton):
     ''' BUTTON PLAYLIST - THUMBNAIL '''
     def button_thumbnail_clicked(self):
         if cv.active_pl_name.count() > 0:
-            if cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].isVisible():
-                cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].hide()
-                cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].hide()
-                cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].hide()
+            if cv.active_pl_name.isVisible():
+                cv.active_pl_name.hide()
+                cv.active_pl_queue.hide()
+                cv.active_pl_duration.hide()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
                 start_thumbnail_thread_grouped_action()
                 self.set_style_thumbnail_button_active()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item()
             else:
-                cv.playlist_widget_dic[cv.active_db_table]['name_list_widget'].show()
-                cv.playlist_widget_dic[cv.active_db_table]['queue_list_widget'].show()
-                cv.playlist_widget_dic[cv.active_db_table]['duration_list_widget'].show()
+                cv.active_pl_name.show()
+                cv.active_pl_queue.show()
+                cv.active_pl_duration.show()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
                 self.set_style_settings_button()
                 stop_thumbnail_thread()

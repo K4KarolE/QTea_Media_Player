@@ -25,6 +25,7 @@ class Bridge:
     button_remove_all_track: object = None
     button_queue: object = None
     button_settings: object = None
+    button_thumbnail: object = None
     playlist_buttons_list = []
 
     button_play_pause: object = None
