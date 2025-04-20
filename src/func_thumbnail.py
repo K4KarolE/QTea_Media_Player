@@ -314,8 +314,8 @@ def update_last_selected_track_dic_and_vars():
 # NONE
 def remove_all_thumbnails_and_clear_history():
     stop_thumbnail_thread()
+    switch_all_pl_to_standard_from_thumbnails_view(True)
     try:
-        switch_all_pl_to_standard_before_thumbnails_removal()
         files = glob.glob(f'{PATH_THUMBNAILS}/*')
         for file in files:
             if Path(file).suffix != '.json':
@@ -329,7 +329,7 @@ def remove_all_thumbnails_and_clear_history():
         MyMessageBoxError(
             'Settings Window',
             'Sorry, something went wrong.'
-            )
+        )
 
 # NONE
 def msg_box_wrapper_for_remove_all_thumbnails_and_clear_history():
@@ -340,12 +340,23 @@ def msg_box_wrapper_for_remove_all_thumbnails_and_clear_history():
         )
 
 # NONE
-def switch_all_pl_to_standard_before_thumbnails_removal():
+def switch_all_pl_to_standard_from_thumbnails_view(triggered_via_purge_thumbnails_button = False):
+
+    def switch_to_standard_pl(pl_name):
+        if not cv.playlist_widget_dic[pl_name]['name_list_widget'].isVisible():
+            cv.playlist_widget_dic[pl_name]['name_list_widget'].show()
+            cv.playlist_widget_dic[pl_name]['queue_list_widget'].show()
+            cv.playlist_widget_dic[pl_name]['duration_list_widget'].show()
+            cv.playlist_widget_dic[pl_name]['thumbnail_window'].hide()
+
     switch_to_standard_active_playlist_from_thumbnail_pl() # to make sure thumbnail button is updated
     for pl_index, pl_name in enumerate(cv.playlist_widget_dic):
-        if pl_index not in cv.playlists_without_title_to_hide_index_list:
-            if not cv.playlist_widget_dic[pl_name]['name_list_widget'].isVisible():
-                cv.playlist_widget_dic[pl_name]['name_list_widget'].show()
-                cv.playlist_widget_dic[pl_name]['queue_list_widget'].show()
-                cv.playlist_widget_dic[pl_name]['duration_list_widget'].show()
-                cv.playlist_widget_dic[pl_name]['thumbnail_window'].hide()
+        # Triggered by settings window / Purge thumbnails button
+        if triggered_via_purge_thumbnails_button:
+            cv.playlist_widget_dic[pl_name]['thumbnail_window_validation']['thumbnail_generation_completed'] = False
+            if pl_index not in cv.playlists_without_title_to_hide_index_list:
+                switch_to_standard_pl(pl_name)
+        # Triggered by settings window / Save button
+        # To make sure all playlist will be hidden with the standard pl "visible"
+        else:
+            switch_to_standard_pl(pl_name)

@@ -26,8 +26,10 @@ from .class_data import (
     )
 from .func_coll import inactive_track_font_style
 from .message_box import MyMessageBoxError
-from .func_thumbnail import msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
-
+from .func_thumbnail import (
+    msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
+    switch_all_pl_to_standard_from_thumbnails_view
+    )
 
 class MySettingsWindow(QWidget):
     def __init__(self):
@@ -590,6 +592,7 @@ class MySettingsWindow(QWidget):
                 general_fields_to_save()
 
                 ''' PLAYLISTS TAB FIELDS '''
+                switch_all_pl_to_standard_from_thumbnails_view()
                 playlists_fields_to_save()
                 
 
