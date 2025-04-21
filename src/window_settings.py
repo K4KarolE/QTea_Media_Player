@@ -264,22 +264,26 @@ class MySettingsWindow(QWidget):
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
                             MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
+
+                elif item_text == cv.general_settings_dic['thumbnail_img_size']['text']:
+                    if not line_edit_text.isdecimal() or int(line_edit_text) not in range(100, 501):
+                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
+                        pass_validation = False
+
+                elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
+                    if not line_edit_text.lstrip('-').isdecimal() or int(line_edit_text) not in range(-1, 365):
+                        MyMessageBoxError('GENERAL TAB',
+                                          'The "Remove unused thumbnails" value should be between -1 and 365.   \n'
+                                          '0 = clean up after every app closure.\n'
+                                          '-1 = no auto thumbnail removal.')
+                        pass_validation = False
+
                 else:
                     if not line_edit_text.isdecimal():
-                        if "Remove unused" in item_text:
-                            item_text = "Remove unused thumbnails"  # avoid line break in text
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer.')
                         pass_validation = False
 
-                    elif item_text == cv.general_settings_dic['thumbnail_img_size']['text']:
-                        if int(line_edit_text) not in range(100, 501):
-                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
-                            pass_validation = False
 
-                    elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
-                        if int(line_edit_text) not in range(1, 365):
-                            MyMessageBoxError('GENERAL TAB', f'The "Remove unused thumbnails" value should be between 1 and 365.')
-                            pass_validation = False
 
             return pass_validation
         

@@ -15,6 +15,7 @@ class ThumbnailWidget(QWidget):
     def __init__(self, file_name, index):
         super().__init__()
         self.index = index
+        self.thumbnail_type = None
         self.setParent(cv.playlist_widget_dic[cv.active_db_table]["thumbnail_window"].widgets_window)
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -50,57 +51,82 @@ class ThumbnailWidget(QWidget):
     def update_to_default_video_img(self):
         self.label_image.setPixmap(br.icon.thumbnail_default_video)
 
+    def update_to_playing_video_img(self):
+        self.label_image.setPixmap(br.icon.thumbnail_playing_video)
+
     def update_to_default_audio_img(self):
         self.label_image.setPixmap(br.icon.thumbnail_default_audio)
 
+    def update_to_playing_audio_img(self):
+        self.label_image.setPixmap(br.icon.thumbnail_playing_audio)
+
 
     def set_default_thumbnail_style(self):
+        self.set_default_thumbnail_img()
+
         self.setStyleSheet(
             "background-color: white;"
             "border: 1px solid grey;"
             "border-radius: 2px;"
-            )
+        )
         self.label_image.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
-            )
+        )
         self.text.setFont(inactive_track_font_style)
         self.text.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
-            )
+        )
 
 
     def set_selected_thumbnail_style(self):
+        self.set_default_thumbnail_img()
+
         self.setStyleSheet(
             "background-color: #CCE8FF;"
             "border: 1px solid grey;"
             "border-radius: 2px;"
-            )
+        )
         self.label_image.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
-            )
+        )
         self.text.setFont(inactive_track_font_style)
         self.text.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
-            )
+        )
 
 
     def set_playing_thumbnail_style(self):
+        self.set_playing_thumbnail_img()
+
         self.setStyleSheet(
             "background-color: #287DCC;"
             "border: 2px solid grey;"
             "border-radius: 2px;"
-            )
+        )
         self.label_image.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
-            )
+        )
         self.text.setFont(active_track_font_style)
         self.text.setStyleSheet(
             "border: 0px;"
             "border-radius: 0px;"
             "color: white;"
-            )
+        )
+
+
+    def set_default_thumbnail_img(self):
+        if self.thumbnail_type == "audio":
+            self.update_to_default_audio_img()
+        elif self.thumbnail_type == "video_failed":
+            self.update_to_default_video_img()
+
+    def set_playing_thumbnail_img(self):
+        if self.thumbnail_type == "audio":
+            self.update_to_playing_audio_img()
+        elif self.thumbnail_type == "video_failed":
+            self.update_to_playing_video_img()

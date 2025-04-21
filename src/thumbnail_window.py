@@ -83,10 +83,13 @@ class WidgetsWindow(QWidget):
         thumbnail_widget = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["widget"]
         if result == "audio":
             thumbnail_widget.update_to_default_audio_img()
+            thumbnail_widget.thumbnail_type = "audio"
         elif result == "failed":
             thumbnail_widget.update_to_default_video_img()
+            thumbnail_widget.thumbnail_type = "video_failed"
         else:
             thumbnail_widget.update_img(result)
+            thumbnail_widget.thumbnail_type = "video_completed" # not in use, yet
 
         if index > 0 and index % 20 == 0:
             save_thumbnail_history_json()

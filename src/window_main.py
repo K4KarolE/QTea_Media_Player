@@ -1,5 +1,3 @@
-import os
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import QApplication, QWidget
@@ -12,6 +10,7 @@ from .func_coll import(
     update_and_save_volume_slider_value,
     update_window_size_vars_from_saved_values
     )
+from .func_thumbnail import auto_thumbnails_removal_after_app_closure
 from .thread_add_media import ThreadAddMedia
 
 
@@ -90,6 +89,8 @@ class MyWindow(QWidget):
                 hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
                 hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
 
+    def closeEvent(self, a0):
+        auto_thumbnails_removal_after_app_closure()
 
     '''
         DRAG/DROP FILES, FOLDERS ON THE PLAYLISTS

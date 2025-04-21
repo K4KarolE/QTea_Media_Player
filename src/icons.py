@@ -25,10 +25,17 @@ class MyIcon():
         default_thumbnail_img_size = 50
         self.thumbnail_default = (QPixmap(f'skins/{cv.skin_selected}/window_icon.png')
                                   .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+
         self.thumbnail_default_video = (QPixmap(f'skins/{cv.skin_selected}/video.png')
                                   .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+        self.thumbnail_playing_video = (QPixmap(f'skins/{cv.skin_selected}/video_playing.png')
+                                        .scaledToWidth(default_thumbnail_img_size,Qt.TransformationMode.SmoothTransformation))
+
         self.thumbnail_default_audio= (QPixmap(f'skins/{cv.skin_selected}/audio.png')
                                         .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+        self.thumbnail_playing_audio = (QPixmap(f'skins/{cv.skin_selected}/audio_playing.png')
+                                        .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+        
 
         self.speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
         self.speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')

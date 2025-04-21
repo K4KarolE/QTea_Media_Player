@@ -360,3 +360,50 @@ def switch_all_pl_to_standard_from_thumbnails_view(triggered_via_purge_thumbnail
         # To make sure all playlist will be hidden with the standard pl "visible"
         else:
             switch_to_standard_pl(pl_name)
+
+#NONE
+def auto_thumbnails_removal_after_app_closure():
+    """ Auto thumbnail removal field validation in
+        window_settings.py / general_fields_validation()
+        cv.thumbnail_remove_older_than:
+        0 - every day
+        -1 = never
+    """
+    if cv.thumbnail_remove_older_than != -1:
+        try:
+            is_thumbnail_history_save_needed = False
+            keep_for_days = cv.thumbnail_remove_older_than * 60*60*24
+            remove_from_failed_list = []
+            remove_from_completed_list = []
+
+            # FAILED
+            for img_name in thumbnail_history["failed"]:
+                img_date = thumbnail_history["failed"][img_name]
+                if img_date <= current_time - keep_for_days:
+                    remove_from_failed_list.append(img_name)
+
+            if remove_from_failed_list:
+                for img_name in remove_from_failed_list:
+                    thumbnail_history.pop(img_name)
+                is_thumbnail_history_save_needed = True
+
+            # COMPLETED
+            for img_name in thumbnail_history["completed"]:
+                img_date = thumbnail_history["completed"][img_name]
+                if img_date <= current_time - keep_for_days:
+                    remove_from_completed_list.append(img_name)
+
+            if remove_from_completed_list:
+                for img_name in remove_from_completed_list:
+                    os.remove(Path(PATH_THUMBNAILS, img_name))
+                    thumbnail_history["completed"].pop(img_name)
+                is_thumbnail_history_save_needed = True
+
+            if is_thumbnail_history_save_needed:
+                save_thumbnail_history_json()
+
+        except:
+            MyMessageBoxError(
+                'Thumbnail removal',
+                'Sorry, something went wrong with the auto thumbnail removal.'
+            )
