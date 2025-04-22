@@ -108,7 +108,10 @@ class Data:
     thumbnail_pos_base_x: int = 5
     thumbnail_pos_base_y: int = 5
     thumbnail_remove_older_than: int = settings['general_settings']['thumbnail_remove_older_than']
-    scroll_bar_size: int = 10
+    if os_linux:
+        scroll_bar_size: int = 10
+    else:
+        scroll_bar_size: int = 15 # 10: barely visible
 
 
     '''
@@ -632,6 +635,7 @@ class Data:
             'queue_list_widget': '',
             'duration_list_widget': '',
             'last_selected_track_index': settings[pl_name]['last_track_index'],
+            'played_thumbnail_style_update_needed': False,
             'active_pl_sum_duration': 0,
             'thumbnail_window': '',
             'thumbnail_window_validation': {

@@ -4,7 +4,7 @@ from PyQt6.QtCore import Qt
 from .class_data import cv
 
 
-class MyIcon():
+class MyIcon:
     def __init__(self):
         self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.png')
 
@@ -22,6 +22,7 @@ class MyIcon():
         self.settings = QIcon(f'skins/{cv.skin_selected}/settings.png')
 
         self.thumbnail = QIcon(f'skins/{cv.skin_selected}/thumbnail.png')
+
         default_thumbnail_img_size = 50
         self.thumbnail_default = (QPixmap(f'skins/{cv.skin_selected}/window_icon.png')
                                   .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))

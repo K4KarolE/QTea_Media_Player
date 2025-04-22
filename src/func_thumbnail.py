@@ -9,7 +9,8 @@ from .class_data import (
     cv,
     PATH_THUMBNAILS,
     thumbnail_history,
-    save_thumbnail_history_json
+    save_thumbnail_history_json,
+    settings
     )
 from .func_coll import cur as sql_cursor
 from .thumbnail_widget import ThumbnailWidget
@@ -174,7 +175,7 @@ def update_thumbnail_support_vars_before_thumbnail_thread():
     cv.thumbnail_db_table = cv.active_db_table
     cv.thumbnail_pl_tracks_count = cv.active_pl_name.count()
 
-    cv.thumbnail_last_played_track_index = cv.active_pl_last_track_index
+    cv.thumbnail_last_played_track_index = settings[cv.active_db_table]['last_track_index']
     cv.thumbnail_last_played_track_index_is_valid = -1 < cv.thumbnail_last_played_track_index <=cv.thumbnail_pl_tracks_count-1
 
     cv.thumbnail_last_selected_track_index = cv.active_pl_name.currentRow()
@@ -202,8 +203,9 @@ def update_thumbnail_style_after_thumbnail_generation():
     widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
     if widget_dic:
         # PLAYED TRACK
-        if -1 < cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
-            widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
+        if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
+            if -1 < cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
+                widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
         # SELECTED TRACK
         if -1 < cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
             widget_dic[cv.thumbnail_last_selected_track_index]['widget'].set_selected_thumbnail_style()
@@ -280,11 +282,16 @@ def update_thumbnail_view_button_style_after_playlist_change():
 
 # PLAYING PL
 def update_playing_and_previous_thumbnail_style():
-    """ Updating thumbnail style after new track is started """
+    """ Updating thumbnail style after new track is started
+        in func_play_coll.py / play_track()
+    """
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
-        thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
-        thumbnail_widget_dic[cv.playing_pl_last_track_index]['widget'].set_default_thumbnail_style()
+        if cv.playing_track_index == cv.playing_pl_last_track_index:
+            thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
+        else:
+            thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
+            thumbnail_widget_dic[cv.playing_pl_last_track_index]['widget'].set_default_thumbnail_style()
 
 # ACTIVE PL
 def update_selected_and_played_and_previous_thumbnail_style():
@@ -302,9 +309,11 @@ def update_selected_and_played_and_previous_thumbnail_style():
         if -1 < cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
             thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
         # PLAYING
-        if cv.playing_track_index <= cv.active_pl_tracks_count-1 and cv.playing_track_index != cv.current_track_index:
-            thumbnail_widget_dic[cv.playing_track_index]['widget'].set_playing_thumbnail_style()
-        update_last_selected_track_dic_and_vars()
+        if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
+            played_track_index = settings[cv.active_db_table]['last_track_index']
+            if played_track_index <= cv.active_pl_tracks_count-1 and played_track_index != cv.current_track_index:
+                thumbnail_widget_dic[played_track_index]['widget'].set_playing_thumbnail_style()
+    update_last_selected_track_dic_and_vars()
 
 # ACTIVE PL
 def update_last_selected_track_dic_and_vars():

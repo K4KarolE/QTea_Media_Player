@@ -23,6 +23,7 @@ from .func_coll import (
 from .func_thumbnail import update_playing_and_previous_thumbnail_style
 
 
+
 class PlaysFunc:
 
     def play_track(self, playing_track_index=None):
@@ -39,6 +40,11 @@ class PlaysFunc:
         
         # playing_track_index --> cv.playing_track_index
         self.generate_playing_track_index(playing_track_index)
+
+        # TO MAKE SURE UN-PLAYED TRACK`S THUMBNAIL VIEW STYLE IS CORRECT
+        # SCENARIO: app started >> non-playing playlist is active + one of the row is selected
+        # >> switch to thumbnail view >> only the selected thumbnail style is in use
+        cv.playlist_widget_dic[cv.playing_db_table]['played_thumbnail_style_update_needed'] = True
         
         ''' QUEUE MANAGEMENT '''
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
@@ -67,11 +73,11 @@ class PlaysFunc:
                 self.update_new_track_style()
             else:
                 update_queued_track_style(cv.playing_pl_last_track_index)
-            update_playing_and_previous_thumbnail_style()
 
+            update_playing_and_previous_thumbnail_style()
             cv.playing_pl_last_track_index = cv.playing_track_index
             save_playing_playlist_and_playing_last_track_index()
-        
+
         else:
             if cv.playing_pl_tracks_count: # last played track index > playlist amount
                 cv.playing_pl_last_track_index = 0
