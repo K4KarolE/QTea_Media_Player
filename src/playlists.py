@@ -47,6 +47,7 @@ class MyPlaylists(QTabWidget):
         self.setCurrentIndex(cv.playing_playlist_index)
         self.currentChanged.connect(self.active_playlist_changed)
         self.playlists_created_at_first_run = True
+        self.playlist_list_widgets_list = ['name_list_widget', 'queue_list_widget', 'duration_list_widget']
         cv.active_playlist_index = self.currentIndex()
         update_active_playlist_vars_and_widgets()
 
@@ -114,16 +115,10 @@ class MyPlaylists(QTabWidget):
     def row_changed_sync_pl(self, list_widget_row_changed):
         current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
         cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
-        for item in current_playlist_list_widgets_dic:
-                if item not in [
-                    list_widget_row_changed,
-                    'last_selected_track_index',
-                    'active_pl_sum_duration',
-                    'thumbnail_window',
-                    'thumbnail_widgets_dic',
-                    'thumbnail_window_validation',
-                    'line_edit']:
-                    current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
+        list_widgets_list_to_sync = self.playlist_list_widgets_list.copy()
+        list_widgets_list_to_sync.remove(list_widget_row_changed)
+        for item in list_widgets_list_to_sync:
+            current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
 
     
     def playlists_creation(self):
@@ -186,7 +181,7 @@ class MyPlaylists(QTabWidget):
             scroll_bar_duration_ver.setStyleSheet(
                             "QScrollBar::vertical"
                                 "{"
-                                "width: 10px;"
+                                f"width: {cv.scroll_bar_size}px;"
                                 "}"               
                             )
             
@@ -224,8 +219,7 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.setFixedWidth(70)
 
             cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow()
-            thumbnail_window = cv.playlist_widget_dic[pl]['thumbnail_window']
-            thumbnail_window.hide()
+            cv.playlist_widget_dic[pl]['thumbnail_window'].hide()
 
 
             layout = QHBoxLayout()
@@ -234,7 +228,7 @@ class MyPlaylists(QTabWidget):
             layout.addWidget(name_list_widget, 84)
             layout.addWidget(queue_list_widget, 6)
             layout.addWidget(duration_list_widget, 10)
-            layout.addWidget(thumbnail_window)
+            layout.addWidget(cv.playlist_widget_dic[pl]['thumbnail_window'])
 
 
             frame = QFrame()
