@@ -13,7 +13,7 @@
 '''
 
 import logging
-from time import perf_counter
+from time import perf_counter, time
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -36,4 +36,10 @@ def logger_runtime(func):
 
 def logger_basic(msg):
     logger.info(msg)
+    if msg == 'App started':
+        logger.app_started = time()
+    elif msg == 'Window displayed':
+        time_diff = str(time() - logger.app_started)[0:5]
+        msg = f'Launch time: {time_diff}'
+        logger.info(msg)
         
