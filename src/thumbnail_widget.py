@@ -16,7 +16,7 @@ class ThumbnailWidget(QWidget):
         super().__init__()
         self.index = index
         self.thumbnail_type = None
-        self.setParent(cv.playlist_widget_dic[cv.active_db_table]["thumbnail_window"].widgets_window)
+        self.setParent(cv.playlist_widget_dic[cv.thumbnail_db_table]["thumbnail_window"].widgets_window)
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setMinimumWidth(cv.thumbnail_width)
