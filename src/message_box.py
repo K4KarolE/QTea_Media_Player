@@ -51,9 +51,9 @@ class MyMessageBoxConfReq(QMessageBox):
 
 
 class MyMessageBoxConfirmation(QMessageBox):
-    def __init__(self, message):
+    def __init__(self, window_title, message):
         super().__init__()
-        self.setWindowTitle('All set')
+        self.setWindowTitle(window_title)
         self.setWindowIcon(br.icon.settings)
         self.setIcon(QMessageBox.Icon.Information)
         self.setText(message)

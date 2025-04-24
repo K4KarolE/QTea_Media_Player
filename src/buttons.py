@@ -14,6 +14,7 @@ from .func_coll import (
     connection, # db
     )
 from .func_thumbnail import (
+    msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished,
     start_thumbnail_thread_grouped_action,
     stop_thumbnail_thread,
     switch_to_standard_active_playlist_from_thumbnail_pl,
@@ -167,6 +168,7 @@ class MyButtons(QPushButton):
                 start_thumbnail_thread_grouped_action()
                 self.set_style_thumbnail_button_active()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item()
+                msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished()
             else:
                 cv.active_pl_name.show()
                 cv.active_pl_queue.show()

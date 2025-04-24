@@ -320,7 +320,18 @@ def update_last_selected_track_dic_and_vars():
     cv.playlist_widget_dic[cv.active_db_table]['last_selected_track_index'] = cv.current_track_index
     cv.active_pl_last_selected_track_index = cv.current_track_index
 
-# NONE
+# BOTH
+def msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished():
+    if cv.add_track_to_db_table == cv.thumbnail_db_table:
+        if br.window.thread_add_media.isRunning():
+            MyMessageBoxConfirmation(
+                'Adding media is unfinished',
+                '\nPlease note, QTea is still adding media to the playlist.\n\n'
+                'The thumbnail view not mirrors the standard playlist completely.\n\n'
+                'Come back to the thumbnail view later for the full list.'
+                )
+
+    # NONE
 def remove_all_thumbnails_and_clear_history():
     stop_thumbnail_thread()
     switch_all_pl_to_standard_from_thumbnails_view(True)
@@ -333,6 +344,7 @@ def remove_all_thumbnails_and_clear_history():
         thumbnail_history["completed"] = {}
         save_thumbnail_history_json()
         MyMessageBoxConfirmation(
+            'All set',
             'Thumbnails have been removed successfully.')
     except:
         MyMessageBoxError(
