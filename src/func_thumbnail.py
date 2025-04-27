@@ -33,7 +33,7 @@ def start_thumbnail_thread_grouped_action():
     """ Actioned via the Thumbnail View button
         Standard playlist >> Thumbnail playlist
     """
-    if is_new_thumbnail_generation_needed():
+    if is_new_thumbnail_generation_necessary():
         stop_another_playlist_thumbnail_thread()
         update_thumbnail_support_vars_before_thumbnail_thread()
         remove_thumbnail_widgets_window_and_thumbnail_dic()
@@ -48,8 +48,8 @@ def start_thumbnail_thread_grouped_action():
 
 
 # ACTIVE PL / start_thumbnail_thread_grouped_action()
-def is_new_thumbnail_generation_needed():
-    """ The "thumbnail_generation_completed" value will be set True
+def is_new_thumbnail_generation_necessary():
+    """ The "thumbnail_generation_needed" value will be set False
         after a full completion of the thumbnail gen. thread / all
         the thumbnails are generated for the thumbnail playlist
     """
@@ -58,11 +58,10 @@ def is_new_thumbnail_generation_needed():
         return False
     elif not cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']:
         return True
-    elif (thumbnail_window_validation['tracks_count'] != cv.active_pl_tracks_count or
+    elif (thumbnail_window_validation['tracks_count'] != cv.active_pl_name.count() or
           thumbnail_window_validation['duration_sum'] != cv.active_pl_sum_duration or
           thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
-          not thumbnail_window_validation['thumbnail_generation_completed']):
-        thumbnail_window_validation['thumbnail_generation_completed'] = False
+          thumbnail_window_validation['thumbnail_generation_needed']):
         return True
     else: return False
 
@@ -368,7 +367,7 @@ def update_thumbnail_view_button_style_after_playlist_change():
 
 
 # PLAYING PL
-def update_playing_and_previous_thumbnail_style():
+def update_thumbnail_style_at_play_track():
     """ Updating thumbnail style after new media is started
         in func_play_coll.py / play_track()
     """
@@ -382,15 +381,15 @@ def update_playing_and_previous_thumbnail_style():
 
 
 # ACTIVE PL
-def update_selected_and_played_and_previous_thumbnail_style():
+def update_thumbnail_style_at_row_change():
     """ Updating thumbnail style after new track/row is selected
         Scenarios:
         - Standard playlist change >> thumbnail playlist style update
         - Thumbnail playlist change (new widget selected / double-clicked) >>
             standard playlist change >> thumbnail playlist style update
     """
-    if not is_new_thumbnail_generation_needed():
-        thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+    if thumbnail_widget_dic:
         # CURRENT
         thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
         # PREVIOUS

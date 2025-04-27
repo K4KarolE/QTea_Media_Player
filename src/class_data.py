@@ -620,10 +620,22 @@ class Data:
 
 
     ''' PLAYLISTS '''
-    '''
-        The dictionary used to:
+    ''' The dictionary used to:
         - create playlists in src / playlists.py
-        - be able to access to the right widget
+        - be able to access to the right widget, support variable
+    'name_list_widget', 'queue_list_widget', 'duration_list_widget':
+        Standard playlist`s list widget elements
+        A playlist row consists all 3 list types next to each other
+    'last_selected_track_index':
+        Thumbnail style update support var
+    'played_thumbnail_style_update_needed':
+        To make sure un-played track`s thumbnail view style is correct
+        SCENARIO: app started >> non-playing playlist is active + one of the row is selected
+        >> switch to thumbnail view >> only the selected thumbnail style is in use
+    'thumbnail_window_validation':
+        Once the Thumbnail View button is triggered, the current playlist`s properties saved
+        in this dictionary to able to determine, if later there is any change made on the playlist
+        which requires new thumbnail generation
     '''
     playlist_widget_dic = {}
 
@@ -642,7 +654,7 @@ class Data:
                 'tracks_count': 0,
                 'duration_sum': 0,
                 'thumbnail_img_size': 0,
-                'thumbnail_generation_completed': False
+                'thumbnail_generation_needed': True
             },
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': ''     # used in the settings window

@@ -174,8 +174,11 @@ class MyButtons(QPushButton):
                 cv.active_pl_queue.show()
                 cv.active_pl_duration.show()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
-                self.set_style_settings_button()
                 stop_thumbnail_thread()
+                self.set_style_settings_button()
+                # Scroll to the current row
+                # Otherwise the top of the playlist is displayed
+                cv.active_pl_duration.scrollToItem(cv.active_pl_duration.item(cv.active_pl_last_selected_track_index))
 
 
     ''' BUTTON PLAYLIST - THUMBNAIL VIEW - SET STYLE '''
