@@ -277,6 +277,12 @@ when the `Previous track` button/hotkey is triggered
     - Audio is not playing for a while (2-10s)
 - Solution: saving the current player`s position at pause and apply it at the continue phase
 
+### Audio device change - LINUX only
+- Issue: Switching audio device on PC/laptop >> **freezes the app, no error message.
+  - ** src / av_player updated to avoid
+  - It is working without any issue with PyQt(6.9.0).
+- Solution: right-click on the video and select the preferred audio device or restart the app
+
 ### Could not find solution yet
 - Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 
