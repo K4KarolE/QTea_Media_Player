@@ -314,6 +314,7 @@ def update_thumbnail_support_vars_before_playlist_clear():
     cv.active_pl_tracks_count = 0
     cv.current_track_index = -1
     cv.active_pl_last_track_index = -1
+    cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed'] = False
     cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'] = {}
 
 
