@@ -42,7 +42,9 @@ class AVPlayer(QWidget):
         self.player.setVideoOutput(self.video_output)
         self.timer = QTimer()   # used to display volume, track title on video
         # AUDIO
-        self.set_audio_output()
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(cv.volume)
         # BASE PLAY
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
         self.player.play()
@@ -72,6 +74,11 @@ class AVPlayer(QWidget):
                 'menu_sub': '',
                 'audio_tracks': []
                 },
+            'Audio Device': {
+                'icon': None,
+                'menu_sub': '',
+                'audio_devices': []
+            },
             'Subtitle': {
                 'icon': None,
                 'menu_sub': '',
@@ -93,9 +100,14 @@ class AVPlayer(QWidget):
         the output device changed
         example: speaker >> headset
         """
-        self.audio_output = QAudioOutput()
-        self.player.setAudioOutput(self.audio_output)
-        self.audio_output.setVolume(cv.volume)
+        # PyQt6 - Linux issue
+        # Working in Windows or PyQt(6.9.0)
+        # More info in Readme
+        if not cv.os_linux:
+            self.audio_output = QAudioOutput()
+            self.player.setAudioOutput(self.audio_output)
+            self.audio_output.setVolume(cv.volume)
+
 
 
     def eventFilter(self, source, event):
@@ -130,6 +142,20 @@ class AVPlayer(QWidget):
                         qaction_to_add = QAction(audio_track_title, self)
                     self.context_menu_dic['Audio Track']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Audio Track']['audio_tracks'].append(audio_track_title)
+                    counter += 1
+
+
+                # AUDIO DEVICES
+                counter = 0
+                for audio_device in self.media_devices.audioOutputs():
+
+                    audio_device_title = audio_device.description()
+                    if audio_device == self.audio_output.device():
+                        qaction_to_add = QAction(br.icon.selected, audio_device_title, self)
+                    else:
+                        qaction_to_add = QAction(audio_device_title, self)
+                    self.context_menu_dic['Audio Device']['menu_sub'].addAction(qaction_to_add)
+                    self.context_menu_dic['Audio Device']['audio_devices'].append(audio_device_title)
                     counter += 1
 
 
@@ -202,6 +228,7 @@ class AVPlayer(QWidget):
 
     def context_menu_clicked(self, q):
         audio_tracks_list = self.context_menu_dic['Audio Track']['audio_tracks']
+        audio_devices_list = self.context_menu_dic['Audio Device']['audio_devices']
         subtitle_tracks_list = self.context_menu_dic['Subtitle']['subtitle_tracks']
         screens_list = self.context_menu_dic['Full Screen']['screens']
 
@@ -227,6 +254,12 @@ class AVPlayer(QWidget):
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
             cv.audio_track_played = audio_tracks_list.index(q.text())
             audio_tracks_list.clear()
+
+        elif q.text() in audio_devices_list:
+            audio_device_index = audio_devices_list.index(q.text())
+            selected_device = self.media_devices.audioOutputs()[audio_device_index]
+            self.audio_output.setDevice(selected_device)
+            audio_devices_list.clear()
 
         elif q.text() in subtitle_tracks_list or q.text() == 'Disable':
             if q.text() in subtitle_tracks_list:
