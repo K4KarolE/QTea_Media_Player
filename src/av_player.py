@@ -150,6 +150,8 @@ class AVPlayer(QWidget):
                 for audio_device in self.media_devices.audioOutputs():
 
                     audio_device_title = audio_device.description()
+                    # "if audio_device.isDefault()" - not suitable when PC output != QTea output
+                    # always the PC device will be marked as selected in the context menu
                     if audio_device == self.audio_output.device():
                         qaction_to_add = QAction(br.icon.selected, audio_device_title, self)
                     else:
