@@ -1,6 +1,6 @@
 ## Main features
 - Thirty playlists supported by default. More can be generated.
-- Playlists` thumbnail view.
+- Thumbnail view.
 - Cross playlists queue management with dedicated window.
 - Cross playlists search.
 - Drag & drop - files, folders.
@@ -12,7 +12,8 @@
 - Hotkeys, right click menus, selectables:
     - Audio and subtitle tracks
     - Full screen on the current display or on the selected display
-- QTea media player can be a viable option for highly organised contentgoers and house party DJs. Inspired by `Winamp` and `VLC media player`.
+- QTea media player can be a viable option for highly organised contentgoers and house party DJs.
+Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 
 ## Guide
 - [Screenshots](#screenshots)
@@ -25,6 +26,7 @@
    - [Hotkeys](#hotkeys)
    - [Playlists](#playlists)
 - [Active and Playing playlists separation](#active-and-playing-playlists-separation)
+- [Thumbnail View](#thumbnail-view)
 - [Increase the number of playlists beyond the default](#steps-to-increase-the-number-of-playlists-beyond-the-default--to-generate-new-playlist-database)
 - [Other Behaviour](#other-behaviour)
     - Volume
@@ -71,8 +73,9 @@
 
 
 ## Terminology
-- `Playing playlist` = playlist where the current track is in the playing or paused state / playlist where the last track was played.
-- `Active playlist` = playlist which is currently selected / displayed.
+- `Playing playlist`: playlist, where the current track is in the playing or paused state / playlist where the last track was played.
+- `Active playlist`: playlist, which is currently selected / displayed.
+- `Thumbnail playlist`: playlist, where the thumbnail generation thread is running on
 
 ## Buttons
 ### Play buttons
@@ -93,7 +96,9 @@ when the `Previous track` button/hotkey is triggered
 - `AD - Add Directory`: adding all the media files listed in the selected directory and subdirectories.
 - `RT - Remove Track`: removes the current/selected track.
 - `CP - Clear Playlist`: removes all the items from the current playlist.
+- `Q`: opens the `Queue and Search Window`
 - `Settings button`: opens the `Settings window`.
+- `Thumbnail View`: switches between the standard and the `Thumbnail View` playlists
 - Tooltip is displayed when the mouse moved over the current button.
 
 ## Settings window
@@ -211,6 +216,35 @@ when the `Previous track` button/hotkey is triggered
     - All the above behaviours are actioned on the `queued tracks playlist` (apart from shuffle)
 - Window title = Playing playlist title | Track title
 
+## Thumbnail View
+### General
+- If `FFmpeg` is installed, the `Thumbnail View` button is active under the Playlist area.
+  - Otherwise, the button is inactive and "FFmpeg installation needed" message is displayed
+once the cursor is over the button.
+  - There is more information below in the `Requirements` section.
+- Adding/removing media to/from a playlist where the `Thumbnail View` is active: automatically switching back to the 
+standard playlist view.
+- Once the `Thumbnail View` button is clicked, the thumbnail generation is running for the current playlist until
+  - It is completed.
+  - Or the `Thumbnail View` button is clicked again "on" the same or "on" another playlist.
+- The `Thumbnail View` and standard playlist view are in sync regarding the selection and currently playing and
+selected track style.
+### Thumbnail generation
+- Every audio file has the same, default audio thumbnail
+- Every new thumbnail image is placed in the `thumbnails` folder with a unique title: 
+"filename.ext"."raw duration"."image size".jpg
+  - `Image title: current time` key-value pair is added to the `thumbnails / _thumbnail_history.json / completed`.
+  - If the thumbnail generation was unsuccessful, it is logged in the `thumbnails / _thumbnail_history.json / failed` 
+  with the `image title: current time` key-value pair.
+- Every thumbnail generation process starts by checking if the image title(key) exists in the 
+`_thumbnail_history.json / completed` or in the `failed` dictionary before the actual thumbnail image generation.
+  - In `failed`: not trying to generate thumbnail image, `image title: current time` value will be updated with the current time.
+  - In `completed`: checks if the file exists.
+    - Yes: image will be used for the thumbnail, `image title: current time` value will be updated with the current time.
+    - No: try to generate a new thumbnail image
+- The "image taken from point" is video duration dependent
+  - Logic in `src / func_thumbnails / get_time_frame_taken_from()`
+
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Close the app if it is running.
 2. Rename the current playlist database: `playlist.db`.
@@ -312,4 +346,4 @@ when the `Previous track` button/hotkey is triggered
 - Tested on Windows 11, Linux Mint 22
 
 ## Thank you all who worked on the modules used in this project!
-## Thank you all Winamp and VLC player contributors!
+## Thank you all Winamp, VLC player and Total/Double Commander contributors!
