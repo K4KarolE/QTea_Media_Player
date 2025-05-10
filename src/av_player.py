@@ -11,10 +11,11 @@ import ctypes
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
-    update_raw_current_duration_db,
-    generate_duration_to_display
+    generate_duration_to_display,
+    play_track_with_default_player_via_context_menu,
+    update_raw_current_duration_db
     )
-
+from .message_box import MyMessageBoxError
 
 '''
 PLAY EMPTY SOUND WORKAROUND
@@ -69,6 +70,7 @@ class AVPlayer(QWidget):
             'Next':{'icon': br.icon.next},
             'Mute - Toggle':{'icon': br.icon.speaker},
             'Alter - Toggle':{'icon': br.icon.alter},
+            'Play track with default player': {'icon': br.icon.start_with_default_player},
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',
@@ -220,7 +222,7 @@ class AVPlayer(QWidget):
             if event.key() == Qt.Key.Key_Escape:
                 if not self.video_area_visible:
                     br.button_toggle_video.button_toggle_video_clicked()
-                self.video_output.setFullScreen(0)
+                self.video_output.setFullScreen(False)
                 self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
                 
@@ -251,6 +253,15 @@ class AVPlayer(QWidget):
             
         elif q.text() == list(self.context_menu_dic)[5]:
             br.window.window_size_toggle_action()
+
+        elif q.text() == list(self.context_menu_dic)[6]:
+            try:
+                play_track_with_default_player_via_context_menu(cv.playing_track_index, cv.playing_db_table)
+            except:
+                MyMessageBoxError(
+                    'Not able to play the file',
+                    'The file or the file`s home folder has been renamed / removed.  '
+                )
         
         elif q.text() in audio_tracks_list:
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
@@ -333,13 +344,13 @@ class AVPlayer(QWidget):
         if not self.video_area_visible:
             br.button_toggle_video.button_toggle_video_clicked()
         if self.video_output.isFullScreen():
-            self.video_output.setFullScreen(0)
+            self.video_output.setFullScreen(False)
             self.video_output.move(0, 0)
             self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
             cv.screen_index_for_fullscreen = -1
         else:
             self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
-            self.video_output.setFullScreen(1)
+            self.video_output.setFullScreen(True)
             self.video_output.setCursor(Qt.CursorShape.BlankCursor)
     
 
@@ -347,9 +358,9 @@ class AVPlayer(QWidget):
         """ Used in the right-clicked on the
             video area / Full Screen / available screen(s)
         """
-        self.video_output.setFullScreen(0)
+        self.video_output.setFullScreen(False)
         self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
-        self.video_output.setFullScreen(1)
+        self.video_output.setFullScreen(True)
     
 
     """
@@ -410,7 +421,7 @@ class AVPlayer(QWidget):
     def screen_saver_on(self):
         if not cv.os_linux:
             ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
-    
+
     def screen_saver_off(self):
         if not cv.os_linux:
             ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
