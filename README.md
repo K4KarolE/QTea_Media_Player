@@ -230,7 +230,7 @@ standard playlist view.
 - The `Thumbnail View` and standard playlist view are in sync regarding the selection and currently playing and
 selected track style.
 ### Thumbnail generation
-- Every audio file has the same, default audio thumbnail
+- Every audio file has the same, default audio thumbnail.
 - Every new thumbnail image is placed in the `thumbnails` folder with a unique title: 
 "filename.ext"."raw duration"."image size".jpg
   - `Image title: current time` key-value pair is added to the `thumbnails / _thumbnail_history.json / completed`.
@@ -241,8 +241,8 @@ selected track style.
   - In `failed`: not trying to generate thumbnail image, `image title: current time` value will be updated with the current time.
   - In `completed`: checks if the file exists.
     - Yes: image will be used for the thumbnail, `image title: current time` value will be updated with the current time.
-    - No: try to generate a new thumbnail image
-- The "image taken from point" is video duration dependent
+    - No: try to generate a new thumbnail image.
+- The "image taken from point" is video duration dependent.
   - Logic in `src / func_thumbnails / get_time_frame_taken_from()`
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
