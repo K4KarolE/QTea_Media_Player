@@ -171,7 +171,7 @@ class MyButtons(QPushButton):
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
                 start_thumbnail_thread_grouped_action()
                 self.set_style_thumbnail_button_active()
-                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item()
+                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
                 msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished()
             else:
                 cv.active_pl_name.show()

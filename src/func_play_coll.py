@@ -128,9 +128,12 @@ class PlaysFunc:
         if br.av_player.video_output.isVisible():
             br.av_player.text_display_on_video(2000, cv.track_title)
         
-        # SCROLL TO PLAYING TRACK IF IT WOULD BE
-        # OUT OF THE VISIBLE WINDOW/LIST
-        cv.playing_pl_name.scrollToItem(cv.playing_pl_name.item(cv.playing_track_index))
+        # SCROLL TO PLAYING TRACK
+        # STANDARD PLAYLIST
+        item = cv.playing_pl_name.item(cv.playing_track_index)
+        cv.playing_pl_name.scrollToItem(item)
+        # THUMBNAIL PLAYLIST
+        cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_window'].scroll_to_current_item_playing_pl()
 
         # SCREEN SAVER SETTINGS UPDATE
         br.av_player.screen_saver_on_off()
