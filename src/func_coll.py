@@ -7,8 +7,9 @@ from .class_data import save_json
 from .class_data import cv, settings
 from .message_box import MyMessageBoxError
 
-import sqlite3
 from pathlib import Path
+import os
+import sqlite3
 import subprocess
 
 
@@ -169,8 +170,9 @@ def generate_track_list_detail(db_track_record):
     # [0]:row, [1]:duration, [2]:current_duration, [3]:path
     track_row_db = db_track_record[0]
     track_name = f'{db_track_record[0]}. {Path(db_track_record[3]).stem}'
+    track_parent_dict = generate_track_parent_dict(db_track_record[3])
     duration_to_display = generate_duration_to_display(db_track_record[1])
-    return track_row_db, track_name, duration_to_display
+    return track_row_db, track_name, track_parent_dict, duration_to_display
 
 
 def add_media_grouped_actions(track_path, raw_duration):
@@ -188,24 +190,31 @@ def add_media_grouped_actions(track_path, raw_duration):
     save_db()
 
     track_name = Path(track_path).stem
+    track_parent_dict = generate_track_parent_dict(track_path)
     row_id = cv.add_track_to_pl_name.count() + 1
     new_track_name = f'{row_id}. {track_name}'
 
-    add_new_list_item(new_track_name, cv.add_track_to_pl_name)
+    add_new_list_item(new_track_name, cv.add_track_to_pl_name, None, track_parent_dict)
     add_new_list_item('', cv.add_track_to_pl_queue)
     add_new_list_item(duration, cv.add_track_to_pl_duration)
+
+
+def generate_track_parent_dict(track_path):
+    dict_list = os.path.dirname(track_path).split('/')
+    return f'{dict_list[-2][0:20]} / {dict_list[-1][0:20]}'
 
 
 def is_active_and_add_to_track_playlist_same():
     return cv.add_track_to_pl_name == cv.active_pl_name
 
 
-def add_new_list_item(new_item, list_widget, align_center = None):
+def add_new_list_item(new_item, list_widget, align_center = None, track_parent_dict = None):
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
 
     list_item = QListWidgetItem(new_item, list_widget)
+    list_item.track_parent_dict = track_parent_dict
     list_item.setSizeHint(list_item_size)
     list_item_style_update(
         list_item,
@@ -502,7 +511,7 @@ def remove_track_from_playlist():
     cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
     playlist = cur.fetchall()
     for item in playlist:
-        track_row_db, list_name, duration = generate_track_list_detail(item)
+        track_row_db, list_name, track_parent_dict, duration = generate_track_list_detail(item)
         cv.active_pl_name.item(track_row_db-1).setText(list_name)
 
     cv.active_pl_tracks_count = cv.active_pl_name.count()

@@ -195,6 +195,7 @@ def thumbnail_widget_resize_and_move_to_pos():
             thumbnail_widget_dic[thumbnail_index]["widget"].resize(cv.thumbnail_new_width, cv.thumbnail_height)
             thumbnail_counter += 1
         update_window_widgets_size(thumbnail_pos_y)
+        scroll_to_active_item_thumbnail_pl()
 
 
 # ACTIVE & THUMBNAIL PL / thumbnail_widget_resize_and_move_to_pos()
@@ -241,6 +242,10 @@ def update_thumbnail_style_after_thumbnail_generation():
         if -1 < cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
             widget_dic[cv.thumbnail_last_selected_track_index]['widget'].set_selected_thumbnail_style()
 
+# THUMBNAIL PL
+def scroll_to_active_item_thumbnail_pl():
+    if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']:
+        cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
 
 
 

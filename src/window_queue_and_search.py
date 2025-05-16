@@ -348,14 +348,16 @@ class MyQueueAndSearchWindow(QWidget):
                 name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
                 for track_index in range(0, name_list_widget.count()):
                     track_title = name_list_widget.item(track_index).text()
-                    if self.search_criteria in track_title.lower():
+                    track_parent_dict = name_list_widget.item(track_index).track_parent_dict
+                    if (self.search_criteria in track_title.lower() or
+                        self.search_criteria in track_parent_dict.lower()):
                         queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
                         queue_number = queue_list_widget.item(track_index).text()
                         if queue_number:
                             cv.search_result_queued_tracks_index_list.append(result_counter)
 
                         cv.search_result_dic[result_counter] = {
-                            'track_title': track_title,
+                            'track_title': f'{track_parent_dict} - {track_title}',
                             'playlist': playlist,
                             'track_index': track_index,
                             'queue_number': queue_number

@@ -24,6 +24,7 @@ from .func_coll import (
     update_active_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
+    scroll_to_active_item_thumbnail_pl,
     thumbnail_repositioning_after_playlist_change,
     update_thumbnail_style_at_row_change,
     update_thumbnail_view_button_style_after_playlist_change
@@ -109,6 +110,7 @@ class MyPlaylists(QTabWidget):
             cv.shuffle_played_tracks_list.clear()
             thumbnail_repositioning_after_playlist_change()
             update_thumbnail_view_button_style_after_playlist_change()
+            scroll_to_active_item_thumbnail_pl()
     
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''
@@ -247,8 +249,8 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0}".format(pl))
             playlist = cur.fetchall()
             for item in playlist:
-                rack_row_db, track_name, duration = generate_track_list_detail(item)
-                add_new_list_item(track_name, name_list_widget)
+                track_row_db, track_name, track_parent_dict, duration = generate_track_list_detail(item)
+                add_new_list_item(track_name, name_list_widget, None, track_parent_dict)
                 add_new_list_item('', queue_list_widget)
                 add_new_list_item(duration, duration_list_widget)
                 cv.playlist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
@@ -337,8 +339,8 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0} WHERE row_id >= {1} AND row_id <= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
             playlist = cur.fetchall()
             for item in playlist:
-                rack_row_db, list_name, duration = generate_track_list_detail(item)
-                cv.active_pl_name.item(rack_row_db-1).setText(list_name)
+                track_row_db, list_name, track_parent_dict, duration = generate_track_list_detail(item)
+                cv.active_pl_name.item(track_row_db-1).setText(list_name)
             
 
             if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(prev_row_id, new_row_id + 1):
@@ -358,8 +360,8 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0} WHERE row_id <= {1} AND row_id >= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
             playlist = cur.fetchall()
             for item in playlist:
-                rack_row_db, list_name, duration = generate_track_list_detail(item)
-                cv.active_pl_name.item(rack_row_db-1).setText(list_name)
+                track_row_db, list_name, track_parent_dict, duration = generate_track_list_detail(item)
+                cv.active_pl_name.item(track_row_db-1).setText(list_name)
             
             if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id, prev_row_id + 1):
                 cv.playing_pl_last_track_index += 1

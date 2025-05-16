@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QScrollBar
     )
 
+from .class_bridge import br
 from .class_data import cv
 from .func_thumbnail import thumbnail_widget_resize_and_move_to_pos, save_thumbnail_history_json
 from .thread_thumbnail import ThreadThumbnail
@@ -69,7 +70,10 @@ class ThumbnailMainWindow(QScrollArea):
         thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
         if thumbnail_widget_dic:
             thumbnail_widget = thumbnail_widget_dic[cv.playing_track_index]['widget']
-            self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
+            min_pos = self.scroll_bar_ver.value()
+            max_pos = self.scroll_bar_ver.value() + br.playlists_all.height() - cv.thumbnail_height
+            if not thumbnail_widget.y() in range(min_pos, max_pos):
+                self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
 
 
 
