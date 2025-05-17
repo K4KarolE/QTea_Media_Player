@@ -405,7 +405,8 @@ class Data:
     playlist_select_prev_pl: str = settings['hotkey_settings']['playlist_select_prev_pl']
     playlist_select_next_pl: str = settings['hotkey_settings']['playlist_select_next_pl']
     queue_toggle: str = settings['hotkey_settings']['queue_toggle']
-    queue_and_search_window: str = settings['hotkey_settings']['queue_and_search_window']
+    queue_window: str = settings['hotkey_settings']['queue_window']
+    search_window: str = settings['hotkey_settings']['search_window']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -558,9 +559,14 @@ class Data:
             'value': queue_toggle,
             'line_edit_widget': ''
         },
-        'queue_and_search_window': {
-            'text': 'Queue & Search window',
-            'value': queue_and_search_window,
+        'queue_window': {
+            'text': 'Show Queue window',
+            'value': queue_window,
+            'line_edit_widget': ''
+        },
+        'search_window': {
+            'text': 'Show Search window',
+            'value': search_window,
             'line_edit_widget': ''
         }
     }

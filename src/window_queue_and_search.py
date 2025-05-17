@@ -51,11 +51,12 @@ class MyQueueAndSearchWindow(QWidget):
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
         TABS_HEIGHT = int(WINDOW_HEIGHT - TABS_POS_Y *2)
-        tabs = QTabWidget()
-        tabs.setFont(QFont('Verdana', 10, 500))
-        tabs.resize(TABS_WIDTH, TABS_HEIGHT) 
-        tabs.move(TABS_POS_X, TABS_POS_Y)
-        tabs.setStyleSheet(
+
+        self.tabs = QTabWidget()
+        self.tabs.setFont(QFont('Verdana', 10, 500))
+        self.tabs.resize(TABS_WIDTH, TABS_HEIGHT)
+        self.tabs.move(TABS_POS_X, TABS_POS_Y)
+        self.tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
                             "background-color: #287DCC;" 
@@ -147,7 +148,7 @@ class MyQueueAndSearchWindow(QWidget):
                         )
         frame.setLayout(layout)
 
-        tabs.addTab(frame, 'Queue')
+        self.tabs.addTab(frame, 'Queue')
 
 
         '''
@@ -256,7 +257,7 @@ class MyQueueAndSearchWindow(QWidget):
                         )
         frame_search.setLayout(layout_search_base)
 
-        tabs.addTab(frame_search, 'Search')
+        self.tabs.addTab(frame_search, 'Search')
 
 
         '''
@@ -265,7 +266,7 @@ class MyQueueAndSearchWindow(QWidget):
         #################################
         '''
         layout_window = QVBoxLayout(self)
-        layout_window.addWidget(tabs)
+        layout_window.addWidget(self.tabs)
 
 
     ''' QUEUE FUNCS '''
@@ -369,7 +370,7 @@ class MyQueueAndSearchWindow(QWidget):
         for item in cv.search_result_dic:
             track_title = cv.search_result_dic[item]['track_title']
             add_new_list_item(track_title, cv.search_title_list_widget)
-            
+
             playlist = cv.search_result_dic[item]['playlist']
             track_index = cv.search_result_dic[item]['track_index']
             queue_number = cv.search_result_dic[item]['queue_number']
@@ -377,3 +378,13 @@ class MyQueueAndSearchWindow(QWidget):
                 add_new_list_item(queue_number, cv.search_queue_list_widget, True)
             else:
                 add_new_list_item('', cv.search_queue_list_widget, True)
+
+
+    def show_queue_tab(self):
+        self.show()
+        self.tabs.setCurrentIndex(0)
+
+
+    def show_search_tab(self):
+        self.show()
+        self.tabs.setCurrentIndex(1)

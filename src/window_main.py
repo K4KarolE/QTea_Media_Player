@@ -67,7 +67,8 @@ class MyWindow(QWidget):
         'playlist_select_prev_pl': self.playlist_select_prev_pl_action,
         'playlist_select_next_pl': self.playlist_select_next_pl_action,
         'queue_toggle': lambda: queue_add_remove_track(),
-        'queue_and_search_window': lambda: br.window_queue_and_search.show()
+        'queue_window': lambda: br.window_queue_and_search.show_queue_tab(),
+        'search_window': lambda: br.window_queue_and_search.show_search_tab()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
