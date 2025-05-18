@@ -249,8 +249,8 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0}".format(pl))
             playlist = cur.fetchall()
             for item in playlist:
-                track_row_db, track_name, track_parent_dict, duration = generate_track_list_detail(item)
-                add_new_list_item(track_name, name_list_widget, None, track_parent_dict)
+                track_row_db, track_name, track_path, duration = generate_track_list_detail(item)
+                add_new_list_item(track_name, name_list_widget, None, track_path)
                 add_new_list_item('', queue_list_widget)
                 add_new_list_item(duration, duration_list_widget)
                 cv.playlist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
@@ -339,7 +339,7 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0} WHERE row_id >= {1} AND row_id <= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
             playlist = cur.fetchall()
             for item in playlist:
-                track_row_db, list_name, track_parent_dict, duration = generate_track_list_detail(item)
+                track_row_db, list_name, track_path, duration = generate_track_list_detail(item)
                 cv.active_pl_name.item(track_row_db-1).setText(list_name)
             
 
@@ -360,7 +360,7 @@ class MyPlaylists(QTabWidget):
             cur.execute("SELECT * FROM {0} WHERE row_id <= {1} AND row_id >= {2}".format(cv.active_db_table, prev_row_id_db, new_row_id_db))
             playlist = cur.fetchall()
             for item in playlist:
-                track_row_db, list_name, track_parent_dict, duration = generate_track_list_detail(item)
+                track_row_db, list_name, track_path, duration = generate_track_list_detail(item)
                 cv.active_pl_name.item(track_row_db-1).setText(list_name)
             
             if not set_track_index_when_moving_currently_playing() and cv.playing_pl_last_track_index in range(new_row_id, prev_row_id + 1):

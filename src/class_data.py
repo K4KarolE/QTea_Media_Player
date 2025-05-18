@@ -234,6 +234,7 @@ class Data:
     window_second_alt_height: int = settings['general_settings']['window_second_alt_height']
     window_alt_size_repositioning: bool = settings['general_settings']['window_alt_size_repositioning']
     default_audio_track: int = settings['general_settings']['default_audio_track']
+    search_result_parent_dicts_size: int = settings['general_settings']['search_result_parent_dicts_size']
     # thumbnail_img_size, remove_thumbnails_older_than: declared in the "Thumbnails" section above
     # it`s validation in window_settings.py / general_fields_validation() / 100-500px
     # USED FOR VALIDATION
@@ -323,6 +324,11 @@ class Data:
         'thumbnail_remove_older_than': {
             'text': 'Remove unused thumbnails\nolder than (days)',
             'value': thumbnail_remove_older_than,
+            'line_edit_widget': ''
+        },
+        'search_result_parent_dicts_size': {
+            'text': 'Search result - parent\nfolders` text length',
+            'value': search_result_parent_dicts_size,
             'line_edit_widget': ''
         }
     }

@@ -33,6 +33,8 @@ from .list_widget_queue_tab import MyQueueListWidget
 from .list_widget_search_tab import MySearchListWidget
 from .message_box import MyMessageBoxError
 
+import os
+
 
 class MyQueueAndSearchWindow(QWidget):
     def __init__(self):
@@ -349,20 +351,20 @@ class MyQueueAndSearchWindow(QWidget):
                 name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
                 for track_index in range(0, name_list_widget.count()):
                     track_title = name_list_widget.item(track_index).text()
-                    track_parent_dict = name_list_widget.item(track_index).track_parent_dict
-                    if (self.search_criteria in track_title.lower() or
-                        self.search_criteria in track_parent_dict.lower()):
+                    track_path = name_list_widget.item(track_index).track_path
+
+                    if self.search_criteria in track_path.lower():
                         queue_list_widget = cv.playlist_widget_dic[playlist]['queue_list_widget']
                         queue_number = queue_list_widget.item(track_index).text()
                         if queue_number:
                             cv.search_result_queued_tracks_index_list.append(result_counter)
 
                         cv.search_result_dic[result_counter] = {
-                            'track_title': f'{track_parent_dict} - {track_title}',
+                            'track_title': f'{self.generate_parent_dicts_to_display(track_path)}{track_title}',
                             'playlist': playlist,
                             'track_index': track_index,
                             'queue_number': queue_number
-                            }
+                        }
                         result_counter += 1
     
 
@@ -388,3 +390,11 @@ class MyQueueAndSearchWindow(QWidget):
     def show_search_tab(self):
         self.show()
         self.tabs.setCurrentIndex(1)
+
+
+    def generate_parent_dicts_to_display(self, track_path):
+        parent_dicts = os.path.dirname(track_path).split('/')
+        if cv.search_result_parent_dicts_size > 0 :
+            return (f'{parent_dicts[-2][0:cv.search_result_parent_dicts_size]} / '
+                    f'{parent_dicts[-1][0:cv.search_result_parent_dicts_size]}  -  ')
+        else: return ""
