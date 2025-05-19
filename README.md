@@ -73,7 +73,8 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 
 
 ## Terminology
-- `Playing playlist`: playlist, where the current track is in the playing or paused state / playlist where the last track was played.
+- `Playing playlist`: playlist, where the current track is in the playing or paused state / 
+playlist where the last track was played.
 - `Active playlist`: playlist, which is currently selected / displayed.
 - `Thumbnail playlist`: playlist, where the thumbnail generation thread is running on
 
@@ -116,42 +117,51 @@ when the `Previous track` button/hotkey is triggered
 ### General
 - `Always on top`: Keeps the player on top of other currently running applications
 - `Continue playback`:
-    - Saves the duration of the currently playing track every 5 seconds
-    - When revisiting the same track, the play continuous from the latest, saved position
+    - Saves the duration of the currently playing track every 5 seconds.
+    - When revisiting the same track, the play continuous from the latest, saved position.
 - `Play at startup`:
-    - Automatically plays the last played track at startup
-    - If the track was removed while playing, at the next startup it plays the track in the same row
+    - Automatically plays the last played track at startup.
+    - If the track was removed while playing, at the next startup it plays the track in the same row.
     - If the last play track removed and there is no track in the same row:
-        - If the playlist is not empty: It plays the first track of the playlist
-        - If the playlist is empty: No track played
+        - If the playlist is not empty: It plays the first track of the playlist.
+        - If the playlist is empty: No track played.
 - `Small / Medium / Big jump`: 
     - Seconds the player position will be moved (forward/backward)
     - Hotkeys of the direction/jump type are in the `Hotkeys tab`
     - Amending the jump values in the `General tab`
 - `Window width-height / alt. / 2nd alt.`:
-    - Values of the different window sizes
-    - To switch between the different window sizes, use the
+    - Values of the different window sizes.
+    - To switch between the different window sizes:
         - `Window alt. size` hotkey (`Hotkeys tab`) or
-        -  Right click on the video area (if applicable) and select `Alter - Toggle`
+        -  Right-click on the video area (if applicable) and select `Alter - Toggle`
     - `Window width-height`:
-        - The size of the window at startup
-        - Both video and playlist section/window are visible
+        - The size of the window at startup.
+        - Both video and playlist section/window are visible.
     - `Window alt. width-height`: 
         - The size of the window after the window size alter toggle actioned once
-        - Only the video window is visible, the playlist window is hidden
+        - Only the video window is visible, the playlist window is hidden.
     - `Window 2nd alt. width-height`: 
-        - The size of the window after the window size alter toggle actioned twice
-        - Only the video window is visible, the playlist window is hidden
+        - The size of the window after the window size alter toggle actioned twice.
+        - Only the video window is visible, the playlist window is hidden.
     - `Window alt. repositioning`:
-        - Repositioning the window depending on the selected size
-        - Default and 1st: middle of the screen / 2nd: right, bottom corner of the screen
+        - Repositioning the window depending on the selected size.
+        - Default and 1st: middle of the screen / 2nd: right, bottom corner of the screen.
     - `Default audio track`:
-        - Video starts with the selected audio track
-        - Can be useful while watching multiple episodes of a tv show in one sitting where the preferred audio track is not the first/default one
+        - Video starts with the selected audio track.
+        - Can be useful while watching multiple episodes of a tv show in one sitting where the preferred audio
+    track is not the first/default one.
+    - `Thumbnail image size`: Min:100, Max:500 pixels.
+    - `Remove unused thumbnails older than (days)`: When closing the app, it removes the unused thumbnails older
+  than the added value and updates the `_thumbnail_history.json` including the logs for the failed /
+  uncreated thumbnails.
+    - `Search result - parent folders' text length`: The separate text length of the 2nd and 1st parent
+    directory of the media in the search result displayed as:
+  2nd degree parent directory(sized) / 1st degree parent directory(sized) - file name
     - Ideas:
-        - Use the first alt. window size when the user is close to a wide screen (e.g.: having a lunch)
-        - Use the second alt. window size when player is secondary and it can be placed in the right, bottom corner of the screen (e.g: while browsing)
-        - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars  
+        - Use the first alt. window size when the user is close to a wide screen (e.g.: having a lunch).
+        - Use the second alt. window size when player is secondary and it can be placed in the right,
+bottom corner of the screen (e.g: while browsing).
+        - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars.
 
 ### Hotkeys
 - Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`
@@ -160,22 +170,25 @@ when the `Previous track` button/hotkey is triggered
     - The values of the jump types are defined in the `General tab`.
 - `Play\pause` vs `Play`:
     - `Play\pause`:
-        - If a track is in the playing/paused state: pauses or continues to play the track independently from the current active playlist
-        - If no track is in the playing/paused state: starts the selected track on the active playlist
-    - `Play`: starts the selected track on the active playlist even if there is a track in the playing/paused state from any playlist
-- `Volume - Increase / Decrease`: changes the volume with +/- 5%
-- `Audio track - use next`: toggles between the available audio channels, there is no disabled state
-- `Subtitle track - use next`: toggles between the available subtitles and a disabled state
-- `Toggle - Full screen`: next to the value set up in this field the `Escape` button is hard-coded to quit from the full screen mode
+        - If a track is in the playing/paused state: pauses or continues to play the track independently
+      from the current active playlist.
+        - If no track is in the playing/paused state: starts the selected track on the active playlist.
+    - `Play`: Starts the selected track on the active playlist even if there is a track in the
+  playing/paused state from any playlist.
+- `Volume - Increase / Decrease`: Changes the volume with +/- 5%.
+- `Audio track - use next`: Toggles between the available audio channels, there is no disabled state.
+- `Subtitle track - use next`: Toggles between the available subtitles and a disabled state.
+- `Toggle - Full screen`: Next to the value set up in this field the `Escape` button is hard-coded to quit
+from the full screen mode.
 - `Toggle - Window alt. size`:
-    - Toggles between the default / alt. / 2nd alt. window sizes defined in the `General tab`
-    - Default: both video and playlist sections are visible
-    - Alt. and 2nd alt.: only the video section is visible 
-- `Playlist - Select previous / next`: jumps between the playlists available
+    - Toggles between the default / alt. / 2nd alt. window sizes defined in the `General tab`.
+    - Default: both video and playlist sections are visible.
+    - Alt. and 2nd alt.: only the video section is visible. 
+- `Playlist - Select previous / next`: Jumps between the playlists available.
 - `Queue / Dequeue track`:
     - Add track to / removes track from the queue list.
     - This hotkey takes action on the `Active playlist`.
-    - On the `Queue and Search window`s track list the right-click / Queue-Dequeue should be used
+    - On the `Queue and Search window`s track list the right-click / Queue-Dequeue should be used.
 - The rest of the hotkeys are self-explanatory.
 
 ### Playlists
@@ -187,7 +200,8 @@ when the `Previous track` button/hotkey is triggered
     - To hide a playlist:
         - Remove the title of the playlist.
         - At least one of the playlists remains visible:
-            - Not able to remove all the playlist titles: clicking on the `Save button`: pop-up window will be displayed with the error message.
+            - Not able to remove all the playlist titles: clicking on the `Save button`: pop-up window will be
+        displayed with the error message.
         - The hidden playlist's records/media information remains in the database.
 - Able to add/remove tracks to any of playlists: the playlist is saved automatically
     - At startup:
@@ -225,7 +239,7 @@ once the cursor is over the button.
 - Adding/removing media to/from a playlist where the `Thumbnail View` is active: automatically switching back to the 
 standard playlist view.
 - Once the `Thumbnail View` button is clicked, the thumbnail generation is running for the current playlist until
-  - It is completed.
+it is completed.
   - Or the `Thumbnail View` button is clicked again "on" the same or "on" another playlist.
 - The `Thumbnail View` and standard playlist view are in sync regarding the selection and currently playing and
 selected track style.
@@ -238,7 +252,8 @@ selected track style.
   with the `image title: current time` key-value pair.
 - Every thumbnail generation process starts by checking if the image title(key) exists in the 
 `_thumbnail_history.json / completed` or in the `failed` dictionary before the actual thumbnail image generation.
-  - In `failed`: not trying to generate thumbnail image, `image title: current time` value will be updated with the current time.
+  - In `failed`: not trying to generate thumbnail image, `image title: current time` value will be updated
+  with the current time.
   - In `completed`: checks if the file exists.
     - Yes: image will be used for the thumbnail, `image title: current time` value will be updated with the current time.
     - No: try to generate a new thumbnail image.
@@ -248,7 +263,8 @@ selected track style.
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Close the app if it is running.
 2. Rename the current playlist database: `playlist.db`.
-3. In the `src / cons_and_vars.py` file change the `playlist_amount = 30` value to as many playlists you wish, save the file.
+3. In the `src / cons_and_vars.py` file change the `playlist_amount = 30` value to as many playlists you wish,
+save the file.
 4. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created.
 5. After the next start of the app, all the playlists will be visible with increasing numeric titles.
 6. Optional: Change the title of the playlists via the `Settings window / Playlists`.
@@ -265,14 +281,16 @@ selected track style.
         - Otherwise the screen saver is on as usual.
 - `Drag & Drop`
     - Internal: able to relocate/move a playlist item.
-    - External: selected files and/or folders can be grabbed and dropped on the active playlist from File Explorer, Desktop,  .. . 
+    - External: selected files and/or folders can be grabbed and dropped on the active playlist from
+  File Explorer, Desktop,  .. . 
 
 ## File types
 - "formats supported depend heavily on the codec packs installed on your system" - [link](https://forum.qt.io/topic/63110/)
 - Which files will be added to the playlist when I add a directory?
     - Every file with the extensions listed in the `src / cons_and_vars.py / FILE TYPES` section will be added:
         - `FILE_TYPES_LIST` used to sort the files in the file dialog window - `AT - Add Track` button.
-        - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary and subdirectories - `AD - Add Directory` button.
+        - `MEDIA_FILES`'s listed file types used to select the correct files from the selected dictionary
+      and subdirectories - `AD - Add Directory` button.
     - Currently listed extensions:
         - Audio: *.aac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.wav
         - Video: *.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.mts *.webm *.wmv

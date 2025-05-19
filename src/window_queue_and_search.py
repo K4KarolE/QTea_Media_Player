@@ -58,6 +58,7 @@ class MyQueueAndSearchWindow(QWidget):
         self.tabs.setFont(QFont('Verdana', 10, 500))
         self.tabs.resize(TABS_WIDTH, TABS_HEIGHT)
         self.tabs.move(TABS_POS_X, TABS_POS_Y)
+        self.tabs.currentChanged.connect(self.set_focus_search_line_edit)
         self.tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
@@ -271,6 +272,14 @@ class MyQueueAndSearchWindow(QWidget):
         layout_window.addWidget(self.tabs)
 
 
+    def set_focus_search_line_edit(self):
+        """ It makes the search field active and let the user
+            type straight away once Search window is displayed
+        """
+        if self.tabs.currentIndex() == 1:
+            self.search_line_edit.setFocus()
+
+
     ''' QUEUE FUNCS '''
     def queue_play_list_item(self):
         current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
@@ -390,6 +399,7 @@ class MyQueueAndSearchWindow(QWidget):
     def show_search_tab(self):
         self.show()
         self.tabs.setCurrentIndex(1)
+        self.search_line_edit.setFocus()
 
 
     def generate_parent_dicts_to_display(self, track_path):
