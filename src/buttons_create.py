@@ -22,7 +22,7 @@ def generate_buttons():
     cv.PLIST_BUTTONS_HEIGHT = 30 # +used: in playlist_buttons_list_wrapper
     PLIST_BUTTONS_X_DIFF = 4    # FOR SELECTING ADD AND REMOVE BUTTONS
     PLIST_BUTTONS_X_BASE = 0
-    PLIST_BUTTONS_Y = 3
+    PLIST_BUTTONS_Y = 0
 
     def button_x_pos(num):
         return int(PLIST_BUTTONS_X_BASE + (PLIST_BUTTONS_WIDTH + 6) * num)

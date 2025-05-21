@@ -1,11 +1,16 @@
 ''' DURATION SLIDER AND VOLUME SLIDER CLASSES '''
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QSlider, QStyle
+from PyQt6.QtCore import Qt, QEvent, QPoint
+from PyQt6.QtWidgets import QSlider, QStyle, QLabel
+from PyQt6.QtGui import QHoverEvent, QFont
 
 from .class_bridge import br
 from .class_data import cv
-from .func_coll import save_volume_slider_value, update_and_save_volume_slider_value 
+from .func_coll import (
+    generate_duration_to_display,
+    save_volume_slider_value,
+    update_and_save_volume_slider_value
+    )
 
 
 class MySlider(QSlider):
@@ -15,6 +20,9 @@ class MySlider(QSlider):
         self.setOrientation(Qt.Orientation.Horizontal)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setMinimumHeight(30)
+        self.installEventFilter(self)
+        self.setMouseTracking(True)
+        self.pressed = False
         self.setStyleSheet(
                         "QSlider::groove"
                             "{"
@@ -39,7 +47,20 @@ class MySlider(QSlider):
                             "}"
                         )
         br.av_player.player.positionChanged.connect(self.play_slider_set_value)
-    
+
+        self.hover_over_duration_info_label = QLabel(self)
+        self.hover_over_duration_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.hover_over_duration_info_label.setParent(br.window)
+        self.hover_over_duration_info_label.setFont(QFont('Arial', 8, 600))
+        self.hover_over_duration_info_label.hide()
+        self.hover_over_duration_info_label.setStyleSheet(
+                                                        "QLabel"
+                                                        "{"
+                                                        "background: #C2C2C2;"
+                                                        "border-radius: 5px;"
+                                                        "color: black;"
+                                                        "}"
+                                                        )
 
 
     def play_slider_set_value(self):
@@ -48,18 +69,61 @@ class MySlider(QSlider):
             self.setValue(br.av_player.player.position())
 
 
-    def mousePressEvent(self, event):
-        ''' CLICK SLIDER --> CHANGE SLIDER AND PLAYER POSITION '''
-        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        br.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-     
+    def eventFilter(self, source, event):
 
-    def mouseMoveEvent(self, event):
-        ''' MOVE SLIDER --> CHANGE SLIDER AND PLAYER POSITION ''' 
-        self.setValue(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
-        br.av_player.player.setPosition(QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width()))
+        if event.type() == QEvent.Type.MouseButtonPress:
+            self.pressed = True
+            self.set_slider_value(event)
 
-    
+        if event.type() == QEvent.Type.MouseButtonRelease:
+            self.pressed = False
+
+        if event.type() == QHoverEvent.Type.HoverEnter:
+            if br.av_player.player.isPlaying() or br.av_player.paused:
+                self.hover_over_duration_info_label.show()
+
+        if event.type() == QHoverEvent.Type.HoverLeave:
+            self.hover_over_duration_info_label.hide()
+
+        if event.type() == QEvent.Type.MouseMove:
+            duration_to_display = generate_duration_to_display(self.generate_value_from_slider(event))
+            self.hover_over_duration_info_label.setText(duration_to_display)
+            self.adjust_size_hover_over_duration_info()
+            self.hover_over_duration_info_label.move(
+                QPoint(self.get_hover_over_duration_info_pos_x(event), self.pos().y()-8))
+            if self.pressed:
+                self.set_slider_value(event)
+
+        return super().eventFilter(source, event)
+
+
+    def set_slider_value(self, event):
+        br.av_player.player.setPosition(self.generate_value_from_slider(event))
+
+
+    def generate_value_from_slider(self, event):
+        return QStyle.sliderValueFromPosition(self.minimum(), self.maximum(), event.pos().x(), self.width())
+
+
+    def get_hover_over_duration_info_pos_x(self, event):
+        # RIGHT
+        if event.pos().x() >= self.width() - self.hover_over_duration_info_label.width():
+            return self.width() - self.hover_over_duration_info_label.width() + 9
+        # LEFT
+        elif event.pos().x() <= self.hover_over_duration_info_label.width() / 2:
+            return int(self.hover_over_duration_info_label.width() / 2) - 13
+        # MIDDLE
+        else: return event.pos().x()
+
+
+    def adjust_size_hover_over_duration_info(self):
+        text_length = len(self.hover_over_duration_info_label.text())
+        if text_length > 5:
+            self.hover_over_duration_info_label.setFixedSize(text_length*8, 14)
+        else: self.hover_over_duration_info_label.setFixedSize(text_length*9, 14)
+
+
+
 
 class MyVolumeSlider(QSlider):
     def __init__(self):

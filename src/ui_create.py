@@ -48,7 +48,7 @@ def generate_ui():
     layout_hor_top.setSpacing(0)
 
     layout_bottom_slider = QVBoxLayout()
-    layout_bottom_slider.setContentsMargins(9, 0, 9, 0)
+    layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
 
     layout_bottom_wrapper = QHBoxLayout()
     layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)
@@ -122,7 +122,7 @@ def generate_ui():
     ''' TOP RIGHT '''
     # BUTTONS
     playlist_buttons_list_wrapper = QFrame()
-    playlist_buttons_list_wrapper.setFixedSize(250, cv.PLIST_BUTTONS_HEIGHT+5)
+    playlist_buttons_list_wrapper.setFixedSize(250, cv.PLIST_BUTTONS_HEIGHT-3)
 
     for button in br.playlist_buttons_list:
         button.setParent(playlist_buttons_list_wrapper)
