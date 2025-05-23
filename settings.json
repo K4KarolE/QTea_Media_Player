@@ -1,11 +1,11 @@
 {
-  "last_used_playlist": 4,
-  "playing_playlist": 3,
+  "last_used_playlist": 2,
+  "playing_playlist": 5,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 1.0,
-  "is_speaker_muted": false,
+  "volume": 0.54,
+  "is_speaker_muted": true,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": true,
@@ -35,7 +35,7 @@
     "medium_jump_forward": "0",
     "big_jump_backward": "Alt+Left",
     "big_jump_forward": "Alt+Right",
-    "display_track_title_on_video": "T",
+    "display_track_info_on_video": "T",
     "volume_mute": "M",
     "volume_up": "=",
     "volume_down": "-",
@@ -77,32 +77,32 @@
   "playlist_0": {
     "playlist_title": "TV #1",
     "playlist_index": 0,
-    "last_track_index": 111
+    "last_track_index": 99
   },
   "playlist_1": {
     "playlist_title": "TV #2",
     "playlist_index": 1,
-    "last_track_index": 180
+    "last_track_index": 121
   },
   "playlist_2": {
     "playlist_title": "TV #3",
     "playlist_index": 2,
-    "last_track_index": 0
+    "last_track_index": 1
   },
   "playlist_3": {
     "playlist_title": "TV #4",
     "playlist_index": 3,
-    "last_track_index": 0
+    "last_track_index": 6
   },
   "playlist_4": {
     "playlist_title": "FILM #1",
     "playlist_index": 4,
-    "last_track_index": 8
+    "last_track_index": 1
   },
   "playlist_5": {
     "playlist_title": "FILM #2",
     "playlist_index": 5,
-    "last_track_index": 7
+    "last_track_index": 8
   },
   "playlist_6": {
     "playlist_title": "MUSIC #1",
@@ -117,7 +117,7 @@
   "playlist_8": {
     "playlist_title": "MUSIC #3",
     "playlist_index": 8,
-    "last_track_index": 105
+    "last_track_index": 139
   },
   "playlist_9": {
     "playlist_title": "",
