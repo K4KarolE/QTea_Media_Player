@@ -76,23 +76,32 @@ class MyWindow(QWidget):
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
-            hotkey_value = cv.hotkey_settings_dic[hotkey]['value']
-            if hotkey_value != 'Enter':
-                hotkey = QShortcut(QKeySequence(hotkey_value), self)
-                hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
-                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
-            else:
-                ''' Make sure both enter keys(standard and return(numpad)) are in sync
-                    and the enter hotkey as "start track" only works in the main window
-                    -> be able to use it in the search window
-                '''
-                hotkey = QShortcut(QKeySequence(hotkey_value), self)
-                hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
-                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
-                # Return
-                hotkey = QShortcut(QKeySequence('Return'), self)
-                hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
-                hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+            hotkey_value_raw = cv.hotkey_settings_dic[hotkey]['value']
+            if "|" in hotkey_value_raw: # multiple hotkeys for the same action
+                for hotkey_value in hotkey_value_raw.split("|"):
+                    hotkey_value = hotkey_value.strip()
+                    self.hotkey_allocation(hotkeys_action_dic, hotkey_value, index)
+            else: self.hotkey_allocation(hotkeys_action_dic, hotkey_value_raw, index)
+
+
+    def hotkey_allocation(self, hotkeys_action_dic, hotkey_value, index):
+        if hotkey_value != 'Enter':
+            hotkey = QShortcut(QKeySequence(hotkey_value), self)
+            hotkey.setContext(Qt.ShortcutContext.ApplicationShortcut)
+            hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+        else:
+            ''' Make sure both enter keys(standard and return(numpad)) are in sync
+                and the enter hotkey as "start track" only works in the main window
+                -> be able to use it in the search window
+            '''
+            hotkey = QShortcut(QKeySequence(hotkey_value), self)
+            hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
+            hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+            # Return
+            hotkey = QShortcut(QKeySequence('Return'), self)
+            hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
+            hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+
 
     def closeEvent(self, a0):
         auto_thumbnails_removal_after_app_closure()

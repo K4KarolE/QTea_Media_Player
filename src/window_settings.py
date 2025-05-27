@@ -160,7 +160,12 @@ class MySettingsWindow(QWidget):
 
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(hotkey_dic_value)
 
-                line_edit_text_all_values.append(line_edit_text)
+                if "|" in line_edit_text:   # multiple hotkeys for the same action
+                    for line_edit_text in line_edit_text.split("|"):
+                        line_edit_text = line_edit_text.strip()
+                        line_edit_text_all_values.append(line_edit_text)
+                else:
+                    line_edit_text_all_values.append(line_edit_text)
 
                 search_result = cv.search_regex.search(line_edit_text.title())
                 if not search_result:

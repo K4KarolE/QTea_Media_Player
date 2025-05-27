@@ -164,7 +164,8 @@ bottom corner of the screen (e.g: while browsing).
         - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars.
 
 ### Hotkeys
-- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`
+- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`, `M | P`, `M+Ctrl | P`
+- Able to add multiple hotkeys for the same action: `Up | P`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
 - `Small / Medium / Big jump - backward/forward`:
     - The values of the jump types are defined in the `General tab`.
