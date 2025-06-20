@@ -283,7 +283,7 @@ class MyQueueAndSearchWindow(QWidget):
     ''' QUEUE FUNCS '''
     def queue_play_list_item(self):
         current_row_index = cv.queue_widget_dic['name_list_widget']['list_widget'].currentRow() - 1
-        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
+        _, playlist_index, track_index, _ = get_playlist_details_from_queue_tab_list(current_row_index)
         cv.playing_playlist_index = playlist_index
         update_playing_playlist_vars_and_widgets()
         br.play_funcs.play_track(track_index)
@@ -321,7 +321,7 @@ class MyQueueAndSearchWindow(QWidget):
         if not self.is_empty_search_result:
             if not cv.track_change_on_main_playlist_new_search_needed:
                 current_row_index = cv.search_title_list_widget.currentRow()
-                playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
+                _, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
                 cv.playing_playlist_index = playlist_index
                 update_playing_playlist_vars_and_widgets()
                 br.play_funcs.play_track(track_index)

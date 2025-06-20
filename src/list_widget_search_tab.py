@@ -94,7 +94,7 @@ class MySearchListWidget(QListWidget):
             # FOLDER
             elif q.text() == list(self.context_menu_dic)[4]:
                 try:
-                    playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(self.currentRow())
+                    playlist, _, track_index = get_playlist_details_from_search_tab_list(self.currentRow())
                     open_track_folder_via_context_menu(track_index, playlist)
                 except:
                     MyMessageBoxError('File location', 'The file`s home folder has been renamed / removed. ')
@@ -102,7 +102,7 @@ class MySearchListWidget(QListWidget):
             # PLAY TRACK WITH DEFAULT PLAYER
             elif q.text() == list(self.context_menu_dic)[5]:
                 try:
-                    playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(self.currentRow())
+                    playlist, _, track_index = get_playlist_details_from_search_tab_list(self.currentRow())
                     play_track_with_default_player_via_context_menu(track_index, playlist)
                 except:
                     MyMessageBoxError('Not able to play the file',
@@ -111,13 +111,13 @@ class MySearchListWidget(QListWidget):
 
     def jump_to_playlist(self):
         current_row_index = self.currentRow()
-        playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
+        _, playlist_index, _ = get_playlist_details_from_search_tab_list(current_row_index)
         br.playlists_all.setCurrentIndex(playlist_index)
     
 
     def queue_dequeue_track(self):
         current_row_index = self.currentRow()
-        playlist, playlist_index, track_index = get_playlist_details_from_search_tab_list(current_row_index)
+        playlist, _, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         queue_tracking_title = [playlist, track_index]
 
         # QUEUE

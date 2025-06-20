@@ -504,7 +504,7 @@ def remove_track_from_playlist():
     cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
     playlist = cur.fetchall()
     for item in playlist:
-        track_row_db, list_name, track_path, duration = generate_track_list_detail(item)
+        track_row_db, list_name, _, _ = generate_track_list_detail(item)
         cv.active_pl_name.item(track_row_db-1).setText(list_name)
 
     cv.active_pl_tracks_count = cv.active_pl_name.count()

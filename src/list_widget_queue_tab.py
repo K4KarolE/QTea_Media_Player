@@ -93,7 +93,7 @@ class MyQueueListWidget(QListWidget):
         elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 current_row_index = self.currentRow() - 1
-                playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(
+                playlist, _, track_index, _ = get_playlist_details_from_queue_tab_list(
                     current_row_index)
                 open_track_folder_via_context_menu(track_index, playlist)
             except:
@@ -103,7 +103,7 @@ class MyQueueListWidget(QListWidget):
         elif q.text() == list(self.context_menu_dic)[5]:
             try:
                 current_row_index = self.currentRow() - 1
-                playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(
+                playlist, _, track_index, _ = get_playlist_details_from_queue_tab_list(
                     current_row_index)
                 play_track_with_default_player_via_context_menu(track_index, playlist)
             except:
@@ -111,7 +111,7 @@ class MyQueueListWidget(QListWidget):
 
     def jump_to_playlist(self):
         current_row_index = self.currentRow() - 1
-        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
+        _, playlist_index, _, _ = get_playlist_details_from_queue_tab_list(current_row_index)
         br.playlists_all.setCurrentIndex(playlist_index)
     
 
