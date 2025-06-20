@@ -56,6 +56,7 @@ class ThreadAddMedia(QThread):
         cv.adding_records_at_moment = True
         logger_basic('Adding directory: Loop - start')
         for dir_path_b, dir_names, file_names in os.walk(dir_path):
+            file_names.sort()
             for file in file_names:
                 if Path(file).suffix in cv.MEDIA_FILES:  # music_title.mp3 -> mp3
                     track_path = str(Path(dir_path_b, file))
