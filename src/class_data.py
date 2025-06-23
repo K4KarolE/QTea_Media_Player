@@ -53,6 +53,7 @@ class Data:
     repeat_playlist: int = settings['repeat_playlist']
     shuffle_playlist_on: bool = settings['shuffle_playlist_on']
     shuffle_played_tracks_list = []
+    shuffle_played_tracks_list_size: int = 20
     is_play_prev_track_clicked: bool = False
     # is_play_prev_track_clicked:
     # used to make sure not adding tracks to the

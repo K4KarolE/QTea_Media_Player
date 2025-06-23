@@ -152,7 +152,7 @@ class PlaysFunc:
         if (not cv.is_play_prev_track_clicked and
                 cv.playing_track_index not in cv.shuffle_played_tracks_list):
             cv.shuffle_played_tracks_list.append(cv.playing_track_index)
-            if len(cv.shuffle_played_tracks_list) > 10:
+            if len(cv.shuffle_played_tracks_list) > cv.shuffle_played_tracks_list_size:
                 cv.shuffle_played_tracks_list.pop(0)
         else:
             if cv.shuffle_played_tracks_list:
@@ -189,9 +189,13 @@ class PlaysFunc:
 
             # SHUFFLE
             if cv.shuffle_playlist_on and cv.playing_pl_tracks_count > 1:
-                next_track_index = list(range(0, cv.playing_pl_tracks_count))
-                next_track_index.pop(cv.playing_track_index)
-                next_track_index = random.choice(next_track_index)
+                # Selecting a new track which was not played
+                # the last "cv.shuffle_played_tracks_list_size" times
+                if cv.playing_pl_tracks_count > cv.shuffle_played_tracks_list_size:
+                    random_choice_list = [x for x in range(0, cv.playing_pl_tracks_count) if x not in cv.shuffle_played_tracks_list]
+                else:
+                    random_choice_list = [x for x in range(0, cv.playing_pl_tracks_count) if x != cv.playing_track_index]
+                next_track_index = random.choice(random_choice_list)
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
             # REPEAT SINGLE TRACK - NO BUTTON CLICK    

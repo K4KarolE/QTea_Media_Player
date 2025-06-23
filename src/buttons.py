@@ -103,6 +103,9 @@ class MyButtons(QPushButton):
             cv.active_pl_duration.clear()
             # FOR SEARCH WINDOW
             cv.track_change_on_main_playlist_new_search_needed = True
+            # CLEAR PREVIOUSLY PLAYED TRACKS RECORD
+            if cv.shuffle_playlist_on:
+                cv.shuffle_played_tracks_list.clear()
 
 
         ''' Queued track in the playlist '''
