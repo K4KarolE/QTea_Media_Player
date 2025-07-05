@@ -511,7 +511,7 @@ def auto_thumbnails_removal_after_app_closure():
 
             if remove_from_failed_list:
                 for img_name in remove_from_failed_list:
-                    thumbnail_history.pop(img_name)
+                    thumbnail_history["failed"].pop(img_name)
                 is_thumbnail_history_save_needed = True
 
             # COMPLETED
