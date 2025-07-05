@@ -481,6 +481,10 @@ def remove_track_from_playlist():
     br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
     update_queued_tracks_after_track_deletion()
     current_row_index = cv.active_pl_name.currentRow()
+
+    # SHUFFLE ON PLAYED MEDIA TRACKING - REMOVE TRACK
+    if cv.shuffle_playlist_on and current_row_index in cv.shuffle_played_tracks_list:
+        cv.shuffle_played_tracks_list.remove(current_row_index)
     
     # PLAYLIST
     cv.active_pl_name.takeItem(current_row_index)
