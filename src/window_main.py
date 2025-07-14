@@ -251,7 +251,7 @@ class MyWindow(QWidget):
 
     def playlist_select_next_pl_action(self):
         current_index = br.playlists_all.currentIndex()
-        last_playlist_index = cv.playlist_amount-1
+        last_playlist_index = cv.playlists_amount-1
         index_counter = 1
         next_playlist_index = current_index + index_counter
 

@@ -93,7 +93,7 @@ class MyPlaylists(QTabWidget):
     '''
     def add_dummy_playlist(self):
         self.addTab(QWidget(), '')
-        self.setTabEnabled(cv.playlist_amount, False)
+        self.setTabEnabled(cv.playlists_amount, False)
 
     def hide_playlists_with_no_title(self):
         for index in cv.playlists_without_title_to_hide_index_list:

@@ -265,9 +265,9 @@ selected track style.
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Close the app if it is running.
 2. Rename the current playlist database: `playlist.db`.
-3. In the `src / cons_and_vars.py` file change the `playlist_amount = 30` value to as many playlists you wish,
-save the file.
-4. In the `src / tables_and_playlists_guide.py` run the `create_tables()` function -> New `playlist.db` will be created.
+3. In the `src / tables_and_playlists_guide.py` file change the `create_tables(playlists_amount = 30)` function's 
+`playlists_amount` argument value to as many playlists you wish, save the Python file.
+4. Run the `create_tables()` function -> New `playlist.db` will be created.
 5. After the next start of the app, all the playlists will be visible with increasing numeric titles.
 6. Optional: Change the title of the playlists via the `Settings window / Playlists`.
 7. Optional: Remove the previous playlist database.

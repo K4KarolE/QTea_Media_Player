@@ -3,6 +3,7 @@ from pathlib import Path
 from json import load, dump
 import re
 import shutil
+import sqlite3
 import sys
 
 
@@ -44,6 +45,19 @@ except:
     thumbnail_history = {"failed": {}, "completed": {}}
 
 
+"""
+    The rest of the DB functions are in:
+    - src / func_coll
+    - src / playlists
+"""
+connection = sqlite3.connect('playlist.db')
+cur = connection.cursor()
+
+def get_playlists_amount_from_db():
+    cur.execute("""SELECT COUNT(*) FROM sqlite_master WHERE type='table'""")
+    return cur.fetchall()[0][0]
+
+
 @dataclass
 class Data:
 
@@ -53,7 +67,7 @@ class Data:
     repeat_playlist: int = settings['repeat_playlist']
     shuffle_playlist_on: bool = settings['shuffle_playlist_on']
     shuffle_played_tracks_list = []
-    shuffle_played_tracks_list_size: int = 20
+    shuffle_played_tracks_list_size: int = 100
     is_play_prev_track_clicked: bool = False
     # is_play_prev_track_clicked:
     # used to make sure not adding tracks to the
@@ -652,8 +666,8 @@ class Data:
     '''
     playlist_widget_dic = {}
 
-    playlist_amount: int = 30
-    for i in range(0, playlist_amount):
+    playlists_amount: int = get_playlists_amount_from_db()
+    for i in range(0, playlists_amount):
         pl_name = f'playlist_{i}'
         playlist_widget_dic[pl_name] = {
             'name_list_widget': '',

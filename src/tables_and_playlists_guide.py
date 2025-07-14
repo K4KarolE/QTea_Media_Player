@@ -9,14 +9,24 @@ which can be actioned in this file for:
 '''
 
 import sqlite3
-from src.class_data import (
-    cv,
-    settings,
-    save_json
-    )
+from pathlib import Path
+from json import load, dump
+
+def open_json():
+    with open(PATH_JSON_SETTINGS) as f:
+        json_dic = load(f)
+    return json_dic
+
+def save_json():
+    with open(PATH_JSON_SETTINGS, 'w') as f:
+        dump(settings, f, indent=2)
+    return
 
 
-connection = sqlite3.connect('playlist.db')
+PATH_JSON_SETTINGS = Path(Path().resolve().parent, 'settings.json')
+settings = open_json()
+
+connection = sqlite3.connect('../playlist.db')
 cur = connection.cursor()
 
 
@@ -28,9 +38,12 @@ def list_all_tables():
 # list_all_tables()
 
 
-def create_tables():
-    ''' Creates new DB and updates settings.json '''
-    for i in range(0, cv.playlist_amount):
+def create_tables(playlists_amount = 30):
+    """ Creates new DB and updates settings.json
+        Rename or delete the previous DB before
+        executing the function
+    """
+    for i in range(0, playlists_amount):
         table_name = f'playlist_{i}'
 
         ''' SQL '''
@@ -53,7 +66,7 @@ def create_tables():
     connection.close()
     save_json()
 
-create_tables()
+# create_tables()
 
 
 

@@ -3,17 +3,14 @@ from PyQt6.QtCore import QUrl, Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
-from .class_data import save_json
+from .class_data import connection, cur, save_json
 from .class_data import cv, settings
 from .message_box import MyMessageBoxError
 
 from pathlib import Path
-import sqlite3
 import subprocess
 
 
-connection = sqlite3.connect('playlist.db')
-cur = connection.cursor()
 inactive_track_font_style = QFont('Arial', 11, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
