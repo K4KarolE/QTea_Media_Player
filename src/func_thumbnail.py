@@ -403,7 +403,7 @@ def update_thumbnail_style_at_row_change():
             thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
         # PLAYING
         if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
-            played_track_index = settings[cv.active_db_table]['last_track_index']
+            played_track_index = settings['playlists'][cv.active_db_table]['last_track_index']
             if played_track_index <= cv.active_pl_tracks_count-1 and played_track_index != cv.current_track_index:
                 thumbnail_widget_dic[played_track_index]['widget'].set_playing_thumbnail_style()
     update_last_selected_track_dic_and_vars()

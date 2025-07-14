@@ -127,7 +127,7 @@ class MyPlaylists(QTabWidget):
         playlist_index_counter = 0
         
         for pl in cv.playlist_widget_dic:
-            playlist_title = settings[pl]['playlist_title']
+            playlist_title = settings['playlists'][pl]['playlist_title']
             if not playlist_title:
                 cv.playlists_without_title_to_hide_index_list.append(playlist_index_counter)
             playlist_index_counter += 1
@@ -256,9 +256,9 @@ class MyPlaylists(QTabWidget):
                 cv.playlist_widget_dic[pl]['active_pl_sum_duration'] += int(item[1])
             
             ''' SET BACK / SELECT LAST USED ROWS '''
-            name_list_widget.setCurrentRow(settings[pl]['last_track_index'])
-            queue_list_widget.setCurrentRow(settings[pl]['last_track_index'])
-            duration_list_widget.setCurrentRow(settings[pl]['last_track_index'])
+            name_list_widget.setCurrentRow(settings['playlists'][pl]['last_track_index'])
+            queue_list_widget.setCurrentRow(settings['playlists'][pl]['last_track_index'])
+            duration_list_widget.setCurrentRow(settings['playlists'][pl]['last_track_index'])
             
             ''' 
                 LAST PLAYED ROWS' STYLE

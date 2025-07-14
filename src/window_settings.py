@@ -378,7 +378,7 @@ class MySettingsWindow(QWidget):
             cv.playlist_widget_dic[pl]['line_edit'] = QLineEdit(tab_playlist)
             line_edit_widget = cv.playlist_widget_dic[pl]['line_edit']
 
-            line_edit_widget.setText(settings[pl]['playlist_title'])
+            line_edit_widget.setText(settings['playlists'][pl]['playlist_title'])
             line_edit_widget.setFont(inactive_track_font_style)
             line_edit_widget.setAlignment(LINE_EDIT_TEXT_ALIGNMENT)
             line_edit_widget.setGeometry(
@@ -418,7 +418,7 @@ class MySettingsWindow(QWidget):
             for pl in cv.playlist_widget_dic:
                 playlist_index = cv.playlist_list.index(pl)
                 new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
-                prev_playlist_title = settings[pl]['playlist_title']
+                prev_playlist_title = settings['playlists'][pl]['playlist_title']
 
                 if (
                     not new_playlist_title and
@@ -440,7 +440,7 @@ class MySettingsWindow(QWidget):
                 for pl in cv.playlist_widget_dic:
                     playlist_index = cv.playlist_list.index(pl)
                     new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
-                    prev_playlist_title = settings[pl]['playlist_title']
+                    prev_playlist_title = settings['playlists'][pl]['playlist_title']
 
                     if (
                         not new_playlist_title and
@@ -459,7 +459,7 @@ class MySettingsWindow(QWidget):
             for pl in cv.playlist_widget_dic:
                 playlist_index = cv.playlist_list.index(pl)
                 new_playlist_title = cv.playlist_widget_dic[pl]['line_edit'].text().strip()
-                prev_playlist_title = settings[pl]['playlist_title']
+                prev_playlist_title = settings['playlists'][pl]['playlist_title']
 
                 if new_playlist_title != prev_playlist_title:
                     
@@ -474,7 +474,7 @@ class MySettingsWindow(QWidget):
                         cv.playlists_without_title_to_hide_index_list.append(playlist_index)
                     
                     br.playlists_all.setTabText(playlist_index, new_playlist_title)
-                    settings[pl]['playlist_title'] = new_playlist_title
+                    settings['playlists'][pl]['playlist_title'] = new_playlist_title
                     to_save = True  
             
             if to_save:
@@ -612,8 +612,8 @@ class MySettingsWindow(QWidget):
                     If the last used playlist removed 
                     at next start the new last playlist will active / displayed
                 '''
-                if  len(settings[cv.playlist_list[cv.active_playlist_index]]['playlist_title']) == 0:
-                    cv.active_playlist_index = settings[pl_list_with_title[-1]]['playlist_index']
+                if  len(settings['playlists'][cv.playlist_list[cv.active_playlist_index]]['playlist_title']) == 0:
+                    cv.active_playlist_index = settings['playlists'][pl_list_with_title[-1]]['playlist_index']
                     settings['last_used_playlist'] = cv.active_playlist_index
                     save_json()
                 

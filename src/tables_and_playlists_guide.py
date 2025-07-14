@@ -43,6 +43,8 @@ def create_tables(playlists_amount = 30):
         Rename or delete the previous DB before
         executing the function
     """
+    settings['playlists'] = {}
+
     for i in range(0, playlists_amount):
         table_name = f'playlist_{i}'
 
@@ -57,7 +59,7 @@ def create_tables(playlists_amount = 30):
                     """.format(table_name))
 
         ''' JSON '''
-        settings[table_name] = {
+        settings['playlists'][table_name] = {
             "playlist_title": str(i + 1),
             "playlist_index": i,
             "last_track_index": 0

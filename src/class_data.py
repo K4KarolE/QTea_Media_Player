@@ -673,7 +673,7 @@ class Data:
             'name_list_widget': '',
             'queue_list_widget': '',
             'duration_list_widget': '',
-            'last_selected_track_index': settings[pl_name]['last_track_index'],
+            'last_selected_track_index': settings['playlists'][pl_name]['last_track_index'],
             'played_thumbnail_style_update_needed': False,
             'active_pl_sum_duration': 0,
             'thumbnail_window': '',

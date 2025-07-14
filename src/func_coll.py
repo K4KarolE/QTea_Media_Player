@@ -22,8 +22,8 @@ separation in the src / cons_and_vars.py
 def update_active_playlist_vars_and_widgets():
     ''' Used / update values after playlist change '''
     cv.active_db_table = cv.playlist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
-    cv.active_pl_title = settings[cv.active_db_table]['playlist_title']
-    cv.active_pl_last_track_index = settings[cv.active_db_table]['last_track_index']
+    cv.active_pl_title = settings['playlists'][cv.active_db_table]['playlist_title']
+    cv.active_pl_last_track_index = settings['playlists'][cv.active_db_table]['last_track_index']
     cv.active_pl_last_selected_track_index = cv.playlist_widget_dic[cv.active_db_table]['last_selected_track_index']
     cv.active_pl_sum_duration = cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration']
     # LIST WIDGETS
@@ -38,8 +38,8 @@ def update_active_playlist_vars_and_widgets():
 def update_playing_playlist_vars_and_widgets():
     ''' Used / update values after a track started in a new playlist '''
     cv.playing_db_table = cv.playlist_list[cv.playing_playlist_index] # cv.playing_db_table = playlist_4 / playlist_2, ..
-    cv.playing_pl_title = settings[cv.playing_db_table]['playlist_title']
-    cv.playing_pl_last_track_index = settings[cv.playing_db_table]['last_track_index']
+    cv.playing_pl_title = settings['playlists'][cv.playing_db_table]['playlist_title']
+    cv.playing_pl_last_track_index = settings['playlists'][cv.playing_db_table]['last_track_index']
     # LIST WIDGETS
     cv.playing_pl_name = cv.playlist_widget_dic[cv.playing_db_table]['name_list_widget']
     cv.playing_pl_queue = cv.playlist_widget_dic[cv.playing_db_table]['queue_list_widget']
@@ -64,17 +64,17 @@ def update_add_track_to_pl_widget_vars():
 
 def save_playing_playlist_and_playing_last_track_index():
     settings['playing_playlist'] = cv.active_playlist_index
-    settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
+    settings['playlists'][cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json()
 
 
 def save_playing_pl_last_track_index():
-    settings[cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
+    settings['playlists'][cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
     save_json()
 
 
 def save_active_pl_last_track_index():
-    settings[cv.active_db_table]['last_track_index'] = cv.active_pl_last_track_index
+    settings['playlists'][cv.active_db_table]['last_track_index'] = cv.active_pl_last_track_index
     save_json()
 
 
