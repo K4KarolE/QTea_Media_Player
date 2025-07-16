@@ -52,9 +52,9 @@ def create_tables(playlists_amount = 30):
         cur.execute("""CREATE TABLE {0}
                     (
                     row_id INTEGER PRIMARY KEY,
-                    duration VARCHAR(20),
-                    current_duration VARCHAR(20), 
-                    path TEXT(20)
+                    duration VARCHAR,
+                    current_duration VARCHAR, 
+                    path TEXT
                     )
                     """.format(table_name))
 
