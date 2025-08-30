@@ -101,5 +101,17 @@ class WidgetsWindow(QWidget):
             thumbnail_widget.update_img(result)
             thumbnail_widget.thumbnail_type = "video_completed" # not in use, yet
 
+        """ Updating playing and selected track style, thumbnail image
+            The "failed" and "audio" validations are in the
+            thumbnail_widget.set_ functions
+        """
+        if index == cv.thumbnail_last_played_track_index and index != cv.thumbnail_last_selected_track_index:
+            thumbnail_widget.set_playing_thumbnail_style()
+            thumbnail_widget.set_playing_thumbnail_img()
+
+        if index == cv.thumbnail_last_selected_track_index:
+            thumbnail_widget.set_selected_thumbnail_style()
+            thumbnail_widget.set_default_thumbnail_img()
+
         if index > 0 and index % 20 == 0:
             save_thumbnail_history_json()

@@ -43,8 +43,6 @@ def start_thumbnail_thread_grouped_action():
         # THREAD
         widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
         widgets_window.thread_thumbnails_update.start()
-        # THUMBNAIL STYLE
-        update_thumbnail_style_after_thumbnail_generation()
 
 
 # ACTIVE PL / start_thumbnail_thread_grouped_action()
@@ -229,18 +227,6 @@ def update_window_widgets_size(last_thumbnail_pos_y):
     thumbnail_widgets_window = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window
     thumbnail_widgets_window.resize(cv.thumbnail_main_window_width, window_widgets_height)
 
-
-# THUMBNAIL PL / start_thumbnail_thread_grouped_action()
-def update_thumbnail_style_after_thumbnail_generation():
-    widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']
-    if widget_dic:
-        # PLAYED TRACK
-        if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
-            if -1 < cv.thumbnail_last_played_track_index <= cv.thumbnail_pl_tracks_count-1:
-                widget_dic[cv.thumbnail_last_played_track_index]['widget'].set_playing_thumbnail_style()
-        # SELECTED TRACK
-        if -1 < cv.thumbnail_last_selected_track_index <= cv.thumbnail_pl_tracks_count-1:
-            widget_dic[cv.thumbnail_last_selected_track_index]['widget'].set_selected_thumbnail_style()
 
 # THUMBNAIL PL
 def scroll_to_active_item_thumbnail_pl():
