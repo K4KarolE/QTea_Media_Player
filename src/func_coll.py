@@ -12,6 +12,7 @@ import subprocess
 
 
 inactive_track_font_style = QFont('Arial', 11, 500)
+inactive_thumbnail_queue_number_font_style = QFont('Arial', 10, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
@@ -479,10 +480,20 @@ def remove_track_from_playlist():
     update_queued_tracks_after_track_deletion()
     current_row_index = cv.active_pl_name.currentRow()
 
+    # SCENARIO: removing playing track on standard pl and switching to thumbnail view
+    # to make sure the playing thumbnail style is not used
+    if cv.playing_track_index == current_row_index:
+        cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed'] = False
+        br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
+        # br.av_player.player.stop()
+        # br.av_player.video_output.hide()
+        # br.image_logo.show()
+        # br.button_play_pause.setIcon(br.icon.start)
+
     # SHUFFLE ON PLAYED MEDIA TRACKING - REMOVE TRACK
     if cv.shuffle_playlist_on and current_row_index in cv.shuffle_played_tracks_list:
         cv.shuffle_played_tracks_list.remove(current_row_index)
-    
+
     # PLAYLIST
     cv.active_pl_name.takeItem(current_row_index)
     cv.active_pl_queue.takeItem(current_row_index)
@@ -509,7 +520,6 @@ def remove_track_from_playlist():
         cv.active_pl_name.item(track_row_db-1).setText(list_name)
 
     cv.active_pl_tracks_count = cv.active_pl_name.count()
-
     cv.track_change_on_main_playlist_new_search_needed = True
 
 

@@ -99,6 +99,9 @@ class Data:
 
     """ THUMBNAILS / THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")
+    # To avoid circular import: "func_thumbnail" >> << "thumbnail_widget"
+    # Used: remove a single track in the thumbnail view
+    thumbnail_widget_resize_and_move_to_pos_func_holder: object = None
 
     thumbnail_db_table: str = None
     thumbnail_last_played_track_index: int = 0

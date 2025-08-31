@@ -15,7 +15,7 @@ from .func_coll import (
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
-    remove_track_from_playlist,
+    remove_track_from_playlist
     )
 from .message_box import MyMessageBoxError
 
@@ -45,22 +45,16 @@ class MyListWidget(QListWidget):
 
 
     def eventFilter(self, source, event):
-        '''
-        event.type() == QEvent.Type.ContextMenu <-- right click
-        self.itemAt(event.pos())    <-- clicked on listwidget item
-        '''
-        if event.type() == QEvent.Type.ContextMenu and self.itemAt(event.pos()):
-
+        """ ContextMenu triggered by the right click
+            on the list widget
+        """
+        if event.type() == QEvent.Type.ContextMenu:
             menu = QMenu()
-
             for menu_title, menu_icon in self.context_menu_dic.items():
-
                 icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
-   
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
-
         return super().eventFilter(source, event)
 
 
@@ -91,13 +85,13 @@ class MyListWidget(QListWidget):
         
         # REMOVE TRACK
         elif q.text() == list(self.context_menu_dic)[3]:
-            try:
+            # try:
                 remove_track_from_playlist()
-            except:
-                MyMessageBoxError(
-                    'File location',
-                    'The file or the file`s home folder has been renamed / removed. '
-                    )
+            # except:
+            #     MyMessageBoxError(
+            #         'File location',
+            #         'The file or the file`s home folder has been renamed / removed. '
+            #         )
         
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:

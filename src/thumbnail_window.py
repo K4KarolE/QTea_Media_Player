@@ -106,8 +106,9 @@ class WidgetsWindow(QWidget):
             thumbnail_widget.set_ functions
         """
         if index == cv.thumbnail_last_played_track_index and index != cv.thumbnail_last_selected_track_index:
-            thumbnail_widget.set_playing_thumbnail_style()
-            thumbnail_widget.set_playing_thumbnail_img()
+            if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
+                thumbnail_widget.set_playing_thumbnail_style()
+                thumbnail_widget.set_playing_thumbnail_img()
 
         if index == cv.thumbnail_last_selected_track_index:
             thumbnail_widget.set_selected_thumbnail_style()

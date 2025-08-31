@@ -88,7 +88,6 @@ def update_thumbnail_support_vars_before_thumbnail_thread():
     """
     cv.thumbnail_db_table = cv.active_db_table
     cv.thumbnail_pl_tracks_count = cv.active_pl_name.count()
-
     cv.thumbnail_last_played_track_index = cv.active_pl_last_track_index
     cv.thumbnail_last_played_track_index_is_valid = -1 < cv.thumbnail_last_played_track_index <=cv.thumbnail_pl_tracks_count-1
 
@@ -195,6 +194,9 @@ def thumbnail_widget_resize_and_move_to_pos():
         update_window_widgets_size(thumbnail_pos_y)
         scroll_to_active_item_thumbnail_pl()
 
+# To avoid circular import: "func_thumbnail" >> << "thumbnail_widget"
+# Used: remove a single track in the thumbnail view
+cv.thumbnail_widget_resize_and_move_to_pos_func_holder = thumbnail_widget_resize_and_move_to_pos
 
 # ACTIVE & THUMBNAIL PL / thumbnail_widget_resize_and_move_to_pos()
 def generate_thumbnail_widget_new_width():
