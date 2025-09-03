@@ -381,6 +381,7 @@ def update_thumbnail_style_at_row_change():
         - Standard playlist change >> thumbnail playlist style update
         - Thumbnail playlist change (new widget selected / double-clicked) >>
             standard playlist change >> thumbnail playlist style update
+            triggered by src / thumbnail widget / mousePressEvent
     """
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:

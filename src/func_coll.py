@@ -485,10 +485,6 @@ def remove_track_from_playlist():
     if cv.playing_track_index == current_row_index:
         cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed'] = False
         br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
-        # br.av_player.player.stop()
-        # br.av_player.video_output.hide()
-        # br.image_logo.show()
-        # br.button_play_pause.setIcon(br.icon.start)
 
     # SHUFFLE ON PLAYED MEDIA TRACKING - REMOVE TRACK
     if cv.shuffle_playlist_on and current_row_index in cv.shuffle_played_tracks_list:
@@ -498,6 +494,16 @@ def remove_track_from_playlist():
     cv.active_pl_name.takeItem(current_row_index)
     cv.active_pl_queue.takeItem(current_row_index)
     cv.active_pl_duration.takeItem(current_row_index)
+
+    # THUMBNAIL STYLE UPDATE HELPER ASSIGNMENTS
+    # In the src / playlists / row_changed_sync_pl function the
+    # cv.current_track_index = current_playlist_l.. .currentRow() assignment increasing the
+    # cv.current_track_index value with one from the second iteration when removing a track
+    # from the playlist >> causing error in the selected thumbnail tracking / thumbnail view
+    # Fixing the issue with new assignments after the list widget items removal
+    cv.current_track_index = cv.active_pl_name.currentRow()
+    cv.active_pl_last_selected_track_index = cv.active_pl_name.currentRow()
+
     # TRACK INDEX UPDATE
     if  cv.active_db_table == cv.playing_db_table:
         if current_row_index < cv.playing_pl_last_track_index:

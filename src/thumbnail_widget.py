@@ -149,6 +149,10 @@ class ThumbnailWidget(QWidget):
         cv.thumbnail_widget_resize_and_move_to_pos_func_holder()
 
     def mousePressEvent(self, a0):
+        """ Thumbnail playlist change (new widget selected / double-clicked) >>
+            standard playlist change >> thumbnail playlist style update
+            via src / func_thumbnail / update_thumbnail_style_at_row_change
+        """
         cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
