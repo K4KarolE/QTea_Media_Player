@@ -106,7 +106,12 @@ class MyButtons(QPushButton):
             # CLEAR PREVIOUSLY PLAYED TRACKS RECORD
             if cv.shuffle_playlist_on:
                 cv.shuffle_played_tracks_list.clear()
-
+            # WINDOW TITLE
+            if cv.active_db_table == cv.playing_db_table:
+                if br.av_player.player.isPlaying() or br.av_player.paused:
+                    br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
+                else:
+                    br.window.setWindowTitle('QTea Media Player')
 
         ''' Queued track in the playlist '''
         if cv.active_db_table in cv.queue_playlists_list:
