@@ -363,7 +363,7 @@ def queue_add_remove_track():
 
             if cv.current_track_index != cv.playing_pl_last_track_index:        
                 update_dequeued_track_style(cv.current_track_index)
-        
+
         search_result_queue_number_update()
 
 
@@ -545,7 +545,7 @@ def get_playlist_details_from_search_tab_list(current_row_index):
 
 
 def search_result_queue_number_update():
-    '''
+    """
     Playlists - queue/dequeue track --> Update the queue numbers in the Search tab
     - cv.queue_tracks_list = [[playlist_3, 4], [playlist_4, 2], ..]
     - playing a queued track: [2] 
@@ -555,16 +555,9 @@ def search_result_queue_number_update():
     Why separate the queue, dequeue number update as below?
     - Dequeue: do not need to iterate through all the search results
     - At least the dequeue part is efficient
-    '''
-    def search_result_queued_tracks_index_list():
-        queued_tracks_index_list = []
-        for index in range(0, cv.search_queue_list_widget.count()):
-            if cv.search_queue_list_widget.item(index).text() != '':
-                queued_tracks_index_list.append(index)
-        return queued_tracks_index_list
-    
-    if cv.search_result_dic:
-        cv.search_result_queued_tracks_index_list = search_result_queued_tracks_index_list()
+    """
+    if cv.search_result_dic and not cv.track_change_on_main_playlist_new_search_needed:
+        cv.search_result_queued_tracks_index_list = get_search_result_queued_tracks_index_list()
         index_for_remove_queue_number = cv.search_result_queued_tracks_index_list.copy()
         
         # DEQUEUE
@@ -605,6 +598,14 @@ def search_result_queue_number_update():
 
     cv.queued_tracks_amount = len(cv.queue_tracks_list)
 
+def get_search_result_queued_tracks_index_list():
+    queued_tracks_index_list = []
+    for index in range(0, cv.search_queue_list_widget.count()):
+        if cv.search_queue_list_widget.item(index).text() != '':
+            queued_tracks_index_list.append(index)
+    return queued_tracks_index_list
+
+
 def clear_queue_update_all_occurrences():
     if cv.queue_tracks_list:
         # SEARCH TAB
@@ -629,6 +630,7 @@ def clear_queue_update_all_occurrences():
         update_queued_tracks_order_number(clear_queue = True)
         cv.queue_tracks_list.clear()
         cv.queue_playlists_list.clear()
+
 
 def update_window_size_vars_from_saved_values():
     cv.window_width = settings['general_settings']['window_width']
