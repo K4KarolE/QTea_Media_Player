@@ -51,11 +51,16 @@ class PlaysFunc:
         if cv.queue_tracking_title in cv.queue_tracks_list:
             current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
             queue_window_remove_track(current_queue_index)
-            
+
             cv.queue_tracks_list.remove(cv.queue_tracking_title)
             cv.queue_playlists_list.remove(cv.playing_db_table)
             cv.playing_pl_queue.item(cv.playing_track_index).setText('')
             update_queued_tracks_order_number()
+            # THUMBNAIL VIEW
+            thumbnail_widgets_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
+            if thumbnail_widgets_dic:
+                thumbnail_widgets_dic[cv.playing_track_index]['widget'].is_queued = False
+                thumbnail_widgets_dic[cv.playing_track_index]['widget'].set_queue_number(None)
 
 
         ''' PLAY '''

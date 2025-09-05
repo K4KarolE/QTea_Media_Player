@@ -12,7 +12,6 @@ import subprocess
 
 
 inactive_track_font_style = QFont('Arial', 11, 500)
-inactive_thumbnail_queue_number_font_style = QFont('Arial', 10, 500)
 active_track_font_style = QFont('Arial', 11, 600)
 
 
@@ -336,6 +335,7 @@ def queue_add_remove_track():
     if cv.active_pl_name.currentItem():    # to avoid action on playlist where no track is selected
             
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+        thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
         
         # STANDARD -> QUEUED TRACK
         if not cv.queue_tracking_title in cv.queue_tracks_list:
@@ -343,13 +343,20 @@ def queue_add_remove_track():
             cv.queue_tracks_list.append(cv.queue_tracking_title)
             cv.queue_playlists_list.append(cv.active_db_table)
 
-            queue_order_number = f'[{len(cv.queue_tracks_list)}]'
-            cv.active_pl_queue.item(cv.current_track_index).setText(queue_order_number)
+            queue_number = len(cv.queue_tracks_list)
+            queue_number_to_display = f'[{len(cv.queue_tracks_list)}]'
+            cv.active_pl_queue.item(cv.current_track_index).setText(queue_number_to_display)
             
             # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
             if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
                 update_queued_track_style(cv.current_track_index)
-            
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget_dic:
+                thumbnail_widget_dic[cv.current_track_index]['widget'].set_queued_track_thumbnail_style()
+                thumbnail_widget_dic[cv.current_track_index]['widget'].set_queue_number(queue_number)
+                thumbnail_widget_dic[cv.current_track_index]['widget'].is_queued = True
+
             queue_window_add_track()
                    
         # QUEUED TRACK -> STANDARD
@@ -363,6 +370,11 @@ def queue_add_remove_track():
 
             if cv.current_track_index != cv.playing_pl_last_track_index:        
                 update_dequeued_track_style(cv.current_track_index)
+                # THUMBNAIL VIEW
+                if thumbnail_widget_dic:
+                    thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
+                    thumbnail_widget_dic[cv.current_track_index]['widget'].set_queue_number(None)
+                    thumbnail_widget_dic[cv.current_track_index]['widget'].is_queued = False
 
         search_result_queue_number_update()
 
@@ -419,6 +431,19 @@ def update_queued_tracks_order_number(clear_queue = False):
         else:
             queue_new_order_number = f'[{index + 1}]'
         queue_list_widget.item(track_index).setText(queue_new_order_number)
+
+        # THUMBNAIL VIEW
+        thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[track_index]['widget']
+            if clear_queue:
+                queue_number_thumbnail_view = None
+                thumbnail_widget.is_queued = False
+            else:
+                queue_number_thumbnail_view = index + 1
+                thumbnail_widget.is_queued = True
+            thumbnail_widget.set_queue_number(queue_number_thumbnail_view)
+
 
 
 def update_queued_tracks_after_track_deletion():

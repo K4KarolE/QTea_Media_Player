@@ -105,11 +105,20 @@ class WidgetsWindow(QWidget):
             The "failed" and "audio" validations are in the
             thumbnail_widget.set_ functions
         """
+        # QUEUED
+        if [cv.thumbnail_db_table, index] in cv.queue_tracks_list:
+            thumbnail_widget.set_queued_track_thumbnail_style()
+            thumbnail_widget.is_queued = True
+            queue_number = cv.queue_tracks_list.index([cv.thumbnail_db_table, index]) + 1
+            thumbnail_widget.set_queue_number(queue_number)
+
+        # PLAYED
         if index == cv.thumbnail_last_played_track_index and index != cv.thumbnail_last_selected_track_index:
             if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
                 thumbnail_widget.set_playing_thumbnail_style()
                 thumbnail_widget.set_playing_thumbnail_img()
 
+        # SELECTED
         if index == cv.thumbnail_last_selected_track_index:
             thumbnail_widget.set_selected_thumbnail_style()
             thumbnail_widget.set_default_thumbnail_img()

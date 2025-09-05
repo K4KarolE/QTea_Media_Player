@@ -12,7 +12,6 @@ from .class_bridge import br
 from .func_coll import (
     active_track_font_style,
     inactive_track_font_style,
-    inactive_thumbnail_queue_number_font_style,
     clear_queue_update_all_occurrences,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
@@ -42,6 +41,7 @@ class ThumbnailWidget(QWidget):
         self.text = QLabel(label_text)
         self.text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         # QUEUE NUMBER
+        self.is_queued = False
         self.queue_number = QLabel('#')
         self.queue_number.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
@@ -92,8 +92,7 @@ class ThumbnailWidget(QWidget):
         # QUEUE
         elif q.text() == list(self.context_menu_dic)[1]:
             queue_add_remove_track()
-            self.set_queued_track_thumbnail_style()
-            self.queue_number.setText('[ placeholder ]')
+
 
         # CLEAR QUEUE
         elif q.text() == list(self.context_menu_dic)[2]:
@@ -179,78 +178,58 @@ class ThumbnailWidget(QWidget):
 
     def set_default_thumbnail_style(self):
         self.set_default_thumbnail_img()
-
         self.setStyleSheet(
             "background-color: white;"
             "border: 1px solid grey;"
             "border-radius: 2px;"
         )
-        self.label_image.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-        )
-        self.text.setFont(inactive_track_font_style)
-        self.text.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-        )
-        self.queue_number.setFont(inactive_thumbnail_queue_number_font_style)
-        self.queue_number.setStyleSheet(
-            "border: None;"
-        )
+        self.label_image.setStyleSheet("border: None;")
+        self.set_text_style(self.text, 'inactive', 'black')
+        self.set_text_style(self.queue_number, 'inactive', 'black')
 
 
     def set_selected_thumbnail_style(self):
         self.set_default_thumbnail_img()
-
         self.setStyleSheet(
             "background-color: #CCE8FF;"
             "border: 1px solid grey;"
             "border-radius: 2px;"
         )
-        self.label_image.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-        )
-        self.text.setFont(inactive_track_font_style)
-        self.text.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-        )
+        self.set_text_style(self.text, 'inactive', 'black')
+        self.set_text_style(self.queue_number, 'inactive', 'black')
+
 
     def set_queued_track_thumbnail_style(self):
         self.setStyleSheet("background-color: #2b2b2b;")
-        self.text.setFont(active_track_font_style)
-        self.text.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-            "color: white;"
-        )
-        self.queue_number.setFont(active_track_font_style)
-        self.queue_number.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-            "color: white;"
-        )
+        self.set_text_style(self.text, 'active', 'white')
+        self.set_text_style(self.queue_number, 'active', 'white')
+
+    def set_queue_number(self, queue_number = None):
+        if queue_number:
+            self.queue_number.setText(f'[ {queue_number} ]')
+        else:
+            self.queue_number.setText('#')
 
 
     def set_playing_thumbnail_style(self):
         self.set_playing_thumbnail_img()
-
         self.setStyleSheet(
             "background-color: #287DCC;"
             "border: 2px solid grey;"
             "border-radius: 2px;"
         )
-        self.label_image.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-        )
-        self.text.setFont(active_track_font_style)
-        self.text.setStyleSheet(
-            "border: 0px;"
-            "border-radius: 0px;"
-            "color: white;"
+        self.set_text_style(self.text, 'active', 'white')
+        self.set_text_style(self.queue_number, 'active', 'white')
+
+
+    def set_text_style(self, widget, font_style: str, font_color: str):
+        if font_style == 'active':
+            widget.setFont(active_track_font_style)
+        else:
+            widget.setFont(inactive_track_font_style)
+        widget.setStyleSheet(
+            "border: None;"
+            f"color: {font_color};"
         )
 
 

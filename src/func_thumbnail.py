@@ -385,11 +385,15 @@ def update_thumbnail_style_at_row_change():
     """
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
+        thumbnail_widget = thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget']
         # CURRENT
         thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
         # PREVIOUS
-        if -1 < cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
-            thumbnail_widget_dic[cv.active_pl_last_selected_track_index]['widget'].set_default_thumbnail_style()
+        if thumbnail_widget.is_queued:
+            thumbnail_widget.set_queued_track_thumbnail_style()
+        else:
+            if -1 < cv.active_pl_last_selected_track_index <= cv.active_pl_tracks_count-1:
+                thumbnail_widget.set_default_thumbnail_style()
         # PLAYING
         if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
             played_track_index = settings['playlists'][cv.active_db_table]['last_track_index']
