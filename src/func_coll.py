@@ -335,8 +335,12 @@ def queue_add_remove_track():
     if cv.active_pl_name.currentItem():    # to avoid action on playlist where no track is selected
             
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+        # THUMBNAIL VIEW
         thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
-        
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[cv.current_track_index]['widget']
+        else: thumbnail_widget = None
+
         # STANDARD -> QUEUED TRACK
         if not cv.queue_tracking_title in cv.queue_tracks_list:
 
@@ -352,10 +356,17 @@ def queue_add_remove_track():
                 update_queued_track_style(cv.current_track_index)
 
             # THUMBNAIL VIEW
-            if thumbnail_widget_dic:
-                thumbnail_widget_dic[cv.current_track_index]['widget'].set_queued_track_thumbnail_style()
-                thumbnail_widget_dic[cv.current_track_index]['widget'].set_queue_number(queue_number)
-                thumbnail_widget_dic[cv.current_track_index]['widget'].is_queued = True
+            """ Before a track can be queued in the thumbnail view (or in
+                the standard playlist; queue list and search list are differ)
+                has to be selected >> "selected thumbnail style" will be
+                still in place even when the track got queued
+                Once another thumbnail is selected the "queued thumbnail" style"
+                will be applied to the queued track
+            """
+            if thumbnail_widget:
+                thumbnail_widget.is_queued = True
+                thumbnail_widget.set_queue_number(queue_number)
+                thumbnail_widget.set_selected_thumbnail_style()
 
             queue_window_add_track()
                    
@@ -370,11 +381,12 @@ def queue_add_remove_track():
 
             if cv.current_track_index != cv.playing_pl_last_track_index:        
                 update_dequeued_track_style(cv.current_track_index)
-                # THUMBNAIL VIEW
-                if thumbnail_widget_dic:
-                    thumbnail_widget_dic[cv.current_track_index]['widget'].set_selected_thumbnail_style()
-                    thumbnail_widget_dic[cv.current_track_index]['widget'].set_queue_number(None)
-                    thumbnail_widget_dic[cv.current_track_index]['widget'].is_queued = False
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.set_queue_number(None)
+                thumbnail_widget.is_queued = False
+                thumbnail_widget.set_selected_thumbnail_style()
 
         search_result_queue_number_update()
 
@@ -488,6 +500,20 @@ def remove_queued_tracks_after_playlist_clear():
             cv.queue_tracks_list.remove(tracking_title)
             cv.queue_playlists_list.remove(playlist)
 
+
+def update_dequeued_track_thumbnail_view(playlist: str, track_index: int):
+    thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
+    if thumbnail_widget_dic:
+        thumbnail_widget = thumbnail_widget_dic[track_index]['widget']
+        thumbnail_widget.set_queue_number(None)
+        thumbnail_widget.is_queued = False
+        """
+            If it is playing >> stays playing thumbnail style
+            If it is selected or selected and playing >> stays selected thumbnail style
+            Otherwise >> default thumbnail style
+        """
+        if not thumbnail_widget.is_playing and not thumbnail_widget.is_selected:
+            thumbnail_widget.set_default_thumbnail_style()
 
 
 def remove_track_from_playlist():
@@ -651,6 +677,10 @@ def clear_queue_update_all_occurrences():
             playlist = track_title[0]
             track_index = track_title[1]
             update_dequeued_track_style_from_queue_window(playlist, track_index)
+            # THUMBNAIL VIEW
+            thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
+            if thumbnail_widget_dic:
+                thumbnail_widget_dic[track_index]["widget"].set_default_thumbnail_style()
 
         update_queued_tracks_order_number(clear_queue = True)
         cv.queue_tracks_list.clear()

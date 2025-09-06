@@ -1,5 +1,5 @@
 '''
-Class created to handle context menu (right click on 
+Class created to handle context menu (right-click on
 the list items), in the Queue tab tracklist
 Used it in the src / window_queue_and_search.py
 '''
@@ -18,6 +18,7 @@ from .func_coll import (
     queue_window_remove_track,
     search_result_queue_number_update,
     update_dequeued_track_style_from_queue_window,
+    update_dequeued_track_thumbnail_view,
     update_queued_tracks_order_number
     )
 from .message_box import MyMessageBoxError
@@ -117,13 +118,14 @@ class MyQueueListWidget(QListWidget):
 
     def dequeue_track(self):
         current_row_index = self.currentRow() - 1
-        playlist, playlist_index, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
+        playlist, _, track_index, queue_tracking_title = get_playlist_details_from_queue_tab_list(current_row_index)
         
         cv.queue_tracks_list.remove(queue_tracking_title)
         cv.queue_playlists_list.remove(playlist)
         cv.playlist_widget_dic[playlist]['queue_list_widget'].item(track_index).setText('')
         
         queue_window_remove_track(current_row_index)
+        update_dequeued_track_thumbnail_view(playlist, track_index)
         update_queued_tracks_order_number()
         search_result_queue_number_update()
 

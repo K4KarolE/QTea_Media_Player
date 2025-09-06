@@ -25,6 +25,9 @@ class ThumbnailWidget(QWidget):
     def __init__(self, file_name, index):
         super().__init__()
         self.index = index
+        self.is_selected = False
+        self.is_playing = False
+        self.is_queued = False
         self.thumbnail_type = None
         self.setParent(cv.playlist_widget_dic[cv.thumbnail_db_table]["thumbnail_window"].widgets_window)
         self.setAutoFillBackground(True)
@@ -41,7 +44,6 @@ class ThumbnailWidget(QWidget):
         self.text = QLabel(label_text)
         self.text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         # QUEUE NUMBER
-        self.is_queued = False
         self.queue_number = QLabel('#')
         self.queue_number.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
@@ -177,6 +179,9 @@ class ThumbnailWidget(QWidget):
 
 
     def set_default_thumbnail_style(self):
+        self.is_selected = False
+        self.is_playing = False
+        self.is_queued = False
         self.set_default_thumbnail_img()
         self.setStyleSheet(
             "background-color: white;"
@@ -189,6 +194,7 @@ class ThumbnailWidget(QWidget):
 
 
     def set_selected_thumbnail_style(self):
+        self.is_selected = True
         self.set_default_thumbnail_img()
         self.setStyleSheet(
             "background-color: #CCE8FF;"
@@ -200,6 +206,7 @@ class ThumbnailWidget(QWidget):
 
 
     def set_queued_track_thumbnail_style(self):
+        self.is_queued = True
         self.setStyleSheet("background-color: #2b2b2b;")
         self.set_text_style(self.text, 'active', 'white')
         self.set_text_style(self.queue_number, 'active', 'white')
@@ -212,6 +219,7 @@ class ThumbnailWidget(QWidget):
 
 
     def set_playing_thumbnail_style(self):
+        self.is_playing = True
         self.set_playing_thumbnail_img()
         self.setStyleSheet(
             "background-color: #287DCC;"
