@@ -207,6 +207,7 @@ class ThumbnailWidget(QWidget):
 
     def set_queued_track_thumbnail_style(self):
         self.is_queued = True
+        self.is_selected = False
         self.setStyleSheet("background-color: #2b2b2b;")
         self.set_text_style(self.text, 'active', 'white')
         self.set_text_style(self.queue_number, 'active', 'white')

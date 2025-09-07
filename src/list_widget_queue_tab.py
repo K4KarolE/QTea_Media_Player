@@ -18,7 +18,7 @@ from .func_coll import (
     queue_window_remove_track,
     search_result_queue_number_update,
     update_dequeued_track_style_from_queue_window,
-    update_dequeued_track_thumbnail_view,
+    update_dequeued_track_thumbnail_from_queue_window,
     update_queued_tracks_order_number
     )
 from .message_box import MyMessageBoxError
@@ -125,7 +125,7 @@ class MyQueueListWidget(QListWidget):
         cv.playlist_widget_dic[playlist]['queue_list_widget'].item(track_index).setText('')
         
         queue_window_remove_track(current_row_index)
-        update_dequeued_track_thumbnail_view(playlist, track_index)
+        update_dequeued_track_thumbnail_from_queue_window(playlist, track_index)
         update_queued_tracks_order_number()
         search_result_queue_number_update()
 

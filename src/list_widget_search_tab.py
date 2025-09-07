@@ -120,29 +120,49 @@ class MySearchListWidget(QListWidget):
         playlist, _, track_index = get_playlist_details_from_search_tab_list(current_row_index)
         queue_tracking_title = [playlist, track_index]
 
+        # THUMBNAIL VIEW
+        thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[track_index]['widget']
+        else:
+            thumbnail_widget = None
+
         # QUEUE
         if not queue_tracking_title in cv.queue_tracks_list:
             # TRACKING
             cv.queue_tracks_list.append(queue_tracking_title)
             cv.queue_playlists_list.append(playlist)
-            queue_order_number = f'[{len(cv.queue_tracks_list)}]'
+            queue_number = len(cv.queue_tracks_list)
+            queue_number_to_display = f'[{len(cv.queue_tracks_list)}]'
             
             # MOTHER PLAYLIST UPDATE 
-            cv.playlist_widget_dic[playlist]['queue_list_widget'].item(track_index).setText(queue_order_number)
+            cv.playlist_widget_dic[playlist]['queue_list_widget'].item(track_index).setText(queue_number_to_display)
             # IF: AVOID CURRENTLY PLAYING TRACK STYLE UPDATE
             if queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
 
                 update_queued_track_style_from_search_tab(playlist, track_index)
 
             # QUEUE TAB LIST UPDATE
-            title = self.currentItem().text()
-            queue_tab_add_track_from_search_tab(playlist, track_index, title)
+            queue_tab_add_track_from_search_tab(playlist, track_index)
 
             # SEARCH TAB - QUEUE LIST UPDATE
             for item in cv.search_result_dic:
                 if (cv.search_result_dic[item]['playlist'] == playlist and 
                     cv.search_result_dic[item]['track_index'] == track_index):
-                    cv.search_queue_list_widget.item(item).setText(queue_order_number)
+                    cv.search_queue_list_widget.item(item).setText(queue_number_to_display)
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.is_queued = True
+                thumbnail_widget.set_queue_number(queue_number)
+                """
+                    If it is playing >> stays playing thumbnail style
+                    If it is selected or selected and playing >> stays selected thumbnail style
+                    Otherwise >> queued thumbnail style
+                """
+                if not thumbnail_widget.is_playing and not thumbnail_widget.is_selected:
+                    thumbnail_widget.set_queued_track_thumbnail_style()
+
 
         # DEQUEUE
         else:
@@ -163,4 +183,16 @@ class MySearchListWidget(QListWidget):
                 if (cv.search_result_dic[item]['playlist'] == playlist and 
                     cv.search_result_dic[item]['track_index'] == track_index):
                     cv.search_queue_list_widget.item(item).setText('')
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.is_queued = False
+                thumbnail_widget.set_queue_number(None)
+                """
+                    If it is playing >> stays playing thumbnail style
+                    If it is selected or selected and playing >> stays selected thumbnail style
+                    Otherwise >> queued thumbnail style
+                """
+                if not thumbnail_widget.is_playing and not thumbnail_widget.is_selected:
+                    thumbnail_widget.set_default_thumbnail_style()
         search_result_queue_number_update()

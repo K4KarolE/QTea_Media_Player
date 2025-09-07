@@ -198,12 +198,12 @@ def is_active_and_add_to_track_playlist_same():
     return cv.add_track_to_pl_name == cv.active_pl_name
 
 
-def add_new_list_item(new_item, list_widget, align_center = None, track_path = None):
+def add_new_list_item(new_item_text, list_widget, align_center = None, track_path = None):
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
 
-    list_item = QListWidgetItem(new_item, list_widget)
+    list_item = QListWidgetItem(new_item_text, list_widget)
     list_item.track_path = track_path
     list_item.setSizeHint(list_item_size)
     list_item_style_update(
@@ -269,14 +269,13 @@ def update_duration_sum_var_after_track_remove():
 
 
 def queue_window_add_track():
-    ''' 
+    """
         On the (main window / any playlist) a track
         added to the queue --> track`s information populating
         on the Queue & Search window / Queue tab / queue list:
         Order Number | Track title | Playlist | Duration
-    '''
-    title_order_number = f'{str(cv.active_pl_name.currentRow() + 1)}.'
-    title = cv.active_pl_name.currentItem().text().lstrip(title_order_number)
+    """
+    title = Path(cv.active_pl_name.currentItem().track_path).stem
     duration = cv.active_pl_duration.currentItem().text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
@@ -285,7 +284,7 @@ def queue_window_add_track():
     add_new_list_item(duration, cv.queue_widget_dic['duration_list_widget']['list_widget'], True)
 
 
-def queue_tab_add_track_from_search_tab(playlist, track_index, title):
+def queue_tab_add_track_from_search_tab(playlist, track_index):
     ''' 
         On the Queue & Search window / Search tab / search result 
         a track added to the queue --> track`s information
@@ -293,6 +292,8 @@ def queue_tab_add_track_from_search_tab(playlist, track_index, title):
         Order Number | Track title | Playlist | Duration
     '''
     playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
+    name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget'].item(track_index)
+    title = Path(name_list_widget.track_path).stem
     duration = cv.playlist_widget_dic[playlist]['duration_list_widget'].item(track_index).text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
@@ -501,7 +502,7 @@ def remove_queued_tracks_after_playlist_clear():
             cv.queue_playlists_list.remove(playlist)
 
 
-def update_dequeued_track_thumbnail_view(playlist: str, track_index: int):
+def update_dequeued_track_thumbnail_from_queue_window(playlist: str, track_index: int):
     thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
     if thumbnail_widget_dic:
         thumbnail_widget = thumbnail_widget_dic[track_index]['widget']
@@ -677,10 +678,13 @@ def clear_queue_update_all_occurrences():
             playlist = track_title[0]
             track_index = track_title[1]
             update_dequeued_track_style_from_queue_window(playlist, track_index)
+
             # THUMBNAIL VIEW
             thumbnail_widget_dic = cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']
             if thumbnail_widget_dic:
-                thumbnail_widget_dic[track_index]["widget"].set_default_thumbnail_style()
+                thumbnail_widget = thumbnail_widget_dic[track_index]["widget"]
+                if not thumbnail_widget.is_playing and not thumbnail_widget.is_selected:
+                    thumbnail_widget.set_default_thumbnail_style()
 
         update_queued_tracks_order_number(clear_queue = True)
         cv.queue_tracks_list.clear()
