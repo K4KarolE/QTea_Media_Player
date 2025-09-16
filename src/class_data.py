@@ -687,7 +687,8 @@ class Data:
                 'thumbnail_generation_needed': True
             },
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
-            'line_edit': ''     # used in the settings window
+            'line_edit': '',     # used in the Settings window / Playlists
+            'button_jump_to_playlist': ''   # used in the Settings window / Playlists
             }
       
     playlist_list = list(playlist_widget_dic)

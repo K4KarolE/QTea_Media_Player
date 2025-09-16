@@ -31,6 +31,25 @@ from .func_thumbnail import (
     switch_all_pl_to_standard_from_thumbnails_view
     )
 
+
+class ButtonJumpToPlaylist(QPushButton):
+    """ Used in the Settings Window / Playlists tab
+        Class to be able to assign different actions
+        through the buttons creation iteration
+    """
+    def __init__(self, parent, playlist_index):
+        super().__init__()
+        self.setParent(parent)
+        self.playlist_index = playlist_index
+        self.setText('>')
+        self.setToolTip('Jump to playlist')
+        self.clicked.connect(self.button_action)
+
+    def button_action(self):
+        br.playlists_all.setCurrentIndex(self.playlist_index)
+
+
+
 class MySettingsWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -52,13 +71,13 @@ class MySettingsWindow(QWidget):
         ############
             TABS         
         ############
-        ''' 
+        '''
         TABS_POS_X, TABS_POS_Y  = 12, 12
         EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y = 20
 
         tabs = QTabWidget(self)
         tabs.setFont(QFont('Verdana', 10, 500))
-        tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, int(WINDOW_HEIGHT-TABS_POS_Y*5.5)) 
+        tabs.resize(WINDOW_WIDTH-TABS_POS_X*2, int(WINDOW_HEIGHT-TABS_POS_Y*5.5))
         tabs.move(TABS_POS_X, TABS_POS_Y)
         tabs.setStyleSheet(
                         "QTabBar::tab:selected"
@@ -84,12 +103,12 @@ class MySettingsWindow(QWidget):
                             "top: 0.3em;"
                             "}"
                         )
-        
-        tab_playlist_scroll_area = QScrollArea() 
+
+        tab_playlist_scroll_area = QScrollArea()
         tab_general_scroll_area = QScrollArea()
         tab_hotkey_scroll_area = QScrollArea()
 
-        tab_playlist = QWidget() 
+        tab_playlist = QWidget()
         tab_general = QWidget()
         tab_hotkey = QWidget()
 
@@ -113,7 +132,7 @@ class MySettingsWindow(QWidget):
             line_edit_text = dic_value['line_edit_widget'].text()
             line_edit_text = line_edit_text.strip().title()
             return item_text, item_value, line_edit_text
-        
+
 
         '''
         ######################
@@ -172,7 +191,7 @@ class MySettingsWindow(QWidget):
                     MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.')
                     pass_validation = False
 
-        
+
             ''' DUPLICATE CHECK '''
             if pass_validation:
                 for index, item in enumerate(line_edit_text_all_values):
@@ -181,8 +200,8 @@ class MySettingsWindow(QWidget):
                             MyMessageBoxError('HOTKEYS TAB', f'The "{item}" hotkey value used more than once.')
                             pass_validation = False
 
-            return pass_validation 
-        
+            return pass_validation
+
 
         def hotkeys_fields_to_save(to_save = False):
             for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
@@ -193,7 +212,7 @@ class MySettingsWindow(QWidget):
                     settings['hotkey_settings'][hotkey_dic_key] = line_edit_text
                     cv.hotkey_settings_dic[hotkey_dic_key]['value'] = line_edit_text
                     to_save = True
-                    
+
             if to_save:
                 save_json()
 
@@ -219,7 +238,7 @@ class MySettingsWindow(QWidget):
             ''' LINE EDIT '''
             cv.general_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_general)
             line_edit_widget = cv.general_settings_dic[item]['line_edit_widget']
-            
+
             # JUMP VALUES
             if 'jump' in item_text:
                 line_edit_widget.setText(str(int(item_value/1000)))
@@ -241,9 +260,9 @@ class MySettingsWindow(QWidget):
                 lines_amount = lines_amount * 0.8
 
             widget_general_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF * lines_amount)
-        
+
         cv.general_settings_last_widget_pos_y = widget_general_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
-        
+
 
         def general_fields_validation(pass_validation = True):
             ''' Screen values can be bigger than the display size:
@@ -259,14 +278,14 @@ class MySettingsWindow(QWidget):
                     if line_edit_text not in ['True', 'False']:
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False".')
                         pass_validation = False
-                
+
                 elif item_text in cv.gen_sett_window_width_text_list:
-                    if (not line_edit_text.isdecimal() or 
+                    if (not line_edit_text.isdecimal() or
                         int(line_edit_text) < cv.window_min_width or
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
                             MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
-                
+
                 elif item_text in cv.gen_sett_window_height_text_list:
                     if (not line_edit_text.isdecimal() or
                         int(line_edit_text) < cv.window_min_height or
@@ -293,7 +312,7 @@ class MySettingsWindow(QWidget):
                         pass_validation = False
 
             return pass_validation
-        
+
 
         def general_fields_to_save(to_save = False):
             for general_dic_key, general_dic_value in cv.general_settings_dic.items():
@@ -306,13 +325,13 @@ class MySettingsWindow(QWidget):
                         settings['general_settings'][general_dic_key] = time_to_jump
                         cv.general_settings_dic[general_dic_key]['value'] = time_to_jump
                         to_save = True
-   
+
                 elif item_text in cv.gen_sett_boolean_text_list:
                     if item_value != eval(line_edit_text):
                         settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
                         cv.general_settings_dic[general_dic_key]['value'] = eval(line_edit_text)
                         to_save = True
-   
+
                 else:
                     if item_value != int(line_edit_text):
                         settings['general_settings'][general_dic_key] = int(line_edit_text)
@@ -359,6 +378,9 @@ class MySettingsWindow(QWidget):
         WIDGET_PL_POS_X = WIDGETS_POS_X
         widget_pl_pos_y = WIDGETS_POS_Y
         PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
+        PL_LINE_EDIT_WIDGET_LENGTH = 190
+        PL_LINE_EDIT_BUTTON_POS_X_DIFF = 10
+        BUTTON_POS_X = WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF + PL_LINE_EDIT_WIDGET_LENGTH + PL_LINE_EDIT_BUTTON_POS_X_DIFF
         number_counter = 1
 
         # AT GENERAL AND HOTKEYS TAB THE LOWEST DIC. KAY-VALUE PAIR WERE ITERATED
@@ -368,7 +390,7 @@ class MySettingsWindow(QWidget):
             ''' LABEL '''
             number = QLabel(tab_playlist, text=f'Playlist #{number_counter}')
             number.setFont(inactive_track_font_style)
-            
+
             if number_counter >= 10:
                 number.move(WIDGET_PL_POS_X, widget_pl_pos_y)
             else:
@@ -384,13 +406,24 @@ class MySettingsWindow(QWidget):
             line_edit_widget.setGeometry(
                 WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF,
                 widget_pl_pos_y,
-                190,
+                PL_LINE_EDIT_WIDGET_LENGTH,
                 LINE_EDIT_HIGHT
                 )
 
+            ''' BUTTONS - JUMP TO PLAYLIST '''
+            cv.playlist_widget_dic[pl]['button_jump_to_playlist'] = ButtonJumpToPlaylist(tab_playlist, number_counter-1)
+            cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setGeometry(
+                BUTTON_POS_X,
+                widget_pl_pos_y,
+                LINE_EDIT_HIGHT,
+                LINE_EDIT_HIGHT
+                )
+            if not line_edit_widget.text():
+                cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(False)
+
             number_counter += 1
             widget_pl_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
-        
+
         cv.playlist_settings_last_widget_pos_y = widget_pl_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
 
@@ -411,7 +444,7 @@ class MySettingsWindow(QWidget):
             if len(pl_list_with_title) == 0:
                 MyMessageBoxError('PLAYLISTS TAB', 'At least one playlist title needed!')
             return pl_list_with_title
-        
+
 
         def playlist_fields_validation_playing_playlist(pass_validation = True):
             ''' Avoid removing the playing playlist '''
@@ -432,7 +465,7 @@ class MySettingsWindow(QWidget):
                                         f'Playing playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                         pass_validation = False
             return pass_validation
-        
+
 
         def playlist_fields_validation_queued_track(pass_validation = True):
             ''' Avoid removing playlists with queued track '''
@@ -462,24 +495,26 @@ class MySettingsWindow(QWidget):
                 prev_playlist_title = settings['playlists'][pl]['playlist_title']
 
                 if new_playlist_title != prev_playlist_title:
-                    
+
                     # NEW TITLE, PREV: EMPTY - INVISIBLE
                     if new_playlist_title and not prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 1)
                         cv.playlists_without_title_to_hide_index_list.remove(playlist_index)
+                        cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(True)
 
                     # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
                     elif not new_playlist_title and prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 0)
                         cv.playlists_without_title_to_hide_index_list.append(playlist_index)
-                    
+                        cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(False)
+
                     br.playlists_all.setTabText(playlist_index, new_playlist_title)
                     settings['playlists'][pl]['playlist_title'] = new_playlist_title
-                    to_save = True  
-            
+                    to_save = True
+
             if to_save:
                 save_json()
-        
+
 
         ''' 
         #####################
@@ -500,7 +535,7 @@ class MySettingsWindow(QWidget):
                                 "background-color: white;"
                                 "}"
                                 )
-            
+
 
         def set_scroll_area_style(scroll_area):
             scroll_area.setStyleSheet(
@@ -524,7 +559,7 @@ class MySettingsWindow(QWidget):
                                         "width: 0px;"
                                         "}"
                                     )
-            
+
         tabs_dic = {
             'Playlists': {
                 'text': 'Playlists',
@@ -568,11 +603,11 @@ class MySettingsWindow(QWidget):
             set_scroll_bar_style(tabs_dic[tab]['scroll_bar_ver'])
             tabs_dic[tab]['scroll_bar_hor'] = QScrollBar()
             set_scroll_bar_style(tabs_dic[tab]['scroll_bar_hor'])
-            
+
             tabs_dic[tab]['scroll_area'].setVerticalScrollBar(tabs_dic[tab]['scroll_bar_ver'])
             tabs_dic[tab]['scroll_area'].setHorizontalScrollBar(tabs_dic[tab]['scroll_bar_hor'])
             set_scroll_area_style(tabs_dic[tab]['scroll_area'])
-     
+
             tabs_dic[tab]['scroll_area'].setWidget(tabs_dic[tab]['widgets_window'])
             tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
 
@@ -587,16 +622,16 @@ class MySettingsWindow(QWidget):
         BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
         BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HEIGHT
 
-    
-        def button_save_clicked():        
+
+        def button_save_clicked():
             pl_list_with_title = playlist_fields_validation_at_least_one_playlist()
-            
-            if (pl_list_with_title and 
+
+            if (pl_list_with_title and
                 playlist_fields_validation_playing_playlist() and
                 playlist_fields_validation_queued_track() and
                 general_fields_validation() and
                 hotkey_fields_validation()):
-                
+
                 ''' GENERAL TAB FIELDS '''
                 hotkeys_fields_to_save()
 
@@ -606,7 +641,7 @@ class MySettingsWindow(QWidget):
                 ''' PLAYLISTS TAB FIELDS '''
                 switch_all_pl_to_standard_from_thumbnails_view()
                 playlists_fields_to_save()
-                
+
 
                 ''' 
                     If the last used playlist removed 
@@ -616,7 +651,7 @@ class MySettingsWindow(QWidget):
                     cv.active_playlist_index = settings['playlists'][pl_list_with_title[-1]]['playlist_index']
                     settings['last_used_playlist'] = cv.active_playlist_index
                     save_json()
-                
+
                 self.hide()
 
 
