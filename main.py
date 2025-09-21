@@ -8,7 +8,6 @@ from src import (
     MyImage,
     MyPlaylists,
     MyQueueAndSearchWindow,
-    MySettingsWindow,
     MySlider,
     MyVolumeSlider,
     MyWindow,
@@ -34,7 +33,6 @@ def main():
     generate_buttons()
     br.playlists_all = MyPlaylists()
     br.window_queue_and_search = MyQueueAndSearchWindow()
-    br.window_settings = MySettingsWindow()
     br.volume_slider = MyVolumeSlider()
     generate_ui()
 

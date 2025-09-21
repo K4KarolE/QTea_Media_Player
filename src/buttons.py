@@ -20,6 +20,7 @@ from .func_thumbnail import (
     switch_to_standard_active_playlist_from_thumbnail_pl,
     update_thumbnail_support_vars_before_playlist_clear
     )
+from .window_settings import MySettingsWindow
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning
 
@@ -131,7 +132,11 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - SETTINGS BUTTON / WINDOW '''
     def button_settings_clicked(self):
-        br.window_settings.show()
+        if br.window_settings:
+            br.window_settings.show()
+        else:
+            br.window_settings = MySettingsWindow()
+            br.window_settings.show()
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''
