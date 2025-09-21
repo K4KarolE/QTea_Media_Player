@@ -37,17 +37,17 @@ class MyWindow(QWidget):
 
     def hotkeys_creation(self):
         hotkeys_action_dic = {
-        'small_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.small_jump),
-        'small_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.small_jump),
-        'medium_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.medium_jump),
-        'medium_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.medium_jump),
-        'big_jump_backward': lambda: br.av_player.player.setPosition(br.av_player.player.position() - cv.big_jump),
-        'big_jump_forward': lambda: br.av_player.player.setPosition(br.av_player.player.position() + cv.big_jump),
+        'small_jump_backward': lambda:self.jump_action(cv.small_jump, 'backward'),
+        'small_jump_forward': lambda: self.jump_action(cv.small_jump, 'forward'),
+        'medium_jump_backward': lambda:self.jump_action(cv.medium_jump, 'backward'),
+        'medium_jump_forward': lambda:self.jump_action(cv.medium_jump, 'forward'),
+        'big_jump_backward':  lambda:self.jump_action(cv.big_jump, 'backward'),
+        'big_jump_forward':  lambda:self.jump_action(cv.big_jump, 'forward'),
         'display_track_info_on_video': lambda: br.av_player.text_display_on_video(
                 2000,
                 f'{cv.track_title}\n'
                 f'{cv.playing_track_index + 1} / {cv.playing_pl_name.count()}\n'
-                f'{int(br.av_player.player.position() / cv.track_full_duration * 100)}%  -  {cv.duration_to_display_straight}'),
+                f'{self.get_current_duration_info()}'),
         'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
         'volume_up': self.volume_up_action,
         'volume_down': self.volume_down_action,
@@ -137,6 +137,19 @@ class MyWindow(QWidget):
             br.window.thread_add_media.source = event.mimeData().urls()
             br.window.thread_add_media.start()
 
+
+    def get_current_duration_info(self):
+        """ Example: 54%  -  11:11 / 20:25 """
+        return (f'{int(br.av_player.player.position() / cv.track_full_duration * 100)}%'
+                f'  -  {cv.duration_to_display_straight}')
+
+    def jump_action(self, jump_size: int, direction: str):
+        if direction == 'backward':
+            new_pos = br.av_player.player.position() + jump_size * -1
+        else:
+            new_pos = br.av_player.player.position() + jump_size
+        br.av_player.player.setPosition(new_pos)
+        br.av_player.text_display_on_video(1000, self.get_current_duration_info()),
 
 
     ''' 
