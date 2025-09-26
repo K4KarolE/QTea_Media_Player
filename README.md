@@ -51,7 +51,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 </div>
 <br>
 <div align="left">
-    <img src="https://github.com/user-attachments/assets/7b956b27-5a1d-4c37-94a5-2e9a0a4905d0">
+    <img src="https://github.com/user-attachments/assets/5d269ced-a2f4-44b6-857b-3cd243be2426">
 </div>
 <br>
 <div align="left">
@@ -67,7 +67,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 </div>
 <br>
 <div align="left">
-    <img src="https://github.com/user-attachments/assets/4c99a7c8-95f8-4281-b935-9c4c0fb3b4a2">
+    <img src="https://github.com/user-attachments/assets/665ff18b-44d4-44fd-a485-7c8e715458df">
 </div>
 <br>
 
