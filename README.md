@@ -307,23 +307,19 @@ selected track style.
 - Issue: the first track has to be played from the start till the end before be able to switch to another track
 - Solution: dummy, empty track (< 1 second) played at startup
 - More info: `src / av_player.py`
-- Side-effect:
-    - No visible side-effect
-    - Unlikely adding much to the launch time (Legion 5 laptop):
-        - Windows 11: 1.2 seconds
-        - Linux Mint 22: 0.4 seconds
+- Side effect: no visible side effect
 
 ### Dummy playlist tab
 - Issue: if the last playlist tab is hidden, the whole playlist tab list is not reachable via the arrow buttons 
 - Solution: The last, dummy, disabled playlist tab always visible
     - More info: `src / playlists.py`
-    - Side-effect: disabled, not clickable, small pice is visible on the right side of the playlists bar
+    - Side effect: disabled, not clickable, small pice is visible on the right side of the playlists bar
 
 ### Information displayed as subtitle
 - Issue: the video scene composition not following the layout, frame size change
     - Window <- QFrame <- Layout <- QGraphicsView <- QGraphicsScene <- QGraphicsVideoItem
 - Solution: the information (track title, volume, ..) displayed as subtitle on the video screen
-    - Side-effect: When the video is not playing, the information is not displayed
+    - Side effect: When the video is not playing, the information is not displayed
 
 ### Audio delay - LINUX only
 - Issue: video or audio paused + continue playing
@@ -339,6 +335,9 @@ selected track style.
 
 ### Could not find solution yet
 - Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
+- System theme overriding the app`s theme:
+  - LINUX: only affecting the header of the app
+  - WIN 11: depends on the theme selected, can affect the whole app
 
 
 ## Requirements
