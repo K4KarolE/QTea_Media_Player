@@ -291,7 +291,7 @@ def queue_tab_add_track_from_search_tab(playlist, track_index):
         populating on the Queue tab / queue list:
         Order Number | Track title | Playlist | Duration
     '''
-    playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
+    playlist_title = cv.playlist_widget_dic[playlist]['playlist_title']
     name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget'].item(track_index)
     title = Path(name_list_widget.track_path).stem
     duration = cv.playlist_widget_dic[playlist]['duration_list_widget'].item(track_index).text()

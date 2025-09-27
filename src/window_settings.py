@@ -510,6 +510,7 @@ class MySettingsWindow(QWidget):
 
                     br.playlists_all.setTabText(playlist_index, new_playlist_title)
                     settings['playlists'][pl]['playlist_title'] = new_playlist_title
+                    cv.playlist_widget_dic[pl]['playlist_title'] = new_playlist_title
                     to_save = True
 
             if to_save:

@@ -355,7 +355,7 @@ class MyQueueAndSearchWindow(QWidget):
         cv.search_result_dic = {}
         cv.search_result_queued_tracks_index_list = []
         for playlist in cv.playlist_widget_dic:
-            playlist_title = cv.playlist_widget_dic[playlist]['line_edit'].text()
+            playlist_title = cv.playlist_widget_dic[playlist]['playlist_title']
             if playlist_title:  # avoiding hidden playlists
                 name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget']
                 for track_index in range(0, name_list_widget.count()):
