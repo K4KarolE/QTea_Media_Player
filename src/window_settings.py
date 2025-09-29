@@ -43,7 +43,18 @@ class ButtonJumpToPlaylist(QPushButton):
         self.playlist_index = playlist_index
         self.setText('>')
         self.setToolTip('Jump to playlist')
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.clicked.connect(self.button_action)
+        self.setStyleSheet("QPushButton"
+                           "{"
+                            "border: 1px solid #C2C2C2;"
+                            "border-radius: 4px;"
+                            "}"
+                           "QPushButton::pressed"
+                            "{"
+                            "background-color: #C2C2C2;"
+                            "}"
+                           )
 
     def button_action(self):
         br.playlists_all.setCurrentIndex(self.playlist_index)
