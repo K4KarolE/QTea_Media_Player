@@ -26,16 +26,22 @@ def save_json():
 PATH_JSON_SETTINGS = Path(Path().resolve().parent, 'settings.json')
 settings = open_json()
 
-connection = sqlite3.connect('../playlist.db')
-cur = connection.cursor()
+""" OS related databases for ease of switching between multiple OS`
+    More information in the README
+"""
+connection_linux = sqlite3.connect('../playlist_db_linux.db')
+sql_cur_linux = connection_linux.cursor()
+
+connection_win = sqlite3.connect('../playlist_db_win.db')
+sql_cur_win = connection_win.cursor()
 
 
-def list_all_tables():
+def list_all_tables(cur, connection):
     cur.execute("""SELECT name FROM sqlite_master WHERE type='table'""")
     for playlist in cur.fetchall():
         print(playlist)
     connection.close()
-# list_all_tables()
+# list_all_tables(sql_cur_linux, connection_linux)
 
 
 def create_tables(playlists_amount = 30):
@@ -49,7 +55,7 @@ def create_tables(playlists_amount = 30):
         table_name = f'playlist_{i}'
 
         ''' SQL '''
-        cur.execute("""CREATE TABLE {0}
+        sql_cur_win.execute("""CREATE TABLE {0}
                     (
                     row_id INTEGER PRIMARY KEY,
                     duration VARCHAR,
@@ -58,21 +64,32 @@ def create_tables(playlists_amount = 30):
                     )
                     """.format(table_name))
 
+
+        sql_cur_linux.execute("""CREATE TABLE {0}
+                            (
+                            row_id INTEGER PRIMARY KEY,
+                            duration VARCHAR,
+                            current_duration VARCHAR, 
+                            path TEXT
+                            )
+                            """.format(table_name))
+
         ''' JSON '''
         settings['playlists'][table_name] = {
             "playlist_title": str(i + 1),
             "playlist_index": i,
             "last_track_index": 0
             }
-        
-    connection.close()
+
+    connection_win.close()
+    connection_linux.close()
     save_json()
 
 # create_tables()
 
 
 
-def remove_table(table_name):
+def remove_table(cur, connection, table_name):
     cur.execute("""DROP TABLE IF EXISTS {0}""".format(table_name))
     connection.close()
-# remove_table('playlist_12')
+# remove_table(sql_cur_linux, connection_linux, 'playlist_12')

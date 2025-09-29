@@ -49,8 +49,15 @@ except:
     The rest of the DB functions are in:
     - src / func_coll
     - src / playlists
+    
+    OS related databases for ease of switching between multiple OS` on the same device
+    More information in the README
 """
-connection = sqlite3.connect('playlist.db')
+os_linux: bool = (sys.platform == 'linux')
+if os_linux:
+    connection = sqlite3.connect('playlist_db_linux.db')
+else:
+    connection = sqlite3.connect('playlist_db_win.db')
 cur = connection.cursor()
 
 def get_playlists_amount_from_db():
@@ -95,7 +102,7 @@ class Data:
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
     # LINUX
     player_paused_position: int = 0
-    os_linux: bool = (sys.platform == 'linux')
+    os_linux: bool = os_linux
 
     """ THUMBNAILS / THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")

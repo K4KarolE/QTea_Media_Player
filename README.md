@@ -9,9 +9,11 @@
 - Quick switch to alternative window mode / size / position.
 - Playlists saved by default.
 - Set video's preferred audio track to default.
-- Hotkeys, right click menus, selectables:
-    - Audio and subtitle tracks
-    - Full screen on the current display or on the selected display
+- Operating system related databases for dual booting.
+- Hotkeys, right click menus:
+    - Audio and subtitle tracks, audio output devices selection.
+    - Full screen on the current or on the selected display.
+    - Play media with default player.
 - QTea media player can be a viable option for highly organised contentgoers and house party DJs.
 Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 
@@ -28,6 +30,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 - [Active and Playing playlists separation](#active-and-playing-playlists-separation)
 - [Thumbnail View](#thumbnail-view)
 - [Increase the number of playlists beyond the default](#steps-to-increase-the-number-of-playlists-beyond-the-default--to-generate-new-playlist-database)
+- [Operating system related databases](#operating-system-related-databases---linux-windows)
 - [Other Behaviour](#other-behaviour)
     - Volume
     - Screen saver
@@ -264,13 +267,23 @@ selected track style.
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
 1. Close the app if it is running.
-2. Rename the current playlist database: `playlist.db`.
+2. Delete the current databases (`playlist_db_linux.db` and `playlist_db_win.db`) or if you would like to save
+the current ones, just rename them. There is more information about the databases in the below/next section.
 3. In the `src / tables_and_playlists_guide.py` file change the `create_tables(playlists_amount = 30)` function's 
 `playlists_amount` argument value to as many playlists you wish, save the Python file.
-4. Run the `create_tables()` function -> New `playlist.db` will be created.
+4. Run the `create_tables()` function -> New `playlist_db_linux.db`, `playlist_db_win.db` will be created.
 5. After the next start of the app, all the playlists will be visible with increasing numeric titles.
 6. Optional: Change the title of the playlists via the `Settings window / Playlists`.
-7. Optional: Remove the previous playlist database.
+7. Optional: Remove the previous playlist databases.
+
+## Operating system related databases - Linux, Windows
+- There are two databases (`playlist_db_linux.db`, `playlist_db_win.db`) holding the playlist information. Only one is
+ in use at the time the app is running. The DB selection depends on the user`s current OS.
+- Reason: ease of switching between multiple OS` on the same device.
+- Example: A media added in Linux is not usable once switched to Windows** so it needs to be re-added >> solution: 
+ multiple OS related databases >> once switched to another OS, the appropriate DB will be in use, where the previously
+ added media with the correct path is available
+- ** different mounting point of the same drive of the media
 
 ## Other Behaviour
 - `Volume`
