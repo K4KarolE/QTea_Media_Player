@@ -10,7 +10,10 @@ from .func_coll import(
     update_and_save_volume_slider_value,
     update_window_size_vars_from_saved_values
     )
-from .func_thumbnail import auto_thumbnails_removal_after_app_closure
+from .func_thumbnail import (
+    auto_thumbnails_removal_after_app_closure,
+    switch_to_standard_active_playlist_from_thumbnail_pl
+    )
 from .thread_add_media import ThreadAddMedia
 
 
@@ -134,6 +137,7 @@ class MyWindow(QWidget):
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
+            switch_to_standard_active_playlist_from_thumbnail_pl()
             br.window.thread_add_media.source = event.mimeData().urls()
             br.window.thread_add_media.start()
 

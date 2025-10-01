@@ -43,6 +43,8 @@ class ThumbnailWidget(QWidget):
         label_text = f'{index + 1}.{file_name}'
         self.text = QLabel(label_text)
         self.text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+        self.text.setToolTip(label_text)
+        self.text.setCursor(Qt.CursorShape.PointingHandCursor)
         # QUEUE NUMBER
         self.queue_number = QLabel('#')
         self.queue_number.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
