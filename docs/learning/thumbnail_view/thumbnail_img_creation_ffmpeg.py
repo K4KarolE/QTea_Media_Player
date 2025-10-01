@@ -20,7 +20,7 @@ def generate_thumbnails():
         file_name = f'{vid_path.name}.{target_img_scale}.jpg'
         target_path = Path(path_thumbnails,file_name)
         if not target_path.is_file():
-            ffmpeg_action = f"ffmpeg -ss {at_seconds} -i '{vid_path}' -vf 'scale={target_img_scale}:{target_img_scale}:force_original_aspect_ratio=decrease' -vframes 1 '{target_path}'"
+            ffmpeg_action = f"ffmpeg -ss {at_seconds} -i '{vid_path}' -vf 'scale={target_img_scale}:{target_img_scale}:force_original_aspect_ratio=decrease' -vframes 1 '{target_path}' -hide_banner"
             os.system(ffmpeg_action)
 
 generate_vids_list()
