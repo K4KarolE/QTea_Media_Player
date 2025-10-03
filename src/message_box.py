@@ -46,6 +46,7 @@ class MyMessageBoxConfReq(QMessageBox):
         self.setIcon(QMessageBox.Icon.Question)
         self.setText(question)
         self.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.accepted.connect(function)
         self.exec()
 
@@ -58,4 +59,5 @@ class MyMessageBoxConfirmation(QMessageBox):
         self.setIcon(QMessageBox.Icon.Information)
         self.setText(message)
         self.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.exec()

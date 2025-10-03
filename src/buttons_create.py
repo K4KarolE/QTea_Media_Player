@@ -31,7 +31,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - ADD TRACK '''
     br.button_add_track = MyButtons(
         'AT',
-        'Add Track'
+        f'Add Track ({cv.playlist_add_track})'
         )
     br.button_add_track.setGeometry(button_x_pos(0), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_add_track.clicked.connect(br.button_add_track.button_add_track_clicked)
@@ -40,7 +40,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
     br.button_add_dir = MyButtons(
         'AD',
-        'Add Directory',
+        f'Add Directory ({cv.playlist_add_directory})',
         )
     br.button_add_dir.setGeometry(button_x_pos(1)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_add_dir.clicked.connect(lambda: br.button_add_dir.button_add_dir_clicked())   # logger decorator on func. -> lambda needed
@@ -49,7 +49,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - REMOVE TRACK '''
     br.button_remove_track = MyButtons(
         'RT',
-        'Remove track'
+        f'Remove track ({cv.playlist_remove_track})'
         )
     br.button_remove_track.setGeometry(button_x_pos(2), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_remove_track.clicked.connect(br.button_remove_track.button_remove_single_track)
@@ -58,7 +58,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     br.button_remove_all_track = MyButtons(
         'CP',
-        'Clear Playlist'
+        f'Clear Playlist ({cv.playlist_remove_all_track})'
         )
     br.button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_remove_all_track.clicked.connect(br.button_remove_all_track.button_remove_all_track)
@@ -67,7 +67,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - QUEUE '''
     br.button_queue = MyButtons(
         'Q',
-        'Queue and Search window',
+        f'Queue and Search window ({cv.queue_window} / {cv.search_window})',
         br.icon.queue
         )
     br.button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
@@ -145,7 +145,7 @@ def generate_buttons():
     '''
     br.button_play_pause = MyButtons(
         'PLAY/PAUSE',
-        'Start/stop playing',
+        f'Start/stop playing ({cv.play_pause})',
         br.icon.start,
         )
     br.button_play_pause.clicked.connect(br.button_play_pause.button_play_pause_clicked)
@@ -156,7 +156,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - STOP '''
     br.button_stop = MyButtons(
         'Stop',
-        'Stop playing',
+        f'Stop playing ({cv.stop})',
         br.icon.stop
         )
     br.button_stop.setGeometry(play_buttons_x_pos(1.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -167,7 +167,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - PREVIOUS TRACK '''
     br.button_prev_track = MyButtons(
         'Prev',
-        'Previous track',
+        f'Previous track ({cv.previous_track})',
         br.icon.previous
         )
     br.button_prev_track.setGeometry(play_buttons_x_pos(2.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -177,7 +177,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
     br.button_next_track = MyButtons(
         'Next',
-        'Next track',
+        f'Next track ({cv.next_track})',
         br.icon.next
         )
     br.button_next_track.setGeometry(play_buttons_x_pos(3.5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -187,7 +187,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
     br.button_toggle_repeat_pl = MyButtons(
         'Tog Rep PL',
-        'Toggle Repeat Playlist',
+        f'Toggle Repeat Playlist ({cv.repeat_track_playlist_toggle})',
         br.icon.repeat
         )
     br.button_toggle_repeat_pl.setGeometry(play_buttons_x_pos(5), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -203,7 +203,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
     br.button_toggle_shuffle_pl = MyButtons(
         'Shuffle PL',
-        'Toggle Shuffle Playlist',
+        f'Toggle Shuffle Playlist ({cv.shuffle_playlist_toggle})',
         br.icon.shuffle
         )
     br.button_toggle_shuffle_pl.setGeometry(play_buttons_x_pos(6), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -215,7 +215,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - TOGGLE PLAYLIST '''
     br.button_toggle_playlist = MyButtons(
         'Shuffle PL',
-        'Toggle Show Playlists',
+        f'Toggle Show Playlists ({cv.playlist_toggle})',
         br.icon.toggle_playlist
         )
     br.button_toggle_playlist.setGeometry(play_buttons_x_pos(7), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)
@@ -225,7 +225,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - TOGGLE VIDEO '''
     br.button_toggle_video = MyButtons(
         'Shuffle PL',
-        'Toggle Show Video Window',
+        f'Toggle Show Video Window ({cv.video_toggle})',
         br.icon.toggle_video
         )
     br.button_toggle_video.setGeometry(play_buttons_x_pos(8), 0, PLAY_BUTTONS_WIDTH, PLAY_BUTTONS_HEIGHT)

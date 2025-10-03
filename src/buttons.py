@@ -39,7 +39,7 @@ class MyButtons(QPushButton):
         self.setToolTipDuration(2000)
         self.setFont(QFont('Times', 9, 600))
         self._window_min_width_no_vid = 650
-        self._window_min_height_no_vid = 180
+        self._window_min_height_no_vid = 195
         if icon:
             self.setIcon(icon)
             self.setText(None)

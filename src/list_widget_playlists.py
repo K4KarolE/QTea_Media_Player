@@ -36,7 +36,7 @@ class MyListWidget(QListWidget):
         
         self.context_menu_dic = { 
             'Play / Pause': {'icon': br.icon.start},
-            'Queue / Dequeue': {'icon': br.icon.queue_blue},
+            f'Queue / Dequeue ({cv.queue_toggle})': {'icon': br.icon.queue_blue},
             'Clear queue': {'icon': br.icon.clear_queue},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
@@ -85,13 +85,13 @@ class MyListWidget(QListWidget):
         
         # REMOVE TRACK
         elif q.text() == list(self.context_menu_dic)[3]:
-            # try:
+            try:
                 remove_track_from_playlist()
-            # except:
-            #     MyMessageBoxError(
-            #         'File location',
-            #         'The file or the file`s home folder has been renamed / removed. '
-            #         )
+            except:
+                MyMessageBoxError(
+                    'File location',
+                    'The file or the file`s home folder has been renamed / removed. '
+                    )
         
         # FOLDER
         elif q.text() == list(self.context_menu_dic)[4]:

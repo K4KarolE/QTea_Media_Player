@@ -347,10 +347,11 @@ the current ones, just rename them. There is more information about the database
 - Solution: right-click on the video and select the preferred audio device or restart the app
 
 ### Could not find solution yet
-- Issue: the video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
+- The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 - System theme overriding the app`s theme:
   - LINUX: only affecting the header of the app
   - WIN 11: depends on the theme selected, can affect the whole app
+- Terminal popping up when generating thumbnails in WIN 11 
 
 
 ## Requirements
