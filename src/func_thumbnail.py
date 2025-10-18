@@ -207,13 +207,10 @@ def generate_thumbnail_widget_new_width():
     thumbnail_and_gap = cv.thumbnail_width + cv.thumbnail_pos_gap
     thumbnails_in_row_possible = int(available_space / thumbnail_and_gap)
     thumbnail_count = len(cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'])
-    if thumbnails_in_row_possible >= thumbnail_count:
-        thumbnail_width_diff = int((available_space - thumbnail_count * thumbnail_and_gap) / thumbnail_count)
+    if thumbnail_count <= thumbnails_in_row_possible:
+        thumbnail_width_diff = 0
     else:
-        if thumbnails_in_row_possible:
-            thumbnail_width_diff = int((available_space - thumbnails_in_row_possible * thumbnail_and_gap) / thumbnails_in_row_possible)
-        else:
-            thumbnail_width_diff = 0
+        thumbnail_width_diff = int((available_space - thumbnails_in_row_possible * thumbnail_and_gap) / thumbnails_in_row_possible)
     cv.thumbnail_new_width = cv.thumbnail_width + thumbnail_width_diff
 
 
