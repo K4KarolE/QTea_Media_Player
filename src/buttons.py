@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QFileDialog, QPushButton, QLabel
+from PyQt6.QtWidgets import QFileDialog, QPushButton
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont
 

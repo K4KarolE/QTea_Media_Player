@@ -470,14 +470,7 @@ class AVPlayer(QWidget):
 
 
 """ 
-Only used for duration calculation -->
-Adding small amount of new record/track:
-    Able to add new tracks without interrupting the current playing
-Adding big amount of new record/track while playing video:
-    VIDEO frame lagging while the new tracks are loading:
-        - No / minimal interruption while loading 10 seasons of a TV show
-        - It takes 8+ seconds while video catches up after loading 400+ music library
-    No interruption in the sound of the currently playing video or if only audio media is playing
+The class used for duration calculation only
 
 Message example when adding files:
 ...
@@ -498,3 +491,11 @@ class TrackDuration(QWidget):
     def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
+        self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
+
+    def media_status_changed_action(self):
+        """ Media is loaded > duration is ready to be generated
+            in the src / thread_add_media
+        """
+        if self.player.mediaStatus() in [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]:
+            br.window.thread_add_media.return_thread_generated_values()

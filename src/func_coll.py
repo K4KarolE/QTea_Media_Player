@@ -172,11 +172,6 @@ def generate_track_list_detail(db_track_record):
 
 
 def add_media_grouped_actions(track_path, raw_duration):
-    """ comment to add """
-    if not raw_duration:    # adding a single track, otherwise the duration gen. in ThreadAddDir.run()
-        br.av_player_duration.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
-        raw_duration = br.av_player_duration.player.duration()
-
     if is_active_and_add_to_track_playlist_same():
         cv.active_pl_sum_duration += raw_duration
     cv.playlist_widget_dic[cv.add_track_to_db_table]['active_pl_sum_duration'] = cv.add_track_to_pl_sum_duration

@@ -648,7 +648,7 @@ class Data:
     AUDIO_FILES_EXTS = "*.aac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.wav"
     AUDIO_FILES = f"Audio files ({AUDIO_FILES_EXTS})"
 
-    VIDEO_FILES_EXTS= "*.avi *.flv *.mkv *.mov *.mp4 *.mpeg *.mts *.webm *.wmv"
+    VIDEO_FILES_EXTS= "*.avi *.flv *.mkv *.mov *.mpg *.mp4 *.mpeg *.mts *.webm *.wmv"
     VIDEO_FILES = f"Video files ({VIDEO_FILES_EXTS})"
 
     MEDIA_FILES = f"Media files ({AUDIO_FILES_EXTS} {VIDEO_FILES_EXTS})"
