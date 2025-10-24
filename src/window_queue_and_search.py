@@ -27,6 +27,7 @@ from .func_coll import (
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_tab_list,
     get_playlist_details_from_search_tab_list,
+    move_window_to_middle_of_current_screen,
     update_playing_playlist_vars_and_widgets
     )
 from .list_widget_queue_tab import MyQueueListWidget
@@ -391,15 +392,21 @@ class MyQueueAndSearchWindow(QWidget):
                 add_new_list_item('', cv.search_queue_list_widget, True)
 
 
+    def reposition_window_to_middle(self):
+        move_window_to_middle_of_current_screen(self)
+
+
     def show_queue_tab(self):
         self.show()
         self.tabs.setCurrentIndex(0)
+        self.reposition_window_to_middle()
 
 
     def show_search_tab(self):
         self.show()
         self.tabs.setCurrentIndex(1)
         self.search_line_edit.setFocus()
+        self.reposition_window_to_middle()
 
 
     def generate_parent_dicts_to_display(self, track_path):

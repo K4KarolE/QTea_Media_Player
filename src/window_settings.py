@@ -24,7 +24,7 @@ from .class_data import (
     settings,
     save_json
     )
-from .func_coll import inactive_track_font_style
+from .func_coll import inactive_track_font_style, move_window_to_middle_of_current_screen
 from .message_box import MyMessageBoxError
 from .func_thumbnail import (
     msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
@@ -692,3 +692,6 @@ class MySettingsWindow(QWidget):
         button_purge_thumbnails.clicked.connect(
             msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
             )
+
+    def reposition_window_to_middle(self):
+        move_window_to_middle_of_current_screen(self)

@@ -25,6 +25,8 @@ from .func_thumbnail import update_thumbnail_style_at_play_track
 
 
 class PlaysFunc:
+    def __init__(self):
+        self.track_path = ""
 
     def play_track(self, playing_track_index=None):
         # PyQt playing the first audio_track of the video by default
@@ -97,26 +99,35 @@ class PlaysFunc:
             self.add_to_shuffle_played_list()
 
         # PATH / DURATION / SLIDER
-        cv.track_full_duration, cv.track_current_duration, track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
+        cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
         cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
         br.play_slider.setMaximum(cv.track_full_duration)
         
         # PLAYER
-        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(track_path))))
+        br.av_player.stopped = False
+        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
+
+    def play_track_second_part(self):
+        """ Media was set as source in the previous "play_track" function which triggers
+            the src / av_player / mediaStatusChanged signal calling this function
+            Otherwise the Audio and Subtitles tracks amount generated
+            before the media is loaded >> zero >> not able to switch Audio or
+            Subtitles via hotkeys
+        """
         # FILE REMOVED / RENAMED
         if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.InvalidMedia:
             br.play_slider.setEnabled(False)
             br.image_logo.show()
             br.av_player.video_output.hide()
-            self.update_window_title(track_path, False)
+            self.update_window_title(self.track_path, False)
             return
         else:
             br.play_slider.setEnabled(True)
-            self.update_window_title(track_path, True)
+            self.update_window_title(self.track_path, True)
         
         # VIDEO AREA / LOGO DISPLAY
-        if track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
+        if self.track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
             br.image_logo.show()
             br.av_player.video_output.hide()
         else:
@@ -269,8 +280,10 @@ class PlaysFunc:
             # Display the current audio track title on the screen
             audio_track = br.av_player.player.audioTracks()[cv.audio_track_played]
             audio_track_title = br.av_player.generate_audio_track_title(audio_track)
-            br.av_player.text_display_on_video(1500, audio_track_title)
-    
+            br.av_player.text_display_on_video(1000, audio_track_title)
+        else:
+            br.av_player.text_display_on_video(1000, "Video has one audio track only")
+
 
     def audio_tracks_use_default(self):
         # Some video`s default audiotrack is not the 1st one >>
@@ -366,4 +379,3 @@ class PlaysFunc:
             'white',
             '#287DCC'
             )
-           

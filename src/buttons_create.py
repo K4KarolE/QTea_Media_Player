@@ -71,7 +71,7 @@ def generate_buttons():
         br.icon.queue
         )
     br.button_queue.setGeometry(button_x_pos(4.3), PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
-    br.button_queue.clicked.connect(lambda: br.window_queue_and_search.show())
+    br.button_queue.clicked.connect(lambda: br.window_queue_and_search.show_queue_tab())
     br.button_queue.setIconSize(QSize(15, 15))
 
 

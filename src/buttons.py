@@ -137,6 +137,7 @@ class MyButtons(QPushButton):
         else:
             br.window_settings = MySettingsWindow()
             br.window_settings.show()
+        br.window_settings.reposition_window_to_middle()
 
 
     ''' BUTTON PLAYLIST - SET STYLE '''
@@ -252,8 +253,14 @@ class MyButtons(QPushButton):
             br.av_player.paused = False
             self.setIcon(br.icon.pause)
             br.av_player.screen_saver_on_off()
-        elif not br.av_player.player.isPlaying() and not br.av_player.paused:
-            br.play_funcs.play_track()
+        elif br.av_player.stopped:
+            # Player stopped and the selected track is the same + play
+            if cv.playing_track_index == cv.playing_pl_name.currentRow():
+                br.play_funcs.play_track_second_part()
+            # Player stopped and the selected track is different + play
+            else:
+                br.play_funcs.play_track()
+
             if br.av_player.player.isPlaying(): # ignoring empty playlist
                 self.setIcon(br.icon.pause)
         
@@ -266,6 +273,7 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - STOP '''
     def button_stop_clicked(self):
+        br.av_player.stopped = True
         br.av_player.player.stop()
         br.av_player.paused = False
         br.button_play_pause.setIcon(br.icon.start)

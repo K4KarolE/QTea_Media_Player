@@ -56,14 +56,15 @@ class AVPlayer(QWidget):
         # SETTINGS
         self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.paused = False
+        self.stopped = False
         self.playlist_visible = True
         self.video_area_visible = True
         # SCREEN UPDATE HANDLING
-        self.primary_screen_changed = False    
+        self.primary_screen_changed = False
         br.app.primaryScreenChanged.connect(lambda: self.screen_primary_changed())
         br.app.screenRemoved.connect(lambda: self.screen_back_to_default())
         # CONTEXT MENU
-        self.context_menu_dic = { 
+        self.context_menu_dic = {
             'Play / Pause': {'icon': br.icon.start},
             'Stop': {'icon': br.icon.stop},
             'Previous':{'icon': br.icon.previous},
@@ -113,10 +114,10 @@ class AVPlayer(QWidget):
 
 
     def eventFilter(self, source, event):
-        
+
         if source == self.video_output:
             if event.type() == QEvent.Type.ContextMenu:
-                
+
                 menu = QMenu()
 
                 # MENU ITEMS
@@ -137,7 +138,7 @@ class AVPlayer(QWidget):
                         audio_track_title = f"Track {counter + 1} - No information"
                     else:
                         audio_track_title = f"Track {counter + 1} - {audio_track_title}"
-                    
+
                     if cv.audio_track_played == counter:
                         qaction_to_add = QAction(br.icon.selected, audio_track_title, self)
                     else:
@@ -177,7 +178,7 @@ class AVPlayer(QWidget):
                         qaction_to_add = QAction(br.icon.selected, subtitle_track_title, self)
                     else:
                         qaction_to_add = QAction(subtitle_track_title, self)
-                        
+
                     self.context_menu_dic['Subtitle']['menu_sub'].addAction(qaction_to_add)
                     self.context_menu_dic['Subtitle']['subtitle_tracks'].append(subtitle_track_title)
 
@@ -200,8 +201,8 @@ class AVPlayer(QWidget):
                     self.context_menu_dic['Full Screen']['screens_pos_x'].append(screen_pos_x)
 
                     counter +=1
-                
-                
+
+
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
 
@@ -209,7 +210,7 @@ class AVPlayer(QWidget):
             # FULL SCREEN TOGGLE 
             elif event.type() == QEvent.Type.MouseButtonDblClick:
                 self.full_screen_onoff_toggle()
-            
+
             # VOLUME UPDATE
             elif event.type() == QEvent.Type.Wheel:
                 if event.angleDelta().y() > 0:
@@ -225,7 +226,7 @@ class AVPlayer(QWidget):
                 self.video_output.setFullScreen(False)
                 self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
-                
+
         return super().eventFilter(source, event)
 
 
@@ -250,7 +251,7 @@ class AVPlayer(QWidget):
 
         elif q.text() == list(self.context_menu_dic)[4]:
             br.button_queue.button_speaker_clicked()
-            
+
         elif q.text() == list(self.context_menu_dic)[5]:
             br.window.window_size_toggle_action()
 
@@ -262,28 +263,31 @@ class AVPlayer(QWidget):
                     'Not able to play the file',
                     'The file or the file`s home folder has been renamed / removed.  '
                 )
-        
+
         elif q.text() in audio_tracks_list:
+            br.av_player.text_display_on_video(1000, q.text())
             self.player.setActiveAudioTrack(audio_tracks_list.index(q.text()))
             cv.audio_track_played = audio_tracks_list.index(q.text())
             audio_tracks_list.clear()
 
         elif q.text() in audio_devices_list:
+            br.av_player.text_display_on_video(1000, q.text())
             audio_device_index = audio_devices_list.index(q.text())
             selected_device = self.media_devices.audioOutputs()[audio_device_index]
             self.audio_output.setDevice(selected_device)
             audio_devices_list.clear()
 
         elif q.text() in subtitle_tracks_list or q.text() == 'Disable':
+            br.av_player.text_display_on_video(1000, q.text())
             if q.text() in subtitle_tracks_list:
                 subtitle_track_index = subtitle_tracks_list.index(q.text())
             else:
                 subtitle_track_index = -1   # -1: disable subtitle
-    
+
             self.player.setActiveSubtitleTrack(subtitle_track_index)
             cv.subtitle_track_played = subtitle_track_index
             subtitle_tracks_list.clear()
-        
+
         elif q.text() in screens_list:
             screen_selected = screens_list.index(q.text())
             if cv.screen_index_for_fullscreen != screen_selected:
@@ -308,7 +312,7 @@ class AVPlayer(QWidget):
         '''
         title = sub_track.stringValue(sub_track.Key.Title)
         subtitle_language = sub_track.stringValue(sub_track.Key.Language)
-        
+
         if title:
             subtitle_track_title = f'{subtitle_language} - {title} [sub]'
         else:
@@ -324,7 +328,7 @@ class AVPlayer(QWidget):
         '''
         title = audio_track.stringValue(audio_track.Key.Title)
         audio_language = audio_track.stringValue(audio_track.Key.Language)
-        
+
         if title:
             audio_track_title = f'{audio_language} - {title}'
         else:
@@ -352,7 +356,7 @@ class AVPlayer(QWidget):
             self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
             self.video_output.setFullScreen(True)
             self.video_output.setCursor(Qt.CursorShape.BlankCursor)
-    
+
 
     def full_screen_to_screen_toggle(self):
         """ Used in the right-clicked on the
@@ -361,7 +365,7 @@ class AVPlayer(QWidget):
         self.video_output.setFullScreen(False)
         self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
         self.video_output.setFullScreen(True)
-    
+
 
     """
         Covering screen updates like:
@@ -375,7 +379,7 @@ class AVPlayer(QWidget):
         if not cv.os_linux:
             br.av_player = AVPlayer()
         self.primary_screen_changed = True
-      
+
     def screen_back_to_default(self):
         """ Triggered by the screenRemoved signal """
         if not self.primary_screen_changed:
@@ -386,7 +390,7 @@ class AVPlayer(QWidget):
                     self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
         else:
             self.primary_screen_changed = False
-    
+
 
     def text_display_on_video(self, time, text):
         ''' 
@@ -446,19 +450,34 @@ class AVPlayer(QWidget):
                 br.button_duration_info.setText(cv.duration_to_display_back)
 
             br.button_duration_info.adjustSize()
-    
+
 
     def media_status_changed_action(self):
-        ''' Set player to the latest point:
-            cv.counter_for_duration: here used to make
-            sure the pause/play action not triggering this function
-            more info about the variable: src / func_play_coll / PlaysFunc
-        '''
-        if cv.counter_for_duration == 0:
-            if self.player.mediaStatus() == self.player.MediaStatus.BufferedMedia:
+        """ DURATION
+            Set player`s duration to the latest point
+            more info about the cv.counter_for_duration variable:
+            src / func_play_coll / PlaysFunc
+
+            PLAY TRACK SECOND PART
+            Start playing a track >> src / func_play_coll / PlaysFunc / play_track()
+            >> br.av_player.player.setSource
+            >> mediaStatusChanged signal >> media_status_changed_action()
+            >> br.play_funcs.play_track_second_part() includes:
+                - InvalidMedia handling
+                - Audio and Subtitle tracks amount creation
+                - Play
+                - etc.
+        """
+
+        if (self.player.mediaStatus() in
+                [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]):
+            if not self.stopped:    # avoiding media status change at stop play action
+                # DURATION
                 if cv.track_current_duration > 0 and cv.continue_playback:
                     br.av_player.player.setPosition(cv.track_current_duration)
-        
+                # PLAY A TRACK (continues)
+                br.play_funcs.play_track_second_part()
+
         ''' Auto play '''
         br.play_funcs.auto_play_next_track()
 
