@@ -253,11 +253,14 @@ class MyButtons(QPushButton):
             br.av_player.paused = False
             self.setIcon(br.icon.pause)
             br.av_player.screen_saver_on_off()
-        elif br.av_player.stopped:
+        elif not br.av_player.player.isPlaying() and not br.av_player.paused:
             # Player stopped and the selected track is the same + play
-            if cv.playing_track_index == cv.playing_pl_name.currentRow():
+            # The "cv.playing_.." variables allocated at the first play >> if cv.playing_pl_name" condition
+            if cv.playing_pl_name and cv.playing_track_index == cv.playing_pl_name.currentRow():
+                self.setIcon(br.icon.pause)
                 br.play_funcs.play_track_second_part()
             # Player stopped and the selected track is different + play
+            # Or app started without "Play at startup" enabled + play
             else:
                 br.play_funcs.play_track()
 

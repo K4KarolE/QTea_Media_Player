@@ -245,32 +245,30 @@ class PlaysFunc:
 
 
     def auto_play_next_track(self):
-        ''' 
+        """
         AT STARTUP:
-        - The function first triggered once the based is played (main / AVPlayer())
-            --> cv.played_at_startup_counter needed
-        - On every playlist the last/previously played row will be selected (src/playlists.py) 
+        - The function first triggered once the base is played (src/av_player)
+        - On every playlist the last/previously played row will be selected (src/playlists.py)
         - The last playing playlist will be set active/displayed (src/playlists.py)
         - If 'Play at startup' active (Settings / General), track will be played automatically
-        '''
-        if not cv.played_at_startup_counter:
-            cv.active_playlist_index = cv.playing_playlist_index
-
-        if br.av_player.base_played:   # avoiding the dummy song played when the class created
+        """
+        # END OF THE MEDIA >> PLAY NEXT TRACK
+        if br.av_player.base_played:
             if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia:
                 # To play from the start at next time playing the same track
-                # Not from (duration - 5 sec) position
+                # Not from (full duration - 5 sec) position
                 if cv.continue_playback and not cv.adding_records_at_moment:
                     update_raw_current_duration_db(0, cv.playing_track_index)
                 self.play_next_track()
+        # START UP
         else:
             br.av_player.base_played = True
+            self.play_at_startup_func()
 
-            if cv.play_at_startup and not cv.played_at_startup_counter:
-                time.sleep(0.01) # otherwise media loading error occurs / not a MediaStatus problem
-                self.play_track()
 
-        cv.played_at_startup_counter = True
+    def play_at_startup_func(self):
+        if cv.play_at_startup:
+            self.play_track()
 
 
     def audio_tracks_play_next_one(self):

@@ -34,7 +34,7 @@ from .list_widget_queue_tab import MyQueueListWidget
 from .list_widget_search_tab import MySearchListWidget
 from .message_box import MyMessageBoxError
 
-import os
+from pathlib import Path
 
 
 class MyQueueAndSearchWindow(QWidget):
@@ -410,8 +410,15 @@ class MyQueueAndSearchWindow(QWidget):
 
 
     def generate_parent_dicts_to_display(self, track_path):
-        parent_dicts = os.path.dirname(track_path).split('/')
+        if cv.os_linux: char_slash = '/'
+        else: char_slash = '\\'
+        parent_dicts = str(Path(track_path).parent).split(char_slash)
+        # os.path.dirname(track_path)) - not usable - delivering diff. results
+
         if cv.search_result_parent_dicts_size > 0 :
-            return (f'{parent_dicts[-2][0:cv.search_result_parent_dicts_size]} / '
-                    f'{parent_dicts[-1][0:cv.search_result_parent_dicts_size]}  -  ')
+            try:
+                return (f'{parent_dicts[-2][0:cv.search_result_parent_dicts_size]} / '
+                        f'{parent_dicts[-1][0:cv.search_result_parent_dicts_size]}  -  ')
+            except:
+                return "// Error occurred while generating the directory name //  "
         else: return ""

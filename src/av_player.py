@@ -26,9 +26,9 @@ before be able to switch tracks without crashing:
 Tried to fix/test:
     - Created an "empty" script to exclude possible errors on my side(like: docs/learning), same behaviour
     - Checked online sources and GitHub repos, but the class creation steps look the same
+- It is solved in `PyQt 6.10` - see `PyQt version history` section in README
 '''
 class AVPlayer(QWidget):
-
     def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
@@ -47,14 +47,16 @@ class AVPlayer(QWidget):
         self.player.setAudioOutput(self.audio_output)
         self.audio_output.setVolume(cv.volume)
         # BASE PLAY
+        # mediaStatusChanged signal >> src / func_play_coll /
+        # 1st run of auto_play_next_track() >> base_played = True
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
         self.player.play()
+        self.base_played = False
         # SIGNALS (more signals below)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
         self.player.positionChanged.connect(self.update_duration_info)
         self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
         # SETTINGS
-        self.base_played = False    # 1st auto_play_next_track() run --> base_played = True
         self.paused = False
         self.stopped = False
         self.playlist_visible = True
@@ -468,15 +470,16 @@ class AVPlayer(QWidget):
                 - Play
                 - etc.
         """
-
-        if (self.player.mediaStatus() in
-                [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]):
-            if not self.stopped:    # avoiding media status change at stop play action
-                # DURATION
-                if cv.track_current_duration > 0 and cv.continue_playback:
-                    br.av_player.player.setPosition(cv.track_current_duration)
-                # PLAY A TRACK (continues)
-                br.play_funcs.play_track_second_part()
+        if br.av_player.base_played:
+            if (self.player.mediaStatus() in
+                    [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]):
+                if not self.stopped:    # avoiding media status change at stop play action
+                    # DURATION
+                    if cv.track_current_duration > 0 and cv.continue_playback:
+                        br.av_player.player.setPosition(cv.track_current_duration)
+                    # TO PLAY A TRACK (continues)
+                    # play_track() >> play_track_second_part() >> track is played
+                    br.play_funcs.play_track_second_part()
 
         ''' Auto play '''
         br.play_funcs.auto_play_next_track()
@@ -491,17 +494,6 @@ class AVPlayer(QWidget):
 """ 
 The class used for duration calculation only
 
-Message example when adding files:
-...
-qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is invalid. Taking it from the metadata
-qt.multimedia.ffmpeg.mediadataholder: AVStream duration -9223372036854775808 is invalid. Taking it from the metadata
-[AVHWFramesContext @ 000001B939AE5AC0] Static surface pool size exceeded.
-[h264 @ 000001B93D732280] get_buffer() failed
-[h264 @ 000001B93D732280] thread_get_buffer() failed
-[h264 @ 000001B93D732280] decode_slice_header error
-[h264 @ 000001B93D732280] no frame!
-
-    
 LEARNED:
 QWidget can not be created earlier than the app = QApplication(sys.argv)
 """

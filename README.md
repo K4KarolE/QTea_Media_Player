@@ -321,6 +321,7 @@ the current ones, just rename them. There is more information about the database
 - Solution: dummy, empty track (< 1 second) played at startup
 - More info: `src / av_player.py`
 - Side effect: no visible side effect
+- It is solved in `PyQt 6.10` - see `PyQt version history` section below for the reason the `6.10` version is not in use
 
 ### Dummy playlist tab
 - Issue: if the last playlist tab is hidden, the whole playlist tab list is not reachable via the arrow buttons 
@@ -342,21 +343,40 @@ the current ones, just rename them. There is more information about the database
 
 ### Audio device change - LINUX only
 - Issue: Switching audio device on PC/laptop >> **freezes the app, no error message.
+- Solution:
   - ** src / av_player updated to avoid
-  - It is working without any issue with PyQt(6.9.0).
-- Solution: right-click on the video and select the preferred audio device or restart the app
+  - Right-click on the video and select the preferred audio device or restart the app
 
 ### Could not find solution yet
 - The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 - System theme overriding the app`s theme:
   - LINUX: only affecting the header of the app
-  - WIN 11: depends on the theme selected, can affect the whole app
-- Terminal popping up when generating thumbnails in WIN 11 
+  - WINDOWS 11: depends on the theme selected, can affect the whole app
+- WINDOWS 11 only: Terminal popping up when generating thumbnails
+- WINDOWS 11 only: Video playing + stop + start another video >> the previous video's last played frame is displayed before the new video starts playing 
 
 
 ## Requirements
-### Python 3 - used: 3.11.5
+### Python 3 - used: 3.12
 - https://www.python.org/
+- For the `Python-PyQt` compatibility matrix visit: [https://wiki.qt.io/Qt_for_Python](https://wiki.qt.io/Qt_for_Python)
+
+### PyQt version history
+- 6.5.3 (10/2023) - In use
+
+- 6.10.0 (10/2025) - Not in use
+  - Issue: duration slider not responding
+    - At startup when "Play at startup" is enabled
+    - Randomly
+  - Error message:
+    ```
+    QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::Demuxer::unnamed
+    QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::StreamDecoder::unnamed
+    QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::StreamDecoder::unnamed
+    QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::VideoRenderer::unnamed
+    QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::AudioRenderer::unnamed
+    ```
+  - Quick fix: stop and play again
 
 ### Install dependencies
 ``` pip install -r requirements.txt ```

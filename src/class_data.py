@@ -265,9 +265,6 @@ class Data:
     # USED FOR VALIDATION
     window_min_width: int = settings['general_settings']['window_min_width']
     window_min_height: int = settings['general_settings']['window_min_height']
-    # COUNTER for play_at_startup:
-    # Starts the last played track automatically at startup
-    played_at_startup_counter: bool = False
 
 
     general_settings_dic = {
