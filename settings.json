@@ -60,7 +60,8 @@
     "playlist_select_next_pl": "Shift+Right",
     "queue_toggle": "Q",
     "queue_window": "Alt+Q",
-    "search_window": "Alt+S"
+    "search_window": "Alt+S",
+    "minimal_interface_toggle": "I"
   },
   "skins": {
     "default": {

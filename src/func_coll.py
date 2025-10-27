@@ -731,3 +731,29 @@ def play_track_with_default_player_via_context_menu(current_row, db_table):
             'Not able to play the file',
             'The file or the file`s home folder has been renamed / removed. '
             )
+
+
+def toggle_minimal_interface():
+    if br.av_player.video_output.isVisible() and not cv.minimal_interface_enabled:
+        cv.minimal_interface_enabled = True
+        br.layout_vert_right_qframe.hide()
+        br.play_buttons_list_wrapper.hide()
+        br.play_slider.hide()
+        br.button_speaker.hide()
+        br.volume_slider.hide()
+        br.layout_bottom_slider.setContentsMargins(0, 0, 0, 0)
+        br.layout_bottom_wrapper.setContentsMargins(0, 0, 0, 0)
+    else:
+        disable_minimal_interface()
+
+
+def disable_minimal_interface():
+    if cv.minimal_interface_enabled:
+        cv.minimal_interface_enabled = False
+        br.layout_vert_right_qframe.show()
+        br.play_buttons_list_wrapper.show()
+        br.play_slider.show()
+        br.button_speaker.show()
+        br.volume_slider.show()
+        br.layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
+        br.layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)

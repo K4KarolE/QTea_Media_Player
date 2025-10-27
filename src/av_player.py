@@ -13,6 +13,7 @@ from .class_data import cv
 from .func_coll import (
     generate_duration_to_display,
     play_track_with_default_player_via_context_menu,
+    toggle_minimal_interface,
     update_raw_current_duration_db
     )
 from .message_box import MyMessageBoxError
@@ -74,6 +75,7 @@ class AVPlayer(QWidget):
             'Mute - Toggle':{'icon': br.icon.speaker},
             'Alter - Toggle':{'icon': br.icon.alter},
             'Play track with default player': {'icon': br.icon.start_with_default_player},
+            'Minimal Interface - Toggle': {'icon': br.icon.minimal_interface},
             'Audio Track': {
                 'icon': None,
                 'menu_sub': '',
@@ -265,6 +267,9 @@ class AVPlayer(QWidget):
                     'Not able to play the file',
                     'The file or the file`s home folder has been renamed / removed.  '
                 )
+
+        elif q.text() == list(self.context_menu_dic)[7]:
+            toggle_minimal_interface()
 
         elif q.text() in audio_tracks_list:
             br.av_player.text_display_on_video(1000, q.text())

@@ -91,6 +91,7 @@ class Data:
     screen_pos_x_for_fullscreen: int = 0
     screen_pos_x_for_fullscreen_via_menu: int = -1
 
+    minimal_interface_enabled: bool = False
     window_size_toggle_counter: int = 0
     playlists_without_title_to_hide_index_list = []
     volume_slider_value: int = 0
@@ -435,6 +436,7 @@ class Data:
     queue_toggle: str = settings['hotkey_settings']['queue_toggle']
     queue_window: str = settings['hotkey_settings']['queue_window']
     search_window: str = settings['hotkey_settings']['search_window']
+    minimal_interface_toggle: str = settings['hotkey_settings']['minimal_interface_toggle']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -595,6 +597,11 @@ class Data:
         'search_window': {
             'text': 'Show Search window',
             'value': search_window,
+            'line_edit_widget': ''
+        },
+        'minimal_interface_toggle': {
+            'text': 'Toggle minimal interface',
+            'value': minimal_interface_toggle,
             'line_edit_widget': ''
         }
     }

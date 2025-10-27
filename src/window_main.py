@@ -4,9 +4,11 @@ from PyQt6.QtWidgets import QApplication, QWidget
 
 from .class_bridge import br
 from .class_data import cv
-from .func_coll import(
+from .func_coll import (
     add_media_grouped_actions,
+    disable_minimal_interface,
     queue_add_remove_track,
+    toggle_minimal_interface,
     update_and_save_volume_slider_value,
     update_window_size_vars_from_saved_values
     )
@@ -75,7 +77,8 @@ class MyWindow(QWidget):
         'playlist_select_next_pl': self.playlist_select_next_pl_action,
         'queue_toggle': lambda: queue_add_remove_track(),
         'queue_window': lambda: br.window_queue_and_search.show_queue_tab(),
-        'search_window': lambda: br.window_queue_and_search.show_search_tab()
+        'search_window': lambda: br.window_queue_and_search.show_search_tab(),
+        'minimal_interface_toggle': lambda: toggle_minimal_interface()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -85,6 +88,8 @@ class MyWindow(QWidget):
                     hotkey_value = hotkey_value.strip()
                     self.hotkey_allocation(hotkeys_action_dic, hotkey_value, index)
             else: self.hotkey_allocation(hotkeys_action_dic, hotkey_value_raw, index)
+
+        self.add_escape_key_for_disable_minimal_interface()
 
 
     def hotkey_allocation(self, hotkeys_action_dic, hotkey_value, index):
@@ -104,6 +109,17 @@ class MyWindow(QWidget):
             hotkey = QShortcut(QKeySequence('Return'), self)
             hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
             hotkey.activated.connect(hotkeys_action_dic[cv.hotkeys_list[index]])
+
+
+    def add_escape_key_for_disable_minimal_interface(self):
+        """ To avoid: Video played with minimal interface,
+            next track, audio only, played automatically
+            >> minimal interface mode is still on
+            >> there is no control available
+        """
+        hotkey = QShortcut(QKeySequence('Escape'), self)
+        hotkey.setContext(Qt.ShortcutContext.WindowShortcut)
+        hotkey.activated.connect(disable_minimal_interface)
 
 
     def closeEvent(self, a0):
@@ -232,7 +248,8 @@ class MyWindow(QWidget):
 
         # 1ST - GREATER THAN MEDIUM SIZE WINDOW WITHOUT PLAYLIST
         if cv.window_size_toggle_counter == 1:
-            br.button_toggle_playlist.button_toggle_playlist_clicked()
+            if not cv.minimal_interface_enabled:
+                br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_alt_width, cv.window_alt_height)
             move_window_to_middle()
 
@@ -246,7 +263,8 @@ class MyWindow(QWidget):
 
         # BACK TO STANDARD - MEDIUM SIZE WINDOW WITH PLAYLIST
         else:
-            br.button_toggle_playlist.button_toggle_playlist_clicked()
+            if not cv.minimal_interface_enabled:
+                br.button_toggle_playlist.button_toggle_playlist_clicked()
             self.resize(cv.window_width, cv.window_height)
             move_window_to_middle()
 

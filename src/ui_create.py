@@ -18,7 +18,7 @@ from .class_data import cv
 LEARNED:
 1,              
     Do not mix widgets and layouts in a layout
-    Hiding the widget --> layout disapears too
+    Hiding the widget --> layout disappears too
 2,
     Layout add to QFrame --> hiding QFrame hides the layout
     Not able to hide Layout by itself
@@ -47,15 +47,15 @@ def generate_ui():
     layout_hor_top = QHBoxLayout()
     layout_hor_top.setSpacing(0)
 
-    layout_bottom_slider = QVBoxLayout()
-    layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
+    br.layout_bottom_slider = QVBoxLayout()
+    br.layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
 
-    layout_bottom_wrapper = QHBoxLayout()
-    layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)
+    br.layout_bottom_wrapper = QHBoxLayout()
+    br.layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)
 
     layout_base.addLayout(layout_hor_top, 90)
-    layout_base.addLayout(layout_bottom_slider, 5)
-    layout_base.addLayout(layout_bottom_wrapper, 5)
+    layout_base.addLayout(br.layout_bottom_slider)
+    layout_base.addLayout(br.layout_bottom_wrapper)
 
 
     ''' SPLITTER - LEFT / RIGHT'''
@@ -147,23 +147,22 @@ def generate_ui():
 
     ''' BOTTOM '''
     # SLIDER
-    layout_bottom_slider.addWidget(br.play_slider)
+    br.layout_bottom_slider.addWidget(br.play_slider)
 
     # LAYOUT BUTTONS / VOLUME
     layout_bottom_buttons = QVBoxLayout()
     layout_bottom_volume = QHBoxLayout()
     layout_bottom_volume.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-    layout_bottom_wrapper.addLayout(layout_bottom_buttons, 80)
-    layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
-
+    br.layout_bottom_wrapper.addLayout(layout_bottom_buttons, 80)
+    br.layout_bottom_wrapper.addLayout(layout_bottom_volume, 20)
 
     # BUTTONS WRAPPER
-    play_buttons_list_wrapper= QFrame()
-    play_buttons_list_wrapper.setFixedHeight(50)
+    br.play_buttons_list_wrapper= QFrame()
+    br.play_buttons_list_wrapper.setFixedHeight(50)
     for button in br.play_buttons_list:
-        button.setParent(play_buttons_list_wrapper)
+        button.setParent(br.play_buttons_list_wrapper)
 
-    layout_bottom_buttons.addWidget(play_buttons_list_wrapper)
+    layout_bottom_buttons.addWidget(br.play_buttons_list_wrapper)
     layout_bottom_volume.addWidget(br.button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
     layout_bottom_volume.addWidget(br.volume_slider)

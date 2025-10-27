@@ -47,5 +47,9 @@ class Bridge:
     layout_vert_left_qframe: object = None
     layout_vert_right_qframe: object = None
 
+    layout_bottom_slider: object = None
+    layout_bottom_wrapper: object = None
+    play_buttons_list_wrapper: object = None
+
 
 br = Bridge()

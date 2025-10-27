@@ -8,9 +8,10 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     active_track_font_style,
-    inactive_track_font_style,  
+    disable_minimal_interface,
     generate_duration_to_display,
     get_all_from_db,
+    inactive_track_font_style,
     list_item_style_update,
     queue_window_remove_track,
     save_playing_playlist_and_playing_last_track_index,
@@ -237,6 +238,8 @@ class PlaysFunc:
             # -> HIDE BLACK SCREEN & DISPLAY LOGO         
             elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
                 br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+                    disable_minimal_interface()
+                    br.av_player.stopped = True
                     br.av_player.player.setPosition(0)
                     br.av_player.video_output.hide()
                     br.image_logo.show()

@@ -6,6 +6,7 @@ from PyQt6.QtGui import QFont
 from .class_bridge import br
 from .class_data import save_json, cv, settings
 from .func_coll import (
+    disable_minimal_interface,
     generate_duration_to_display,
     remove_track_from_playlist,
     remove_queued_tracks_after_playlist_clear,
@@ -282,6 +283,7 @@ class MyButtons(QPushButton):
         br.button_play_pause.setIcon(br.icon.start)
         br.av_player.screen_saver_on()
         if br.av_player.video_output.isVisible():
+            disable_minimal_interface()
             br.image_logo.show()
             br.av_player.video_output.hide()
 
