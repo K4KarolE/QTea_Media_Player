@@ -23,6 +23,7 @@
     "window_min_width": 650,
     "window_min_height": 250,
     "window_alt_size_repositioning": true,
+    "window_auto_resize_to_video_resolution": false,
     "default_audio_track": 1,
     "thumbnail_img_size": 200,
     "thumbnail_remove_older_than": 60,

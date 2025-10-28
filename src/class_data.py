@@ -259,6 +259,7 @@ class Data:
     window_second_alt_width: int = settings['general_settings']['window_second_alt_width']
     window_second_alt_height: int = settings['general_settings']['window_second_alt_height']
     window_alt_size_repositioning: bool = settings['general_settings']['window_alt_size_repositioning']
+    window_auto_resize_to_video_resolution: bool = settings['general_settings']['window_auto_resize_to_video_resolution']
     default_audio_track: int = settings['general_settings']['default_audio_track']
     search_result_parent_dicts_size: int = settings['general_settings']['search_result_parent_dicts_size']
     # thumbnail_img_size, remove_thumbnails_older_than: declared in the "Thumbnails" section above
@@ -334,6 +335,11 @@ class Data:
             'value': window_alt_size_repositioning,
             'line_edit_widget': ''
         },
+        'window_auto_resize_to_video_resolution': {
+            'text': 'Auto resize window\nto video resolution',
+            'value': window_auto_resize_to_video_resolution,
+            'line_edit_widget': ''
+        },
         'default_audio_track': {
             'text': 'Default audio track',
             'value': default_audio_track,
@@ -363,7 +369,8 @@ class Data:
         general_settings_dic['always_on_top']['text'],
         general_settings_dic['continue_playback']['text'],
         general_settings_dic['play_at_startup']['text'],
-        general_settings_dic['window_alt_size_repositioning']['text']
+        general_settings_dic['window_alt_size_repositioning']['text'],
+        general_settings_dic['window_auto_resize_to_video_resolution']['text']
         ]
     
     gen_sett_window_width_text_list = [

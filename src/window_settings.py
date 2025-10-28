@@ -373,6 +373,7 @@ class MySettingsWindow(QWidget):
             cv.window_second_alt_width = sett_gen['window_second_alt_width']
             cv.window_second_alt_height = sett_gen['window_second_alt_height']
             cv.window_alt_size_repositioning = sett_gen['window_alt_size_repositioning']
+            cv.window_auto_resize_to_video_resolution = sett_gen['window_auto_resize_to_video_resolution']
             cv.default_audio_track = sett_gen['default_audio_track']
             cv.thumbnail_img_size = sett_gen['thumbnail_img_size']
             cv.thumbnail_width = cv.thumbnail_img_size + cv.widg_and_img_diff

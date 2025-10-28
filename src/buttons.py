@@ -365,19 +365,21 @@ class MyButtons(QPushButton):
             br.av_player.playlist_visible = False
             br.button_toggle_video.setDisabled(True)
         else:
-            br.layout_vert_right_qframe.show()
-            br.av_player.playlist_visible = True
-            br.button_toggle_video.setDisabled(False)
+            if not cv.minimal_interface_enabled:
+                br.layout_vert_right_qframe.show()
+                br.av_player.playlist_visible = True
+                br.button_toggle_video.setDisabled(False)
 
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE VIDEO '''
     def button_toggle_video_clicked(self):
         if br.av_player.playlist_visible and br.av_player.video_area_visible:
-            br.layout_vert_left_qframe.hide()
-            br.av_player.video_area_visible = False
-            br.window.resize(int(cv.window_width/3), br.window.geometry().height())
-            br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
-            br.button_toggle_playlist.setDisabled(True)
+            if not cv.minimal_interface_enabled:
+                br.layout_vert_left_qframe.hide()
+                br.av_player.video_area_visible = False
+                br.window.resize(int(cv.window_width/3), br.window.geometry().height())
+                br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
+                br.button_toggle_playlist.setDisabled(True)
         else:
             br.window.resize(cv.window_width, br.window.geometry().height())
             br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)

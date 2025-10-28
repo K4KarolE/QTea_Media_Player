@@ -743,6 +743,7 @@ def toggle_minimal_interface():
         br.volume_slider.hide()
         br.layout_bottom_slider.setContentsMargins(0, 0, 0, 0)
         br.layout_bottom_wrapper.setContentsMargins(0, 0, 0, 0)
+        br.av_player.resize_window_minimal_interface_enabled()
     else:
         disable_minimal_interface()
 

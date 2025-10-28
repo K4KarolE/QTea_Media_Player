@@ -31,7 +31,7 @@ class MyWindow(QWidget):
         if cv.always_on_top:
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()
-        self.move_app_to_middle_at_startup()
+        self.move_window_to_middle()
         self.thread_add_media = ThreadAddMedia()
         self.thread_add_media.result_ready.connect(self.add_track_to_playlist_via_thread)
 
@@ -216,58 +216,60 @@ class MyWindow(QWidget):
         update_and_save_volume_slider_value(new_volume)
 
 
-    def move_app_to_middle_at_startup(self):
-        """ To make sure the app is displayed
-            in the middle of the screen at the startup
-        """
+    def generate_window_middle_position(self):
         current_screen = QApplication.screenAt(self.pos())
         screen_rect = current_screen.availableGeometry()
-        pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
-        pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
-        self.move(pos_x_middle, pos_y_middle)
+        pos_x = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
+        pos_y = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
+        return screen_rect, pos_x, pos_y
+
+
+    def move_window_to_middle(self):
+        _, pos_x, pos_y, = self.generate_window_middle_position()
+        self.move(pos_x, pos_y)
+
+
+    def move_window_to_middle_alt_size_repositioning_enabled(self):
+        if cv.window_alt_size_repositioning:
+            self.move_window_to_middle()
+
+
+    def toggle_playlist_no_minimal_interface(self):
+        if not cv.minimal_interface_enabled:
+            br.button_toggle_playlist.button_toggle_playlist_clicked()
 
 
     def window_size_toggle_action(self):
+        # RETURN FROM FULL SCREEN
         if br.av_player.video_output.isFullScreen():
             br.av_player.full_screen_onoff_toggle()
             return
 
         cv.window_size_toggle_counter =  (cv.window_size_toggle_counter + 1) % 3
         update_window_size_vars_from_saved_values()
-
-        current_screen = QApplication.screenAt(self.pos())
-        screen_rect = current_screen.availableGeometry()
-        WIN_TASKBAR_HEIGHT = 30
-
-
-        def move_window_to_middle():
-            if cv.window_alt_size_repositioning:
-                pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width())/2)
-                pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height())/2)
-                self.move(pos_x_middle, pos_y_middle)
+        screen_rect, _, _  = self.generate_window_middle_position()
+        TASKBAR_HEIGHT = 30
 
         # 1ST - GREATER THAN MEDIUM SIZE WINDOW WITHOUT PLAYLIST
         if cv.window_size_toggle_counter == 1:
-            if not cv.minimal_interface_enabled:
-                br.button_toggle_playlist.button_toggle_playlist_clicked()
+            self.toggle_playlist_no_minimal_interface()
             self.resize(cv.window_alt_width, cv.window_alt_height)
-            move_window_to_middle()
-
+            self.move_window_to_middle_alt_size_repositioning_enabled()
+            br.av_player.resize_window_minimal_interface_enabled()
         # 2ND - SMALL WINDOW IN THE RIGHT-BOTTOM CORNER, NO PLAYLIST
         elif cv.window_size_toggle_counter == 2:
             self.resize(cv.window_second_alt_width, cv.window_second_alt_height)
+            br.av_player.resize_window_minimal_interface_enabled()
             if cv.window_alt_size_repositioning:
                 pos_x_corner = screen_rect.x() + screen_rect.width() - self.width()
-                pos_y_corner = screen_rect.y() + screen_rect.height() - self.height() - WIN_TASKBAR_HEIGHT
+                pos_y_corner = screen_rect.y() + screen_rect.height() - self.height() - TASKBAR_HEIGHT
                 self.move(pos_x_corner, pos_y_corner)
-
         # BACK TO STANDARD - MEDIUM SIZE WINDOW WITH PLAYLIST
         else:
-            if not cv.minimal_interface_enabled:
-                br.button_toggle_playlist.button_toggle_playlist_clicked()
+            self.toggle_playlist_no_minimal_interface()
             self.resize(cv.window_width, cv.window_height)
-            move_window_to_middle()
-
+            self.move_window_to_middle_alt_size_repositioning_enabled()
+            br.av_player.resize_window_minimal_interface_enabled()
 
 
     def playlist_select_prev_pl_action(self):
