@@ -16,10 +16,11 @@ from .func_thumbnail import (
     auto_thumbnails_removal_after_app_closure,
     switch_to_standard_active_playlist_from_thumbnail_pl
     )
+from .logger import logger_runtime
 from .thread_add_media import ThreadAddMedia
 
 
-
+@logger_runtime
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -164,12 +165,13 @@ class MyWindow(QWidget):
                 f'  -  {cv.duration_to_display_straight}')
 
     def jump_action(self, jump_size: int, direction: str):
-        if direction == 'backward':
-            new_pos = br.av_player.player.position() + jump_size * -1
-        else:
-            new_pos = br.av_player.player.position() + jump_size
-        br.av_player.player.setPosition(new_pos)
-        br.av_player.text_display_on_video(1000, self.get_current_duration_info()),
+        if br.av_player.is_playing_or_paused():
+            if direction == 'backward':
+                new_pos = br.av_player.player.position() + jump_size * -1
+            else:
+                new_pos = br.av_player.player.position() + jump_size
+            br.av_player.player.setPosition(new_pos)
+            br.av_player.text_display_on_video(1000, self.get_current_duration_info())
 
 
     ''' 

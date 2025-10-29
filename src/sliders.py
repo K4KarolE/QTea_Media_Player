@@ -11,8 +11,9 @@ from .func_coll import (
     save_volume_slider_value,
     update_and_save_volume_slider_value
     )
+from .logger import logger_runtime
 
-
+@logger_runtime
 class MySlider(QSlider):
     ''' Duration slider '''
     def __init__(self):
@@ -65,34 +66,35 @@ class MySlider(QSlider):
 
     def play_slider_set_value(self):
         ''' PLAYER/DURATION --> SLIDER POSITION '''
-        if br.av_player.base_played:
+        if br.av_player.base_played_end_of_media_signal_ignored:
             self.setValue(br.av_player.player.position())
 
 
     def eventFilter(self, source, event):
 
-        if event.type() == QEvent.Type.MouseButtonPress:
-            self.pressed = True
-            self.set_slider_value(event)
-
-        if event.type() == QEvent.Type.MouseButtonRelease:
-            self.pressed = False
-
-        if event.type() == QHoverEvent.Type.HoverEnter:
-            if br.av_player.player.isPlaying() or br.av_player.paused:
-                self.hover_over_duration_info_label.show()
-
-        if event.type() == QHoverEvent.Type.HoverLeave:
-            self.hover_over_duration_info_label.hide()
-
-        if event.type() == QEvent.Type.MouseMove:
-            duration_to_display = generate_duration_to_display(self.generate_value_from_slider(event))
-            self.hover_over_duration_info_label.setText(duration_to_display)
-            self.adjust_size_hover_over_duration_info()
-            self.hover_over_duration_info_label.move(
-                QPoint(self.get_hover_over_duration_info_pos_x(event), self.pos().y()-8))
-            if self.pressed:
+        if br.av_player.is_playing_or_paused():
+            if event.type() == QEvent.Type.MouseButtonPress:
+                self.pressed = True
                 self.set_slider_value(event)
+
+            if event.type() == QEvent.Type.MouseButtonRelease:
+                self.pressed = False
+
+            if event.type() == QHoverEvent.Type.HoverEnter:
+                if br.av_player.player.isPlaying() or br.av_player.paused:
+                    self.hover_over_duration_info_label.show()
+
+            if event.type() == QHoverEvent.Type.HoverLeave:
+                self.hover_over_duration_info_label.hide()
+
+            if event.type() == QEvent.Type.MouseMove:
+                duration_to_display = generate_duration_to_display(self.generate_value_from_slider(event))
+                self.hover_over_duration_info_label.setText(duration_to_display)
+                self.adjust_size_hover_over_duration_info()
+                self.hover_over_duration_info_label.move(
+                    QPoint(self.get_hover_over_duration_info_pos_x(event), self.pos().y()-8))
+                if self.pressed:
+                    self.set_slider_value(event)
 
         return super().eventFilter(source, event)
 

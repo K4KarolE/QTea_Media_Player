@@ -10,8 +10,9 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QLabel
 
 from .class_data import cv
+from .logger import logger_runtime
 
-
+@logger_runtime
 class MyImage(QLabel):
     def __init__(self, img_name, img_size):
         super().__init__()

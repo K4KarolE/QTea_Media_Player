@@ -30,9 +30,10 @@ from .func_thumbnail import (
     update_thumbnail_view_button_style_after_playlist_change
     )
 from .list_widget_playlists import MyListWidget
+from .logger import logger_runtime
 from .thumbnail_window import ThumbnailMainWindow
 
-
+@logger_runtime
 class MyPlaylists(QTabWidget):
     '''
     playlists_created_at_first_run variable
@@ -264,9 +265,9 @@ class MyPlaylists(QTabWidget):
                 LAST PLAYED ROWS' STYLE
                 the currently playing track's style is different --> ignored
             '''
-            if cv.play_at_startup == 'False':
+            if not cv.play_at_startup:
                 set_last_played_row_style()
-            elif cv.play_at_startup == 'True' and pl != cv.playlist_list[cv.playing_playlist_index]:
+            elif cv.play_at_startup and pl != cv.playlist_list[cv.playing_playlist_index]:
                 set_last_played_row_style()
             
 

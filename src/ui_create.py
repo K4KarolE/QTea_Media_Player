@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
+from .logger import logger_runtime
 
 
 ''' 
@@ -40,6 +41,7 @@ GUIDE:
     |________|_______|  
 '''
 
+@logger_runtime
 def generate_ui():
     layout_base = QVBoxLayout(br.window)
     layout_base.setContentsMargins(0, 0, 0, 0)

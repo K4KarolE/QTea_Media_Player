@@ -1,5 +1,4 @@
 from pathlib import Path
-import time
 import random
 
 from PyQt6.QtCore import QUrl
@@ -22,7 +21,7 @@ from .func_coll import (
     update_raw_current_duration_db
     )
 from .func_thumbnail import update_thumbnail_style_at_play_track
-
+from .logger import logger_check
 
 
 class PlaysFunc:
@@ -244,9 +243,10 @@ class PlaysFunc:
                     br.av_player.video_output.hide()
                     br.image_logo.show()
                     br.button_play_pause.setIcon(br.icon.start)
+                    br.button_duration_info.disable_and_set_to_zero()
 
 
-
+    @logger_check
     def auto_play_next_track(self):
         """
         AT STARTUP:
@@ -256,22 +256,15 @@ class PlaysFunc:
         - If 'Play at startup' active (Settings / General), track will be played automatically
         """
         # END OF THE MEDIA >> PLAY NEXT TRACK
-        if br.av_player.base_played:
-            if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia:
+        if br.av_player.base_played_end_of_media_signal_ignored:
+            # if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia:
                 # To play from the start at next time playing the same track
                 # Not from (full duration - 5 sec) position
                 if cv.continue_playback and not cv.adding_records_at_moment:
                     update_raw_current_duration_db(0, cv.playing_track_index)
                 self.play_next_track()
-        # START UP
         else:
-            br.av_player.base_played = True
-            self.play_at_startup_func()
-
-
-    def play_at_startup_func(self):
-        if cv.play_at_startup:
-            self.play_track()
+            br.av_player.base_played_end_of_media_signal_ignored = True
 
 
     def audio_tracks_play_next_one(self):

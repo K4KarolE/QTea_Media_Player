@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QListWidgetItem, QApplication
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
+from . import logger_sum
 from .class_bridge import br
 from .class_data import connection, cur, save_json
 from .class_data import cv, settings
@@ -168,7 +169,7 @@ def generate_duration_to_display(raw_duration):
 
         return duration
     except:
-        print('ERROR - generate_duration_to_display(raw_duration)')
+        logger_sum('ERROR - generate_duration_to_display(raw_duration)')
 
 
 def generate_track_list_detail(db_track_record):

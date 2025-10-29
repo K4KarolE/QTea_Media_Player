@@ -2,8 +2,9 @@ from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtCore import Qt
 
 from .class_data import cv
+from .logger import logger_runtime
 
-
+@logger_runtime
 class MyIcon:
     def __init__(self):
         self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.png')

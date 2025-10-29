@@ -30,6 +30,7 @@ from .func_thumbnail import (
     msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
     switch_all_pl_to_standard_from_thumbnails_view
     )
+from .logger import logger_runtime
 
 
 class ButtonJumpToPlaylist(QPushButton):
@@ -60,8 +61,11 @@ class ButtonJumpToPlaylist(QPushButton):
         br.playlists_all.setCurrentIndex(self.playlist_index)
 
 
-
+@logger_runtime
 class MySettingsWindow(QWidget):
+    """ No logging at startup
+        It is created once the Settings button clicked
+    """
     def __init__(self):
         super().__init__()
 

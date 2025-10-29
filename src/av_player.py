@@ -1,4 +1,4 @@
-''' AVPlayer and TrackDuration classes creation '''
+""" AVPlayer and TrackDuration classes creation """
 
 from PyQt6.QtMultimedia import (
     QAudioOutput,
@@ -21,19 +21,18 @@ from .func_coll import (
     toggle_minimal_interface,
     update_raw_current_duration_db
     )
+from .logger import logger_runtime, logger_sum
 from .message_box import MyMessageBoxError
 
 '''
-PLAY EMPTY SOUND WORKAROUND
+PLAY EMPTY SOUND WORKAROUND (self.base_played)
 - At least one file needs to be played from start to finish
 before be able to switch tracks without crashing:
     - At the AVPlayer class instance creation, dummy "song" loaded, played (<1s, no sound)
     - After the 1st dummy track played, no error while switching media
-Tried to fix/test:
-    - Created an "empty" script to exclude possible errors on my side(like: docs/learning), same behaviour
-    - Checked online sources and GitHub repos, but the class creation steps look the same
 - It is solved in `PyQt 6.10` - see `PyQt version history` section in README
 '''
+@logger_runtime
 class AVPlayer(QWidget):
     def __init__(self):
         super().__init__()
@@ -41,7 +40,7 @@ class AVPlayer(QWidget):
         self.media_devices = QMediaDevices()
         # VIDEO
         self.video_output = QVideoWidget()
-            # Window flag
+            # Window flag:
             # To make sure on Linux / full screen mode:
             # the app is not visible, just the full-screened video
         self.video_output.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
@@ -52,12 +51,9 @@ class AVPlayer(QWidget):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
         self.audio_output.setVolume(cv.volume)
-        # BASE PLAY
-        # mediaStatusChanged signal >> src / func_play_coll /
-        # 1st run of auto_play_next_track() >> base_played = True
-        self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
-        self.player.play()
+        # BASE PLAY - more info in above
         self.base_played = False
+        self.base_played_end_of_media_signal_ignored = False
         # SIGNALS (more signals below)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
         self.player.positionChanged.connect(self.update_duration_info)
@@ -110,6 +106,13 @@ class AVPlayer(QWidget):
                 }
             }
 
+    @logger_runtime
+    def set_base_track_as_source(self):
+        self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
+
+
+    def is_playing_or_paused(self):
+        return self.player.isPlaying() or self.paused
 
 
     def set_audio_output(self):
@@ -450,7 +453,7 @@ class AVPlayer(QWidget):
 
 
     def update_duration_info(self):
-        if self.base_played:
+        if self.base_played_end_of_media_signal_ignored:
             track_current_duration = self.player.position()
 
             # SAVING THE CURRENT DURATION EVERY 5 SEC
@@ -506,13 +509,35 @@ class AVPlayer(QWidget):
             br.window.resize(br.window.width(), new_vid_height)
 
 
-    def is_media_status_valid(self):
-        """
-            To avoid mediaStatusChanged signal triggering twice
-            on the same media when start playing
-        """
-        self.media_status_changed_counter += 1
-        return self.media_status_changed_counter % 2 == 0
+    def is_media_status_loaded(self):
+        return self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia
+
+
+    def is_media_status_end_of_media(self):
+        return self.player.mediaStatus() == QMediaPlayer.MediaStatus.EndOfMedia
+
+
+    def play_base_and_play_at_startup(self):
+        if not self.base_played and self.is_media_status_loaded():
+            self.player.play()
+            self.base_played = True
+            logger_sum('Base has been played - App is running - sum')
+            if cv.play_at_startup and cv.os_linux:  # Win 11: app freeze
+                self.base_played_end_of_media_signal_ignored = True
+                br.play_funcs.play_track()
+                logger_sum('Last media is playing - sum')
+
+
+    def is_loaded_media_validation_passed(self):
+        if self.base_played and self.is_media_status_loaded() and not self.stopped:
+            return True
+        return False
+
+
+    def is_end_of_media_validation_passed(self):
+        if self.base_played and self.is_media_status_end_of_media() and not self.stopped:
+            return True
+        return False
 
 
     def media_status_changed_action(self):
@@ -531,35 +556,27 @@ class AVPlayer(QWidget):
                 - Play
                 - etc.
         """
-        if br.av_player.base_played:
-            if (self.player.mediaStatus() in
-                    [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]):
-                if not self.stopped:    # avoiding media status change at stop play action
-                    if self.is_media_status_valid():    # avoiding duplicate signals
-                        # DURATION
-                        if cv.track_current_duration > 0 and cv.continue_playback:
-                            br.av_player.player.setPosition(cv.track_current_duration)
-                        # WINDOW RESIZE
-                        if self.player.hasVideo():
-                            self.generate_video_resolution_from_meta_data()
-                            self.resize_window_to_video_resolution()
-                        else:
-                            self.vid_width, self.vid_height = None, None
-                        # TO PLAY A TRACK (continues)
-                        # play_track() >> play_track_second_part() >> track is played
-                        br.play_funcs.play_track_second_part()
-                else:
-                    self.media_status_changed_counter += 1
+        if self.is_loaded_media_validation_passed():
+            # DURATION
+            if cv.track_current_duration > 0 and cv.continue_playback:
+                br.av_player.player.setPosition(cv.track_current_duration)
+            # DURATION INFO - BUTTON
+            br.button_duration_info.setEnabled(True)
+            # WINDOW RESIZE
+            if self.player.hasVideo():
+                self.generate_video_resolution_from_meta_data()
+                self.resize_window_to_video_resolution()
+            else:
+                self.vid_width, self.vid_height = None, None
+            # TO PLAY A TRACK (continues)
+            # play_track() >> play_track_second_part() >> track is played
+            br.play_funcs.play_track_second_part()
 
+        elif self.is_end_of_media_validation_passed():
+            br.play_funcs.auto_play_next_track()
 
-        ''' Auto play '''
-        br.play_funcs.auto_play_next_track()
+        else: self.play_base_and_play_at_startup()
 
-                    
-
-
-
-    
 
 
 """ 

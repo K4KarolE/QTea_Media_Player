@@ -32,11 +32,13 @@ from .func_coll import (
     )
 from .list_widget_queue_tab import MyQueueListWidget
 from .list_widget_search_tab import MySearchListWidget
+from .logger import logger_runtime
 from .message_box import MyMessageBoxError
 
 from pathlib import Path
 
 
+@logger_runtime
 class MyQueueAndSearchWindow(QWidget):
     def __init__(self):
         super().__init__()

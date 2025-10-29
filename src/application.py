@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QApplication
 
 from .class_data import cv
 from .class_bridge import br
+from .logger import *
 
 '''
 To avoid system theme >> qt app theme
@@ -13,19 +14,27 @@ QApplication.setDesktopSettingsAware(False)
 
 
 
-
+@logger_runtime
 class MyApp(QApplication):
 
     def __init__(self, argv):
         super().__init__(argv)
         self.installEventFilter(self)
         self.app_moved_while_fullscreen_mode = False
+        self.applicationStateChanged.connect(lambda: self.application_state_changed_action())
+        self.is_app_status_changed = False
+
+
+    def application_state_changed_action(self):
+        if not self.is_app_status_changed:
+            br.av_player.set_base_track_as_source()
+            self.is_app_status_changed = True
 
 
     def eventFilter(self, source, event):
         """ 
             Used to track the app`s repositioning
-            >> double clicking on the video
+            >> double-clicking on the video
             >> full screen on the current display
             more: src / av_player
         """      
