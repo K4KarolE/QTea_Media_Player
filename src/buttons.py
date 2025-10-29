@@ -229,6 +229,10 @@ class MyButtons(QPushButton):
                             "color: grey;"   
                             "}"
                         )
+
+    def disable_and_set_to_zero(self):
+        self.setDisabled(True)
+        self.setText('00:00 / 00:00')
     
 
 
@@ -282,6 +286,7 @@ class MyButtons(QPushButton):
         br.av_player.paused = False
         br.button_play_pause.setIcon(br.icon.start)
         br.av_player.screen_saver_on()
+        br.button_duration_info.disable_and_set_to_zero()
         if br.av_player.video_output.isVisible():
             disable_minimal_interface()
             br.image_logo.show()
@@ -373,19 +378,19 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE VIDEO '''
     def button_toggle_video_clicked(self):
-        if br.av_player.playlist_visible and br.av_player.video_area_visible:
-            if not cv.minimal_interface_enabled:
-                br.layout_vert_left_qframe.hide()
-                br.av_player.video_area_visible = False
-                br.window.resize(int(cv.window_width/3), br.window.geometry().height())
-                br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
-                br.button_toggle_playlist.setDisabled(True)
-        else:
-            br.window.resize(cv.window_width, br.window.geometry().height())
-            br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
-            br.layout_vert_left_qframe.show()
-            br.av_player.video_area_visible = True
-            br.button_toggle_playlist.setDisabled(False)
+        if not cv.minimal_interface_enabled:
+            if br.av_player.playlist_visible and br.av_player.video_area_visible:
+                    br.layout_vert_left_qframe.hide()
+                    br.av_player.video_area_visible = False
+                    br.window.resize(int(cv.window_width/3), br.window.geometry().height())
+                    br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
+                    br.button_toggle_playlist.setDisabled(True)
+            else:
+                br.window.resize(cv.window_width, br.window.geometry().height())
+                br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
+                br.layout_vert_left_qframe.show()
+                br.av_player.video_area_visible = True
+                br.button_toggle_playlist.setDisabled(False)
 
 
     ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''

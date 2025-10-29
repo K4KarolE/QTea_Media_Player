@@ -5,13 +5,13 @@ from .buttons import MyButtons
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import inactive_track_font_style
+from .logger import logger_runtime
 
-
-''' Please note, the "button_speaker" and the "duration_sum_widg"
-    buttons do not appear as classic buttons on the UI   
+''' Please note, the "button_speaker", "duration_sum_widg" and the
+    "button_duration_info" buttons do not appear as classic buttons on the UI   
 '''
 
-
+@logger_runtime
 def generate_buttons():
     '''
     ########################
@@ -235,7 +235,7 @@ def generate_buttons():
     ''' BUTTON PLAY SECTION - DURATION INFO '''
     def button_duration_info_clicked():
         """ 01:22 / 03:43 <--> -02:21 / 03:43 """
-        if cv.track_full_duration_to_display:
+        if cv.track_full_duration_to_display and br.button_duration_info.isEnabled():
             if cv.is_duration_to_display_straight:
                 cv.is_duration_to_display_straight = False
                 br.button_duration_info.setText(cv.duration_to_display_back)
@@ -252,6 +252,7 @@ def generate_buttons():
     br.button_duration_info.move(play_buttons_x_pos(9.5), 0)
     br.button_duration_info.clicked.connect(button_duration_info_clicked)
     br.button_duration_info.set_style_duration_info_button()
+    br.button_duration_info.setDisabled(True)
 
 
     ''' 
