@@ -502,11 +502,26 @@ class AVPlayer(QWidget):
         """ Avoiding black bars around the video area
             in the Minimal Interface mode via height
             adjusted to the window width
+            In use in every "window size toggle" position
         """
-        if self.vid_width and self.vid_height and cv.minimal_interface_enabled:
+        if cv.minimal_interface_enabled:
+            self.resize_window_height_to_match_video_res_ratio()
+
+
+    def resize_window_height_to_match_video_res_ratio(self):
+        """ Avoiding black bars around the video area
+            in the Minimal Interface mode by default and
+            in non Min.Int. mode via hotkey only
+        """
+        if cv.minimal_interface_enabled:
+            player_bottom_section_height = 0
+        else:
+            player_bottom_section_height = 100  # duration slider, control buttons, volume section
+
+        if self.vid_width and self.vid_height:
             resolution_ratio = self.vid_width / self.vid_height
             new_vid_height = int(br.window.width() / resolution_ratio)
-            br.window.resize(br.window.width(), new_vid_height)
+            br.window.resize(br.window.width(), new_vid_height + player_bottom_section_height)
 
 
     def is_media_status_loaded(self):

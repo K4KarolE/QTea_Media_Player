@@ -79,7 +79,8 @@ class MyWindow(QWidget):
         'queue_toggle': lambda: queue_add_remove_track(),
         'queue_window': lambda: br.window_queue_and_search.show_queue_tab(),
         'search_window': lambda: br.window_queue_and_search.show_search_tab(),
-        'minimal_interface_toggle': lambda: toggle_minimal_interface()
+        'minimal_interface_toggle': lambda: toggle_minimal_interface(),
+        'remove_black_bars_around_video': lambda: br.av_player.resize_window_height_to_match_video_res_ratio()
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -220,15 +221,18 @@ class MyWindow(QWidget):
 
     def generate_window_middle_position(self):
         current_screen = QApplication.screenAt(self.pos())
-        screen_rect = current_screen.availableGeometry()
-        pos_x = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
-        pos_y = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
-        return screen_rect, pos_x, pos_y
+        if current_screen:
+            screen_rect = current_screen.availableGeometry()
+            pos_x = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
+            pos_y = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
+            return screen_rect, pos_x, pos_y
+        else: return None, None, None
 
 
     def move_window_to_middle(self):
         _, pos_x, pos_y, = self.generate_window_middle_position()
-        self.move(pos_x, pos_y)
+        if pos_x and pos_y:
+            self.move(pos_x, pos_y)
 
 
     def move_window_to_middle_alt_size_repositioning_enabled(self):
@@ -259,7 +263,7 @@ class MyWindow(QWidget):
             self.move_window_to_middle_alt_size_repositioning_enabled()
             br.av_player.resize_window_minimal_interface_enabled()
         # 2ND - SMALL WINDOW IN THE RIGHT-BOTTOM CORNER, NO PLAYLIST
-        elif cv.window_size_toggle_counter == 2:
+        elif cv.window_size_toggle_counter == 2 and screen_rect:
             self.resize(cv.window_second_alt_width, cv.window_second_alt_height)
             br.av_player.resize_window_minimal_interface_enabled()
             if cv.window_alt_size_repositioning:

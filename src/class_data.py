@@ -444,6 +444,7 @@ class Data:
     queue_window: str = settings['hotkey_settings']['queue_window']
     search_window: str = settings['hotkey_settings']['search_window']
     minimal_interface_toggle: str = settings['hotkey_settings']['minimal_interface_toggle']
+    remove_black_bars_around_video: str = settings['hotkey_settings']['remove_black_bars_around_video']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -609,6 +610,11 @@ class Data:
         'minimal_interface_toggle': {
             'text': 'Toggle minimal interface',
             'value': minimal_interface_toggle,
+            'line_edit_widget': ''
+        },
+        'remove_black_bars_around_video': {
+            'text': 'Remove black bars\naround video',
+            'value': remove_black_bars_around_video,
             'line_edit_widget': ''
         }
     }
