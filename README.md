@@ -168,7 +168,8 @@ bottom corner of the screen (e.g: while browsing).
         - Adjust the sizes according the currently played TV show`s video ratio to avoid black bars.
 
 ### Hotkeys
-- Acceptable hotkey formats: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `M+Ctrl+Space`, `M | P`, `M+Ctrl | P`
+- Acceptable hotkey format examples: `M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`, `Shift+Left`,
+`M+Ctrl+Space`, `M | P`, `M+Ctrl | P`
 - Able to add multiple hotkeys for the same action: `Up | P`
 - Acceptable hotkey list in `src / cons_and_vars.py / keys_list`
 - `Small / Medium / Big jump - backward/forward`:
@@ -347,14 +348,28 @@ the current ones, just rename them. There is more information about the database
   - ** src / av_player updated to avoid
   - Right-click on the video and select the preferred audio device or restart the app
 
-### Could not find solution yet
+### Adding the same media twice
+- Issue: Adding the same media after each other:
+  - The duration player's (src / av_player / TrackDuration) `mediaStatusChanged` signal will not be triggered >> 
+the second media will not be added to the playlist
+  - The duration player get blocked / unresponsive >> not able to add another media
+- Solution: when the 2nd, same media added, the `TrackDuration.setSource()` function is skipped (the previous, 
+same media is already loaded) and jumps to the "add media the playlist phase" 
+(`src / thread_add_media / return_thread_generated_values()`)
+
+## Could not find solution yet
 - The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 - OS theme overriding the app`s theme:
   - LINUX: Only affecting the header of the app
   - WINDOWS 11: None - no theme overriding
 - WINDOWS 11 only: Terminal popping up when generating thumbnails
 - WINDOWS 11 only: Video playing + stop + start another video >> the previous video's last played frame is displayed before the new video starts playing
-- WINDOWS 11 only: Enabled `Play at Startup` >> app freeze without any error message >> `Play at Startup` is ignored    
+- WINDOWS 11 only: Enabled `Play at Startup` >> app freeze without any error message >> `Play at Startup` is ignored
+- `QMediaPlayer` - Memory Leak: `QMediaPlayer.setSource()` function can increase the memory usage,
+[QTBUG-36671](https://bugreports.qt.io/browse/QTBUG-36671)
+  - Can occur when: 
+    - Adding media to the player
+    - Playing new media
 
 
 ## Requirements
