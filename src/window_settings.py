@@ -181,7 +181,11 @@ class MySettingsWindow(QWidget):
                 LINE_EDIT_HIGHT
                 )
 
-            widget_hotkey_pos_y += WIDGETS_NEXT_LINE_POS_Y_DIFF
+            lines_amount = item_text.count('\n') + 1  # line break in text - multiple lines
+            if lines_amount != 1:
+                lines_amount = lines_amount * 0.8
+
+            widget_hotkey_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF * lines_amount)
 
         cv.hotkey_settings_last_widget_pos_y = widget_hotkey_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
@@ -203,7 +207,9 @@ class MySettingsWindow(QWidget):
 
                 search_result = cv.search_regex.search(line_edit_text.title())
                 if not search_result:
-                    MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.')
+                    MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.\n\n' +
+                    "Acceptable hotkey format examples:\n" +
+                    "`M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`, `M+Ctrl+Space`, `Shift+Left`, `M | P`, `M+Ctrl | P`")
                     pass_validation = False
 
 

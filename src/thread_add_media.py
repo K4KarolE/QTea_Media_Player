@@ -10,7 +10,7 @@ from .func_coll import (
     is_active_and_add_to_track_playlist_same,
     update_add_track_to_pl_widget_vars
     )
-
+from . import logger_check
 
 
 class ThreadAddMedia(QThread):
@@ -32,6 +32,12 @@ class ThreadAddMedia(QThread):
         super().__init__()
         self.source = None
         self.track_path_list = []
+        self.last_track_added = "" 
+        # self.last_track_added - Used to avoid the below scenario:
+        # Adding the same media after each other >> the duration player's mediaStatusChanged
+        # signal will not be triggered >> the second media will not be added and the
+        # duration player get blocked / unresponsive >> not able to add another media
+
 
     def run(self):
         update_add_track_to_pl_widget_vars()
@@ -53,24 +59,28 @@ class ThreadAddMedia(QThread):
                 elif Path(url).suffix in cv.MEDIA_FILES:
                     self.track_path_list.append(url)
 
-        # SOURCE FROM ADD TRACK BUTTON
+        # SOURCE FROM ADD DIRECTORY BUTTON
         elif Path(self.source).is_dir():
             self.add_dir(self.source)
 
-        # SOURCE FROM ADD DIRECTORY BUTTON
+        # SOURCE FROM ADD TRACK BUTTON
         elif Path(self.source).is_file():
             self.track_path_list.append(self.source)
 
         ##################################
         # STARTING THE MEDIA ADDING LOOP #
         ##################################
-        if self.track_path_list:
-            self.player_set_source(self.track_path_list[0])
+        if self.track_path_list:    # Please see the comment above
+            if self.last_track_added == self.track_path_list[0]:
+                self.return_thread_generated_values()
+            else:
+                self.last_track_added = self.track_path_list[0]
+                self.player_set_source(self.track_path_list[0])
 
 
     def add_dir(self, dir_path):
         cv.adding_records_at_moment = True
-        for dir_path_b, dir_names, file_names in os.walk(dir_path):
+        for dir_path_b, _, file_names in os.walk(dir_path):
             file_names.sort()
             for file in file_names:
                 if Path(file).suffix in cv.MEDIA_FILES:  # music_title.mp3 -> mp3
@@ -78,11 +88,13 @@ class ThreadAddMedia(QThread):
                     self.track_path_list.append(track_path)
 
 
+    @logger_check
     def player_set_source(self, track_path):
         """ Triggers the src / av_player / TrackDuration class / mediaStatusChanged signal """
         br.av_player_duration.player.setSource(QUrl.fromLocalFile(track_path))
 
 
+    @logger_check
     def return_thread_generated_values(self):
         """ Triggered via the src / av_player / TrackDuration class`
             mediaStatusChanged signal

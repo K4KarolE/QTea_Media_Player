@@ -611,5 +611,5 @@ class TrackDuration(QWidget):
         """ Media is loaded > duration is ready to be generated
             in the src / thread_add_media
         """
-        if self.player.mediaStatus() in [QMediaPlayer.MediaStatus.LoadedMedia, QMediaPlayer.MediaStatus.InvalidMedia]:
+        if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
             br.window.thread_add_media.return_thread_generated_values()

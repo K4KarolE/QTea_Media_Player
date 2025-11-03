@@ -16,7 +16,7 @@ from .func_thumbnail import (
     auto_thumbnails_removal_after_app_closure,
     switch_to_standard_active_playlist_from_thumbnail_pl
     )
-from .logger import logger_runtime
+from .logger import logger_check, logger_runtime
 from .thread_add_media import ThreadAddMedia
 
 
@@ -35,6 +35,7 @@ class MyWindow(QWidget):
         self.move_window_to_middle()
         self.thread_add_media = ThreadAddMedia()
         self.thread_add_media.result_ready.connect(self.add_track_to_playlist_via_thread)
+        self.new_window_size_diff_percent = 0.05
 
 
     def add_track_to_playlist_via_thread(self, track_path, raw_duration):
@@ -80,7 +81,9 @@ class MyWindow(QWidget):
         'queue_window': lambda: br.window_queue_and_search.show_queue_tab(),
         'search_window': lambda: br.window_queue_and_search.show_search_tab(),
         'minimal_interface_toggle': lambda: toggle_minimal_interface(),
-        'remove_black_bars_around_video': lambda: br.av_player.resize_window_height_to_match_video_res_ratio()
+        'remove_black_bars_around_video': lambda: br.av_player.resize_window_height_to_match_video_res_ratio(),
+        'increase_window_size': lambda: self.change_window_size(True),
+        'decrease_window_size': lambda: self.change_window_size(False)
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -151,19 +154,21 @@ class MyWindow(QWidget):
         else:
             event.ignore()
 
+    @logger_check
     def dropEvent(self, event):
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
             switch_to_standard_active_playlist_from_thumbnail_pl()
-            br.window.thread_add_media.source = event.mimeData().urls()
-            br.window.thread_add_media.start()
+            self.thread_add_media.source = event.mimeData().urls()
+            self.thread_add_media.start()
 
 
     def get_current_duration_info(self):
         """ Example: 54%  -  11:11 / 20:25 """
         return (f'{int(br.av_player.player.position() / cv.track_full_duration * 100)}%'
                 f'  -  {cv.duration_to_display_straight}')
+
 
     def jump_action(self, jump_size: int, direction: str):
         if br.av_player.is_playing_or_paused():
@@ -243,6 +248,24 @@ class MyWindow(QWidget):
     def toggle_playlist_no_minimal_interface(self):
         if not cv.minimal_interface_enabled:
             br.button_toggle_playlist.button_toggle_playlist_clicked()
+
+
+    def change_window_size(self, is_increase=False):
+        if is_increase: ratio = 1 + self.new_window_size_diff_percent
+        else: ratio = 1 - self.new_window_size_diff_percent
+        new_width = int(self.width() * ratio)
+        # POSITION ADJUSTMENT
+        width_diff = new_width - self.width()
+        new_pos_x = int(self.pos().x() - width_diff / 2)
+        self.move(new_pos_x, self.pos().y())
+        # RESIZE
+        # NO BLACK BARS AROUND VIDEO
+        if cv.minimal_interface_enabled or not br.av_player.playlist_visible:
+            self.resize(new_width, cv.window_height)
+            br.av_player.resize_window_height_to_match_video_res_ratio()
+        # WITH BLACK BARS
+        else:
+            self.resize(new_width, int(self.height() * ratio))
 
 
     def window_size_toggle_action(self):

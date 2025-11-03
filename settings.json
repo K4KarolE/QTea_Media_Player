@@ -63,7 +63,9 @@
     "queue_window": "Alt+Q",
     "search_window": "Alt+S",
     "minimal_interface_toggle": "I",
-    "remove_black_bars_around_video": "K"
+    "remove_black_bars_around_video": "K",
+    "increase_window_size": "Ctrl++",
+    "decrease_window_size": "Ctrl+-"
   },
   "skins": {
     "default": {

@@ -445,6 +445,8 @@ class Data:
     search_window: str = settings['hotkey_settings']['search_window']
     minimal_interface_toggle: str = settings['hotkey_settings']['minimal_interface_toggle']
     remove_black_bars_around_video: str = settings['hotkey_settings']['remove_black_bars_around_video']
+    increase_window_size: str = settings['hotkey_settings']['increase_window_size']
+    decrease_window_size: str = settings['hotkey_settings']['decrease_window_size']
 
     hotkey_settings_dic = {
         'small_jump_backward': {
@@ -615,6 +617,16 @@ class Data:
         'remove_black_bars_around_video': {
             'text': 'Remove black bars\naround video',
             'value': remove_black_bars_around_video,
+            'line_edit_widget': ''
+        },
+        'increase_window_size': {
+            'text': 'Increase window size',
+            'value': increase_window_size,
+            'line_edit_widget': ''
+        },
+        'decrease_window_size': {
+            'text': 'Decrease window size',
+            'value': decrease_window_size,
             'line_edit_widget': ''
         }
     }
