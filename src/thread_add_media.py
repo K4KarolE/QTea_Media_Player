@@ -16,10 +16,12 @@ from . import logger_check
 class ThreadAddMedia(QThread):
     """ Phase A,
         - Adding media from different sources (via button or drop - file, files, dictionary)
-        - Extracting the track path(s)
+        - "run()":
+            - Extracting the track path(s) and adding to the "self.track_path_list"
+            - Once the previous step completed, loading the first media >> starting Phase B
 
         Phase B,
-        - Once the media is loaded > signal is triggered > duration is ready to be generated
+        - Once the media is loaded >> signal is triggered >> duration is ready to be generated
             src / av_player / TrackDuration / mediaStatusChanged signal
         - Track path and duration values passed to the
             src / MyWindow / add_track_to_playlist_via_thread()
@@ -70,12 +72,8 @@ class ThreadAddMedia(QThread):
         ##################################
         # STARTING THE MEDIA ADDING LOOP #
         ##################################
-        if self.track_path_list:    # Please see the comment above
-            if self.last_track_added == self.track_path_list[0]:
-                self.return_thread_generated_values()
-            else:
-                self.last_track_added = self.track_path_list[0]
-                self.player_set_source(self.track_path_list[0])
+        if self.track_path_list:
+            self.track_path_list_action()
 
 
     def add_dir(self, dir_path):
@@ -102,17 +100,31 @@ class ThreadAddMedia(QThread):
         raw_duration = br.av_player_duration.player.duration()
 
         self.result_ready.emit(self.track_path_list[0], raw_duration)
+        self.last_track_added = self.track_path_list[0]
         self.track_path_list.pop(0)
 
         cv.add_track_to_pl_sum_duration += raw_duration
         self.update_duration_sum_widget()
         
         if self.track_path_list:
-            self.player_set_source(self.track_path_list[0])
+            self.track_path_list_action()
         else:
             cv.adding_records_at_moment = False
             if is_active_and_add_to_track_playlist_same():
                 cv.active_pl_tracks_count = cv.add_track_to_pl_name.count()
+
+
+    def track_path_list_action(self):
+        """ If: To avoid: adding the same media after each other
+                Skipping the ".setSource" phase, the previous, same media
+                is already loaded in for the duration generation
+                Please see the comment above in the __init__ constructor
+            Else: start / continue the media adding loop
+        """
+        if self.last_track_added == self.track_path_list[0]:
+            self.return_thread_generated_values()
+        else:
+            self.player_set_source(self.track_path_list[0])
 
 
     def update_duration_sum_widget(self):
