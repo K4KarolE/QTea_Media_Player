@@ -140,11 +140,20 @@ class AVPlayer(QWidget):
 
                 # MENU ITEMS
                 for menu_title, menu_icon in self.context_menu_dic.items():
-                    icon = menu_icon['icon']
-                    if icon:
+                    if menu_title == 'Play / Pause':
+                        if self.paused:
+                            icon = br.icon.start
+                            menu_title = 'Play'
+                        else:
+                            icon = br.icon.pause
+                            menu_title = 'Pause'
                         menu.addAction(QAction(icon, menu_title, self))
                     else:
-                        self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
+                        icon = menu_icon['icon']
+                        if icon:
+                            menu.addAction(QAction(icon, menu_title, self))
+                        else:
+                            self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
 
 
                 # AUDIO TRACKS
@@ -255,7 +264,7 @@ class AVPlayer(QWidget):
         subtitle_tracks_list = self.context_menu_dic[self.subtitle_track_menu_title]['subtitle_tracks']
         screens_list = self.context_menu_dic[self.full_screen_menu_title]['screens']
 
-        if q.text() == list(self.context_menu_dic)[0]:
+        if q.text() in list(self.context_menu_dic)[0]:
             br.button_play_pause.button_play_pause_clicked()
 
         elif q.text() == list(self.context_menu_dic)[1]:
