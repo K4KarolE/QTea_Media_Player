@@ -59,6 +59,7 @@ class MyWindow(QWidget):
         'volume_up': self.volume_up_action,
         'volume_down': self.volume_down_action,
         'audio_tracks_rotate': lambda: br.play_funcs.audio_tracks_play_next_one(),
+        'audio_output_device_rotate': lambda: br.play_funcs.audio_output_device_use_next_one(),
         'subtitle_tracks_rotate': lambda: br.play_funcs.subtitle_tracks_play_next_one(),
         'play_pause': lambda: br.button_play_pause.button_play_pause_clicked(),
         'play': lambda: br.play_funcs.play_track(), # play_pause vs. play: info in readme

@@ -342,11 +342,20 @@ the current ones, just rename them. There is more information about the database
     - Audio is not playing for a while (2-10s)
 - Solution: saving the current player`s position at pause and apply it at the continue phase
 
-### Audio device change - LINUX only
-- Issue: Switching audio device on PC/laptop >> **freezes the app, no error message.
+### Audio device change - WINDOWS only
+- Issue: Switching audio output device on PC/laptop while the app is in playing/paused state + play next track >> freezes the app, error message:
+    ```
+    [AVHWFramesContext @ 00000202E043C100] Static surface pool size exceeded.
+    [h264 @ 00000202CD315540] get_buffer() failed
+    [h264 @ 00000202CD315540] thread_get_buffer() failed
+    [h264 @ 00000202CD315540] decode_slice_header error
+    [h264 @ 00000202CD315540] no frame!
+    ```
 - Solution:
-  - ** src / av_player updated to avoid
-  - Right-click on the video and select the preferred audio device or restart the app
+  - The app`s audio output is not following the system's audio output update
+  - Right-click on the video area (if visible) and select the preferred audio device in the context menu or
+  - Use the dedicated hotkey to select the next audio output or
+  - Restart the app
 
 ### Adding the same media twice
 - Issue: Adding the same media after each other:

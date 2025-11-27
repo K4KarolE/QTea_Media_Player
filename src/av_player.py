@@ -117,18 +117,15 @@ class AVPlayer(QWidget):
 
     def set_audio_output(self):
         """
-        Actioned at startup and when
-        the output device changed
+        Triggered when the audio output device has changed
         example: speaker >> headset
         """
-        # PyQt6 - Linux issue
-        # Working in Windows or PyQt(6.9.0)
-        # More info in Readme
-        if not cv.os_linux:
+        # OS Windows issue only
+        # More info in the README/Workarounds
+        if cv.os_linux:
             self.audio_output = QAudioOutput()
             self.player.setAudioOutput(self.audio_output)
             self.audio_output.setVolume(cv.volume)
-
 
 
     def eventFilter(self, source, event):

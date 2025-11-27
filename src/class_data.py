@@ -422,6 +422,7 @@ class Data:
     volume_up: str = settings['hotkey_settings']['volume_up']
     volume_down: str = settings['hotkey_settings']['volume_down']
     audio_tracks_rotate: str = settings['hotkey_settings']['audio_tracks_rotate']
+    audio_output_device_rotate: str = settings['hotkey_settings']['audio_output_device_rotate']
     subtitle_tracks_rotate: str = settings['hotkey_settings']['subtitle_tracks_rotate']
     play_pause: str = settings['hotkey_settings']['play_pause']
     play: str = settings['hotkey_settings']['play']  # play vs play_pause: info in readme / Hotkeys
@@ -502,6 +503,11 @@ class Data:
         'audio_tracks_rotate': {
             'text': 'Audio track - use next',
             'value': audio_tracks_rotate,
+            'line_edit_widget': ''
+        },
+        'audio_output_device_rotate': {
+            'text': 'Audio output - use next',
+            'value': audio_output_device_rotate,
             'line_edit_widget': ''
         },
         'subtitle_tracks_rotate': {

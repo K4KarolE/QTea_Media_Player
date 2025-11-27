@@ -302,7 +302,17 @@ class PlaysFunc:
         else:
             subtitle_track_title = 'No subtitles'
         br.av_player.text_display_on_video(1000, subtitle_track_title)
-    
+
+
+    def audio_output_device_use_next_one(self):
+        device_list = br.av_player.media_devices.audioOutputs()
+        current_device = br.av_player.audio_output.device()
+        current_device_index = device_list.index(current_device)
+        next_device_index = (current_device_index + 1) % len(device_list)
+        next_device = device_list[next_device_index]
+        br.av_player.audio_output.setDevice(next_device)
+        br.av_player.text_display_on_video(1000, next_device.description())
+
 
     def generate_playing_track_index(self, playing_track_index):
         ''' 

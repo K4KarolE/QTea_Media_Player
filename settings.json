@@ -41,6 +41,7 @@
     "volume_up": "Up | = | +",
     "volume_down": "Down | -",
     "audio_tracks_rotate": "B",
+    "audio_output_device_rotate": "C",
     "subtitle_tracks_rotate": "V",
     "play_pause": "Space",
     "play": "Enter",
