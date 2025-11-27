@@ -72,6 +72,7 @@ class AVPlayer(QWidget):
         br.app.screenRemoved.connect(lambda: self.screen_back_to_default())
         # CONTEXT MENU
         self.audio_track_menu_title = f'Audio Track  ({cv.audio_tracks_rotate})'
+        self.audio_device_menu_title = f'Audio Device  ({cv.audio_output_device_rotate})'
         self.subtitle_track_menu_title = f'Subtitle  ({cv.subtitle_tracks_rotate})'
         self.full_screen_menu_title = f'Full Screen ({cv.full_screen_toggle})'
         self.context_menu_dic = {
@@ -88,7 +89,7 @@ class AVPlayer(QWidget):
                 'menu_sub': '',
                 'audio_tracks': []
                 },
-            'Audio Device': {
+            f'{self.audio_device_menu_title}': {
                 'icon': None,
                 'menu_sub': '',
                 'audio_devices': []
@@ -183,8 +184,8 @@ class AVPlayer(QWidget):
                         qaction_to_add = QAction(br.icon.selected, audio_device_title, self)
                     else:
                         qaction_to_add = QAction(audio_device_title, self)
-                    self.context_menu_dic['Audio Device']['menu_sub'].addAction(qaction_to_add)
-                    self.context_menu_dic['Audio Device']['audio_devices'].append(audio_device_title)
+                    self.context_menu_dic[self.audio_device_menu_title]['menu_sub'].addAction(qaction_to_add)
+                    self.context_menu_dic[self.audio_device_menu_title]['audio_devices'].append(audio_device_title)
                     counter += 1
 
 
