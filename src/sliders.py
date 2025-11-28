@@ -197,4 +197,9 @@ class MyVolumeSlider(QSlider):
         br.button_speaker.button_speaker_update() # if muted -> unmuted
         # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
         # AND VOLUME CHANGE IS BETWEEN 0< <100
-        br.av_player.text_display_on_video(1000, f"Volume:  {str(int(cv.volume*100))}%")
+        volume_percent = f'{str(int(cv.volume*100))}%'
+        br.av_player.text_display_on_video(1000, f"Volume:  {volume_percent}")
+        # VOLUME PERCENT UPDATE
+        br.volume_percent_label.setText(volume_percent)
+        br.volume_percent_label.adjustSize()
+

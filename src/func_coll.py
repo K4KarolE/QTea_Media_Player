@@ -741,7 +741,7 @@ def toggle_minimal_interface():
         br.play_buttons_list_wrapper.hide()
         br.play_slider.hide()
         br.button_speaker.hide()
-        br.volume_slider.hide()
+        br.volume_qframe.hide()         # including volume percent label and volume slider
         br.layout_bottom_slider.setContentsMargins(0, 0, 0, 0)
         br.layout_bottom_wrapper.setContentsMargins(0, 0, 0, 0)
         br.av_player.resize_window_minimal_interface_enabled()
@@ -756,6 +756,6 @@ def disable_minimal_interface():
         br.play_buttons_list_wrapper.show()
         br.play_slider.show()
         br.button_speaker.show()
-        br.volume_slider.show()
+        br.volume_qframe.show()     # including volume percent label and volume slider
         br.layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
         br.layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)

@@ -1,7 +1,9 @@
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
+    QLabel,
     QSplitter,
     QVBoxLayout
     )
@@ -166,5 +168,33 @@ def generate_ui():
         button.setParent(br.play_buttons_list_wrapper)
 
     layout_bottom_buttons.addWidget(br.play_buttons_list_wrapper)
-    layout_bottom_volume.addWidget(br.button_speaker, alignment=Qt.AlignmentFlag.AlignRight)
-    layout_bottom_volume.addWidget(br.volume_slider)
+
+
+    ''' layout_bottom_volume
+                V1         V2 << QFrame
+        __________________________________
+        |                | volume label  |
+        | speaker button | volume slider |
+    '''
+    volume1_vert_layout = QVBoxLayout()
+    volume1_vert_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+    volume1_vert_layout.addWidget(br.button_speaker)
+
+    volume2_vert_layout = QVBoxLayout()
+    volume2_vert_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+    volume_qframe = QFrame()
+    volume_qframe.setFixedSize(br.volume_slider.width(), 30)
+    volume2_vert_layout.addWidget(volume_qframe)
+
+    br.volume_percent_label = QLabel(str(int(cv.volume*100)) + '%', parent=volume_qframe)
+    br.volume_percent_label.setFont(QFont('Arial', 9, 600))
+    br.volume_percent_label.setStyleSheet("color: grey;") # blue: #287DCC
+
+    br.volume_slider.setParent(volume_qframe)
+    br.volume_slider.move(0,5)
+
+    layout_bottom_volume.addLayout(volume1_vert_layout)
+    layout_bottom_volume.addLayout(volume2_vert_layout)
+
+    br.volume_qframe = volume_qframe

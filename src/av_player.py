@@ -258,7 +258,7 @@ class AVPlayer(QWidget):
 
     def context_menu_clicked(self, q):
         audio_tracks_list = self.context_menu_dic[self.audio_track_menu_title]['audio_tracks']
-        audio_devices_list = self.context_menu_dic['Audio Device']['audio_devices']
+        audio_devices_list = self.context_menu_dic[self.audio_device_menu_title]['audio_devices']
         subtitle_tracks_list = self.context_menu_dic[self.subtitle_track_menu_title]['subtitle_tracks']
         screens_list = self.context_menu_dic[self.full_screen_menu_title]['screens']
 
