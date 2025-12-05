@@ -1,22 +1,23 @@
-'''
-Class created to handle context menu (right-click on
-the list items) in the main window playlists
+"""
+Class created to handle multi row selection and context menu (right-click on the list items) in the main window playlists
 Used it in the src / playlists.py 
-'''
+"""
 
 from PyQt6.QtCore import QEvent
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import  QListWidget, QMenu
+from PyQt6.QtWidgets import QListWidget, QMenu, QAbstractItemView
 
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
+    get_multiple_selection_first_and_last_row_index,
+    is_track_selection_multiple,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
     remove_track_from_playlist
-    )
+)
 from .message_box import MyMessageBoxError
 
 
@@ -25,6 +26,7 @@ class MyListWidget(QListWidget):
         super().__init__()
         self.play_track = br.button_play_pause.button_play_pause_via_list
         self.itemDoubleClicked.connect(lambda: self.play_track())
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -41,7 +43,34 @@ class MyListWidget(QListWidget):
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
-            }   
+            }
+
+
+    def set_multi_selection_settings(self):
+        """ Applied once the playlist is created in src / playlists / playlists_creation()
+            Used to sync the multi selected rows between the playlist columns (different playlist list widgets):
+            active_pl_name, active_pl_queue, active_pl_duration
+        """
+        self.itemSelectionChanged.connect(lambda: self.selection_changed_multi_selection_action())
+
+
+    def selection_changed_multi_selection_action(self):
+        """ In the used playlist column (one of active_pl_name, active_pl_queue, active_pl_duration)
+            the multi selection is automatically applied once the user using the SHIFT key and click combo
+            This function is used to sync the multi selection between the rest of the playlist list widgets
+        """
+        if self.is_multi_selection_sync_needed():
+            playlist_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
+            playlist_list_widgets_list.remove(self)
+            row_min, row_max = get_multiple_selection_first_and_last_row_index()
+            for playlist_list_widget in playlist_list_widgets_list:
+                for row in range(row_min, row_max + 1):
+                    if list_widget_item := playlist_list_widget.item(row):
+                        list_widget_item.setSelected(True)
+
+
+    def is_multi_selection_sync_needed(self):
+        return not cv.is_row_changed_sync_pl_in_action and is_track_selection_multiple()
 
 
     def eventFilter(self, source, event):

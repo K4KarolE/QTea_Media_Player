@@ -116,12 +116,15 @@ class MyPlaylists(QTabWidget):
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''
     def row_changed_sync_pl(self, list_widget_row_changed):
+        cv.is_row_changed_sync_pl_in_action = True
         current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
         cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
         list_widgets_list_to_sync = self.playlist_list_widgets_list.copy()
         list_widgets_list_to_sync.remove(list_widget_row_changed)
         for item in list_widgets_list_to_sync:
+            current_playlist_list_widgets_dic[item].clearSelection()
             current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
+        cv.is_row_changed_sync_pl_in_action = False
 
     
     def playlists_creation(self):
@@ -283,6 +286,9 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('duration_list_widget'))
             queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('queue_list_widget'))
 
+            name_list_widget.set_multi_selection_settings()
+            queue_list_widget.set_multi_selection_settings()
+            duration_list_widget.set_multi_selection_settings()
 
 
     def drag_and_drop_list_item_action(self):

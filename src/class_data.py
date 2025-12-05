@@ -91,6 +91,9 @@ class Data:
     screen_pos_x_for_fullscreen: int = 0
     screen_pos_x_for_fullscreen_via_menu: int = -1
 
+    # Used to avoid the multi selection sync action being triggered by the new row selection
+    is_row_changed_sync_pl_in_action: bool = False
+
     minimal_interface_enabled: bool = False
     window_size_toggle_counter: int = 0
     playlists_without_title_to_hide_index_list = []
