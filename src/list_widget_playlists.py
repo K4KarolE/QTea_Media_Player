@@ -11,12 +11,11 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
-    get_multiple_selection_first_and_last_row_index,
-    is_track_selection_multiple,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
-    remove_track_from_playlist
+    remove_track_from_playlist,
+is_track_selection_multiple
 )
 from .message_box import MyMessageBoxError
 
@@ -27,6 +26,9 @@ class MyListWidget(QListWidget):
         self.play_track = br.button_play_pause.button_play_pause_via_list
         self.itemDoubleClicked.connect(lambda: self.play_track())
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.multi_row_selection_sync_list_widgets_list = []
+        self.is_multi_row_selection_sync_needed = False
+        self.clicked.connect(lambda: self.clear_multi_row_selection())
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -35,8 +37,8 @@ class MyListWidget(QListWidget):
                                 "color: black;"   
                                 "}"
                             )
-        
-        self.context_menu_dic = { 
+
+        self.context_menu_dic = {
             'Play / Pause': {'icon': br.icon.start},
             f'Queue / Dequeue ({cv.queue_toggle})': {'icon': br.icon.queue_blue},
             'Clear queue': {'icon': br.icon.clear_queue},
@@ -44,6 +46,19 @@ class MyListWidget(QListWidget):
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
             }
+
+
+    def clear_multi_row_selection(self):
+        """
+            Scenario: multiple rows are selected + clicked on the same / last row:
+            >> the selection in the active column / list widget automatically cleared by default
+            >> this function clears the other two list widgets` selection
+        """
+        if cv.current_track_index == cv.last_clicked_track_index and is_track_selection_multiple():
+            for _ in self.multi_row_selection_sync_list_widgets_list:
+                _.clearSelection()
+                _.item(cv.current_track_index).setSelected(True)
+        cv.last_clicked_track_index = cv.current_track_index
 
 
     def set_multi_selection_settings(self):
@@ -58,19 +73,20 @@ class MyListWidget(QListWidget):
         """ In the used playlist column (one of active_pl_name, active_pl_queue, active_pl_duration)
             the multi selection is automatically applied once the user using the SHIFT key and click combo
             This function is used to sync the multi selection between the rest of the playlist list widgets
+            The "is_multi_row_selection_sync_needed" variable helps to avoid recursive selection
         """
-        if self.is_multi_selection_sync_needed():
-            playlist_list_widgets_list = [cv.active_pl_name, cv.active_pl_queue, cv.active_pl_duration]
-            playlist_list_widgets_list.remove(self)
-            row_min, row_max = get_multiple_selection_first_and_last_row_index()
-            for playlist_list_widget in playlist_list_widgets_list:
+        if self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1:
+            row_min, row_max = self.get_multiple_selection_first_and_last_row_index()
+            for playlist_list_widget in self.multi_row_selection_sync_list_widgets_list:
+                playlist_list_widget.is_multi_row_selection_sync_needed = False
                 for row in range(row_min, row_max + 1):
                     if list_widget_item := playlist_list_widget.item(row):
                         list_widget_item.setSelected(True)
+            self.is_multi_row_selection_sync_needed = False
 
-
-    def is_multi_selection_sync_needed(self):
-        return not cv.is_row_changed_sync_pl_in_action and is_track_selection_multiple()
+    def get_multiple_selection_first_and_last_row_index(self):
+        selected_row_number_list = [self.row(n) for n in self.selectedItems()]
+        return min(selected_row_number_list), max(selected_row_number_list)
 
 
     def eventFilter(self, source, event):

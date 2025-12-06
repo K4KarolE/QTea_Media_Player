@@ -116,15 +116,22 @@ class MyPlaylists(QTabWidget):
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''
     def row_changed_sync_pl(self, list_widget_row_changed):
-        cv.is_row_changed_sync_pl_in_action = True
+        """ The "is_multi_row_selection_sync_needed" variable to avoid recursive multi selection
+            Selecting multiple rows in one of the columns/list widgets (name, queue, duration) >>
+            Will sync the selection for the other 2 columns/list widgets
+            in the src / list_widget_playlists
+        """
         current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
         cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
         list_widgets_list_to_sync = self.playlist_list_widgets_list.copy()
         list_widgets_list_to_sync.remove(list_widget_row_changed)
+
+        current_list_widget = current_playlist_list_widgets_dic[list_widget_row_changed]
+        current_list_widget.is_multi_row_selection_sync_needed = True
+
         for item in list_widgets_list_to_sync:
             current_playlist_list_widgets_dic[item].clearSelection()
             current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
-        cv.is_row_changed_sync_pl_in_action = False
 
     
     def playlists_creation(self):
@@ -223,6 +230,12 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
             duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             duration_list_widget.setFixedWidth(70)
+
+
+            name_list_widget.multi_row_selection_sync_list_widgets_list = [queue_list_widget, duration_list_widget]
+            queue_list_widget.multi_row_selection_sync_list_widgets_list = [name_list_widget, duration_list_widget]
+            duration_list_widget.multi_row_selection_sync_list_widgets_list = [name_list_widget, queue_list_widget]
+
 
             cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow()
             cv.playlist_widget_dic[pl]['thumbnail_window'].hide()

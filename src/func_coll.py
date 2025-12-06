@@ -610,19 +610,6 @@ def is_track_selection_multiple():
     return selected_rows > 1
 
 
-def get_multiple_selection_first_and_last_row_index():
-    dic = {
-        cv.active_pl_name: len(cv.active_pl_name.selectedItems()),
-        cv.active_pl_queue: len(cv.active_pl_queue.selectedItems()),
-        cv.active_pl_duration: len(cv.active_pl_duration.selectedItems()),
-    }
-    selected_pl =  max(dic, key=dic.get)
-    first_row_selected = selected_pl.row(selected_pl.selectedItems()[0])
-    last_row_selected = selected_pl.row(selected_pl.selectedItems()[-1])
-    row_range = [first_row_selected, last_row_selected]
-    return min(row_range), max(row_range)
-
-
 def get_playlist_details_from_queue_tab_list(current_row_index):
     queue_tracking_title = cv.queue_tracks_list[current_row_index]
     playlist = queue_tracking_title[0]
