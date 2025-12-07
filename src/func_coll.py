@@ -128,6 +128,10 @@ def get_duration_db(playing_track_index, db_table):
     return int(cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
                            (playing_track_index + 1,)).fetchall()[0][1])
 
+def get_duration_db_sum_multi_selection(row_min, row_max):
+    return cur.execute(f"SELECT SUM(duration) FROM {cv.active_db_table} WHERE row_id BETWEEN ? AND ?"
+                     ,(row_min + 1, row_max + 1,)).fetchall()[0][0]
+
 
 def get_all_from_db(playing_track_index, db_table):
     result_all = cur.execute("SELECT * FROM {0} WHERE row_id = ?".format(db_table),
@@ -270,6 +274,12 @@ def save_speaker_muted_value():
 def update_duration_sum_var_after_track_remove():
     raw_duration = get_duration_db(cv.active_pl_name.currentRow(), cv.active_db_table)
     cv.active_pl_sum_duration -= raw_duration
+    cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
+
+
+def update_duration_sum_var_after_multiple_tracks_remove(row_min, row_max):
+    raw_sum_duration = get_duration_db_sum_multi_selection(row_min, row_max)
+    cv.active_pl_sum_duration -= raw_sum_duration
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
 
@@ -542,11 +552,18 @@ def remove_track_from_playlist():
 
 
 def remove_multiple_tracks_from_playlist():
-    for selected_item in cv.active_pl_name.selectedItems():
-        current_row_index = cv.active_pl_name.row(selected_item)
-        cv.active_pl_name.takeItem(current_row_index)
-        cv.active_pl_queue.takeItem(current_row_index)
-        cv.active_pl_duration.takeItem(current_row_index)
+
+    # DURATION - GET SUM - UPDATE INFO WIDGET
+    selected_row_number_list = [cv.active_pl_name.row(n) for n in cv.active_pl_name.selectedItems()]
+    row_min, row_max = min(selected_row_number_list), max(selected_row_number_list)
+    update_duration_sum_var_after_multiple_tracks_remove(row_min, row_max)
+    br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
+
+    # PLAYLIST
+    for row_index in reversed(range(row_min, row_max+1)):
+        cv.active_pl_name.takeItem(row_index)
+        cv.active_pl_queue.takeItem(row_index)
+        cv.active_pl_duration.takeItem(row_index)
 
 
 def remove_single_track_from_playlist():
