@@ -50,7 +50,7 @@ class MyListWidget(QListWidget):
 
     def clear_multi_row_selection(self):
         """
-            Scenario: multiple rows are selected + clicked on the same / last row:
+            Scenario: multiple rows are selected + clicked on the same / last selected row:
             >> the selection in the active column / list widget automatically cleared by default
             >> this function clears the other two list widgets` selection
         """
@@ -70,15 +70,20 @@ class MyListWidget(QListWidget):
 
 
     def selection_changed_multi_selection_action(self):
-        """ In the used playlist column (one of active_pl_name, active_pl_queue, active_pl_duration)
+        """ In the used playlist column (one of list widgets: active_pl_name, active_pl_queue, active_pl_duration)
             the multi selection is automatically applied once the user using the SHIFT key and click combo
             This function is used to sync the multi selection between the rest of the playlist list widgets
             The "is_multi_row_selection_sync_needed" variable helps to avoid recursive selection
 
             Why not use only the "itemSelectionChanged" signal for row and selection change
-            instead of the "src/playlists/currentRowChanged" + "self.itemSelectionChanged" + "self.clicked" signals:
-            The "currentRowChanged" signal is way faster, the "itemSelectionChanged" signal for the row change
-            is way too slow, the 2nd and 3rd list columns/list widget update is visibly late
+            instead of the "src/playlists/currentRowChanged" + "self.itemSelectionChanged" + "self.clicked" signals?
+
+            The "currentRowChanged" and "self.clicked" signals are way faster than the "itemSelectionChanged" signal:
+            A,
+            Clicking inside / outside an existing selection >> clears the selection apart from the current row by
+            default, but the "self.selectedItems()" list still holds the selected list widgets this point
+            B, Creating a selection >> triggers the "currentRowChanged" signal, but the "self.selectedItems()" list
+            still NOT holds the selected list widgets at this point
         """
         if self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1:
             row_min, row_max = self.get_multiple_selection_first_and_last_row_index()
