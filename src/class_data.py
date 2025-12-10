@@ -91,6 +91,9 @@ class Data:
     screen_pos_x_for_fullscreen: int = 0
     screen_pos_x_for_fullscreen_via_menu: int = -1
 
+    # Used in a scenario: multi selection + clicked on the last / current row
+    last_clicked_track_index: int = -1
+
     minimal_interface_enabled: bool = False
     window_size_toggle_counter: int = 0
     playlists_without_title_to_hide_index_list = []
