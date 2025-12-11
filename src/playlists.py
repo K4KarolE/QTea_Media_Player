@@ -115,23 +115,21 @@ class MyPlaylists(QTabWidget):
     
 
     ''' SYNC THE LIST'S(NAME, QUEUE, DURATION) SELECTION '''
-    def row_changed_sync_pl(self, list_widget_row_changed):
+    def row_changed_sync_pl(self, list_widget):
         """ The "is_multi_row_selection_sync_needed" variable to avoid recursive multi selection
             Selecting multiple rows in one of the columns/list widgets (name, queue, duration) >>
             Will sync the selection for the other 2 columns/list widgets
             in the src / list_widget_playlists
         """
-        current_playlist_list_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]
-        cv.current_track_index = current_playlist_list_widgets_dic[list_widget_row_changed].currentRow()
-        list_widgets_list_to_sync = self.playlist_list_widgets_list.copy()
-        list_widgets_list_to_sync.remove(list_widget_row_changed)
+        cv.row_change_action_counter += 1
+        if cv.row_change_action_counter % 3 == 1:
+            cv.row_change_action_counter = 1
+            list_widget.is_multi_row_selection_sync_needed = True
+            cv.current_track_index = list_widget.currentRow()
+            for list_widget_to_sync in list_widget.row_selection_sync_list_widgets_list:
+                list_widget_to_sync.clearSelection()
+                list_widget_to_sync.setCurrentRow(cv.current_track_index)
 
-        current_list_widget = current_playlist_list_widgets_dic[list_widget_row_changed]
-        current_list_widget.is_multi_row_selection_sync_needed = True
-
-        for item in list_widgets_list_to_sync:
-            current_playlist_list_widgets_dic[item].clearSelection()
-            current_playlist_list_widgets_dic[item].setCurrentRow(cv.current_track_index)
 
     
     def playlists_creation(self):
@@ -232,9 +230,9 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.setFixedWidth(70)
 
 
-            name_list_widget.multi_row_selection_sync_list_widgets_list = [queue_list_widget, duration_list_widget]
-            queue_list_widget.multi_row_selection_sync_list_widgets_list = [name_list_widget, duration_list_widget]
-            duration_list_widget.multi_row_selection_sync_list_widgets_list = [name_list_widget, queue_list_widget]
+            name_list_widget.row_selection_sync_list_widgets_list = [queue_list_widget, duration_list_widget]
+            queue_list_widget.row_selection_sync_list_widgets_list = [name_list_widget, duration_list_widget]
+            duration_list_widget.row_selection_sync_list_widgets_list = [name_list_widget, queue_list_widget]
 
 
             cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow()
@@ -292,12 +290,12 @@ class MyPlaylists(QTabWidget):
                 AFTER NEWLY SELECTED TRACK
             '''
             def name_list_widget_row_changed():
-                self.row_changed_sync_pl('name_list_widget')
+                self.row_changed_sync_pl(cv.active_pl_name)
                 update_thumbnail_style_at_row_change()
 
             name_list_widget.currentRowChanged.connect(lambda: name_list_widget_row_changed())
-            duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('duration_list_widget'))
-            queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl('queue_list_widget'))
+            duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl(cv.active_pl_duration))
+            queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl(cv.active_pl_queue))
 
             name_list_widget.set_multi_selection_settings()
             queue_list_widget.set_multi_selection_settings()
@@ -305,6 +303,7 @@ class MyPlaylists(QTabWidget):
 
 
     def drag_and_drop_list_item_action(self):
+        cv.row_change_action_counter += 1
         cv.track_change_on_main_playlist_new_search_needed = True
 
         prev_row_id = cv.active_pl_duration.currentRow()
