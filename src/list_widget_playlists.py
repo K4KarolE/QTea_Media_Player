@@ -26,7 +26,7 @@ class MyListWidget(QListWidget):
         self.play_track = br.button_play_pause.button_play_pause_via_list
         self.itemDoubleClicked.connect(lambda: self.play_track())
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.multi_row_selection_sync_list_widgets_list = []
+        self.row_selection_sync_list_widgets_list = []
         self.is_multi_row_selection_sync_needed = False
         self.clicked.connect(lambda: self.clear_multi_row_selection())
         self.installEventFilter(self)
@@ -55,7 +55,7 @@ class MyListWidget(QListWidget):
             >> this function clears the other two list widgets` selection
         """
         if cv.current_track_index == cv.last_clicked_track_index and is_track_selection_multiple():
-            for _ in self.multi_row_selection_sync_list_widgets_list:
+            for _ in self.row_selection_sync_list_widgets_list:
                 _.clearSelection()
                 _.item(cv.current_track_index).setSelected(True)
         cv.last_clicked_track_index = cv.current_track_index
@@ -87,7 +87,7 @@ class MyListWidget(QListWidget):
         """
         if self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1:
             row_min, row_max = self.get_multiple_selection_first_and_last_row_index()
-            for playlist_list_widget in self.multi_row_selection_sync_list_widgets_list:
+            for playlist_list_widget in self.row_selection_sync_list_widgets_list:
                 playlist_list_widget.is_multi_row_selection_sync_needed = False
                 for row in range(row_min, row_max + 1):
                     if list_widget_item := playlist_list_widget.item(row):

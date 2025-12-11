@@ -93,6 +93,8 @@ class Data:
 
     # Used in a scenario: multi selection + clicked on the last / current row
     last_clicked_track_index: int = -1
+    # Click one of the list widgets (name, queue, duration) >> sync the other two with no recursion
+    row_change_action_counter: int = 0
 
     minimal_interface_enabled: bool = False
     window_size_toggle_counter: int = 0
