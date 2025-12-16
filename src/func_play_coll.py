@@ -190,6 +190,10 @@ class PlaysFunc:
 
 
     def play_next_track(self):
+        if not cv.playing_pl_name:
+            # Scenario: app started without autoplay + play next button clicked
+            cv.playing_pl_name = cv.active_pl_name
+
         if cv.queue_tracks_list:
             # IF: THE CURRENTLY PLAYING TRACK ADDED TO THE QUEUE AS 1ST ONE
             # cv.queue_tracks_list = [[playlist_3, 5],[playlist_2, 3]..]
