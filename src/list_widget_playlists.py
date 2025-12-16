@@ -28,6 +28,8 @@ class MyListWidget(QListWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.row_selection_sync_list_widgets_list = []
         self.is_multi_row_selection_sync_needed = False
+        self.selected_items = []
+        self.selected_items_row_index_list = []
         self.clicked.connect(lambda: self.clear_multi_row_selection())
         self.installEventFilter(self)
         self.setStyleSheet(
@@ -85,18 +87,33 @@ class MyListWidget(QListWidget):
             B, Creating a selection >> triggers the "currentRowChanged" signal, but the "self.selectedItems()" list
             still NOT holds the selected list widgets at this point
         """
-        if self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1:
-            row_min, row_max = self.get_multiple_selection_first_and_last_row_index()
+        if (self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1 and
+                not cv.is_multi_selected_drag_drop_in_action):
+
+            self.selected_items = self.selectedItems()
+            self.sort_selected_items_and_gen_row_index_list()
+
             for playlist_list_widget in self.row_selection_sync_list_widgets_list:
                 playlist_list_widget.is_multi_row_selection_sync_needed = False
-                for row in range(row_min, row_max + 1):
+
+                for row in self.selected_items_row_index_list:
                     if list_widget_item := playlist_list_widget.item(row):
                         list_widget_item.setSelected(True)
+                playlist_list_widget.selected_items = playlist_list_widget.selectedItems()
+                playlist_list_widget.sort_selected_items_and_gen_row_index_list()
+
             self.is_multi_row_selection_sync_needed = False
 
-    def get_multiple_selection_first_and_last_row_index(self):
-        selected_row_number_list = [self.row(n) for n in self.selectedItems()]
-        return min(selected_row_number_list), max(selected_row_number_list)
+
+    def sort_selected_items_and_gen_row_index_list(self):
+        """ The multi selection direction matters
+            If the first selected list widget item`s row number smaller than the
+            last selected item`s row number (selecting upwards), the first element
+            of the "list_widget.selected_items" will not be in order:
+            "list_widget.selected_items" by row number example: [13, 9, 10, 11, 12]
+       """
+        self.selected_items.sort(key=lambda x: self.row(x))
+        self.selected_items_row_index_list = [self.row(n) for n in self.selected_items]
 
 
     def eventFilter(self, source, event):

@@ -95,6 +95,9 @@ class Data:
     last_clicked_track_index: int = -1
     # Click one of the list widgets (name, queue, duration) >> sync the other two with no recursion
     row_change_action_counter: int = 0
+    # To make sure the "selected items" list is not changed while the
+    # sync between the name and queue, duration list widgets are actioned
+    is_multi_selected_drag_drop_in_action: bool = False
 
     minimal_interface_enabled: bool = False
     window_size_toggle_counter: int = 0
