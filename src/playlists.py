@@ -443,38 +443,62 @@ class MyPlaylists(QTabWidget):
             self.rows_moved_triggered_counter = 0
             cv.is_multi_selected_drag_drop_in_action = False
 
+            # DATABASE AND TRACKS TITLE UPDATE
+            row_min_db = cv.active_pl_name.selected_items_row_index_list[0] + 1
+            row_max_db = cv.active_pl_name.selected_items_row_index_list[-1] + 1
+            row_amount = len(cv.active_pl_name.selected_items_row_index_list)
+            target_row_index_db = target_row_index + 1
 
+            # Temporary row id placement for the rows we are moving
+            cur.execute("UPDATE {0} SET row_id = row_id * -1 WHERE row_id BETWEEN {1} AND {2}"
+                        .format(cv.active_db_table, row_min_db, row_max_db))
 
-            # MOVING TRACK DOWN
+            # MOVING TRACKS DOWN
             if target_row_index > cv.active_pl_name.selected_items_row_index_list[0]:
 
-                # Database update
-                # Temporary row id placement for the rows we are moving
-                row_min_db = cv.active_pl_name.selected_items_row_index_list[0] + 1
-                row_max_db = cv.active_pl_name.selected_items_row_index_list[-1] + 1
-                cur.execute("UPDATE {0} SET row_id = row_id * -1 WHERE row_id BETWEEN {1} AND {2}"
-                            .format(cv.active_db_table, row_min_db, row_max_db))
-
                 # Decrease the row ids between current and target rows
-                row_amount = len(cv.active_pl_name.selected_items_row_index_list)
-                target_row_index_db = target_row_index + row_amount
+                target_row_index_db_down = target_row_index + row_amount
                 cur.execute("UPDATE {0} SET row_id = row_id - {1} WHERE row_id > {2} AND row_id <= {3}".
-                            format(cv.active_db_table, row_amount, row_min_db, target_row_index_db))
+                            format(cv.active_db_table, row_amount, row_min_db, target_row_index_db_down))
 
                 # Update the row id for the rows with temporary row id
-                how_many_rows_passed_by = target_row_index_db - row_max_db
+                how_many_rows_passed_by_down = target_row_index_db_down - row_max_db
                 cur.execute("UPDATE {0} SET row_id = row_id * -1 + {1} WHERE row_id < 0"
-                            .format(cv.active_db_table, how_many_rows_passed_by))
+                            .format(cv.active_db_table, how_many_rows_passed_by_down))
                 connection.commit()
 
 
                 # Rename widgets according to the new position (12.Coco Jamboo >> 23.Coco Jumboo)
                 cur.execute(
                     "SELECT * FROM {0} WHERE row_id >= {1} AND row_id <= {2}".
-                    format(cv.active_db_table, row_min_db, target_row_index_db))
+                    format(cv.active_db_table, row_min_db, target_row_index_db_down))
                 playlist = cur.fetchall()
                 for item in playlist:
                     track_row_db, list_name, _, _ = generate_track_list_detail(item)
                     cv.active_pl_name.item(track_row_db - 1).setText(list_name)
 
+            # MOVING TRACKS UP
+            else:
+                # Increase the row ids between current and target rows
+                cur.execute("UPDATE {0} SET row_id = row_id + {1} WHERE row_id >= {2} AND row_id < {3}".
+                            format(cv.active_db_table, row_amount, target_row_index_db, row_min_db))
+                connection.commit()
+
+                # Update the row id for the rows with temporary row id
+                how_many_rows_passed_by_up = target_row_index_db - row_min_db
+                cur.execute("UPDATE {0} SET row_id = row_id * -1 + {1} WHERE row_id < 0"
+                            .format(cv.active_db_table, how_many_rows_passed_by_up))
+                connection.commit()
+
+                # Rename widgets according to the new position (12.Coco Jamboo >> 23.Coco Jumboo)
+                cur.execute(
+                    "SELECT * FROM {0} WHERE row_id >= {1} AND row_id <= {2}".
+                    format(cv.active_db_table, target_row_index_db, row_max_db))
+                playlist = cur.fetchall()
+                for item in playlist:
+                    track_row_db, list_name, _, _ = generate_track_list_detail(item)
+                    cv.active_pl_name.item(track_row_db - 1).setText(list_name)
+
+            # To make sure after the tracks relocation the selection is reduced back to one row only
+            cv.active_pl_queue.setCurrentRow(target_row_index)
         self.rows_moved_triggered_counter += 1
