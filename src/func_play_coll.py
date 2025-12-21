@@ -21,13 +21,14 @@ from .func_coll import (
     update_raw_current_duration_db
     )
 from .func_thumbnail import update_thumbnail_style_at_play_track
-from .logger import logger_check
+from .logger import *
 
 
 class PlaysFunc:
     def __init__(self):
         self.track_path = ""
 
+    @logger_check
     def play_track(self, playing_track_index=None):
         # PyQt playing the first audio_track of the video by default
         #  -> reset our variable when playing new track
@@ -39,7 +40,7 @@ class PlaysFunc:
         cv.counter_for_duration = 0
 
         update_playing_playlist_vars_and_widgets()
-        
+
         # playing_track_index --> cv.playing_track_index
         self.generate_playing_track_index(playing_track_index)
 
@@ -47,8 +48,24 @@ class PlaysFunc:
         # SCENARIO: app started >> non-playing playlist is active + one of the row is selected
         # >> switch to thumbnail view >> only the selected thumbnail style is in use
         cv.playlist_widget_dic[cv.playing_db_table]['played_thumbnail_style_update_needed'] = True
-        
-        ''' QUEUE MANAGEMENT '''
+
+        # QUEUE
+        self.queue_update()
+
+        # STYLE
+        self.played_and_queued_track_style_update()
+
+        # PATH / DURATION / SLIDER
+        cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
+        cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+        br.play_slider.setMaximum(cv.track_full_duration)
+
+        # PLAYER
+        br.av_player.stopped = False
+        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+
+
+    def queue_update(self):
         cv.queue_tracking_title = [cv.playing_db_table, cv.playing_track_index]
         if cv.queue_tracking_title in cv.queue_tracks_list:
             current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
@@ -65,13 +82,13 @@ class PlaysFunc:
                 thumbnail_widgets_dic[cv.playing_track_index]['widget'].set_queue_number(None)
 
 
-        ''' PLAY '''
-        ''' SCENARIOS TO AVOID:
+    def played_and_queued_track_style_update(self):
+        """ SCENARIOS TO AVOID + SOLUTIONS:
             1, last, played track in the playlist removed
                 -> next startup: start the 1st track in the playlist
             2, playing track, clear playlist, restart app
                 -> next startup: empty playlist displayed, no autoplay
-        '''
+        """
         if 0 <= cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
 
             # PLAYING TRACK ADDED TO THE QUEUE - VALUATION
@@ -87,27 +104,33 @@ class PlaysFunc:
                 cv.active_pl_last_track_index = cv.playing_track_index
             save_playing_playlist_and_playing_last_track_index()
 
-        else:
-            if cv.playing_pl_tracks_count: # last played track index > playlist amount
-                cv.playing_pl_last_track_index = 0
-                save_playing_playlist_and_playing_last_track_index()
-                self.play_track()
-            else:   # empty playlist
-                return
+        elif cv.playing_pl_tracks_count:  # last played track index > playlist amount
+            cv.playing_pl_last_track_index = 0
+            save_playing_playlist_and_playing_last_track_index()
+            self.play_track()
 
         if cv.shuffle_playlist_on:
             self.add_to_shuffle_played_list()
 
-        # PATH / DURATION / SLIDER
-        cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
-        cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-        br.play_slider.setMaximum(cv.track_full_duration)
-        
-        # PLAYER
-        br.av_player.stopped = False
-        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+
+    def add_to_shuffle_played_list(self):
+        """
+            "Shuffle playlist" is ON:
+            The currently playing tracks added to the "shuffle_played_tracks_list"
+            which is used when the "Play previous" button/hotkey is triggered
+            "Shuffle playlist" is OFF: the previous track played in playlist
+        """
+        if (not cv.is_play_prev_track_clicked and
+                cv.playing_track_index not in cv.shuffle_played_tracks_list):
+            cv.shuffle_played_tracks_list.append(cv.playing_track_index)
+            if len(cv.shuffle_played_tracks_list) > cv.shuffle_played_tracks_list_size:
+                cv.shuffle_played_tracks_list.pop(0)
+        else:
+            if cv.shuffle_played_tracks_list:
+                cv.shuffle_played_tracks_list.pop(-1)
 
 
+    @logger_check
     def play_track_second_part(self):
         """ Media was set as source in the previous "play_track" function which triggers
             the src / av_player / mediaStatusChanged signal calling this function
@@ -125,7 +148,7 @@ class PlaysFunc:
         else:
             br.play_slider.setEnabled(True)
             self.update_window_title(self.track_path, True)
-        
+
         # VIDEO AREA / LOGO DISPLAY
         if self.track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
             br.image_logo.show()
@@ -133,11 +156,11 @@ class PlaysFunc:
         else:
             br.image_logo.hide()
             br.av_player.video_output.show()
-        
+
         # AUDIO / SUBTITLE TRACKS
         cv.audio_tracks_amount = len(br.av_player.player.audioTracks())
         cv.subtitle_tracks_amount = len(br.av_player.player.subtitleTracks())
-        
+
         # PLAY
         self.audio_tracks_use_default()
         br.av_player.player.play()
@@ -145,7 +168,7 @@ class PlaysFunc:
         # DISPLAY TRACK TITLE ON VIDEO
         if br.av_player.video_output.isVisible():
             br.av_player.text_display_on_video(2000, cv.track_title)
-        
+
         # SCROLL TO PLAYING TRACK
         # STANDARD PLAYLIST
         item = cv.playing_pl_name.item(cv.playing_track_index)
@@ -158,23 +181,6 @@ class PlaysFunc:
 
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
-
-
-    def add_to_shuffle_played_list(self):
-        '''
-        "Shuffle playlist" is ON:
-        The currently playing tracks added to the "shuffle_played_tracks_list"
-        which is used when the "Play previous" button/hotkey is triggered
-        "Shuffle playlist" is OFF: the previous track played in playlist
-        '''
-        if (not cv.is_play_prev_track_clicked and
-                cv.playing_track_index not in cv.shuffle_played_tracks_list):
-            cv.shuffle_played_tracks_list.append(cv.playing_track_index)
-            if len(cv.shuffle_played_tracks_list) > cv.shuffle_played_tracks_list_size:
-                cv.shuffle_played_tracks_list.pop(0)
-        else:
-            if cv.shuffle_played_tracks_list:
-                cv.shuffle_played_tracks_list.pop(-1)
 
 
     def update_window_title(self, track_path, no_error):
@@ -217,33 +223,33 @@ class PlaysFunc:
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
             # REPEAT SINGLE TRACK - NO BUTTON CLICK    
-            elif (cv.repeat_playlist == 0 and 
-                br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
-                    cv.track_current_duration = 0
-                    br.av_player.player.setPosition(0)
-                    br.av_player.player.play()
+            elif (cv.repeat_playlist == 0 and
+                  br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+                cv.track_current_duration = 0
+                br.av_player.player.setPosition(0)
+                br.av_player.player.play()
             # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
-            elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and 
-                cv.repeat_playlist in [0,1,2]):
+            elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and
+                  cv.repeat_playlist in [0,1,2]):
                 cv.playing_track_index += 1
                 self.play_track(cv.playing_track_index)
             # REPEAT PLAYLIST    
             elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
-                cv.repeat_playlist == 2):
-                    cv.playing_track_index = 0
-                    self.play_track(cv.playing_track_index)
+                  cv.repeat_playlist == 2):
+                cv.playing_track_index = 0
+                self.play_track(cv.playing_track_index)
             # SET THE CURRENT TRACK BACK TO STARTING POINT
             # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
             # -> HIDE BLACK SCREEN & DISPLAY LOGO         
             elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
-                br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
-                    disable_minimal_interface()
-                    br.av_player.stopped = True
-                    br.av_player.player.setPosition(0)
-                    br.av_player.video_output.hide()
-                    br.image_logo.show()
-                    br.button_play_pause.setIcon(br.icon.start)
-                    br.button_duration_info.disable_and_set_to_zero()
+                  br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+                disable_minimal_interface()
+                br.av_player.stopped = True
+                br.av_player.player.setPosition(0)
+                br.av_player.video_output.hide()
+                br.image_logo.show()
+                br.button_play_pause.setIcon(br.icon.start)
+                br.button_duration_info.disable_and_set_to_zero()
 
 
     @logger_check
@@ -257,12 +263,11 @@ class PlaysFunc:
         """
         # END OF THE MEDIA >> PLAY NEXT TRACK
         if br.av_player.base_played_end_of_media_signal_ignored:
-            # if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia:
-                # To play from the start at next time playing the same track
-                # Not from (full duration - 5 sec) position
-                if cv.continue_playback and not cv.adding_records_at_moment:
-                    update_raw_current_duration_db(0, cv.playing_track_index)
-                self.play_next_track()
+            # To play from the start at next time playing the same track
+            # Not from (full duration - 5 sec) position
+            if cv.continue_playback and not cv.adding_records_at_moment:
+                update_raw_current_duration_db(0, cv.playing_track_index)
+            self.play_next_track()
         else:
             br.av_player.base_played_end_of_media_signal_ignored = True
 
@@ -285,7 +290,7 @@ class PlaysFunc:
         if cv.audio_tracks_amount > 1 and 1 <= cv.default_audio_track <= cv.audio_tracks_amount:
             br.av_player.player.setActiveAudioTrack(cv.default_audio_track - 1)
             cv.audio_track_played = cv.default_audio_track - 1
-    
+
 
     def subtitle_tracks_play_next_one(self):
         if cv.subtitle_tracks_amount:
@@ -346,40 +351,38 @@ class PlaysFunc:
             'black',
             'white'
         )
-
         list_item_style_update(
             cv.playing_pl_queue.item(cv.playing_pl_last_track_index),
             inactive_track_font_style,
             'black',
             'white'
         )
-
         list_item_style_update(
             cv.playing_pl_duration.item(cv.playing_pl_last_track_index),
             inactive_track_font_style,
             'black',
             'white'
         )
-    
+
 
     def update_new_track_style(self):
         list_item_style_update(
-            cv.playing_pl_name.item(cv.playing_track_index), 
+            cv.playing_pl_name.item(cv.playing_track_index),
             active_track_font_style,
             'white',
             '#287DCC'
-            )
-                
+        )
+
         list_item_style_update(
-            cv.playing_pl_queue.item(cv.playing_track_index), 
+            cv.playing_pl_queue.item(cv.playing_track_index),
             active_track_font_style,
             'white',
             '#287DCC'
-            )
+        )
 
         list_item_style_update(
             cv.playing_pl_duration.item(cv.playing_track_index),
             active_track_font_style,
             'white',
             '#287DCC'
-            )
+        )
