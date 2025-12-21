@@ -60,7 +60,10 @@ class MyPlaylists(QTabWidget):
         br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
         self.add_dummy_playlist()
         self.hide_playlists_with_no_title()
+        # Multi rows selection & moving
         self.rows_moved_triggered_counter:int = 1
+        self.rows_amount:int
+        self.how_many_rows_passed_by:int
         self.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
@@ -428,7 +431,7 @@ class MyPlaylists(QTabWidget):
 
             target_row_index = cv.active_pl_name.row(cv.active_pl_name.selected_items[0])
 
-            ### REPOSITION WIDGETS ###
+            ''' REPOSITION WIDGETS '''
             # Removing list widget items
             for _ in reversed(cv.active_pl_name.selected_items_row_index_list):
                 cv.active_pl_queue.takeItem(_)
@@ -443,30 +446,29 @@ class MyPlaylists(QTabWidget):
             self.rows_moved_triggered_counter = 0
             cv.is_multi_selected_drag_drop_in_action = False
 
-            # DATABASE AND TRACKS TITLE UPDATE
+            ''' DATABASE AND TRACKS TITLE UPDATE '''
             row_min_db = cv.active_pl_name.selected_items_row_index_list[0] + 1
             row_max_db = cv.active_pl_name.selected_items_row_index_list[-1] + 1
-            row_amount = len(cv.active_pl_name.selected_items_row_index_list)
+            self.rows_amount = len(cv.active_pl_name.selected_items_row_index_list)
             target_row_index_db = target_row_index + 1
 
             # Temporary row id placement for the rows we are moving
             cur.execute("UPDATE {0} SET row_id = row_id * -1 WHERE row_id BETWEEN {1} AND {2}"
                         .format(cv.active_db_table, row_min_db, row_max_db))
+            connection.commit()
 
             # MOVING TRACKS DOWN
             if target_row_index > cv.active_pl_name.selected_items_row_index_list[0]:
-
                 # Decrease the row ids between current and target rows
-                target_row_index_db_down = target_row_index + row_amount
+                target_row_index_db_down = target_row_index + self.rows_amount
                 cur.execute("UPDATE {0} SET row_id = row_id - {1} WHERE row_id > {2} AND row_id <= {3}".
-                            format(cv.active_db_table, row_amount, row_min_db, target_row_index_db_down))
+                            format(cv.active_db_table, self.rows_amount, row_min_db, target_row_index_db_down))
 
                 # Update the row id for the rows with temporary row id
-                how_many_rows_passed_by_down = target_row_index_db_down - row_max_db
+                self.how_many_rows_passed_by = target_row_index_db_down - row_max_db
                 cur.execute("UPDATE {0} SET row_id = row_id * -1 + {1} WHERE row_id < 0"
-                            .format(cv.active_db_table, how_many_rows_passed_by_down))
+                            .format(cv.active_db_table, self.how_many_rows_passed_by))
                 connection.commit()
-
 
                 # Rename widgets according to the new position (12.Coco Jamboo >> 23.Coco Jumboo)
                 cur.execute(
@@ -477,17 +479,19 @@ class MyPlaylists(QTabWidget):
                     track_row_db, list_name, _, _ = generate_track_list_detail(item)
                     cv.active_pl_name.item(track_row_db - 1).setText(list_name)
 
+                self.update_playing_track_index_multi_selection('Down')
+
             # MOVING TRACKS UP
             else:
                 # Increase the row ids between current and target rows
-                cur.execute("UPDATE {0} SET row_id = row_id + {1} WHERE row_id >= {2} AND row_id < {3}".
-                            format(cv.active_db_table, row_amount, target_row_index_db, row_min_db))
-                connection.commit()
+                for item in reversed(range(target_row_index_db, row_min_db)):
+                    cur.execute("UPDATE {0} SET row_id = row_id + {1} WHERE row_id = {2}".
+                                format(cv.active_db_table, self.rows_amount, item))
 
                 # Update the row id for the rows with temporary row id
-                how_many_rows_passed_by_up = target_row_index_db - row_min_db
+                self.how_many_rows_passed_by = target_row_index_db - row_min_db
                 cur.execute("UPDATE {0} SET row_id = row_id * -1 + {1} WHERE row_id < 0"
-                            .format(cv.active_db_table, how_many_rows_passed_by_up))
+                            .format(cv.active_db_table, self.how_many_rows_passed_by))
                 connection.commit()
 
                 # Rename widgets according to the new position (12.Coco Jamboo >> 23.Coco Jumboo)
@@ -499,6 +503,48 @@ class MyPlaylists(QTabWidget):
                     track_row_db, list_name, _, _ = generate_track_list_detail(item)
                     cv.active_pl_name.item(track_row_db - 1).setText(list_name)
 
+                self.update_playing_track_index_multi_selection('Up')
+
             # To make sure after the tracks relocation the selection is reduced back to one row only
             cv.active_pl_queue.setCurrentRow(target_row_index)
+
+            # Update queued tracks index
+            self.update_queued_tracks_index_multi_selection(target_row_index)
+
         self.rows_moved_triggered_counter += 1
+
+
+
+    def is_playing_track_in_selection(self):
+        return cv.playing_pl_last_track_index in cv.active_pl_name.selected_items_row_index_list
+
+
+    def update_playing_track_index_multi_selection(self, direction:str):
+        if cv.playing_pl_last_track_index: # avoid: start the app without playing + moving rows
+            if self.is_playing_track_in_selection():
+                cv.playing_pl_last_track_index = cv.playing_pl_last_track_index + self.how_many_rows_passed_by
+            else:
+                if direction == 'Up':
+                    cv.playing_pl_last_track_index += self.rows_amount
+                else:
+                    cv.playing_pl_last_track_index -= self.rows_amount
+            cv.playing_track_index = cv.playing_pl_last_track_index
+            save_playing_pl_last_track_index()
+
+
+    def update_queued_tracks_index_multi_selection(self, target_row_index):
+        if cv.active_db_table in cv.queue_playlists_list:
+            for item in cv.queue_tracks_list:
+                if cv.active_db_table == item[0]:
+
+                    # MOVING THE QUEUED TRACK
+                    if item[1] in cv.active_pl_name.selected_items_row_index_list:
+                        item[1] = item[1] + self.how_many_rows_passed_by
+
+                    # MOVING A TRACK BELOW THE QUEUED TRACK
+                    elif item[1] in range(cv.active_pl_name.selected_items_row_index_list[0], target_row_index + 1):
+                        item[1] = item[1] - self.rows_amount
+
+                    # MOVING A TRACK ABOVE THE QUEUED TRACK
+                    elif item[1] in range(target_row_index, cv.active_pl_name.selected_items_row_index_list[0] + 1):
+                        item[1] = item[1] + self.rows_amount
