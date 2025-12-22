@@ -22,11 +22,29 @@ from .func_coll import (
     )
 from .func_thumbnail import update_thumbnail_style_at_play_track
 from .logger import *
+from .thread_play_track_set_source import ThreadPlayTrackSetSource
 
 
 class PlaysFunc:
     def __init__(self):
         self.track_path = ""
+        # Thread for "style update" and "set source" separation
+        # More info in below in the "result_ready_action" function
+        # or in the "src / thread_play_track_set_source"
+        self.thread_play_track_set_source = ThreadPlayTrackSetSource()
+        self.thread_play_track_set_source.result_ready.connect(self.result_ready_action)
+
+    def result_ready_action(self):
+        """
+            Used for separate the "style update" and "set source" functions
+            Otherwise the style update of the name, queue and duration list widget items would
+            be so slow/sluggish that style updates would look out of sync, not act as a single row
+
+            play_track() / self.thread_play_track_set_source.start()
+            >> self.played_and_queued_track_style_update() and result_ready.emit()
+            >> this function
+        """
+        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
     @logger_check
     def play_track(self, playing_track_index=None):
@@ -53,7 +71,9 @@ class PlaysFunc:
         self.queue_update()
 
         # STYLE
-        self.played_and_queued_track_style_update()
+        # The "self.played_and_queued_track_style_update()" actioned in the
+        # "src / thread_play_track_set_source" and triggered via the
+        # "self.thread_play_track_set_source.start()" function below
 
         # PATH / DURATION / SLIDER
         cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
@@ -61,8 +81,9 @@ class PlaysFunc:
         br.play_slider.setMaximum(cv.track_full_duration)
 
         # PLAYER
+        # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
         br.av_player.stopped = False
-        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+        self.thread_play_track_set_source.start()
 
 
     def queue_update(self):
