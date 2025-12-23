@@ -23,11 +23,13 @@ from .func_coll import (
 from .func_thumbnail import update_thumbnail_style_at_play_track
 from .logger import *
 from .thread_play_track_set_source import ThreadPlayTrackSetSource
+from .message_box import MyMessageBoxError
 
 
 class PlaysFunc:
     def __init__(self):
         self.track_path = ""
+        self.track_path_previous = ""
         # Thread for "style update" and "set source" separation
         # More info in below in the "result_ready_action" function
         # or in the "src / thread_play_track_set_source"
@@ -43,8 +45,16 @@ class PlaysFunc:
             play_track() / self.thread_play_track_set_source.start()
             >> self.played_and_queued_track_style_update() and result_ready.emit()
             >> this function
+
+            Playing the same file - The same file can be added multiple times to the playlists
+            The media status changed signal is not fired and the "self.play_track_second_part()"
+            is not called when the same file path is set as source, solution:
         """
-        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+        if self.track_path == self.track_path_previous:
+            br.av_player.player.setPosition(cv.track_current_duration)
+            self.play_track_second_part()
+        else:
+            br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
     @logger_check
     def play_track(self, playing_track_index=None):
@@ -77,13 +87,21 @@ class PlaysFunc:
 
         # PATH / DURATION / SLIDER
         cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
-        cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-        br.play_slider.setMaximum(cv.track_full_duration)
 
-        # PLAYER
-        # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
-        br.av_player.stopped = False
-        self.thread_play_track_set_source.start()
+        # FILE NOT REACHABLE
+        if not Path(self.track_path).is_file():
+            MyMessageBoxError(
+                'Not able to play the file',
+                'The file or the file`s home folder has been renamed / removed. '
+            )
+        else:
+            cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+            br.play_slider.setMaximum(cv.track_full_duration)
+
+            # PLAYER
+            # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
+            br.av_player.stopped = False
+            self.thread_play_track_set_source.start()
 
 
     def queue_update(self):
@@ -128,7 +146,6 @@ class PlaysFunc:
         elif cv.playing_pl_tracks_count:  # last played track index > playlist amount
             cv.playing_pl_last_track_index = 0
             save_playing_playlist_and_playing_last_track_index()
-            self.play_track()
 
         if cv.shuffle_playlist_on:
             self.add_to_shuffle_played_list()
@@ -159,6 +176,8 @@ class PlaysFunc:
             before the media is loaded >> zero >> not able to switch Audio or
             Subtitles via hotkeys
         """
+        # PLAYING THE SAME FILE - support variable - more info in the "self.result_ready_action()" above
+        self.track_path_previous = self.track_path
         # FILE REMOVED / RENAMED
         if br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.InvalidMedia:
             br.play_slider.setEnabled(False)
