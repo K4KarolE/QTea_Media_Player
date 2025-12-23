@@ -54,11 +54,11 @@ class AVPlayer(QWidget):
         # BASE PLAY - more info in above
         self.base_played = False
         self.base_played_end_of_media_signal_ignored = False
+        self.media_status_loaded_media_signal_counter: int = 1 # playing track >> setSource(track path) >> LoadedMedia signal fires twice
         # SIGNALS (more signals below)
         self.media_devices.audioOutputsChanged.connect(lambda: self.set_audio_output())
         self.player.positionChanged.connect(self.update_duration_info)
         self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
-        self.media_status_changed_counter = 0
         # SETTINGS
         self.paused = False
         self.stopped = False
@@ -532,7 +532,14 @@ class AVPlayer(QWidget):
 
 
     def is_media_status_loaded(self):
-        return self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia
+        if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
+            if self.media_status_loaded_media_signal_counter % 2 == 0:
+                self.media_status_loaded_media_signal_counter += 1
+                return True
+            else:
+                self.media_status_loaded_media_signal_counter += 1
+                return False
+        return False
 
 
     def is_media_status_end_of_media(self):
@@ -540,11 +547,12 @@ class AVPlayer(QWidget):
 
 
     def play_base_and_play_at_startup(self):
-        if not self.base_played and self.is_media_status_loaded():
+        if not self.base_played and self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
             self.player.play()
             self.base_played = True
             logger_sum('Base has been played - App is running - sum')
             if cv.play_at_startup and cv.os_linux:  # Win 11: app freeze
+                self.player.stop() # avoid frozen app at startup
                 self.base_played_end_of_media_signal_ignored = True
                 br.play_funcs.play_track()
                 logger_sum('Last media is playing - sum')
@@ -612,9 +620,9 @@ class TrackDuration(QWidget):
     def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
-        self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
+        self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action_duration())
 
-    def media_status_changed_action(self):
+    def media_status_changed_action_duration(self):
         """ Media is loaded > duration is ready to be generated
             in the src / thread_add_media
         """
