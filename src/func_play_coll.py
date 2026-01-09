@@ -145,6 +145,7 @@ class PlaysFunc:
 
         elif cv.playing_pl_tracks_count:  # last played track index > playlist amount
             cv.playing_pl_last_track_index = 0
+            self.update_new_track_style()
             save_playing_playlist_and_playing_last_track_index()
 
         if cv.shuffle_playlist_on:

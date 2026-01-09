@@ -139,10 +139,13 @@ def get_duration_db_sum_multi_selection(row_min, row_max):
 def get_all_from_db(playing_track_index, db_table):
     result_all = cur.execute("SELECT * FROM {0} WHERE row_id = ?"
                              .format(db_table),(playing_track_index + 1,)).fetchall()
-    duration = int(result_all[0][1])
-    current_duration = int(result_all[0][2])
-    path = result_all[0][3]
-    return duration, current_duration, path
+    if result_all:
+        duration = int(result_all[0][1])
+        current_duration = int(result_all[0][2])
+        path = result_all[0][3]
+        return duration, current_duration, path
+    else:
+        return -1, -1, -1
 
 
 def generate_duration_to_display(raw_duration):
@@ -571,45 +574,49 @@ def remove_track_from_playlist():
             if cv.shuffle_playlist_on and row_index in cv.shuffle_played_tracks_list:
                 cv.shuffle_played_tracks_list.remove(row_index)
 
+        # TRACKS COUNT
+        cv.active_pl_tracks_count = cv.active_pl_name.count()
+
         # THUMBNAIL STYLE UPDATE HELPER ASSIGNMENTS
         # In the src / playlists / row_changed_sync_pl function the
         # cv.current_track_index = current_playlist_l.. .currentRow() assignment increasing the
         # cv.current_track_index value with one from the second iteration when removing a track
         # from the playlist >> causing error in the selected thumbnail tracking / thumbnail view
         # Fixing the issue with new assignments after the list widget items removal
-        cv.current_track_index = cv.active_pl_name.currentRow()
-        cv.active_pl_name.item(cv.current_track_index).setSelected(True)
-        cv.active_pl_last_selected_track_index = cv.active_pl_name.currentRow()
+        if cv.active_pl_tracks_count:
+            cv.current_track_index = cv.active_pl_name.currentRow()
+            cv.active_pl_name.item(cv.current_track_index).setSelected(True)
+            cv.active_pl_last_selected_track_index = cv.active_pl_name.currentRow()
 
-        # TRACK INDEX UPDATE
-        removed_tracks_amount = row_max + 1 - row_min
-        if cv.active_db_table == cv.playing_db_table:
-            if row_max < cv.playing_pl_last_track_index:
-                cv.playing_pl_last_track_index -= removed_tracks_amount
-                cv.active_pl_last_track_index -= removed_tracks_amount
-                save_playing_pl_last_track_index()
-            if row_max < cv.playing_track_index:
-                cv.playing_track_index -= removed_tracks_amount
-        elif cv.active_db_table != cv.playing_db_table:
-            # To make sure cv.playing_pl_last_track_index has a value
-            # Scenario to avoid: app started, no track played yet, remove a track
-            if cv.playing_pl_last_track_index:
+            # TRACK INDEX UPDATE
+            removed_tracks_amount = row_max + 1 - row_min
+            if cv.active_db_table == cv.playing_db_table:
                 if row_max < cv.playing_pl_last_track_index:
+                    cv.playing_pl_last_track_index -= removed_tracks_amount
                     cv.active_pl_last_track_index -= removed_tracks_amount
-                    save_active_pl_last_track_index()
+                    save_playing_pl_last_track_index()
+                if row_max < cv.playing_track_index:
+                    cv.playing_track_index -= removed_tracks_amount
+            elif cv.active_db_table != cv.playing_db_table:
+                # To make sure cv.playing_pl_last_track_index has a value
+                # Scenario to avoid: app started, no track played yet, remove a track
+                if cv.playing_pl_last_track_index:
+                    if row_max < cv.playing_pl_last_track_index:
+                        cv.active_pl_last_track_index -= removed_tracks_amount
+                        save_active_pl_last_track_index()
 
         # DB
         remove_record_db(row_min, row_max)
 
         # RENAME TRACKS' NAME
-        row_id_db = row_min + 1
-        cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
-        playlist = cur.fetchall()
-        for item in playlist:
-            track_row_db, list_name, _, _ = generate_track_list_detail(item)
-            cv.active_pl_name.item(track_row_db - 1).setText(list_name)
+        if cv.active_pl_tracks_count > row_min:
+            row_id_db = row_min + 1
+            cur.execute("SELECT * FROM {0} WHERE row_id >= ?".format(cv.active_db_table), (row_id_db,))
+            playlist = cur.fetchall()
+            for item in playlist:
+                track_row_db, list_name, _, _ = generate_track_list_detail(item)
+                cv.active_pl_name.item(track_row_db - 1).setText(list_name)
 
-        cv.active_pl_tracks_count = cv.active_pl_name.count()
         cv.track_change_on_main_playlist_new_search_needed = True
 
 

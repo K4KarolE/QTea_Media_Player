@@ -554,8 +554,9 @@ class AVPlayer(QWidget):
             if cv.play_at_startup and cv.os_linux:  # Win 11: app freeze
                 self.player.stop() # avoid frozen app at startup
                 self.base_played_end_of_media_signal_ignored = True
-                br.play_funcs.play_track()
-                logger_sum('Last media is playing - sum')
+                if cv.active_pl_tracks_count:
+                    br.play_funcs.play_track()
+                    logger_sum('Last media is playing - sum')
 
 
     def is_loaded_media_validation_passed(self):
