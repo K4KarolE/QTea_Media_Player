@@ -314,6 +314,14 @@ class MySettingsWindow(QWidget):
                             MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
 
+                elif item_text in cv.gen_sett_string_text_list:
+                    if (text_length := len(line_edit_text)) > 20:
+                        item_text = item_text.replace('\n', ' ')
+                        MyMessageBoxError('GENERAL TAB',
+                                          f'The "{item_text}" value should not be longer than 20 characters.\n\n'
+                                          f'The current one is {text_length} characters long.')
+                        pass_validation = False
+
                 elif item_text == cv.general_settings_dic['thumbnail_img_size']['text']:
                     if not line_edit_text.isdecimal() or int(line_edit_text) not in range(100, 501):
                         MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
@@ -321,8 +329,9 @@ class MySettingsWindow(QWidget):
 
                 elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
                     if not line_edit_text.lstrip('-').isdecimal() or int(line_edit_text) not in range(-1, 365):
+                        item_text = item_text.replace('\n', ' ')
                         MyMessageBoxError('GENERAL TAB',
-                                          'The "Remove unused thumbnails" value should be between -1 and 365.   \n'
+                                          f'The "{item_text}" value should be between -1 and 365.   \n'
                                           '0 = clean up after every app closure.\n'
                                           '-1 = no auto thumbnail removal.')
                         pass_validation = False
@@ -351,6 +360,12 @@ class MySettingsWindow(QWidget):
                     if item_value != eval(line_edit_text):
                         settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
                         cv.general_settings_dic[general_dic_key]['value'] = eval(line_edit_text)
+                        to_save = True
+
+                elif item_text in cv.gen_sett_string_text_list:
+                    if item_value != line_edit_text:
+                        settings['general_settings'][general_dic_key] = line_edit_text
+                        cv.general_settings_dic[general_dic_key]['value'] = line_edit_text
                         to_save = True
 
                 else:
@@ -390,6 +405,7 @@ class MySettingsWindow(QWidget):
             cv.thumbnail_height = cv.thumbnail_img_size + cv.widg_and_img_diff
             cv.thumbnail_remove_older_than = sett_gen['thumbnail_remove_older_than']
             cv.search_result_parent_dicts_size = sett_gen['search_result_parent_dicts_size']
+            cv.add_dir_ignore_file_titles_including = sett_gen['add_dir_ignore_file_titles_including']
 
 
         '''

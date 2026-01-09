@@ -27,7 +27,8 @@
     "default_audio_track": 1,
     "thumbnail_img_size": 200,
     "thumbnail_remove_older_than": 60,
-    "search_result_parent_dicts_size": 30
+    "search_result_parent_dicts_size": 30,
+    "add_dir_ignore_file_titles_including": "Sample"
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",

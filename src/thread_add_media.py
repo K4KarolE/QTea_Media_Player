@@ -81,9 +81,13 @@ class ThreadAddMedia(QThread):
         for dir_path_b, _, file_names in os.walk(dir_path):
             file_names.sort()
             for file in file_names:
-                if Path(file).suffix in cv.MEDIA_FILES:  # music_title.mp3 -> mp3
-                    track_path = str(Path(dir_path_b, file))
-                    self.track_path_list.append(track_path)
+                if not self.is_file_title_ignored(file) and Path(file).suffix in cv.MEDIA_FILES:
+                        track_path = str(Path(dir_path_b, file))
+                        self.track_path_list.append(track_path)
+
+    def is_file_title_ignored(self, file):
+        return (cv.add_dir_ignore_file_titles_including and
+                cv.add_dir_ignore_file_titles_including.lower() in file.lower())
 
 
     @logger_check

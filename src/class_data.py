@@ -276,6 +276,8 @@ class Data:
     window_min_width: int = settings['general_settings']['window_min_width']
     window_min_height: int = settings['general_settings']['window_min_height']
 
+    add_dir_ignore_file_titles_including: str = settings['general_settings']['add_dir_ignore_file_titles_including']
+
 
     general_settings_dic = {
         'always_on_top': {
@@ -367,6 +369,11 @@ class Data:
             'text': 'Search result - parent\nfolders` text length',
             'value': search_result_parent_dicts_size,
             'line_edit_widget': ''
+        },
+        'add_dir_ignore_file_titles_including': {
+            'text': 'Add directory - ignore\nfile titles including',
+            'value': add_dir_ignore_file_titles_including,
+            'line_edit_widget': ''
         }
     }
 
@@ -397,6 +404,10 @@ class Data:
         general_settings_dic['small_jump']['text'],
         general_settings_dic['medium_jump']['text'],
         general_settings_dic['big_jump']['text']
+        ]
+
+    gen_sett_string_text_list = [
+        general_settings_dic['add_dir_ignore_file_titles_including']['text']
         ]
   
     general_settings_amount: int = len(list(general_settings_dic))
