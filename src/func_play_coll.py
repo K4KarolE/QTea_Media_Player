@@ -89,7 +89,7 @@ class PlaysFunc:
         cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
 
         # FILE NOT REACHABLE
-        if not Path(self.track_path).is_file():
+        if self.track_path == -1 or not Path(self.track_path).is_file():
             MyMessageBoxError(
                 'Not able to play the file',
                 'The file or the file`s home folder has been renamed / removed. '
