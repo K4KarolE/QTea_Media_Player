@@ -3,7 +3,7 @@ Class created to handle multi row selection and context menu (right-click on the
 Used it in the src / playlists.py 
 """
 
-from PyQt6.QtCore import QEvent
+from PyQt6.QtCore import QEvent, Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QListWidget, QMenu, QAbstractItemView
 
@@ -114,6 +114,20 @@ class MyListWidget(QListWidget):
        """
         self.selected_items.sort(key=lambda x: self.row(x))
         self.selected_items_row_index_list = [self.row(n) for n in self.selected_items]
+
+
+    """ The "keyPressEvent" and "keyReleaseEvent" functions for avoid using
+        non-continuous selection via "Control key" + "left click"
+        Playlist actions like move, delete selected items are created for
+        continuous selection only (for now)
+    """
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Control:
+            self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key.Key_Control:
+            self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
 
     def eventFilter(self, source, event):
