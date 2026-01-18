@@ -28,6 +28,7 @@ class MyListWidget(QListWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.row_selection_sync_list_widgets_list = []
         self.is_multi_row_selection_sync_needed = False
+        self.is_control_key_pressed: bool = False
         self.selected_items = []
         self.selected_items_row_index_list = []
         self.clicked.connect(lambda: self.clear_multi_row_selection())
@@ -55,11 +56,16 @@ class MyListWidget(QListWidget):
             Scenario: multiple rows are selected + clicked on the same / last selected row:
             >> the selection in the active column / list widget automatically cleared by default
             >> this function clears the other two list widgets` selection
+            Scenario: clicking in the multi selection while the "Control" key is pressed
         """
-        if cv.current_track_index == cv.last_clicked_track_index and is_track_selection_multiple():
-            for _ in self.row_selection_sync_list_widgets_list:
-                _.clearSelection()
-                _.item(cv.current_track_index).setSelected(True)
+        if is_track_selection_multiple():
+            if self.is_control_key_pressed or cv.current_track_index == cv.last_clicked_track_index:
+                for _ in self.row_selection_sync_list_widgets_list:
+                    _.clearSelection()
+                    _.item(cv.current_track_index).setSelected(True)
+                if self.is_control_key_pressed:
+                    self.clearSelection()
+                    self.item(cv.current_track_index).setSelected(True)
         cv.last_clicked_track_index = cv.current_track_index
 
 
@@ -124,10 +130,12 @@ class MyListWidget(QListWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Control:
             self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+            self.is_control_key_pressed = True
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key.Key_Control:
             self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.is_control_key_pressed = False
 
 
     def eventFilter(self, source, event):
