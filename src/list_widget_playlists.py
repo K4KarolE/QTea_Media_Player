@@ -1,6 +1,6 @@
 """
 Class created to handle multi row selection and context menu (right-click on the list items) in the main window playlists
-Used it in the src / playlists.py 
+Used it in the src / playlists.py
 """
 
 from PyQt6.QtCore import QEvent, Qt
@@ -11,7 +11,6 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
-    is_track_selection_multiple,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
@@ -31,7 +30,6 @@ class MyListWidget(QListWidget):
         self.is_control_key_pressed: bool = False
         self.selected_items = []
         self.selected_items_row_index_list = []
-        self.clicked.connect(lambda: self.clear_multi_row_selection())
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -49,24 +47,6 @@ class MyListWidget(QListWidget):
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
             }
-
-
-    def clear_multi_row_selection(self):
-        """
-            Scenario: multiple rows are selected + clicked on the same / last selected row:
-            >> the selection in the active column / list widget automatically cleared by default
-            >> this function clears the other two list widgets` selection
-            Scenario: clicking in the multi selection while the "Control" key is pressed
-        """
-        if is_track_selection_multiple():
-            if self.is_control_key_pressed or cv.current_track_index == cv.last_clicked_track_index:
-                for _ in self.row_selection_sync_list_widgets_list:
-                    _.clearSelection()
-                    _.item(cv.current_track_index).setSelected(True)
-                if self.is_control_key_pressed:
-                    self.clearSelection()
-                    self.item(cv.current_track_index).setSelected(True)
-        cv.last_clicked_track_index = cv.current_track_index
 
 
     def set_multi_selection_settings(self):
@@ -120,6 +100,19 @@ class MyListWidget(QListWidget):
        """
         self.selected_items.sort(key=lambda x: self.row(x))
         self.selected_items_row_index_list = [self.row(n) for n in self.selected_items]
+
+
+    def mouseReleaseEvent(self, event):
+        """ Once clicked outside a multi selection >> the multi selection will be
+            reduced to a single row / single selection >> to make sure the support selection lists
+            mirror this change / lists' values have been removed
+            Otherwise when the current, single selected row in the previous multi row selection interval
+            >> the row(name, queue, duration) style will not be synced via "playlists / row_changed_sync_pl()"
+        """
+        if self.currentRow() not in self.selected_items_row_index_list:
+            cv.active_pl_name.selected_items_row_index_list = []
+            cv.active_pl_queue.selected_items_row_index_list = []
+            cv.active_pl_duration.selected_items_row_index_list = []
 
 
     """ The "keyPressEvent" and "keyReleaseEvent" functions for avoid using

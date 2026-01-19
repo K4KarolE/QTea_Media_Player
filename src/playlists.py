@@ -126,15 +126,18 @@ class MyPlaylists(QTabWidget):
             Will sync the selection for the other 2 columns/list widgets
             in the src / list_widget_playlists
         """
-        cv.row_change_action_counter += 1
-        if cv.row_change_action_counter % 3 == 1:
-            cv.row_change_action_counter = 1
-            list_widget.is_multi_row_selection_sync_needed = True
-            cv.current_track_index = list_widget.currentRow()
-            for list_widget_to_sync in list_widget.row_selection_sync_list_widgets_list:
-                list_widget_to_sync.clearSelection()
-                list_widget_to_sync.setCurrentRow(cv.current_track_index)
+        if not self.is_current_row_in_multi_selection(list_widget):
+            cv.row_change_action_counter += 1
+            if cv.row_change_action_counter % 3 == 1:
+                cv.row_change_action_counter = 1
+                list_widget.is_multi_row_selection_sync_needed = True
+                cv.current_track_index = list_widget.currentRow()
+                for list_widget_to_sync in list_widget.row_selection_sync_list_widgets_list:
+                    list_widget_to_sync.clearSelection()
+                    list_widget_to_sync.setCurrentRow(cv.current_track_index)
 
+    def is_current_row_in_multi_selection(self,list_widget):
+        return list_widget.currentRow() in list_widget.selected_items_row_index_list
 
 
     def playlists_creation(self):
@@ -426,7 +429,6 @@ class MyPlaylists(QTabWidget):
             name list widget items already has been relocated
         """
         if self.rows_moved_triggered_counter == len(cv.active_pl_duration.selected_items):
-            cv.row_change_action_counter += 1
             cv.track_change_on_main_playlist_new_search_needed = True
             cv.is_multi_selected_drag_drop_in_action = True
 
@@ -445,7 +447,6 @@ class MyPlaylists(QTabWidget):
                 cv.active_pl_duration.insertItem(self.target_row_index, _)
 
             self.rows_moved_triggered_counter = 0
-            cv.is_multi_selected_drag_drop_in_action = False
 
             ''' DATABASE AND TRACKS TITLE UPDATE '''
             row_min_db = cv.active_pl_name.selected_items_row_index_list[0] + 1
@@ -506,13 +507,28 @@ class MyPlaylists(QTabWidget):
 
                 self.update_playing_track_index_multi_selection('Up')
 
-            # To make sure after the tracks relocation the selection is reduced back to one row only
-            cv.active_pl_queue.setCurrentRow(self.target_row_index)
-
             # Update queued tracks index
             self.update_queued_tracks_index_multi_selection()
 
-        self.rows_moved_triggered_counter += 1
+            # To make sure the row(name, queue, duration) style is in sync
+            cv.active_pl_name.clearSelection()
+            cv.active_pl_duration.clearSelection()
+            cv.active_pl_queue.clearSelection()
+
+            cv.active_pl_name.setCurrentRow(self.target_row_index)
+            cv.active_pl_duration.setCurrentRow(self.target_row_index)
+            cv.active_pl_queue.setCurrentRow(self.target_row_index)
+            cv.row_change_action_counter = 3    # used in the row_changed_sync_pl()
+
+            # Reset the support lists
+            cv.active_pl_name.selected_items_row_index_list = []
+            cv.active_pl_queue.selected_items_row_index_list = []
+            cv.active_pl_duration.selected_items_row_index_list = []
+
+            cv.is_multi_selected_drag_drop_in_action = False
+
+
+        self.rows_moved_triggered_counter += 1  # More info in the function header
 
 
 
@@ -534,9 +550,11 @@ class MyPlaylists(QTabWidget):
 
     def is_selection_moving_over_the_played_track(self):
         smallest_selected_row_index = cv.active_pl_name.selected_items_row_index_list[0]
-        if smallest_selected_row_index < cv.playing_track_index < self.target_row_index:
+        # Down
+        if smallest_selected_row_index <= cv.playing_track_index < self.target_row_index + self.rows_amount:
             return True
-        elif smallest_selected_row_index > cv.playing_track_index > self.target_row_index:
+        # Up
+        elif smallest_selected_row_index >= cv.playing_track_index > self.target_row_index:
             return True
         return False
 
