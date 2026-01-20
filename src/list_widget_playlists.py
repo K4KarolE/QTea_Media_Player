@@ -43,6 +43,7 @@ class MyListWidget(QListWidget):
             'Play / Pause': {'icon': br.icon.start},
             f'Queue / Dequeue ({cv.queue_toggle})': {'icon': br.icon.queue_blue},
             'Clear queue': {'icon': br.icon.clear_queue},
+            'Clear multi selection': {'icon': br.icon.clear_multi_selection},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
@@ -140,6 +141,9 @@ class MyListWidget(QListWidget):
             for menu_title, menu_icon in self.context_menu_dic.items():
                 icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
+            # Disable "Clear multi selection" when there is no multi selection
+            if not self.selected_items_row_index_list:
+                menu.actions()[3].setEnabled(False)
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
         return super().eventFilter(source, event)
@@ -169,9 +173,28 @@ class MyListWidget(QListWidget):
                 clear_queue_update_all_occurrences()
             except:
                 MyMessageBoxError('Error','Sorry, something went wrong.')
-        
-        # REMOVE TRACK
+
+
+        # CLEAR SELECTION
         elif q.text() == list(self.context_menu_dic)[3]:
+            try:
+                if cv.active_pl_name.selected_items_row_index_list:
+                    cv.active_pl_name.clearSelection()
+                    cv.active_pl_duration.clearSelection()
+                    cv.active_pl_queue.clearSelection()
+                    cv.active_pl_name.selected_items_row_index_list = []
+                    cv.active_pl_queue.selected_items_row_index_list = []
+                    cv.active_pl_duration.selected_items_row_index_list = []
+                    cv.active_pl_name.setCurrentRow(cv.current_track_index)
+                    cv.active_pl_duration.setCurrentRow(cv.current_track_index)
+                    cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+                    cv.row_change_action_counter = 3
+            except:
+                MyMessageBoxError('Error', 'Sorry, something went wrong.')
+
+
+        # REMOVE TRACK
+        elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 remove_track_from_playlist()
             except:
@@ -181,7 +204,7 @@ class MyListWidget(QListWidget):
                     )
         
         # FOLDER
-        elif q.text() == list(self.context_menu_dic)[4]:
+        elif q.text() == list(self.context_menu_dic)[5]:
             try:
                 open_track_folder_via_context_menu(self.currentRow(), cv.active_db_table)
             except:
@@ -191,7 +214,7 @@ class MyListWidget(QListWidget):
                     )
 
         # PLAY TRACK WITH DEFAULT PLAYER
-        elif q.text() == list(self.context_menu_dic)[5]:
+        elif q.text() == list(self.context_menu_dic)[6]:
             try:
                 play_track_with_default_player_via_context_menu(self.currentRow(), cv.active_db_table)
             except:

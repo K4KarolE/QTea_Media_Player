@@ -50,6 +50,7 @@ class MyIcon:
 
         self.search = QIcon(f'skins/{cv.skin_selected}/search.png')
         self.clear_queue = QIcon(f'skins/{cv.skin_selected}/bin.png')
+        self.clear_multi_selection = QIcon(f'skins/{cv.skin_selected}/clear_multi_selection.png')
 
         self.start_with_default_player = QIcon(f'skins/{cv.skin_selected}/start_with_default_player.png')
         self.minimal_interface = QIcon(f'skins/{cv.skin_selected}/minimal_interface.png')
