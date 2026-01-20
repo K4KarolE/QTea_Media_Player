@@ -629,6 +629,17 @@ def is_track_selection_multiple():
     return selected_rows > 1
 
 
+def clear_multi_selection_when_track_starts_inside_the_selection():
+    """ Used in the "func_play_coll / play_track()" """
+    if cv.playing_track_index in cv.playing_pl_name.selected_items_row_index_list:
+            cv.playing_pl_name.clearSelection()
+            cv.playing_pl_duration.clearSelection()
+            cv.playing_pl_queue.clearSelection()
+            cv.playing_pl_name.selected_items_row_index_list = []
+            cv.playing_pl_queue.selected_items_row_index_list = []
+            cv.playing_pl_duration.selected_items_row_index_list = []
+
+
 def get_playlist_details_from_queue_tab_list(current_row_index):
     queue_tracking_title = cv.queue_tracks_list[current_row_index]
     playlist = queue_tracking_title[0]

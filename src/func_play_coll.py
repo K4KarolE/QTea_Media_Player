@@ -7,6 +7,7 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     active_track_font_style,
+    clear_multi_selection_when_track_starts_inside_the_selection,
     disable_minimal_interface,
     generate_duration_to_display,
     get_all_from_db,
@@ -89,7 +90,7 @@ class PlaysFunc:
         cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
 
         # FILE NOT REACHABLE
-        if not Path(self.track_path).is_file():
+        if self.track_path == -1 or not Path(self.track_path).is_file():
             MyMessageBoxError(
                 'Not able to play the file',
                 'The file or the file`s home folder has been renamed / removed. '
@@ -132,6 +133,7 @@ class PlaysFunc:
 
             # PLAYING TRACK ADDED TO THE QUEUE - VALUATION
             if not [cv.playing_db_table, cv.playing_pl_last_track_index] in cv.queue_tracks_list:
+                clear_multi_selection_when_track_starts_inside_the_selection()
                 self.update_previous_track_style()
                 self.update_new_track_style()
             else:

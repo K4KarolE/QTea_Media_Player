@@ -1,9 +1,9 @@
 """
 Class created to handle multi row selection and context menu (right-click on the list items) in the main window playlists
-Used it in the src / playlists.py 
+Used it in the src / playlists.py
 """
 
-from PyQt6.QtCore import QEvent
+from PyQt6.QtCore import QEvent, Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QListWidget, QMenu, QAbstractItemView
 
@@ -11,7 +11,6 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     clear_queue_update_all_occurrences,
-    is_track_selection_multiple,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
@@ -28,9 +27,9 @@ class MyListWidget(QListWidget):
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.row_selection_sync_list_widgets_list = []
         self.is_multi_row_selection_sync_needed = False
+        self.is_control_key_pressed: bool = False
         self.selected_items = []
         self.selected_items_row_index_list = []
-        self.clicked.connect(lambda: self.clear_multi_row_selection())
         self.installEventFilter(self)
         self.setStyleSheet(
                             "QListWidget::item:selected"
@@ -44,23 +43,11 @@ class MyListWidget(QListWidget):
             'Play / Pause': {'icon': br.icon.start},
             f'Queue / Dequeue ({cv.queue_toggle})': {'icon': br.icon.queue_blue},
             'Clear queue': {'icon': br.icon.clear_queue},
+            'Clear multi selection': {'icon': br.icon.clear_multi_selection},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
             }
-
-
-    def clear_multi_row_selection(self):
-        """
-            Scenario: multiple rows are selected + clicked on the same / last selected row:
-            >> the selection in the active column / list widget automatically cleared by default
-            >> this function clears the other two list widgets` selection
-        """
-        if cv.current_track_index == cv.last_clicked_track_index and is_track_selection_multiple():
-            for _ in self.row_selection_sync_list_widgets_list:
-                _.clearSelection()
-                _.item(cv.current_track_index).setSelected(True)
-        cv.last_clicked_track_index = cv.current_track_index
 
 
     def set_multi_selection_settings(self):
@@ -116,6 +103,35 @@ class MyListWidget(QListWidget):
         self.selected_items_row_index_list = [self.row(n) for n in self.selected_items]
 
 
+    def mouseReleaseEvent(self, event):
+        """ Once clicked outside a multi selection >> the multi selection will be
+            reduced to a single row / single selection >> to make sure the support selection lists
+            mirror this change / lists' values have been removed
+            Otherwise when the current, single selected row in the previous multi row selection interval
+            >> the row(name, queue, duration) style will not be synced via "playlists / row_changed_sync_pl()"
+        """
+        if self.currentRow() not in self.selected_items_row_index_list:
+            cv.active_pl_name.selected_items_row_index_list = []
+            cv.active_pl_queue.selected_items_row_index_list = []
+            cv.active_pl_duration.selected_items_row_index_list = []
+
+
+    """ The "keyPressEvent" and "keyReleaseEvent" functions for avoid using
+        non-continuous selection via "Control key" + "left click"
+        Playlist actions like move, delete selected items are created for
+        continuous selection only (for now)
+    """
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Control:
+            self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+            self.is_control_key_pressed = True
+
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key.Key_Control:
+            self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+            self.is_control_key_pressed = False
+
+
     def eventFilter(self, source, event):
         """ ContextMenu triggered by the right click
             on the list widget
@@ -125,6 +141,9 @@ class MyListWidget(QListWidget):
             for menu_title, menu_icon in self.context_menu_dic.items():
                 icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
+            # Disable "Clear multi selection" when there is no multi selection
+            if not self.selected_items_row_index_list:
+                menu.actions()[3].setEnabled(False)
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
         return super().eventFilter(source, event)
@@ -154,9 +173,28 @@ class MyListWidget(QListWidget):
                 clear_queue_update_all_occurrences()
             except:
                 MyMessageBoxError('Error','Sorry, something went wrong.')
-        
-        # REMOVE TRACK
+
+
+        # CLEAR SELECTION
         elif q.text() == list(self.context_menu_dic)[3]:
+            try:
+                if cv.active_pl_name.selected_items_row_index_list:
+                    cv.active_pl_name.clearSelection()
+                    cv.active_pl_duration.clearSelection()
+                    cv.active_pl_queue.clearSelection()
+                    cv.active_pl_name.selected_items_row_index_list = []
+                    cv.active_pl_queue.selected_items_row_index_list = []
+                    cv.active_pl_duration.selected_items_row_index_list = []
+                    cv.active_pl_name.setCurrentRow(cv.current_track_index)
+                    cv.active_pl_duration.setCurrentRow(cv.current_track_index)
+                    cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+                    cv.row_change_action_counter = 3
+            except:
+                MyMessageBoxError('Error', 'Sorry, something went wrong.')
+
+
+        # REMOVE TRACK
+        elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 remove_track_from_playlist()
             except:
@@ -166,7 +204,7 @@ class MyListWidget(QListWidget):
                     )
         
         # FOLDER
-        elif q.text() == list(self.context_menu_dic)[4]:
+        elif q.text() == list(self.context_menu_dic)[5]:
             try:
                 open_track_folder_via_context_menu(self.currentRow(), cv.active_db_table)
             except:
@@ -176,7 +214,7 @@ class MyListWidget(QListWidget):
                     )
 
         # PLAY TRACK WITH DEFAULT PLAYER
-        elif q.text() == list(self.context_menu_dic)[5]:
+        elif q.text() == list(self.context_menu_dic)[6]:
             try:
                 play_track_with_default_player_via_context_menu(self.currentRow(), cv.active_db_table)
             except:
