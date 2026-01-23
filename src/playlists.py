@@ -551,10 +551,10 @@ class MyPlaylists(QTabWidget):
     def is_selection_moving_over_the_played_track(self):
         smallest_selected_row_index = cv.active_pl_name.selected_items_row_index_list[0]
         # Down
-        if smallest_selected_row_index <= cv.playing_track_index < self.target_row_index + self.rows_amount:
+        if smallest_selected_row_index < cv.playing_track_index < self.target_row_index + self.rows_amount:
             return True
         # Up
-        elif smallest_selected_row_index >= cv.playing_track_index > self.target_row_index:
+        elif smallest_selected_row_index > cv.playing_track_index >= self.target_row_index:
             return True
         return False
 
