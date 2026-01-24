@@ -638,6 +638,10 @@ def clear_multi_selection_when_track_starts_inside_the_selection():
             cv.playing_pl_name.selected_items_row_index_list = []
             cv.playing_pl_queue.selected_items_row_index_list = []
             cv.playing_pl_duration.selected_items_row_index_list = []
+            # To make sure, when using "Add to the Queue" shortkey after the selection
+            # clearance, the correct track is added to the queue
+            if cv.active_db_table == cv.playing_db_table:
+                cv.current_track_index = cv.playing_track_index
 
 
 def get_playlist_details_from_queue_tab_list(current_row_index):
