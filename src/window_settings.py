@@ -296,8 +296,12 @@ class MySettingsWindow(QWidget):
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_boolean_text_list:
-                    if line_edit_text not in ['True', 'False']:
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be "True" or "False".')
+                    if line_edit_text not in ['True', 'T', 'False', 'F']:
+                        MyMessageBoxError(
+                        'GENERAL TAB',
+                        f'The "{item_text}" value should be one of the below:   \n'
+                                '"True", "T", "False", "F"\n\n'
+                                'It is not case sensitive.')
                         pass_validation = False
 
                 elif item_text in cv.gen_sett_window_width_text_list:
@@ -357,6 +361,8 @@ class MySettingsWindow(QWidget):
                         to_save = True
 
                 elif item_text in cv.gen_sett_boolean_text_list:
+                    if len(line_edit_text) == 1:
+                        line_edit_text = {'T': 'True', 'F': 'False'}[line_edit_text]
                     if item_value != eval(line_edit_text):
                         settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
                         cv.general_settings_dic[general_dic_key]['value'] = eval(line_edit_text)
