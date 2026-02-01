@@ -19,10 +19,11 @@ active_track_font_style = QFont('Arial', 11, 600)
 def move_window_to_middle_of_current_screen(self):
     """ Used for the Settings and Queue&Search windows """
     current_screen = QApplication.screenAt(br.window.pos())
-    screen_rect = current_screen.availableGeometry()
-    pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
-    pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
-    self.move(pos_x_middle, pos_y_middle)
+    if current_screen:
+        screen_rect = current_screen.availableGeometry()
+        pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
+        pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
+        self.move(pos_x_middle, pos_y_middle)
 
 
 '''
