@@ -19,10 +19,11 @@ active_track_font_style = QFont('Arial', 11, 600)
 def move_window_to_middle_of_current_screen(self):
     """ Used for the Settings and Queue&Search windows """
     current_screen = QApplication.screenAt(br.window.pos())
-    screen_rect = current_screen.availableGeometry()
-    pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
-    pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
-    self.move(pos_x_middle, pos_y_middle)
+    if current_screen:
+        screen_rect = current_screen.availableGeometry()
+        pos_x_middle = screen_rect.x() + int((screen_rect.width() - self.width()) / 2)
+        pos_y_middle = screen_rect.y() + int((screen_rect.height() - self.height()) / 2)
+        self.move(pos_x_middle, pos_y_middle)
 
 
 '''
@@ -638,6 +639,10 @@ def clear_multi_selection_when_track_starts_inside_the_selection():
             cv.playing_pl_name.selected_items_row_index_list = []
             cv.playing_pl_queue.selected_items_row_index_list = []
             cv.playing_pl_duration.selected_items_row_index_list = []
+            # To make sure, when using "Add to the Queue" shortkey after the selection
+            # clearance, the correct track is added to the queue
+            if cv.active_db_table == cv.playing_db_table:
+                cv.current_track_index = cv.playing_track_index
 
 
 def get_playlist_details_from_queue_tab_list(current_row_index):

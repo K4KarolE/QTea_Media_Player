@@ -512,7 +512,8 @@ def auto_thumbnails_removal_after_app_closure():
 
             if remove_from_completed_list:
                 for img_name in remove_from_completed_list:
-                    os.remove(Path(PATH_THUMBNAILS, img_name))
+                    if Path(PATH_THUMBNAILS, img_name).is_file():
+                        os.remove(Path(PATH_THUMBNAILS, img_name))
                     thumbnail_history["completed"].pop(img_name)
                 is_thumbnail_history_save_needed = True
 

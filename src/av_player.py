@@ -152,6 +152,9 @@ class AVPlayer(QWidget):
                             menu.addAction(QAction(icon, menu_title, self))
                         else:
                             self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
+                        # SEPARATOR
+                        if menu_title.split()[0] in ['Next', 'Minimal']:
+                            menu.addSeparator()
 
 
                 # AUDIO TRACKS
