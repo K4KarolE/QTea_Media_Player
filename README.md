@@ -44,36 +44,39 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
     - [No solution yet](#could-not-find-solution-yet)
 - [Requirements](#requirements)
 
-## Screenshots
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/5f8abf75-7f97-48d8-a979-30550915a306">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/d9334f75-d459-4354-8401-7b33b33fe25e">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/5d269ced-a2f4-44b6-857b-3cd243be2426">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/67521950-75c7-4767-924a-dbd16e31620c">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/1acf7a47-ffd5-4586-ae63-c49a31b13c2d">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/577c5064-e2ff-4789-9a0a-d63925c9153e">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/665ff18b-44d4-44fd-a485-7c8e715458df">
-</div>
-<br>
 
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/6a14f0a2-48a1-43ea-be04-a2bd1b58d4da">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/ffe21b93-1b36-455f-a4a2-bbedaf7eccab">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/ea884bcb-79fd-4fa4-ab0f-8cd665f416fc">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/b666dd76-2bc2-4bea-b9b1-16bb6a73031e">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/73c70cea-e2f9-4762-b5c3-c10234b6f29d">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/f5d65ceb-89a0-481b-afea-575d75cd60a6">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/3fea0e96-41ae-4051-a871-ec39cbcd51c0">
+</div>
+<br>
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/919f35d6-3ffb-4c3a-9355-48593501eae3">
+</div>
+<br>
 
 ## Terminology
 - `Playing playlist`: playlist, where the current track is in the playing or paused state / 
@@ -216,9 +219,9 @@ from the full screen mode.
         - The `Playing playlist` is active/displayed.
 
 <div align="left">
-    <img width="260" src="https://github.com/user-attachments/assets/c46365e5-26af-4ad2-b6a3-837636aea9ab">
-    <img width="260" src="https://github.com/user-attachments/assets/9172c9ce-f762-4c24-9198-c4e0572ea880">
-    <img width="260" src="https://github.com/user-attachments/assets/f0140e2e-eef4-4ca0-8760-eeee17972184">
+    <img width="260" src="https://github.com/user-attachments/assets/36ebbf70-1db1-490d-9f25-e1c3f6d757f5">
+    <img width="260" src="https://github.com/user-attachments/assets/7d2063db-e3f5-45d3-843f-0b5f1a4a4658">
+    <img width="260" src="https://github.com/user-attachments/assets/f5635faf-9845-467b-9a96-c313c68b825b">
 </div>
 <br>
 
