@@ -10,7 +10,8 @@ from .func_coll import (
     is_active_and_add_to_track_playlist_same,
     update_add_track_to_pl_widget_vars
     )
-from . import logger_check
+from .logger import logger_check
+from .message_box import MyMessageBoxError
 
 
 class ThreadAddMedia(QThread):
@@ -24,7 +25,7 @@ class ThreadAddMedia(QThread):
         - Once the media is loaded >> signal is triggered >> duration is ready to be generated
             src / av_player / TrackDuration / mediaStatusChanged signal
         - Track path and duration values passed to the
-            src / MyWindow / add_track_to_playlist_via_thread()
+            src / window_main / MyWindow / add_track_to_playlist_via_thread()
         - If more item in the "self.track_path_list" the Phase B loop continues
             by loading the next media in
         """
@@ -34,6 +35,7 @@ class ThreadAddMedia(QThread):
         super().__init__()
         self.source = None
         self.track_path_list = []
+        self.invalid_media_self_track_path_list = []
         self.last_track_added = "" 
         # self.last_track_added - Used to avoid the below scenario:
         # Adding the same media after each other >> the duration player's mediaStatusChanged
@@ -97,25 +99,42 @@ class ThreadAddMedia(QThread):
 
 
     @logger_check
-    def return_thread_generated_values(self):
+    def return_thread_generated_values(self, invalid_media = False):
         """ Triggered via the src / av_player / TrackDuration class`
             mediaStatusChanged signal
+
+            From "src / av_player / TrackDuration" the invalid media status
+            triggers once for adding multiple media at the same time
+            and triggers twice for adding single media >>
+            hence the "if self.track_path_list" validation
         """
-        raw_duration = br.av_player_duration.player.duration()
+        if invalid_media:
+            if self.track_path_list:
+                self.invalid_media_self_track_path_list.append(self.track_path_list[0])
+                self.track_path_list.pop(0)
+                self.last_track_added = None
+        else:
+            raw_duration = br.av_player_duration.player.duration()
 
-        self.result_ready.emit(self.track_path_list[0], raw_duration)
-        self.last_track_added = self.track_path_list[0]
-        self.track_path_list.pop(0)
+            self.result_ready.emit(self.track_path_list[0], raw_duration)
+            self.last_track_added = self.track_path_list[0]
+            self.track_path_list.pop(0)
 
-        cv.add_track_to_pl_sum_duration += raw_duration
-        self.update_duration_sum_widget()
-        
+            cv.add_track_to_pl_sum_duration += raw_duration
+            self.update_duration_sum_widget()
+
         if self.track_path_list:
             self.track_path_list_action()
         else:
             cv.adding_records_at_moment = False
             if is_active_and_add_to_track_playlist_same():
                 cv.active_pl_tracks_count = cv.add_track_to_pl_name.count()
+            if self.invalid_media_self_track_path_list:
+                MyMessageBoxError('Invalid Media' , self.generate_invalid_media_error_msg_text())
+                # invalid_media_self_track_path_list set back to the default empty list
+                # in the self.generate_invalid_media_error_msg_text() to make sure
+                # the message window displayed only once for a single invalid media
+                # otherwise it would be displayed twice
 
 
     def track_path_list_action(self):
@@ -139,3 +158,11 @@ class ThreadAddMedia(QThread):
         """
         if is_active_and_add_to_track_playlist_same():
             br.duration_sum_widg.setText(generate_duration_to_display(cv.add_track_to_pl_sum_duration))
+
+
+    def generate_invalid_media_error_msg_text(self):
+        string_to_print = "Not able to add the below invalid media: \n\n"
+        for _ in self.invalid_media_self_track_path_list:
+            string_to_print = string_to_print + Path(_).name + '\n'
+        self.invalid_media_self_track_path_list = []
+        return string_to_print

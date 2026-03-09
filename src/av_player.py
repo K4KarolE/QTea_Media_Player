@@ -629,6 +629,12 @@ class TrackDuration(QWidget):
     def media_status_changed_action_duration(self):
         """ Media is loaded > duration is ready to be generated
             in the src / thread_add_media
+
+            Invalid media status triggers once for adding multiple media at the same time
+            and triggers twice for adding single media
+            It is handled in the "src / thread_add_media / return_thread_generated_values"
         """
         if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
             br.window.thread_add_media.return_thread_generated_values()
+        elif self.player.mediaStatus() == QMediaPlayer.MediaStatus.InvalidMedia:
+            br.window.thread_add_media.return_thread_generated_values(invalid_media = True)
