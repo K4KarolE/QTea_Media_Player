@@ -1,6 +1,11 @@
 """ Cheers all!
     https://www.geeksforgeeks.org/python/pyqt5-qtablewidget/
     https://www.qtcentre.org/threads/25952-Select-entire-row-in-QTableWidget-programmatically
+
+    Please note, the QTableWidget is not used in the app. If you want to
+    save some headache and workarounds, use the QTableWidget instead of
+    three synced QListWidgets (title, queue, duration) like I did.
+    I am pretty sure in VLC and in Double Commander the QTableWidget is in place.
 """
 
 import sys
