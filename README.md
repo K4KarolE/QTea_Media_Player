@@ -405,8 +405,11 @@ same media is already loaded) and jumps to the "add media the playlist phase"
             ```
         - Quick fix: stop and play again
 
-### Install dependencies
+### Install PyQt dependencies
 ``` pip install -r requirements.txt ```
+
+### Install testing dependency
+``` pip install pytest==9.0.2 ```
 
 ### Additional dependency for Linux
 ``` sudo apt install libxcb-cursor-dev ```
