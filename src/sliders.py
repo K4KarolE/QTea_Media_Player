@@ -8,7 +8,6 @@ from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
     generate_duration_to_display,
-    save_volume_slider_value,
     update_and_save_volume_slider_value
     )
 from .logger import logger_runtime
@@ -193,7 +192,7 @@ class MyVolumeSlider(QSlider):
             br.av_player.text_display_on_video() 
         '''
         br.av_player.audio_output.setVolume(self.sliderPosition()/100)
-        save_volume_slider_value(self.sliderPosition()/100)
+        update_and_save_volume_slider_value(self.sliderPosition()/100)
         br.button_speaker.button_speaker_update() # if muted -> unmuted
         # DISPLAY VOLUME ON VIDEO SCREEN WHEN NO ACTIVE SUBTITLE
         # AND VOLUME CHANGE IS BETWEEN 0< <100

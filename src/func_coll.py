@@ -267,12 +267,6 @@ def update_and_save_volume_slider_value(new_value):
     save_json()
 
 
-def save_volume_slider_value(new_value):
-    cv.volume = new_value
-    settings['volume'] = new_value
-    save_json()
-
-
 def save_speaker_muted_value():
     settings['is_speaker_muted'] = cv.is_speaker_muted
     save_json()
