@@ -21,7 +21,7 @@ class MyMessageBoxError(QMessageBox):
 class MyMessageBoxWarning(QMessageBox):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f'Warning - Queued track')
+        self.setWindowTitle('Warning - Queued track')
         self.setWindowIcon(br.icon.settings)
         self.setIcon(QMessageBox.Icon.Warning)
         self.setText('There is a queued track in the playlist!  ' + 

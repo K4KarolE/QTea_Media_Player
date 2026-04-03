@@ -1,15 +1,15 @@
 import sys
 import pytest
-from src.application import *
-from src.icons import *
+from src.application import logger_sum, QApplication
+from src.icons import MyIcon
 
 @pytest.fixture
 def test_instance():
     """ logger_sum() declares a variable, which will be used
-        in the @logger_runtime in MyApp() and MyIcon()
+        in the @logger_runtime MyIcon()
     """
     logger_sum('App started')
-    MyApp(sys.argv)
+    app = QApplication(sys.argv)
     return MyIcon()
 
 
