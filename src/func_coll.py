@@ -284,15 +284,19 @@ def update_duration_sum_var_after_multiple_tracks_remove(row_min, row_max):
     cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = cv.active_pl_sum_duration
 
 
-def queue_window_add_track():
+def queue_window_add_track(row_index: int = None):
     """
         On the (main window / any playlist) a track
         added to the queue --> track`s information populating
         on the Queue & Search window / Queue tab / queue list:
         Order Number | Track title | Playlist | Duration
     """
-    title = Path(cv.active_pl_name.currentItem().track_path).stem
-    duration = cv.active_pl_duration.currentItem().text()
+    if row_index:
+        title = Path(cv.active_pl_name.item(row_index).track_path).stem
+        duration = cv.active_pl_duration.item(row_index).text()
+    else:
+        title = Path(cv.active_pl_name.currentItem().track_path).stem
+        duration = cv.active_pl_duration.currentItem().text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
     add_new_list_item(title, cv.queue_widget_dic['name_list_widget']['list_widget'])
@@ -337,7 +341,7 @@ def queue_window_remove_track(current_queue_index):
 
 
 def queue_add_remove_track():
-    ''' queue_tracking_title - unique value pair/list to track the queued records
+    """queue_tracking_title - unique value pair/list to track the queued records
         queue_tracking_title = [current playlist, current row/track index] = [playlist_3, 6]
         queue_playlists_list = [queue_tracking_title 1, queue_tracking_title 2, ...]
 
@@ -348,9 +352,80 @@ def queue_add_remove_track():
                             -> current playlist added to the queue_playlists_list
                             -> queue list widget text/order number update
                             -> list widgets style update
-    '''
+    """
+    if is_track_selection_multiple():
+        queue_add_remove_multiple_tracks()
+    else: queue_add_remove_single_track()
+
+
+def queue_add_remove_multiple_tracks():
+
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+    selected_items_row_index_list = cv.active_pl_name.selected_items_row_index_list.copy()
+
+    # QUEUED TRACK -> STANDARD
+    for row_index in reversed(selected_items_row_index_list):
+        cv.queue_tracking_title = [cv.active_db_table, row_index]
+
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[row_index]['widget']
+        else:
+            thumbnail_widget = None
+
+
+        if cv.queue_tracking_title in cv.queue_tracks_list:
+            selected_items_row_index_list.remove(row_index)
+            current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+            queue_window_remove_track(current_queue_index)
+            cv.queue_tracks_list.remove(cv.queue_tracking_title)
+            cv.queue_playlists_list.remove(cv.active_db_table)
+            cv.active_pl_queue.item(row_index).setText('')
+            update_queued_tracks_order_number()
+
+            if cv.current_track_index != cv.playing_pl_last_track_index:
+                update_dequeued_track_style(row_index)
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.set_queue_number(None)
+                thumbnail_widget.is_queued = False
+                thumbnail_widget.set_selected_thumbnail_style()
+
+    # STANDARD -> QUEUED TRACK
+    for row_index in selected_items_row_index_list:
+        cv.queue_tracking_title = [cv.active_db_table, row_index]
+
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[row_index]['widget']
+        else:
+            thumbnail_widget = None
+
+        if cv.queue_tracking_title not in cv.queue_tracks_list:
+            cv.queue_tracks_list.append(cv.queue_tracking_title)
+            cv.queue_playlists_list.append(cv.active_db_table)
+
+            queue_number = len(cv.queue_tracks_list)
+            queue_number_to_display = f'[{len(cv.queue_tracks_list)}]'
+            cv.active_pl_queue.item(row_index).setText(queue_number_to_display)
+
+            # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
+            if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
+                update_queued_track_style(row_index)
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.is_queued = True
+                thumbnail_widget.set_queue_number(queue_number)
+                thumbnail_widget.set_selected_thumbnail_style()
+
+            queue_window_add_track(row_index)
+
+    # search_result_queue_number_update()
+
+
+def queue_add_remove_single_track():
     if cv.active_pl_name.currentItem():    # to avoid action on playlist where no track is selected
-            
+
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
         # THUMBNAIL VIEW
         thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']

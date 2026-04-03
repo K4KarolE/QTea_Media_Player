@@ -19,6 +19,7 @@ from .func_coll import (
     add_new_list_item,
     generate_duration_to_display,
     generate_track_list_detail,
+    is_track_selection_multiple,
     save_json,
     save_playing_pl_last_track_index,
     update_active_playlist_vars_and_widgets
@@ -311,9 +312,10 @@ class MyPlaylists(QTabWidget):
 
 
     def drag_and_drop_list_item_action(self):
-        if len(cv.active_pl_name.selectedItems()) == 1:
+        if is_track_selection_multiple():
+            self.drag_and_drop_multi_selection()
+        else:
             self.drag_and_drop_single_selection()
-        else: self.drag_and_drop_multi_selection()
 
 
     def drag_and_drop_single_selection(self):
