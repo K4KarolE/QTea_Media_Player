@@ -291,7 +291,7 @@ def queue_window_add_track(row_index: int = None):
         on the Queue & Search window / Queue tab / queue list:
         Order Number | Track title | Playlist | Duration
     """
-    if row_index:
+    if row_index >= 0:
         title = Path(cv.active_pl_name.item(row_index).track_path).stem
         duration = cv.active_pl_duration.item(row_index).text()
     else:
@@ -420,7 +420,7 @@ def queue_add_remove_multiple_tracks():
 
             queue_window_add_track(row_index)
 
-    # search_result_queue_number_update()
+    search_result_queue_number_update()
 
 
 def queue_add_remove_single_track():
@@ -744,7 +744,7 @@ def search_result_queue_number_update():
     if cv.search_result_dic and not cv.track_change_on_main_playlist_new_search_needed:
         cv.search_result_queued_tracks_index_list = get_search_result_queued_tracks_index_list()
         index_for_remove_queue_number = cv.search_result_queued_tracks_index_list.copy()
-        
+
         # DEQUEUE
         if len(cv.queue_tracks_list) < cv.queued_tracks_amount:
 
@@ -760,10 +760,13 @@ def search_result_queue_number_update():
                             queue_number = f'[{cv.queue_tracks_list.index(tracking_title) + 1}]'
                             cv.search_queue_list_widget.item(search_result_index).setText(queue_number)
                             index_for_remove_queue_number.remove(search_result_index)
-            
-            if index_for_remove_queue_number:
-                cv.search_queue_list_widget.item(index_for_remove_queue_number[0]).setText('')
-                cv.search_result_queued_tracks_index_list.remove(index_for_remove_queue_number[0])
+            # Remove queue number
+            for _ in index_for_remove_queue_number:
+                cv.search_queue_list_widget.item(_).setText('')
+
+            # Remove "index_for_remove_queue_number" items from "cv.search_result_queued_tracks_index_list"
+            cv.search_result_queued_tracks_index_list = \
+                [n for n in cv.search_result_queued_tracks_index_list if n not in index_for_remove_queue_number]
         
         # QUEUE
         elif len(cv.queue_tracks_list) > cv.queued_tracks_amount:
