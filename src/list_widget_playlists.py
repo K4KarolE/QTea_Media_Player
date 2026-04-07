@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import QListWidget, QMenu, QAbstractItemView
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
+    clear_multi_selection,
     clear_queue_update_all_occurrences,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
@@ -178,17 +179,7 @@ class MyListWidget(QListWidget):
         # CLEAR SELECTION
         elif q.text() == list(self.context_menu_dic)[3]:
             try:
-                if cv.active_pl_name.selected_items_row_index_list:
-                    cv.active_pl_name.clearSelection()
-                    cv.active_pl_duration.clearSelection()
-                    cv.active_pl_queue.clearSelection()
-                    cv.active_pl_name.selected_items_row_index_list = []
-                    cv.active_pl_queue.selected_items_row_index_list = []
-                    cv.active_pl_duration.selected_items_row_index_list = []
-                    cv.active_pl_name.setCurrentRow(cv.current_track_index)
-                    cv.active_pl_duration.setCurrentRow(cv.current_track_index)
-                    cv.active_pl_queue.setCurrentRow(cv.current_track_index)
-                    cv.row_change_action_counter = 3
+                clear_multi_selection()
             except:
                 MyMessageBoxError('Error', 'Sorry, something went wrong.')
 

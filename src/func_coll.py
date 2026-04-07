@@ -291,12 +291,12 @@ def queue_window_add_track(row_index: int = None):
         on the Queue & Search window / Queue tab / queue list:
         Order Number | Track title | Playlist | Duration
     """
-    if row_index >= 0:
-        title = Path(cv.active_pl_name.item(row_index).track_path).stem
-        duration = cv.active_pl_duration.item(row_index).text()
-    else:
+    if row_index is None:
         title = Path(cv.active_pl_name.currentItem().track_path).stem
         duration = cv.active_pl_duration.currentItem().text()
+    else:
+        title = Path(cv.active_pl_name.item(row_index).track_path).stem
+        duration = cv.active_pl_duration.item(row_index).text()
     queue_number = f'{str(len(cv.queue_tracks_list))}.'
     add_new_list_item(queue_number, cv.queue_widget_dic['queue_list_widget']['list_widget'], True)
     add_new_list_item(title, cv.queue_widget_dic['name_list_widget']['list_widget'])
@@ -359,7 +359,6 @@ def queue_add_remove_track():
 
 
 def queue_add_remove_multiple_tracks():
-
     thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
     selected_items_row_index_list = cv.active_pl_name.selected_items_row_index_list.copy()
 
@@ -382,14 +381,18 @@ def queue_add_remove_multiple_tracks():
             cv.active_pl_queue.item(row_index).setText('')
             update_queued_tracks_order_number()
 
-            if cv.current_track_index != cv.playing_pl_last_track_index:
+            # DEFAULT PLAYLIST VIEW
+            if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
                 update_dequeued_track_style(row_index)
 
             # THUMBNAIL VIEW
             if thumbnail_widget:
                 thumbnail_widget.set_queue_number(None)
                 thumbnail_widget.is_queued = False
-                thumbnail_widget.set_selected_thumbnail_style()
+                if cv.queue_tracking_title == [cv.playing_db_table, cv.playing_pl_last_track_index]:
+                    thumbnail_widget.set_playing_thumbnail_style()
+                else:
+                    thumbnail_widget.set_default_thumbnail_style()
 
     # STANDARD -> QUEUED TRACK
     for row_index in selected_items_row_index_list:
@@ -408,6 +411,7 @@ def queue_add_remove_multiple_tracks():
             queue_number_to_display = f'[{len(cv.queue_tracks_list)}]'
             cv.active_pl_queue.item(row_index).setText(queue_number_to_display)
 
+            # DEFAULT PLAYLIST VIEW
             # AVOID UPDATING CURRENTLY PLAYING TRACK STYLE - ONLY QUEUE NUMBER UPDATE
             if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
                 update_queued_track_style(row_index)
@@ -416,8 +420,8 @@ def queue_add_remove_multiple_tracks():
             if thumbnail_widget:
                 thumbnail_widget.is_queued = True
                 thumbnail_widget.set_queue_number(queue_number)
-                thumbnail_widget.set_selected_thumbnail_style()
-
+                if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
+                    thumbnail_widget.set_queued_track_thumbnail_style()
             queue_window_add_track(row_index)
 
     search_result_queue_number_update()
@@ -712,6 +716,24 @@ def clear_multi_selection_when_track_starts_inside_the_selection():
             # clearance, the correct track is added to the queue
             if cv.active_db_table == cv.playing_db_table:
                 cv.current_track_index = cv.playing_track_index
+
+
+def clear_multi_selection():
+    """ Used in the "src / list_widget_playlists" context menu and
+        before switching to thumbnail view via Thumbnail view button
+        action: "src / buttons / button_thumbnail_clicked()"
+    """
+    if is_track_selection_multiple():
+        cv.active_pl_name.clearSelection()
+        cv.active_pl_duration.clearSelection()
+        cv.active_pl_queue.clearSelection()
+        cv.active_pl_name.selected_items_row_index_list = []
+        cv.active_pl_queue.selected_items_row_index_list = []
+        cv.active_pl_duration.selected_items_row_index_list = []
+        cv.active_pl_name.setCurrentRow(cv.current_track_index)
+        cv.active_pl_duration.setCurrentRow(cv.current_track_index)
+        cv.active_pl_queue.setCurrentRow(cv.current_track_index)
+        cv.row_change_action_counter = 3
 
 
 def get_playlist_details_from_queue_tab_list(current_row_index):

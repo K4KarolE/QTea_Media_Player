@@ -6,6 +6,7 @@ from PyQt6.QtGui import QFont
 from .class_bridge import br
 from .class_data import save_json, cv, settings
 from .func_coll import (
+    clear_multi_selection,
     disable_minimal_interface,
     generate_duration_to_display,
     remove_track_from_playlist,
@@ -180,6 +181,7 @@ class MyButtons(QPushButton):
     def button_thumbnail_clicked(self):
         if cv.active_pl_name.count() > 0:
             if cv.active_pl_name.isVisible():
+                clear_multi_selection()
                 cv.active_pl_name.hide()
                 cv.active_pl_queue.hide()
                 cv.active_pl_duration.hide()
