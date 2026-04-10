@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import QWidget, QMenu
 from PyQt6.QtGui import QAction
 
 import ctypes
+import os
 
 from .class_bridge import br
 from .class_data import cv
@@ -21,7 +22,7 @@ from .func_coll import (
     toggle_minimal_interface,
     update_raw_current_duration_db
     )
-from .logger import logger_runtime, logger_sum
+from .logger import logger, logger_runtime, logger_sum
 from .message_box import MyMessageBoxError
 
 '''
@@ -448,18 +449,42 @@ class AVPlayer(QWidget):
     def screen_saver_on_off(self):
         # SCREEN SAVER OFF
         if self.video_output.isVisible() and self.player.isPlaying():
-            self.screen_saver_off()
+            self.set_screen_saver_off()
         # SCREEN SAVER ON
         else:
-            self.screen_saver_on()
+            self.set_screen_saver_on()
 
-    def screen_saver_on(self):
-        if not cv.os_linux:
-            ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
+    def set_screen_saver_on(self):
+        # LINUX
+        if cv.screen_saver_idle_delay_default_value:
+            try:
+                os.system(
+                    f'gsettings set org.{cv.desktop_env_for_screen_saver}.desktop.session idle-delay'
+                    f' {cv.screen_saver_idle_delay_default_value}')
 
-    def screen_saver_off(self):
-        if not cv.os_linux:
-            ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+            except:
+                logger.info('ERROR - Not able to set back the screensaver.')
+        # WINDOWS
+        else:
+            try:
+                ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
+            except:
+                logger.info('ERROR - Not able to set back the screensaver.')
+
+
+    def set_screen_saver_off(self):
+        # LINUX
+        if cv.screen_saver_idle_delay_default_value:
+            try:
+                os.system(f'gsettings set org.{cv.desktop_env_for_screen_saver}.desktop.session idle-delay 0')
+            except:
+                logger.info('ERROR - Not able to disable the screensaver.')
+        # WINDOWS
+        else:
+            try:
+                ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+            except:
+                logger.info('ERROR - Not able to disable the screensaver.')
 
 
     def update_duration_info(self):

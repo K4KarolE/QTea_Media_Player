@@ -33,7 +33,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 - [Operating system related databases](#operating-system-related-databases---linux-windows)
 - [Other Behaviour](#other-behaviour)
     - Volume
-    - Screen saver
+    - Screensaver
     - Drag & Drop
 - [File types](#file-types)
 - [Workarounds](#workarounds)
@@ -295,9 +295,13 @@ the current ones, just rename them. There is more information about the database
         - It switches back to the un-muted state.
         - New volume = volume before muted -/+ the change.
     - The volume range is less wide compared to `VLC media player`.
-- `Screen saver`
-    - When video window is displayed and video is playing the screen saver is turned off.
-        - Otherwise the screen saver is on as usual.
+- `Screensaver`
+    - When video window is displayed and video is playing the screensaver is turned off.
+        Otherwise, the screensaver is on as usual.
+    - LINUX:
+      - Please note, it is tailored for Ubuntu, Linux Mint.
+      - For other distros, the screensaver management is may not suitable.
+    - WINDOWS: Works on 10/11.
 - `Drag & Drop`
     - Internal: able to relocate/move a playlist item.
     - External: selected files and/or folders can be grabbed and dropped on the active playlist from

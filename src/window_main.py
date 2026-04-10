@@ -129,7 +129,11 @@ class MyWindow(QWidget):
 
 
     def closeEvent(self, a0):
+        """ Actions after the app closure """
+        if br.av_player.player.isPlaying() and br.av_player.video_output.isVisible():
+            br.av_player.set_screen_saver_on()
         auto_thumbnails_removal_after_app_closure()
+
 
     '''
         DRAG/DROP FILES, FOLDERS ON THE PLAYLISTS

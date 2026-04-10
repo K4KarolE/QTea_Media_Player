@@ -5,6 +5,7 @@ import re
 import shutil
 import sqlite3
 import sys
+import os
 
 
 def open_json():
@@ -65,6 +66,21 @@ def get_playlists_amount_from_db():
     return cur.fetchall()[0][0]
 
 
+""" Screensaver variables
+    Video is visible and playing: screensaver is on
+    Video is not visible or in paused, stopped state: screensaver is off
+    Only audio (in any state): screensaver is off
+"""
+screen_saver_idle_delay_default_value: int = None
+desktop_env_for_screen_saver: str = None
+if os_linux:
+    try:
+        desktop_env_for_screen_saver = os.environ['DESKTOP_SESSION']    # cinnamon, mate, etc.
+        get_desktop_env_command = f'gsettings get org.{desktop_env_for_screen_saver}.desktop.session idle-delay'
+        screen_saver_idle_delay_default_value = os.popen(get_desktop_env_command).read().split()[1]
+    except: print('Unable to get idle delay value for screensaver.')
+
+
 @dataclass
 class Data:
 
@@ -90,6 +106,8 @@ class Data:
     screen_index_for_fullscreen: int = -1
     screen_pos_x_for_fullscreen: int = 0
     screen_pos_x_for_fullscreen_via_menu: int = -1
+    screen_saver_idle_delay_default_value = screen_saver_idle_delay_default_value
+    desktop_env_for_screen_saver = desktop_env_for_screen_saver
 
     # Used in a scenario: multi selection + clicked on the last / current row
     last_clicked_track_index: int = -1

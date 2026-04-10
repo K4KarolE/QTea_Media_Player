@@ -252,14 +252,12 @@ class MyButtons(QPushButton):
                 cv.player_paused_position = br.av_player.player.position()
             br.av_player.paused = True
             self.setIcon(br.icon.start)
-            br.av_player.screen_saver_on()
         elif br.av_player.paused:
             if cv.os_linux:
                 br.av_player.player.setPosition(cv.player_paused_position)
             br.av_player.player.play()
             br.av_player.paused = False
             self.setIcon(br.icon.pause)
-            br.av_player.screen_saver_on_off()
         elif not br.av_player.player.isPlaying() and not br.av_player.paused:
             # Player stopped and the selected track is the same + play
             # The "cv.playing_.." variables allocated at the first play >> if cv.playing_pl_name" condition
@@ -273,6 +271,7 @@ class MyButtons(QPushButton):
 
             if br.av_player.player.isPlaying(): # ignoring empty playlist
                 self.setIcon(br.icon.pause)
+        br.av_player.screen_saver_on_off()
         
     
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
@@ -287,7 +286,7 @@ class MyButtons(QPushButton):
         br.av_player.player.stop()
         br.av_player.paused = False
         br.button_play_pause.setIcon(br.icon.start)
-        br.av_player.screen_saver_on()
+        br.av_player.set_screen_saver_on()
         br.button_duration_info.disable_and_set_to_zero()
         if br.av_player.video_output.isVisible():
             disable_minimal_interface()
