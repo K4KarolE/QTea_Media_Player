@@ -579,7 +579,7 @@ class AVPlayer(QWidget):
             self.player.play()
             self.base_played = True
             logger_sum('Base has been played - App is running - sum')
-            if cv.play_at_startup and cv.os_linux:  # Win 11: app freeze
+            if cv.play_at_startup:
                 self.player.stop() # avoid frozen app at startup
                 self.base_played_end_of_media_signal_ignored = True
                 if cv.active_pl_tracks_count:
