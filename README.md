@@ -343,13 +343,14 @@ the current ones, just rename them. There is more information about the database
 - Solution: the information (track title, volume, ..) displayed as subtitle on the video screen
     - Side effect: When the video is not playing, the information is not displayed
 
-### Audio delay - LINUX only
+### Audio delay - Linux only
 - Issue: video or audio paused + continue playing
     - Video continue normally
     - Audio is not playing for a while (2-10s)
 - Solution: saving the current player`s position at pause and apply it at the continue phase
 
-### Audio device change - WINDOWS only
+### Audio device change - Linux and Windows
+- It is solved in `PyQt 6.10.0` and above
 - Issue: Switching audio output device on PC/laptop while the app is in playing/paused state + play next track >> freezes the app, error message:
     ```
     [AVHWFramesContext @ 00000202E043C100] Static surface pool size exceeded.
