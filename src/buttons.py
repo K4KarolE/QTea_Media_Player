@@ -282,6 +282,13 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAY SECTION - STOP '''
     def button_stop_clicked(self):
+        if br.av_player.video_output.isFullScreen():
+            # To make sure if the video was on fullscreen on an additional screen
+            # when the 'Stop' initiated, at the next 'Play' will not be
+            # fullscreen on the additional screen automatically
+            br.av_player.video_output.setFullScreen(False)
+            br.av_player.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+            cv.screen_index_for_fullscreen = -1
         br.av_player.stopped = True
         br.av_player.player.stop()
         br.av_player.paused = False
