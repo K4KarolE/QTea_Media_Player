@@ -256,6 +256,8 @@ class AVPlayer(QWidget):
                 self.video_output.setFullScreen(False)
                 self.video_output.move(0, 0)
                 self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+                br.image_logo.hide()    # scenario: video fullscreen was on the additional display
+                cv.screen_index_for_fullscreen = -1
 
         return super().eventFilter(source, event)
 
@@ -375,8 +377,8 @@ class AVPlayer(QWidget):
             1st "if" scenario:
                 - full screen on another display
                 - video area hidden in the app
-            >> video area needs to be shown before
-            moving back the video output
+            >> video area needs to be shown before moving back the video output
+            br.image_logo.hide(): fullscreen video was on the additional display
         """
         if not self.video_area_visible:
             br.button_toggle_video.button_toggle_video_clicked()
@@ -385,6 +387,7 @@ class AVPlayer(QWidget):
             self.video_output.move(0, 0)
             self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
             cv.screen_index_for_fullscreen = -1
+            br.image_logo.hide()
         else:
             self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
             self.video_output.setFullScreen(True)
@@ -394,10 +397,12 @@ class AVPlayer(QWidget):
     def full_screen_to_screen_toggle(self):
         """ Used in the right-clicked on the
             video area / Full Screen / available screen(s)
+            br.image_logo.show(): fullscreen video on the additional display
         """
         self.video_output.setFullScreen(False)
         self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
         self.video_output.setFullScreen(True)
+        br.image_logo.show()
 
 
     """
@@ -414,13 +419,17 @@ class AVPlayer(QWidget):
         self.primary_screen_changed = True
 
     def screen_back_to_default(self):
-        """ Triggered by the screenRemoved signal """
+        """ Triggered by the screenRemoved signal
+            br.image_logo.show(): fullscreen video was on the additional display
+        """
         if not self.primary_screen_changed:
             if self.video_output.isVisible():
                 if self.video_output.isFullScreen():
                     self.video_output.setFullScreen(0)
                     self.video_output.move(0, 0)
                     self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+                    br.image_logo.hide()
+                    cv.screen_index_for_fullscreen = -1
         else:
             self.primary_screen_changed = False
 
