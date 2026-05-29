@@ -39,16 +39,48 @@ class MyListWidget(QListWidget):
                                 "color: black;"   
                                 "}"
                             )
-
+        # The displayed value (self.context_menu_queue_title) for the "Temp_queue_dequeue_title" and "icon"
+        # will be generated in the "eventFilter()" via "generate_queue_or_dequeue_context_menu_items()"
+        # The title and icon depend on the selected track(s) is/are already queued or not
+        self.context_menu_queue_title = ''
+        self.context_menu_queue_icon = None
         self.context_menu_dic = {
             'Play / Pause': {'icon': br.icon.start},
-            f'Queue / Dequeue ({cv.queue_toggle})': {'icon': br.icon.queue_blue},
+            'Temp_queue_dequeue_title': {'icon': None},
             'Clear queue': {'icon': br.icon.clear_queue},
             'Clear multi selection': {'icon': br.icon.clear_multi_selection},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
             }
+
+
+    def generate_queue_or_dequeue_context_menu_items(self):
+        queue_dequeue_decider_list = ['','']
+        if len(self.selectedItems()) == 1:  # single selection
+            queue_tracking_title = [cv.active_db_table, cv.current_track_index]
+            if queue_tracking_title in cv.queue_tracks_list:
+                queue_dequeue_decider_list[0] = 'to_dequeue'
+            else:
+                queue_dequeue_decider_list[1] = 'to_queue'
+        else:   # multiple selection
+            for row_index in self.selected_items_row_index_list:
+                queue_tracking_title = [cv.active_db_table, row_index]
+                if queue_tracking_title in cv.queue_tracks_list:
+                    queue_dequeue_decider_list[0] = 'to_dequeue'
+                else:
+                    queue_dequeue_decider_list[1] = 'to_queue'
+                if queue_dequeue_decider_list[0] and queue_dequeue_decider_list[1]:
+                    break
+        if queue_dequeue_decider_list[0] and queue_dequeue_decider_list[1]:
+            self.context_menu_queue_title = f'Queue / Dequeue ({cv.queue_toggle})'
+            self.context_menu_queue_icon = br.icon.queue_blue
+        elif queue_dequeue_decider_list[0]:
+            self.context_menu_queue_title = f'Dequeue ({cv.queue_toggle})'
+            self.context_menu_queue_icon = br.icon.de_queue
+        else:
+            self.context_menu_queue_title = f'Queue ({cv.queue_toggle})'
+            self.context_menu_queue_icon = br.icon.queue_blue
 
 
     def set_multi_selection_settings(self):
@@ -140,7 +172,12 @@ class MyListWidget(QListWidget):
         if event.type() == QEvent.Type.ContextMenu:
             menu = QMenu()
             for menu_title, menu_icon in self.context_menu_dic.items():
-                icon = menu_icon['icon']
+                if menu_title == 'Temp_queue_dequeue_title':
+                    self.generate_queue_or_dequeue_context_menu_items()
+                    icon = self.context_menu_queue_icon
+                    menu_title = self.context_menu_queue_title
+                else:
+                    icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
             # Disable "Clear multi selection" when there is no multi selection
             if not self.selected_items_row_index_list:
@@ -165,7 +202,7 @@ class MyListWidget(QListWidget):
                     )
         
         # QUEUE
-        elif q.text() == list(self.context_menu_dic)[1]:
+        elif q.text() == self.context_menu_queue_title:
             queue_add_remove_track()
         
         # CLEAR QUEUE
