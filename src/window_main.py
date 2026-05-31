@@ -43,6 +43,7 @@ class MyWindow(QWidget):
 
 
     def hotkeys_creation(self):
+        shuffle_indicator_dic = {True: 'ON', False: 'OFF'}
         hotkeys_action_dic = {
         'small_jump_backward': lambda:self.jump_action(cv.small_jump, 'backward'),
         'small_jump_forward': lambda: self.jump_action(cv.small_jump, 'forward'),
@@ -54,7 +55,8 @@ class MyWindow(QWidget):
                 2000,
                 f'{cv.track_title}\n'
                 f'{cv.playing_track_index + 1} / {cv.playing_pl_name.count()}\n'
-                f'{self.get_current_duration_info()}'),
+                f'{self.get_current_duration_info()}\n'
+                f'Shuffle: {shuffle_indicator_dic[cv.shuffle_playlist_on]}'),
         'volume_mute': lambda: br.button_speaker.button_speaker_clicked(),
         'volume_up': self.volume_up_action,
         'volume_down': self.volume_down_action,
