@@ -307,6 +307,9 @@ class MyButtons(QPushButton):
             cv.playing_track_index = cv.playing_pl_name.currentRow()
 
         if cv.playing_pl_tracks_count > 0:
+            # The "add_to_shuffle_played_list = False" counterpart (= True) is in the
+            # src / func_play_coll / add_to_shuffle_played_list() to make sure the value
+            # is not changed back to "False" before the "add_to_shuffle_played_list()" call
             cv.is_play_prev_track_clicked = True
             # TRACK IN SHUFFLE LIST
             if cv.shuffle_playlist_on and len(cv.shuffle_played_tracks_list) > 1:
@@ -319,10 +322,13 @@ class MyButtons(QPushButton):
                 else:
                     cv.playing_track_index = cv.playing_pl_tracks_count - 1
                     br.play_funcs.play_track(cv.playing_track_index)
-            cv.is_play_prev_track_clicked = False
 
     def play_shuffle_played_list_track(self):
-        cv.playing_track_index = cv.shuffle_played_tracks_list[-2]
+        """ The "cv.shuffle_played_tracks_list" verification
+            is before the function call above
+        """
+        cv.shuffle_played_tracks_list.pop(-1)
+        cv.playing_track_index = cv.shuffle_played_tracks_list[-1]
         if cv.playing_pl_tracks_count > cv.playing_track_index + 1:
             br.play_funcs.play_track(cv.playing_track_index)
 

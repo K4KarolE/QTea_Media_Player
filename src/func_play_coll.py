@@ -157,18 +157,22 @@ class PlaysFunc:
     def add_to_shuffle_played_list(self):
         """
             "Shuffle playlist" is ON:
-            The currently playing tracks added to the "shuffle_played_tracks_list"
-            which is used when the "Play previous" button/hotkey is triggered
-            "Shuffle playlist" is OFF: the previous track played in playlist
+            The playing track is added to the "shuffle_played_tracks_list"
+            which is used
+                - to make sure the next played track is not played previously since
+                the "Shuffle" is turned on
+                - when the "Previous Track" button is clicked: to be able to go back
+                to/play the tracks played previously on the "Shuffle"
         """
-        if (not cv.is_play_prev_track_clicked and
-                cv.playing_track_index not in cv.shuffle_played_tracks_list):
-            cv.shuffle_played_tracks_list.append(cv.playing_track_index)
-            if len(cv.shuffle_played_tracks_list) > cv.shuffle_played_tracks_list_size:
-                cv.shuffle_played_tracks_list.pop(0)
-        else:
-            if cv.shuffle_played_tracks_list:
-                cv.shuffle_played_tracks_list.pop(-1)
+        if not cv.is_play_prev_track_clicked:
+            if cv.playing_track_index not in cv.shuffle_played_tracks_list:
+                cv.shuffle_played_tracks_list.append(cv.playing_track_index)
+                # Example 1: 10 length playlist + shuffled-played tracks reached 10
+                # Example 2: 200 length playlist + shuffled-played tracks reached 100 (cv.shuffle_played_tracks_list_size)
+                #    >> remove the 1st track from the list
+                if len(cv.shuffle_played_tracks_list) in [cv.playing_pl_tracks_count, cv.shuffle_played_tracks_list_size]:
+                    cv.shuffle_played_tracks_list.pop(0)
+        cv.is_play_prev_track_clicked = False   # more info in "src / buttons / button_prev_track_clicked()"
 
 
     @logger_check
@@ -260,12 +264,10 @@ class PlaysFunc:
 
             # SHUFFLE
             if cv.shuffle_playlist_on and cv.playing_pl_tracks_count > 1:
-                # Selecting a new track which was not played
-                # the last "cv.shuffle_played_tracks_list_size" times
-                if cv.playing_pl_tracks_count > cv.shuffle_played_tracks_list_size:
-                    random_choice_list = [x for x in range(0, cv.playing_pl_tracks_count) if x not in cv.shuffle_played_tracks_list]
-                else:
-                    random_choice_list = [x for x in range(0, cv.playing_pl_tracks_count) if x != cv.playing_track_index]
+                # The "cv.shuffle_played_tracks_list" is always kept <= than the
+                # "cv.playing_pl_tracks_count" and "cv.shuffle_played_tracks_list_size"
+                # More info in the "add_to_shuffle_played_list()" above
+                random_choice_list = [x for x in range(0, cv.playing_pl_tracks_count) if x not in cv.shuffle_played_tracks_list]
                 next_track_index = random.choice(random_choice_list)
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
