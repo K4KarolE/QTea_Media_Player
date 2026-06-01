@@ -24,7 +24,12 @@ from .class_data import (
     settings,
     save_json
     )
-from .func_coll import inactive_track_font_style, move_window_to_middle_of_current_screen
+from .func_coll import (
+    inactive_track_font_style,
+    move_window_to_middle_of_current_screen,
+    update_active_playlist_vars_and_widgets,
+    update_playing_playlist_vars_and_widgets
+    )
 from .message_box import MyMessageBoxError
 from .func_thumbnail import (
     msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
@@ -689,12 +694,26 @@ class MySettingsWindow(QWidget):
 
 
                 ''' 
-                    If the last used playlist removed 
-                    at next start the new last playlist will active / displayed
+                    - Playing playlist removed (media played + stopped + playlist removed)
+                        >> to make sure the next "Play" will be actioned on the new active / displayed playlist
+                    - Playing playlist is the last of the playlists + removed + app closed
+                        >> app starts with the new last non-hidden playlist
                 '''
+                to_save = False
+                # ACTIVE PLAYLIST
                 if  len(settings['playlists'][cv.playlist_list[cv.active_playlist_index]]['playlist_title']) == 0:
                     cv.active_playlist_index = settings['playlists'][pl_list_with_title[-1]]['playlist_index']
                     settings['last_used_playlist'] = cv.active_playlist_index
+                    update_active_playlist_vars_and_widgets()
+                    to_save = True
+                # PLAYING PLAYLIST
+                if  len(settings['playlists'][cv.playlist_list[cv.playing_playlist_index]]['playlist_title']) == 0:
+                    cv.playing_playlist_index = settings['playlists'][pl_list_with_title[-1]]['playlist_index']
+                    settings['last_used_playlist'] = cv.playing_playlist_index
+                    update_playing_playlist_vars_and_widgets()
+                    to_save = True
+
+                if to_save:
                     save_json()
 
                 self.hide()
