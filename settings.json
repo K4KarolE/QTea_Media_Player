@@ -28,7 +28,8 @@
     "thumbnail_img_size": 200,
     "thumbnail_remove_older_than": 60,
     "search_result_parent_dicts_size": 30,
-    "add_dir_ignore_file_titles_including": "Sample"
+    "add_dir_ignore_file_titles_including": "Sample",
+    "clear_playlist_at_playlist_remove": true
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",

@@ -300,6 +300,7 @@ class Data:
     window_min_height: int = settings['general_settings']['window_min_height']
 
     add_dir_ignore_file_titles_including: str = settings['general_settings']['add_dir_ignore_file_titles_including']
+    clear_playlist_at_playlist_remove: bool = settings['general_settings']['clear_playlist_at_playlist_remove']
 
 
     general_settings_dic = {
@@ -397,6 +398,11 @@ class Data:
             'text': 'Add directory - ignore\nfile titles including',
             'value': add_dir_ignore_file_titles_including,
             'line_edit_widget': ''
+        },
+        'clear_playlist_at_playlist_remove': {
+            'text': 'Automatically clear playlist\nwhen it is removed',
+            'value': clear_playlist_at_playlist_remove,
+            'line_edit_widget': ''
         }
     }
 
@@ -408,7 +414,8 @@ class Data:
         general_settings_dic['continue_playback']['text'],
         general_settings_dic['play_at_startup']['text'],
         general_settings_dic['window_alt_size_repositioning']['text'],
-        general_settings_dic['window_auto_resize_to_video_resolution']['text']
+        general_settings_dic['window_auto_resize_to_video_resolution']['text'],
+        general_settings_dic['clear_playlist_at_playlist_remove']['text']
         ]
     
     gen_sett_window_width_text_list = [

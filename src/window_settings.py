@@ -417,6 +417,7 @@ class MySettingsWindow(QWidget):
             cv.thumbnail_remove_older_than = sett_gen['thumbnail_remove_older_than']
             cv.search_result_parent_dicts_size = sett_gen['search_result_parent_dicts_size']
             cv.add_dir_ignore_file_titles_including = sett_gen['add_dir_ignore_file_titles_including']
+            cv.clear_playlist_at_playlist_remove = sett_gen['clear_playlist_at_playlist_remove']
 
 
         '''
