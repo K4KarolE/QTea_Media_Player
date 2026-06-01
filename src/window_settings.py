@@ -25,6 +25,7 @@ from .class_data import (
     save_json
     )
 from .func_coll import (
+    clear_playlist_at_playlist_remove_action,
     inactive_track_font_style,
     move_window_to_middle_of_current_screen,
     update_active_playlist_vars_and_widgets,
@@ -557,6 +558,8 @@ class MySettingsWindow(QWidget):
                         br.playlists_all.setTabVisible(playlist_index, 0)
                         cv.playlists_without_title_to_hide_index_list.append(playlist_index)
                         cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(False)
+                        if cv.clear_playlist_at_playlist_remove:
+                            clear_playlist_at_playlist_remove_action(pl)
 
                     br.playlists_all.setTabText(playlist_index, new_playlist_title)
                     settings['playlists'][pl]['playlist_title'] = new_playlist_title

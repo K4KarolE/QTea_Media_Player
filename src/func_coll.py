@@ -912,3 +912,24 @@ def disable_minimal_interface():
         br.volume_qframe.show()     # including volume percent label and volume slider
         br.layout_bottom_slider.setContentsMargins(9, 6, 9, 0)
         br.layout_bottom_wrapper.setContentsMargins(9, 0, 9, 0)
+
+
+def clear_playlist_at_playlist_remove_action(playlist_name: str):   # playlist_name = playlist_3 / ..
+    """
+        Used in "src / window_settings / playlists_fields_to_save()" when
+        the playlist is removed ("Settings window / Playlists": title removed + "Save" button clicked)
+        and the "cv.clear_playlist_at_playlist_remove" boolean is enabled via
+        "Settings window / General / Automatically clear playlist when it is removed" field
+
+        The "queue" and "playing playlist" validations actioned before this function is called
+    """
+    if cv.playlist_widget_dic[playlist_name]['name_list_widget'].count() > 0:
+        # DB
+        cur.execute("DELETE FROM {0}".format(playlist_name))
+        connection.commit()
+        # PLAYLIST
+        cv.playlist_widget_dic[playlist_name]['name_list_widget'].clear()
+        cv.playlist_widget_dic[playlist_name]['queue_list_widget'].clear()
+        cv.playlist_widget_dic[playlist_name]['duration_list_widget'].clear()
+        cv.playlist_widget_dic[playlist_name]['played_thumbnail_style_update_needed'] = False
+        cv.playlist_widget_dic[playlist_name]['thumbnail_widgets_dic'] = {}
