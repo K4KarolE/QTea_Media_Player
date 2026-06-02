@@ -54,6 +54,7 @@ class MyIcon:
 
         self.start_with_default_player = QIcon(f'skins/{cv.skin_selected}/start_with_default_player.png')
         self.minimal_interface = QIcon(f'skins/{cv.skin_selected}/minimal_interface.png')
+        self.quit = QIcon(f'skins/{cv.skin_selected}/quit.png')
         
         ## VIDEO AREA - CONTEXTMENU / RIGHT CLICK
         # TOGGLE BETWEEN ALTERNATIVE WINDOW SIZE / POSITION

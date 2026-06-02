@@ -13,6 +13,8 @@ from PyQt6.QtGui import QAction
 
 import ctypes
 import os
+import sys
+
 
 from .class_bridge import br
 from .class_data import cv
@@ -105,7 +107,8 @@ class AVPlayer(QWidget):
                 'menu_sub': '',
                 'screens': [],
                 'screens_pos_x': []
-                }
+                },
+            'Quit': {'icon': br.icon.quit},
             }
 
     @logger_runtime
@@ -155,7 +158,7 @@ class AVPlayer(QWidget):
                         else:
                             self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
                         # SEPARATOR
-                        if menu_title.split()[0] in ['Next', 'Minimal']:
+                        if menu_title.split()[0] in ['Next', 'Minimal', 'Full']:
                             menu.addSeparator()
 
 
@@ -335,6 +338,9 @@ class AVPlayer(QWidget):
                 cv.screen_pos_x_for_fullscreen_via_menu = screen_pos_x - app_pos_x
             screens_list.clear()
             self.full_screen_to_screen_toggle()
+
+        elif q.text() == list(self.context_menu_dic)[12]:
+            sys.exit()
 
 
     def generate_subtitle_track_title(self, sub_track):
