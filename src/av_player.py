@@ -601,6 +601,8 @@ class AVPlayer(QWidget):
                 if cv.active_pl_tracks_count:
                     br.play_funcs.play_track()
                     logger_sum('Last media is playing - sum')
+            # Playlists creation in 3 rounds - more info in the "src / playlists"
+            br.playlists_all.playlists_second_and_third_round_content_creation()
 
 
     def is_loaded_media_validation_passed(self):

@@ -1,4 +1,4 @@
-''' PLAYLISTS/TABS CREATION '''
+""" PLAYLISTS/TABS CREATION """
 
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -36,17 +36,40 @@ from .thumbnail_window import ThumbnailMainWindow
 
 @logger_runtime
 class MyPlaylists(QTabWidget):
-    '''
-    playlists_created_at_first_run variable
-    USED TO AVOID THE 
+    """
+    Playlists compiling phases:
+    - App started
+    - Round 0: Dummy playlists created with no content/media
+    - Round 1: One playlist, the last played playlist content is loaded, the playlist is displayed
+    - Round 2: Ten playlists around the previous playlist are loaded, five on the left, five on the right side
+    - Round 3: The rest of the playlists are filled with content
+
+    Round 2 and 3 executed via "playlists_second_and_third_round_content_creation()" once the app is running
+    in the "src / av_player / play_base_and_play_at_startup()"
+
+    Why 5-5 playlists are filled in Round 2:
+        - Depends on the default window size (size of the app at startup) and tab sizes, less than 10 tabs / playlists
+        are displayed at the startup
+
+    Goal:
+        - To reduce startup time
+        - Make the startup time playlists` amount independent
+
+
+    "playlists_created_at_first_run" variable used to avoid the
         __.currentChanged.connect(self.active_playlist)
-    SIGNAL AT THE PLAYLISTS CREATION
-    '''
+    signal at the playlists creation
+    """
     def __init__(self):
         super().__init__()
         self.playlists_created_at_first_run = False
         self.setFont(QFont('Verdana', 10, 500))
-        self.playlists_creation()
+        self.playlists_content_creation_first_round_list = [cv.playlist_list[cv.playing_playlist_index]]
+        self.playlists_content_creation_second_round_list = []
+        self.playlists_content_creation_third_round_list = []
+        self.playlists_generate_second_and_third_round_lists()
+        self.playlists_shell_creation()
+        self.playlists_creation(self.playlists_content_creation_first_round_list)   # 2nd, 3rd round - more info above
         self.setCurrentIndex(cv.playing_playlist_index)
         self.currentChanged.connect(self.active_playlist_changed)
         self.playlists_created_at_first_run = True
@@ -54,7 +77,7 @@ class MyPlaylists(QTabWidget):
         cv.active_playlist_index = self.currentIndex()
         update_active_playlist_vars_and_widgets()
 
-        # IF ADD TO THE QUEUE WITHOUT ROW SELECTION AT THE STARTUP
+        # IF "ADD TO THE QUEUE" WITHOUT ROW SELECTION AT THE STARTUP
         # GOING TO SELECT THE LAST PLAYED ROW
         cv.current_track_index = cv.active_pl_last_track_index
 
@@ -141,42 +164,53 @@ class MyPlaylists(QTabWidget):
         return list_widget.currentRow() in list_widget.selected_items_row_index_list
 
 
-    def playlists_creation(self):
-        playlist_index_counter = 0
+    def playlists_generate_second_and_third_round_lists(self):
+        """ Playlist creation in 3 rounds:
+            1st round list: one playlist - last played, displayed at startup
+            2nd round list: 5 playlists on the left and 5 on the right of the 1st round playlist
+            3rd round list: rest of the playlists
+            More info under the class title above
+        """
+        radius: int = 5
+        radius_min_key: int = cv.playing_playlist_index - radius
+        radius_max_key: int = cv.playing_playlist_index + radius
+        if radius_min_key < 0: radius_min_key = 0
+        if radius_max_key > len(cv.playlist_list): radius_max_key = len(cv.playlist_list)
 
-        for pl in cv.playlist_widget_dic:
-            playlist_title = settings['playlists'][pl]['playlist_title']
+        self.playlists_content_creation_second_round_list = cv.playlist_list[radius_min_key:radius_max_key + 1]
+        self.playlists_content_creation_third_round_list = [n for n in cv.playlist_list if n
+                                                            not in self.playlists_content_creation_second_round_list]
+        self.playlists_content_creation_second_round_list.remove(cv.playlist_list[cv.playing_playlist_index])
+
+
+    def playlists_shell_creation(self):
+        """ Creating the tabs with dummy QFrame, filling up later with the
+            playlists' content via the "playlists_creation(playlists_list)" function
+            More info under the class title above
+        """
+        for pl_index, pl in enumerate(cv.playlist_list):
+            playlist_title = cv.playlist_widget_dic[pl]['playlist_title']
             if not playlist_title:
-                cv.playlists_without_title_to_hide_index_list.append(playlist_index_counter)
-            playlist_index_counter += 1
+                cv.playlists_without_title_to_hide_index_list.append(pl_index)
+
+            cv.playlist_widget_dic[pl]['qframe'] = QFrame()
+            self.addTab(cv.playlist_widget_dic[pl]['qframe'], playlist_title)
 
 
-            def set_last_played_row_style():
-                name_list_widget.setStyleSheet(
-                                        "QListWidget::item:selected"
-                                            "{"
-                                            "background: #CCE8FF;" 
-                                            "color: black;"   # font
-                                            "}"
-                                        )
-
-                queue_list_widget.setStyleSheet(
-                                        "QListWidget::item:selected"
-                                            "{"
-                                            "background: #CCE8FF;" 
-                                            "color: black;"   # font
-                                            "}"
-                                        )
-
-                duration_list_widget.setStyleSheet(
-                                        "QListWidget::item:selected"
-                                            "{"
-                                            "background: #CCE8FF;" 
-                                            "color: black;"   # font
-                                            "}"
-                                        )
+    def playlists_second_and_third_round_content_creation(self):
+        """ Executed once the app is running in "src / av_player / play_base_and_play_at_startup()"
+            Playlist creation in 3 rounds:
+            1st round: one playlist - last played, displayed at startup
+            2nd round: 5 playlists on the left and 5 on the right of the 1st round playlist
+            3rd round: rest of the playlists
+            More info under the class title above
+        """
+        self.playlists_creation(self.playlists_content_creation_second_round_list)
+        self.playlists_creation(self.playlists_content_creation_third_round_list)
 
 
+    def playlists_creation(self, playlists_list: list):
+        for pl in playlists_list:
             scroll_bar_name_ver = QScrollBar()
             scroll_bar_name_hor = QScrollBar()
             scroll_bar_duration_ver = QScrollBar()
@@ -212,11 +246,11 @@ class MyPlaylists(QTabWidget):
                                 "}"
                             )
 
-
-
             ''' LISTS CREATION '''
-            ''' Lists -> QHBoxLayout -> QFrame -> Add as a Tab '''
-
+            ''' Lists -> QHBoxLayout -> Update* existing QFrame already added as a tab 
+                via the "playlists_shell_creation()" function
+                Update* = QFrame.setLayout(layout)
+            '''
             cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget()
             name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
@@ -255,18 +289,12 @@ class MyPlaylists(QTabWidget):
             layout.addWidget(queue_list_widget, 6)
             layout.addWidget(duration_list_widget, 10)
             layout.addWidget(cv.playlist_widget_dic[pl]['thumbnail_window'])
-
-
-            frame = QFrame()
-            frame.setStyleSheet(
-                            "QFrame"
-                                "{"
-                                "border: 0px;"
-                                "}"
-                            )
-            frame.setLayout(layout)
-
-            self.addTab(frame, playlist_title)
+            cv.playlist_widget_dic[pl]['qframe'].setStyleSheet("QFrame"
+                                                                "{"
+                                                                "border: 0px;"
+                                                                "}"
+                                                                )
+            cv.playlist_widget_dic[pl]['qframe'].setLayout(layout)
 
 
             ''' PLAYLIST DB --> LIST WIDGET '''
@@ -289,26 +317,52 @@ class MyPlaylists(QTabWidget):
                 the currently playing track's style is different --> ignored
             '''
             if not cv.play_at_startup:
-                set_last_played_row_style()
+                self.set_last_played_row_style(name_list_widget, queue_list_widget, duration_list_widget)
             elif cv.play_at_startup and pl != cv.playlist_list[cv.playing_playlist_index]:
-                set_last_played_row_style()
+                self.set_last_played_row_style(name_list_widget, queue_list_widget, duration_list_widget)
 
 
-            ''' 
-                SYNC THE LIST'S(NAME, DURATION) SELECTION AND STYLE
-                AFTER NEWLY SELECTED TRACK
-            '''
-            def name_list_widget_row_changed():
-                self.row_changed_sync_pl(cv.active_pl_name)
-                update_thumbnail_style_at_row_change()
-
-            name_list_widget.currentRowChanged.connect(lambda: name_list_widget_row_changed())
+            name_list_widget.currentRowChanged.connect(lambda: self.name_list_widget_row_changed())
             duration_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl(cv.active_pl_duration))
             queue_list_widget.currentRowChanged.connect(lambda: self.row_changed_sync_pl(cv.active_pl_queue))
 
             name_list_widget.set_multi_selection_settings()
             queue_list_widget.set_multi_selection_settings()
             duration_list_widget.set_multi_selection_settings()
+
+
+    def name_list_widget_row_changed(self):
+        """ Sync the list's(name, duration) selection and style
+            after newly selected track
+        """
+        self.row_changed_sync_pl(cv.active_pl_name)
+        update_thumbnail_style_at_row_change()
+
+
+    def set_last_played_row_style(self, name_list_widget, queue_list_widget, duration_list_widget):
+        name_list_widget.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
+
+        queue_list_widget.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
+
+        duration_list_widget.setStyleSheet(
+                                "QListWidget::item:selected"
+                                    "{"
+                                    "background: #CCE8FF;" 
+                                    "color: black;"   # font
+                                    "}"
+                                )
 
 
     def drag_and_drop_list_item_action(self):
