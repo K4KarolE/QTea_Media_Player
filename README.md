@@ -30,6 +30,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 - [Active and Playing playlists separation](#active-and-playing-playlists-separation)
 - [Thumbnail View](#thumbnail-view)
 - [Increase the number of playlists beyond the default](#steps-to-increase-the-number-of-playlists-beyond-the-default--to-generate-new-playlist-database)
+- [Playlists compiling phases](#playlists-compiling-phases)
 - [Operating system related databases](#operating-system-related-databases---linux-windows)
 - [Other Behaviour](#other-behaviour)
     - Volume
@@ -270,6 +271,8 @@ selected track style.
   - Logic in `src / func_thumbnails / get_time_frame_taken_from()`
 
 ## Steps to increase the number of playlists beyond the default / to generate new playlist database
+- The playlists amount is not affecting the app's startup time, 
+more info in the `Playlists compiling phases` section below or in `src / playlists / MyPlaylists` class.
 1. Close the app if it is running.
 2. Delete the current databases (`playlist_db_linux.db` and `playlist_db_win.db`) or if you would like to save
 the current ones, just rename them. There is more information about the databases in the below/next section.
@@ -279,6 +282,21 @@ the current ones, just rename them. There is more information about the database
 5. After the next start of the app, all the playlists will be visible with increasing numeric titles.
 6. Optional: Change the title of the playlists via the `Settings window / Playlists`.
 7. Optional: Remove the previous playlist databases.
+
+##  Playlists compiling phases:
+- App started
+- Round 0: Dummy playlists created with no content/media.
+- Round 1: One playlist, the last played playlist content is loaded, the playlist is displayed.
+- Round 2: 10 playlists around the previous playlist are loaded, 5 on the left, 5 on the right side.
+- Round 3: The rest of the playlists are filled with content.
+
+Why 5-5 playlists are filled in Round 2:
+- Depends on the default window size (size of the app at startup) and tab sizes, less than 10 tabs / playlists
+are displayed at the startup.
+
+Achieved:
+- Reduced startup time.
+- Startup time got independent of the playlists` amount.
 
 ## Operating system related databases - Linux, Windows
 - There are two databases (`playlist_db_linux.db`, `playlist_db_win.db`) holding the playlist information. Only one is
