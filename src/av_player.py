@@ -78,8 +78,11 @@ class AVPlayer(QWidget):
         self.audio_device_menu_title = f'Audio Device  ({cv.audio_output_device_rotate})'
         self.subtitle_track_menu_title = f'Subtitle  ({cv.subtitle_tracks_rotate})'
         self.full_screen_menu_title = f'Full Screen ({cv.full_screen_toggle})'
+        # CONTEXT MENU
+        # The "Play/Pause" context menu ('Temp_play_pause_title' in the dic.) title and icon are generated in the
+        # "eventFilter()" below, depend on the current track's playing state
         self.context_menu_dic = {
-            'Play / Pause': {'icon': br.icon.start},
+            'Temp_play_pause_title': {'icon': None},
             'Stop': {'icon': br.icon.stop},
             'Previous': {'icon': br.icon.previous},
             'Next': {'icon': br.icon.next},
@@ -143,7 +146,7 @@ class AVPlayer(QWidget):
 
                 # MENU ITEMS
                 for menu_title, menu_icon in self.context_menu_dic.items():
-                    if menu_title == 'Play / Pause':
+                    if menu_title == 'Temp_play_pause_title':
                         if self.paused:
                             icon = br.icon.start
                             menu_title = 'Play'
@@ -272,7 +275,7 @@ class AVPlayer(QWidget):
         subtitle_tracks_list = self.context_menu_dic[self.subtitle_track_menu_title]['subtitle_tracks']
         screens_list = self.context_menu_dic[self.full_screen_menu_title]['screens']
 
-        if q.text() in list(self.context_menu_dic)[0]:
+        if q.text() in ['Play', 'Pause']:
             br.button_play_pause.button_play_pause_clicked()
 
         elif q.text() == list(self.context_menu_dic)[1]:
