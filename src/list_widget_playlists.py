@@ -1,6 +1,6 @@
 """
 Class created to handle multi row selection and context menu (right-click on the list items) in the main window playlists
-Used it in the src / playlists.py
+Used it in the "src / playlists "
 """
 
 from PyQt6.QtCore import QEvent, Qt
@@ -39,13 +39,16 @@ class MyListWidget(QListWidget):
                                 "color: black;"   
                                 "}"
                             )
+        # CONTEXT MENU
         # The displayed value (self.context_menu_queue_title) for the "Temp_queue_dequeue_title" and "icon"
         # will be generated in the "eventFilter()" via "generate_queue_or_dequeue_context_menu_items()"
         # The title and icon depend on the selected track(s) is/are already queued or not
+        # Similar behaviour for the "Play / Pause - (Temp_play_pause_title)" section, title and icon depend on
+        # if the current track is playing or not
         self.context_menu_queue_title = ''
         self.context_menu_queue_icon = None
         self.context_menu_dic = {
-            'Play / Pause': {'icon': br.icon.start},
+            'Temp_play_pause_title': {'icon': None},
             'Temp_queue_dequeue_title': {'icon': None},
             'Clear queue': {'icon': br.icon.clear_queue},
             'Clear multi selection': {'icon': br.icon.clear_multi_selection},
@@ -165,6 +168,12 @@ class MyListWidget(QListWidget):
             self.is_control_key_pressed = False
 
 
+    def is_current_track_playing(self):
+        return (cv.active_db_table == cv.playing_db_table and
+                cv.current_track_index == cv.playing_track_index and
+                br.av_player.player.isPlaying())
+
+
     def eventFilter(self, source, event):
         """ ContextMenu triggered by the right click
             on the list widget
@@ -172,7 +181,16 @@ class MyListWidget(QListWidget):
         if event.type() == QEvent.Type.ContextMenu:
             menu = QMenu()
             for menu_title, menu_icon in self.context_menu_dic.items():
-                if menu_title == 'Temp_queue_dequeue_title':
+                # Play / Pause
+                if menu_title == 'Temp_play_pause_title':
+                    if self.is_current_track_playing():
+                        menu_title = 'Pause'
+                        icon = br.icon.pause
+                    else:
+                        menu_title = 'Play'
+                        icon = br.icon.start
+                # Queue / Dequeue
+                elif menu_title == 'Temp_queue_dequeue_title':
                     self.generate_queue_or_dequeue_context_menu_items()
                     icon = self.context_menu_queue_icon
                     menu_title = self.context_menu_queue_title
@@ -189,9 +207,9 @@ class MyListWidget(QListWidget):
 
     def context_menu_clicked(self, q):
         # PLAY
-        if q.text() == list(self.context_menu_dic)[0]:
+        if q.text() in ['Play', 'Pause']:
             try:
-                if self.currentRow() == cv.playing_track_index:
+                if self.is_current_track_playing():
                     br.button_play_pause.button_play_pause_clicked()
                 else:
                     self.play_track()
