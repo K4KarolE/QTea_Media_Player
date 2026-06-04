@@ -22,6 +22,12 @@ from .message_box import MyMessageBoxError
 
 
 class ThumbnailWidget(QWidget):
+    """ A thumbnail widget represents one media (video, audio)
+        It contains a square frame, an image, the title of the media and the queue number placeholder (or the number)
+        Audio: thumbnail widget contains the default audio icon which not related to the audio file
+        Video: thumbnail widget contains an image generated from the video if possible, if not, it holds the default
+        video icon
+    """
     def __init__(self, file_name, index):
         super().__init__()
         self.index = index
@@ -54,15 +60,24 @@ class ThumbnailWidget(QWidget):
         self.layout.addWidget(self.text, 2)
         self.setLayout(self.layout)
         self.set_default_thumbnail_style()
+        # CONTEXT MENU
+        # The "Play/Pause", and "Queue/Dequeue" titles and icons are generated in the "eventFilter()" below depend on
+        # is the current track in the playing state or is the current track already queued
         self.context_menu_dic = {
-            'Play / Pause': {'icon': br.icon.start},
-            'Queue / Dequeue': {'icon': br.icon.queue_blue},
+            'Temp_play_pause_title': {'icon': None},
+            'Temp_queue_dequeue_title': {'icon': None},
             'Clear queue': {'icon': br.icon.clear_queue},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
             'Play track with default player': {'icon': br.icon.start_with_default_player}
         }
         self.show()
+
+
+    def is_current_track_playing(self):
+        return (cv.active_db_table == cv.playing_db_table and
+                cv.current_track_index == cv.playing_track_index and
+                br.av_player.player.isPlaying())
 
 
     def eventFilter(self, source, event):
@@ -72,7 +87,24 @@ class ThumbnailWidget(QWidget):
         if event.type() == QEvent.Type.ContextMenu:
             menu = QMenu()
             for menu_title, menu_icon in self.context_menu_dic.items():
-                icon = menu_icon['icon']
+                # Play / Pause
+                if menu_title == 'Temp_play_pause_title':
+                    if self.is_current_track_playing():
+                        menu_title = 'Pause'
+                        icon = br.icon.pause
+                    else:
+                        menu_title = 'Play'
+                        icon = br.icon.start
+                # Queue / Dequeue
+                elif menu_title == 'Temp_queue_dequeue_title':
+                    if self.is_queued:
+                        menu_title = 'Dequeue'
+                        icon = br.icon.de_queue
+                    else:
+                        menu_title = 'Queue'
+                        icon = br.icon.queue_blue
+                else:
+                    icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
@@ -81,10 +113,12 @@ class ThumbnailWidget(QWidget):
 
     def context_menu_clicked(self, q):
         # PLAY
-        if q.text() == list(self.context_menu_dic)[0]:
+        if q.text() in ['Play', 'Pause']:
             try:
-                if self.index == cv.playing_track_index:
+                # Switch between "Playing" and "Pause" states
+                if cv.active_db_table == cv.playing_db_table and self.index == cv.playing_track_index:
                     br.button_play_pause.button_play_pause_clicked()
+                # Start playing an inactive track
                 else:
                     br.button_play_pause.button_play_pause_via_list()
             except:
@@ -94,7 +128,7 @@ class ThumbnailWidget(QWidget):
                 )
 
         # QUEUE
-        elif q.text() == list(self.context_menu_dic)[1]:
+        elif q.text() in ['Queue', 'Dequeue']:
             queue_add_remove_track()
 
 
