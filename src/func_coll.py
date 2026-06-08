@@ -933,3 +933,17 @@ def clear_playlist_at_playlist_remove_action(playlist_name: str):   # playlist_n
         cv.playlist_widget_dic[playlist_name]['duration_list_widget'].clear()
         cv.playlist_widget_dic[playlist_name]['played_thumbnail_style_update_needed'] = False
         cv.playlist_widget_dic[playlist_name]['thumbnail_widgets_dic'] = {}
+
+
+def stop_play_when_playing_track_removed(is_clear_playlist: bool):
+     if _is_current_actively_playing_playlist():
+        if is_clear_playlist:
+            br.button_stop.button_stop_clicked()
+        else:
+            if cv.current_track_index == cv.playing_track_index:
+                br.button_stop.button_stop_clicked()
+
+def _is_current_actively_playing_playlist():
+    return (cv.active_db_table == cv.playing_db_table and
+             (br.av_player.player.isPlaying() or br.av_player.paused))
+

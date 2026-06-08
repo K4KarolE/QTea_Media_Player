@@ -9,9 +9,10 @@ from .func_coll import (
     clear_multi_selection,
     disable_minimal_interface,
     generate_duration_to_display,
-    remove_track_from_playlist,
     remove_queued_tracks_after_playlist_clear,
+    remove_track_from_playlist,
     save_speaker_muted_value,
+    stop_play_when_playing_track_removed,
     cur, # db
     connection, # db
     )
@@ -80,12 +81,10 @@ class MyButtons(QPushButton):
             br.window.thread_add_media.start()
 
 
-
-
-
     ''' BUTTON PLAYLIST - REMOVE SINGLE TRACK '''
     def button_remove_single_track(self):
         if cv.active_pl_name.currentRow() > -1:
+            stop_play_when_playing_track_removed(False)
             remove_track_from_playlist()
             switch_to_standard_active_playlist_from_thumbnail_pl()
 
@@ -103,7 +102,7 @@ class MyButtons(QPushButton):
             switch_to_standard_active_playlist_from_thumbnail_pl()
             update_thumbnail_support_vars_before_playlist_clear()
             self._clear_playlist()
-        
+
         cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
         cv.active_pl_sum_duration = 0
         br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
@@ -111,6 +110,7 @@ class MyButtons(QPushButton):
     @staticmethod
     def _clear_playlist():
         """ Used in the "button_remove_all_track()" above """
+        stop_play_when_playing_track_removed(True)
         switch_to_standard_active_playlist_from_thumbnail_pl()
         # QUEUE
         remove_queued_tracks_after_playlist_clear()
@@ -160,7 +160,7 @@ class MyButtons(QPushButton):
                             "background-color : #C2C2C2;"
                             "}"
                         )
-    
+
 
     ''' BUTTON PLAYLIST - SETTINGS - SET STYLE '''
     def set_style_settings_button(self):
@@ -221,7 +221,7 @@ class MyButtons(QPushButton):
         )
 
 
-    
+
 
     ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''
     def set_style_duration_info_button(self):
@@ -237,7 +237,7 @@ class MyButtons(QPushButton):
     def disable_and_set_to_zero(self):
         self.setDisabled(True)
         self.setText('00:00 / 00:00')
-    
+
 
 
 
@@ -274,13 +274,13 @@ class MyButtons(QPushButton):
             if br.av_player.player.isPlaying(): # ignoring empty playlist
                 self.setIcon(br.icon.pause)
         br.av_player.screen_saver_on_off()
-        
-    
+
+
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
         self.setIcon(br.icon.pause)
         br.play_funcs.play_track()
-    
+
 
     ''' BUTTON PLAY SECTION - STOP '''
     def button_stop_clicked(self):
@@ -339,29 +339,29 @@ class MyButtons(QPushButton):
     ''' BUTTON PLAY SECTION - NEXT TRACK '''
     def button_next_track_clicked(self):
         br.play_funcs.play_next_track()
-    
+
 
     ''' BUTTON PLAY SECTION - TOGGLE REPEAT PLAYLIST '''
     def button_toggle_repeat_pl_clicked(self):
         cv.repeat_playlist =  (cv.repeat_playlist + 1) % 3
-        
+
         # NO REPEAT
         if cv.repeat_playlist == 1:
             self.setFlat(False)
             self.setIcon(br.icon.repeat)
-            br.av_player.text_display_on_video(1500, 'Repeat: OFF') 
+            br.av_player.text_display_on_video(1500, 'Repeat: OFF')
         # REPEAT PLAYLIST
         elif cv.repeat_playlist == 2:
             self.setFlat(True)
-            br.av_player.text_display_on_video(1500, 'Repeat: Playlist') 
+            br.av_player.text_display_on_video(1500, 'Repeat: Playlist')
         # REPEAT SINGLE TRACK
         else:
             self.setIcon(br.icon.repeat_single)
-            br.av_player.text_display_on_video(1500, 'Repeat: Single track') 
-        
+            br.av_player.text_display_on_video(1500, 'Repeat: Single track')
+
         settings['repeat_playlist'] = cv.repeat_playlist
         save_json()
-    
+
 
     ''' BUTTON PLAY SECTION - TOGGLE SHUFFLE PLAYLIST '''
     def button_toggle_shuffle_pl_clicked(self):
@@ -373,11 +373,11 @@ class MyButtons(QPushButton):
         else:
             cv.shuffle_playlist_on = True
             self.setFlat(True)
-            br.av_player.text_display_on_video(1500, 'Shuffle: ON') 
-        
+            br.av_player.text_display_on_video(1500, 'Shuffle: ON')
+
         settings['shuffle_playlist_on'] = cv.shuffle_playlist_on
         save_json()
-    
+
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE PLAYLIST '''
     def button_toggle_playlist_clicked(self):
@@ -396,11 +396,11 @@ class MyButtons(QPushButton):
     def button_toggle_video_clicked(self):
         if not cv.minimal_interface_enabled:
             if br.av_player.playlist_visible and br.av_player.video_area_visible:
-                    br.layout_vert_left_qframe.hide()
-                    br.av_player.video_area_visible = False
-                    br.window.resize(int(cv.window_width/3), br.window.geometry().height())
-                    br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
-                    br.button_toggle_playlist.setDisabled(True)
+                br.layout_vert_left_qframe.hide()
+                br.av_player.video_area_visible = False
+                br.window.resize(int(cv.window_width/3), br.window.geometry().height())
+                br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
+                br.button_toggle_playlist.setDisabled(True)
             else:
                 br.window.resize(cv.window_width, br.window.geometry().height())
                 br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
@@ -415,12 +415,12 @@ class MyButtons(QPushButton):
             cv.is_speaker_muted = False
             br.button_speaker.setIcon(br.icon.speaker)
             br.av_player.audio_output.setVolume(cv.volume)
-            br.av_player.text_display_on_video(1500, 'Muted: OFF') 
+            br.av_player.text_display_on_video(1500, 'Muted: OFF')
         else:
             cv.is_speaker_muted = True
             br.button_speaker.setIcon(br.icon.speaker_muted)
             br.av_player.audio_output.setVolume(0)
-            br.av_player.text_display_on_video(1500, 'Muted: ON') 
+            br.av_player.text_display_on_video(1500, 'Muted: ON')
         save_speaker_muted_value()
 
     # USED WHEN CHANGING VOLUME WHILE MUTED

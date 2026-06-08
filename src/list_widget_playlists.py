@@ -15,7 +15,8 @@ from .func_coll import (
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
-    remove_track_from_playlist
+    remove_track_from_playlist,
+    stop_play_when_playing_track_removed
 )
 from .message_box import MyMessageBoxError
 
@@ -242,6 +243,7 @@ class MyListWidget(QListWidget):
         # REMOVE TRACK
         elif q.text() == list(self.context_menu_dic)[4]:
             try:
+                stop_play_when_playing_track_removed(False)
                 remove_track_from_playlist()
             except:
                 MyMessageBoxError(
