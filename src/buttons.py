@@ -92,45 +92,47 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track(self):
-        
-        def clear_playlist():
-            switch_to_standard_active_playlist_from_thumbnail_pl()
-            # QUEUE
-            remove_queued_tracks_after_playlist_clear()
-            # DB
-            cur.execute("DELETE FROM {0}".format(cv.active_db_table))
-            connection.commit()
-            # PLAYLIST
-            cv.active_pl_name.clear()
-            cv.active_pl_queue.clear()
-            cv.active_pl_duration.clear()
-            # FOR SEARCH WINDOW
-            cv.track_change_on_main_playlist_new_search_needed = True
-            # CLEAR PREVIOUSLY PLAYED TRACKS RECORD
-            if cv.shuffle_playlist_on:
-                cv.shuffle_played_tracks_list.clear()
-            # WINDOW TITLE
-            if cv.active_db_table == cv.playing_db_table:
-                if br.av_player.player.isPlaying() or br.av_player.paused:
-                    br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
-                else:
-                    br.window.setWindowTitle('QTea Media Player')
-
-        ''' Queued track in the playlist '''
+        # Queued track in the playlist
         if cv.active_db_table in cv.queue_playlists_list:
             if MyMessageBoxWarning().clicked_continue():
                 switch_to_standard_active_playlist_from_thumbnail_pl()
                 update_thumbnail_support_vars_before_playlist_clear()
-                clear_playlist()
+                self._clear_playlist()
+        # No queued track in the playlist
         else:
             switch_to_standard_active_playlist_from_thumbnail_pl()
             update_thumbnail_support_vars_before_playlist_clear()
-            clear_playlist()
+            self._clear_playlist()
         
         cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
         cv.active_pl_sum_duration = 0
         br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
-        
+
+    @staticmethod
+    def _clear_playlist():
+        """ Used in the "button_remove_all_track()" above """
+        switch_to_standard_active_playlist_from_thumbnail_pl()
+        # QUEUE
+        remove_queued_tracks_after_playlist_clear()
+        # DB
+        cur.execute("DELETE FROM {0}".format(cv.active_db_table))
+        connection.commit()
+        # PLAYLIST
+        cv.active_pl_name.clear()
+        cv.active_pl_queue.clear()
+        cv.active_pl_duration.clear()
+        # FOR SEARCH WINDOW
+        cv.track_change_on_main_playlist_new_search_needed = True
+        # CLEAR PREVIOUSLY PLAYED TRACKS RECORD
+        if cv.shuffle_playlist_on:
+            cv.shuffle_played_tracks_list.clear()
+        # WINDOW TITLE
+        if cv.active_db_table == cv.playing_db_table:
+            if br.av_player.player.isPlaying() or br.av_player.paused:
+                br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
+            else:
+                br.window.setWindowTitle('QTea Media Player')
+
 
     ''' BUTTON PLAYLIST - SETTINGS BUTTON / WINDOW '''
     def button_settings_clicked(self):
