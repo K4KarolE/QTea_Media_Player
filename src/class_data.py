@@ -301,7 +301,7 @@ class Data:
 
     add_dir_ignore_file_titles_including: str = settings['general_settings']['add_dir_ignore_file_titles_including']
     clear_playlist_at_playlist_remove: bool = settings['general_settings']['clear_playlist_at_playlist_remove']
-
+    conf_msg_at_clear_playlist_with_playing_track: bool = settings['general_settings']['conf_msg_at_clear_playlist_with_playing_track']
 
     general_settings_dic = {
         'always_on_top': {
@@ -403,6 +403,11 @@ class Data:
             'text': 'Automatically clear playlist\nwhen it is removed',
             'value': clear_playlist_at_playlist_remove,
             'line_edit_widget': ''
+        },
+        'conf_msg_at_clear_playlist_with_playing_track': {
+            'text': 'Confirmation message\nbefore clear playlist with\nplaying track',
+            'value': conf_msg_at_clear_playlist_with_playing_track,
+            'line_edit_widget': ''
         }
     }
 
@@ -415,7 +420,8 @@ class Data:
         general_settings_dic['play_at_startup']['text'],
         general_settings_dic['window_alt_size_repositioning']['text'],
         general_settings_dic['window_auto_resize_to_video_resolution']['text'],
-        general_settings_dic['clear_playlist_at_playlist_remove']['text']
+        general_settings_dic['clear_playlist_at_playlist_remove']['text'],
+        general_settings_dic['conf_msg_at_clear_playlist_with_playing_track']['text']
         ]
     
     gen_sett_window_width_text_list = [

@@ -419,6 +419,8 @@ class MySettingsWindow(QWidget):
             cv.search_result_parent_dicts_size = sett_gen['search_result_parent_dicts_size']
             cv.add_dir_ignore_file_titles_including = sett_gen['add_dir_ignore_file_titles_including']
             cv.clear_playlist_at_playlist_remove = sett_gen['clear_playlist_at_playlist_remove']
+            cv.conf_msg_at_clear_playlist_with_playing_track = sett_gen['conf_msg_at_clear_playlist_with_playing_track']
+
 
 
         '''
