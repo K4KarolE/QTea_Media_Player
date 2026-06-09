@@ -65,7 +65,7 @@ class PlaysFunc:
 
         # If the "Start from the latest point" is enabled:
         # Saving the current duration in every 5 second
-        # -> reset our assist variable when playing new track   
+        # -> reset our assist variable when playing new track
         cv.counter_for_duration = 0
 
         update_playing_playlist_vars_and_widgets()
@@ -90,19 +90,20 @@ class PlaysFunc:
         cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
 
         # FILE NOT REACHABLE
-        if self.track_path == -1 or not Path(self.track_path).is_file():
-            MyMessageBoxError(
-                'Not able to play the file',
-                'The file or the file`s home folder has been renamed / removed. '
-            )
-        else:
-            cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-            br.play_slider.setMaximum(cv.track_full_duration)
+        if cv.playing_pl_tracks_count:  # To make sure error message not displayed for empty Playing playlist
+            if self.track_path == -1 or not Path(self.track_path).is_file():
+                MyMessageBoxError(
+                    'Not able to play the file',
+                    'The file or the file`s home folder has been renamed / removed. '
+                )
+            else:
+                cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+                br.play_slider.setMaximum(cv.track_full_duration)
 
-            # PLAYER
-            # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
-            br.av_player.stopped = False
-            self.thread_play_track_set_source.start()
+                # PLAYER
+                # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
+                br.av_player.stopped = False
+                self.thread_play_track_set_source.start()
 
 
     def queue_update(self):
