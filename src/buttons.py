@@ -91,21 +91,27 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     def button_remove_all_track(self):
+        clear_playlist_needed = True
+
         # Queued track in the playlist
         if cv.active_db_table in cv.queue_playlists_list:
-            if MyMessageBoxWarning().clicked_continue():
-                switch_to_standard_active_playlist_from_thumbnail_pl()
-                update_thumbnail_support_vars_before_playlist_clear()
-                self._clear_playlist()
-        # No queued track in the playlist
-        else:
+            if not MyMessageBoxWarning('queued').clicked_continue():
+                clear_playlist_needed = False
+
+        # Playing track in the playlist
+        if clear_playlist_needed and cv.conf_msg_at_clear_playlist_with_playing_track:
+            if cv.active_db_table == cv.playing_db_table and br.av_player.player.isPlaying():
+                if not MyMessageBoxWarning('played').clicked_continue():
+                    clear_playlist_needed = False
+
+        if clear_playlist_needed:
             switch_to_standard_active_playlist_from_thumbnail_pl()
             update_thumbnail_support_vars_before_playlist_clear()
             self._clear_playlist()
+            cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
+            cv.active_pl_sum_duration = 0
+            br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
-        cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
-        cv.active_pl_sum_duration = 0
-        br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
     @staticmethod
     def _clear_playlist():
