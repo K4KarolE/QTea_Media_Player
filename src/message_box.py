@@ -19,17 +19,28 @@ class MyMessageBoxError(QMessageBox):
 
 
 class MyMessageBoxWarning(QMessageBox):
-    def __init__(self):
+    def __init__(self, msg_type:str):
         super().__init__()
-        self.setWindowTitle('Warning - Queued track')
+        if msg_type == 'queued':
+            self.set_msg_box_queued_track_in_playlist()
+        elif msg_type == 'played':
+            self.set_msg_box_played_track_in_playlist()
         self.setWindowIcon(br.icon.settings)
         self.setIcon(QMessageBox.Icon.Warning)
-        self.setText('There is a queued track in the playlist!  ' + 
-            'It will be removed from the queue list.\n\n' +
-            'Do you want to clear the playlist?')
         self.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
         self.clicked_value = self.exec()
+
+    def set_msg_box_queued_track_in_playlist(self):
+        self.setWindowTitle('Warning - Queued track')
+        self.setText('There is a queued track in the playlist!  ' +
+                     'It will be removed from the queue list.\n\n' +
+                     'Do you want to clear the playlist?')
+
+    def set_msg_box_played_track_in_playlist(self):
+        self.setWindowTitle('Warning - Played track')
+        self.setText('There is a playing track in the playlist!  \n\n' +
+                     'Do you want to clear the playlist?')
 
     def clicked_continue(self):
         if self.clicked_value == 16384: #Yes
