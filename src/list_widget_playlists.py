@@ -12,6 +12,7 @@ from .class_data import cv
 from .func_coll import (
     clear_multi_selection,
     clear_queue_update_all_occurrences,
+    clear_queue_update_for_current_playlist,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
@@ -52,6 +53,7 @@ class MyListWidget(QListWidget):
             'Temp_play_pause_title': {'icon': None},
             'Temp_queue_dequeue_title': {'icon': None},
             'Clear queue': {'icon': br.icon.clear_queue},
+            'Clear queue for this playlist only': {'icon': br.icon.clear_queue_current_playlist},
             'Clear multi selection': {'icon': br.icon.clear_multi_selection},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
@@ -198,9 +200,20 @@ class MyListWidget(QListWidget):
                 else:
                     icon = menu_icon['icon']
                 menu.addAction(QAction(icon, menu_title, self))
+
+            # Disable "Clear queue" when there is no queued track at all
+            if not cv.queue_playlists_list:
+                menu.actions()[2].setEnabled(False)
+
+            # Disable "Clear queue for this playlist only"
+            # when there is no queued track in the current playlist
+            if cv.active_db_table not in cv.queue_playlists_list:
+                menu.actions()[3].setEnabled(False)
+
             # Disable "Clear multi selection" when there is no multi selection
             if not self.selected_items_row_index_list:
-                menu.actions()[3].setEnabled(False)
+                menu.actions()[4].setEnabled(False)
+
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
         return super().eventFilter(source, event)
@@ -231,9 +244,15 @@ class MyListWidget(QListWidget):
             except:
                 MyMessageBoxError('Error','Sorry, something went wrong.')
 
-
-        # CLEAR SELECTION
+        # CLEAR QUEUE FOR THE CURRENT PLAYLIST ONLY
         elif q.text() == list(self.context_menu_dic)[3]:
+            try:
+                clear_queue_update_for_current_playlist()
+            except:
+                MyMessageBoxError('Error', 'Sorry, something went wrong.')
+
+        # CLEAR MULTI SELECTION
+        elif q.text() == list(self.context_menu_dic)[4]:
             try:
                 clear_multi_selection()
             except:
@@ -241,7 +260,7 @@ class MyListWidget(QListWidget):
 
 
         # REMOVE TRACK
-        elif q.text() == list(self.context_menu_dic)[4]:
+        elif q.text() == list(self.context_menu_dic)[5]:
             try:
                 stop_play_when_playing_track_removed(False)
                 remove_track_from_playlist()
@@ -252,7 +271,7 @@ class MyListWidget(QListWidget):
                     )
         
         # FOLDER
-        elif q.text() == list(self.context_menu_dic)[5]:
+        elif q.text() == list(self.context_menu_dic)[6]:
             try:
                 open_track_folder_via_context_menu(self.currentRow(), cv.active_db_table)
             except:
@@ -262,7 +281,7 @@ class MyListWidget(QListWidget):
                     )
 
         # PLAY TRACK WITH DEFAULT PLAYER
-        elif q.text() == list(self.context_menu_dic)[6]:
+        elif q.text() == list(self.context_menu_dic)[7]:
             try:
                 play_track_with_default_player_via_context_menu(self.currentRow(), cv.active_db_table)
             except:

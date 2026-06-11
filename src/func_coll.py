@@ -849,6 +849,54 @@ def clear_queue_update_all_occurrences():
         cv.queue_playlists_list.clear()
 
 
+def clear_queue_update_for_current_playlist():
+    """ Used in the context menu for both standard playlist and thumbnail view
+        It is a modified version of the "queue_add_remove_multiple_tracks()"
+        function from above (src / func_coll / .)
+    """
+    queued_items_row_index_list = []
+    for track_info in cv.queue_tracks_list:
+        playlist = track_info[0]
+        track_index = track_info[1]
+        if playlist == cv.active_db_table:
+            queued_items_row_index_list.append(track_index)
+    queued_items_row_index_list.sort()
+
+    thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+
+    # QUEUED TRACK -> STANDARD
+    for row_index in reversed(queued_items_row_index_list):
+        cv.queue_tracking_title = [cv.active_db_table, row_index]
+
+        if thumbnail_widget_dic:
+            thumbnail_widget = thumbnail_widget_dic[row_index]['widget']
+        else:
+            thumbnail_widget = None
+
+        if cv.queue_tracking_title in cv.queue_tracks_list:
+            queued_items_row_index_list.remove(row_index)
+            current_queue_index = cv.queue_tracks_list.index(cv.queue_tracking_title)
+            queue_window_remove_track(current_queue_index)
+            cv.queue_tracks_list.remove(cv.queue_tracking_title)
+            cv.queue_playlists_list.remove(cv.active_db_table)
+            cv.active_pl_queue.item(row_index).setText('')
+            update_queued_tracks_order_number()
+
+            # DEFAULT PLAYLIST VIEW
+            if cv.queue_tracking_title != [cv.playing_db_table, cv.playing_pl_last_track_index]:
+                update_dequeued_track_style(row_index)
+
+            # THUMBNAIL VIEW
+            if thumbnail_widget:
+                thumbnail_widget.set_queue_number(None)
+                thumbnail_widget.is_queued = False
+                if cv.queue_tracking_title == [cv.playing_db_table, cv.playing_pl_last_track_index]:
+                    thumbnail_widget.set_playing_thumbnail_style()
+                else:
+                    thumbnail_widget.set_default_thumbnail_style()
+    search_result_queue_number_update()
+
+
 def update_window_size_vars_from_saved_values():
     cv.window_width = settings['general_settings']['window_width']
     cv.window_height = settings['general_settings']['window_height']
