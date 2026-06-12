@@ -181,7 +181,7 @@ class MyListWidget(QListWidget):
         """ ContextMenu triggered by the right click
             on the list widget
         """
-        if event.type() == QEvent.Type.ContextMenu:
+        if event.type() == QEvent.Type.ContextMenu and cv.active_pl_tracks_count:
             menu = QMenu()
             for menu_title, menu_icon in self.context_menu_dic.items():
                 # Play / Pause
