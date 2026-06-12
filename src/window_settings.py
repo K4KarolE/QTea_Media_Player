@@ -111,7 +111,8 @@ class MySettingsWindow(QWidget):
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
-                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
+                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,\
+                             stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
                             "color: black;"   # font
                             "border: 2px solid #F0F0F0;"
                             "border-radius: 4px;"
@@ -213,9 +214,11 @@ class MySettingsWindow(QWidget):
 
                 search_result = cv.search_regex.search(line_edit_text.title())
                 if not search_result:
+                    item_text = item_text.replace('\n', ' ')
                     MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.\n\n' +
                     "Acceptable hotkey format examples:\n" +
-                    "`M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`, `M+Ctrl+Space`, `Shift+Left`, `M | P`, `M+Ctrl | P`")
+                    "`M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`," +
+                    "`M+Ctrl+Space`, `Shift+Left`, `M | P`, `M+Ctrl | P`")
                     pass_validation = False
 
 
@@ -303,6 +306,7 @@ class MySettingsWindow(QWidget):
 
                 if item_text in cv.gen_sett_boolean_text_list:
                     if line_edit_text not in ['True', 'T', 'False', 'F']:
+                        item_text = item_text.replace('\n', ' ')
                         MyMessageBoxError(
                         'GENERAL TAB',
                         f'The "{item_text}" value should be one of the below:   \n'
@@ -314,14 +318,20 @@ class MySettingsWindow(QWidget):
                     if (not line_edit_text.isdecimal() or
                         int(line_edit_text) < cv.window_min_width or
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
-                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
+                            item_text = item_text.replace('\n', ' ')
+                            MyMessageBoxError(
+                                'GENERAL TAB',
+                                f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
 
                 elif item_text in cv.gen_sett_window_height_text_list:
                     if (not line_edit_text.isdecimal() or
                         int(line_edit_text) < cv.window_min_height or
                         int(line_edit_text) > MAX_WINDOW_SIZE_XY):
-                            MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
+                            item_text = item_text.replace('\n', ' ')
+                            MyMessageBoxError(
+                                'GENERAL TAB',
+                                f'The "{item_text}" value should be an integer: {cv.window_min_width}=< X <={MAX_WINDOW_SIZE_XY}.')
                             pass_validation = False
 
                 elif item_text in cv.gen_sett_string_text_list:
@@ -334,21 +344,28 @@ class MySettingsWindow(QWidget):
 
                 elif item_text == cv.general_settings_dic['thumbnail_img_size']['text']:
                     if not line_edit_text.isdecimal() or int(line_edit_text) not in range(100, 501):
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be between 100 and 500.')
+                        item_text = item_text.replace('\n', ' ')
+                        MyMessageBoxError(
+                            'GENERAL TAB',
+                            f'The "{item_text}" value should be between 100 and 500.')
                         pass_validation = False
 
                 elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
                     if not line_edit_text.lstrip('-').isdecimal() or int(line_edit_text) not in range(-1, 365):
                         item_text = item_text.replace('\n', ' ')
-                        MyMessageBoxError('GENERAL TAB',
-                                          f'The "{item_text}" value should be between -1 and 365.   \n'
-                                          '0 = clean up after every app closure.\n'
-                                          '-1 = no auto thumbnail removal.')
+                        MyMessageBoxError(
+                            'GENERAL TAB',
+                            f'The "{item_text}" value should be between -1 and 365.   \n'
+                                      '0 = clean up after every app closure.\n'
+                                      '-1 = no auto thumbnail removal.')
                         pass_validation = False
 
                 else:
                     if not line_edit_text.isdecimal():
-                        MyMessageBoxError('GENERAL TAB', f'The "{item_text}" value should be a positive integer.')
+                        item_text = item_text.replace('\n', ' ')
+                        MyMessageBoxError(
+                            'GENERAL TAB',
+                            f'The "{item_text}" value should be a positive integer.')
                         pass_validation = False
 
             return pass_validation
@@ -433,7 +450,8 @@ class MySettingsWindow(QWidget):
         PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
         PL_LINE_EDIT_WIDGET_LENGTH = 190
         PL_LINE_EDIT_BUTTON_POS_X_DIFF = 10
-        BUTTON_POS_X = WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF + PL_LINE_EDIT_WIDGET_LENGTH + PL_LINE_EDIT_BUTTON_POS_X_DIFF
+        BUTTON_POS_X = WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF + \
+                       PL_LINE_EDIT_WIDGET_LENGTH + PL_LINE_EDIT_BUTTON_POS_X_DIFF
         number_counter = 1
 
         # AT GENERAL AND HOTKEYS TAB THE LOWEST DIC. KAY-VALUE PAIR WERE ITERATED
@@ -491,7 +509,9 @@ class MySettingsWindow(QWidget):
                 if len(playlist_title) > 25:
                     playlist_title = f'{playlist_title[0:23]}..'
                     cv.playlist_widget_dic[pl]['line_edit'].setText(playlist_title)
-                    MyMessageBoxError('PLAYLISTS TAB', f'The more than 25 char.s long  \n titles will be truncated:\n\n"{playlist_title}"')
+                    MyMessageBoxError(
+                        'PLAYLISTS TAB',
+                        f'The more than 25 characters long  \n titles will be truncated:\n\n"{playlist_title}"')
                 if len(playlist_title) != 0:
                     pl_list_with_title.append(pl)
             if len(pl_list_with_title) == 0:
@@ -514,8 +534,8 @@ class MySettingsWindow(QWidget):
                     ):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
-                                        'PLAYLISTS TAB',
-                                        f'Playing playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
+                            'PLAYLISTS TAB',
+                            f'Playing playlist can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                         pass_validation = False
             return pass_validation
 
@@ -535,8 +555,8 @@ class MySettingsWindow(QWidget):
                         ):
                             cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                             MyMessageBoxError(
-                                            'PLAYLISTS TAB',
-                                            f'Playlist with queued track can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
+                                'PLAYLISTS TAB',
+                                f'Playlist with queued track can not be removed, Playlist #{playlist_index+1}:  {prev_playlist_title}')
                             pass_validation = False
             return pass_validation
 
