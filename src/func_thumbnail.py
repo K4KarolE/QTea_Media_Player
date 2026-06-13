@@ -433,12 +433,15 @@ def remove_all_thumbnails_and_clear_history():
     stop_thumbnail_thread()
     switch_all_pl_to_standard_from_thumbnails_view(True)
     try:
-        # THUMBNAILS
+        # THUMBNAIL - FILES
         files = glob.glob(f'{PATH_THUMBNAILS}/*')
         for file in files:
             if Path(file).suffix != '.json':
                 os.remove(file)
-        # HISTORY
+        # THUMBNAIL - WIDGETS
+        for pl in cv.playlist_widget_dic:
+            cv.playlist_widget_dic[pl]['thumbnail_widgets_dic'] = {}
+        # THUMBNAIL - HISTORY
         thumbnail_history["failed"] = {}
         thumbnail_history["completed"] = {}
         save_thumbnail_history_json()
