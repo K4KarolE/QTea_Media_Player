@@ -372,8 +372,18 @@ class MySettingsWindow(QWidget):
 
 
         def general_fields_to_save(to_save = False):
-            for general_dic_key, general_dic_value in cv.general_settings_dic.items():
+            """ Guide for the "item_text, item_value, line_edit_text" values:
 
+                general_settings_dic = {        # generated in "src / class_data"
+                    'always_on_top': {
+                        'text': 'Always on top',    - item_text - displayed explanation text
+                        'value': always_on_top,     - item_value - variable - cv.always_on_top - the saved value
+                        'line_edit_widget': ''      - item_line_edit_widget.text() = current field value
+                    },
+                    {..}
+            """
+            for general_dic_key, general_dic_value in cv.general_settings_dic.items():
+                #
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_jump_text_list:
@@ -385,10 +395,14 @@ class MySettingsWindow(QWidget):
 
                 elif item_text in cv.gen_sett_boolean_text_list:
                     if len(line_edit_text) == 1:
+                        # "f" >> "False", "T" >> "True"
                         line_edit_text = {'T': 'True', 'F': 'False'}[line_edit_text]
+                        cv.general_settings_dic[general_dic_key]['line_edit_widget'].setText(line_edit_text)
                     if item_value != eval(line_edit_text):
                         settings['general_settings'][general_dic_key] = eval(line_edit_text)    # "true"(str) -> bool
                         cv.general_settings_dic[general_dic_key]['value'] = eval(line_edit_text)
+                        # True > false > False
+                        cv.general_settings_dic[general_dic_key]['line_edit_widget'].setText(line_edit_text)
                         to_save = True
 
                 elif item_text in cv.gen_sett_string_text_list:
