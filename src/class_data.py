@@ -793,6 +793,18 @@ class Data:
     playlist_list = list(playlist_widget_dic)
     playlist_settings_last_widget_pos_y: int = 0     # to calc. the parent widget height
 
+    ''' To make sure if an invalid** "playing_playlist_index" is saved at the last use of the app,
+        still able to start the app with the first playlist
+        
+        ** an index of a playlist with no title
+    '''
+    if (playing_playlist_index not in range(len(playlist_list)) or
+            playlist_widget_dic[playlist_list[playing_playlist_index]]['playlist_title'] == ""):
+        playing_playlist_index = 0
+        playlist_widget_dic[playlist_list[0]]['playlist_title'] = \
+            'ERROR - Invalid "playing_playlist_index" saved at last use'
+
+
 
     ''' QUEUE AND SEARCH WINDOW - QUEUE TAB '''
     queue_widget_dic = {
