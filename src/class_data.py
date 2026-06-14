@@ -786,6 +786,7 @@ class Data:
             },
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': '',     # used in the Settings window / Playlists
+            'button_remove_playlist_title': '',    # used in the Settings window / Playlists
             'button_jump_to_playlist': ''   # used in the Settings window / Playlists
             }
       

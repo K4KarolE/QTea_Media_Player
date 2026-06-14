@@ -40,10 +40,7 @@ from .logger import logger_runtime
 
 
 class ButtonJumpToPlaylist(QPushButton):
-    """ Used in the Settings Window / Playlists tab
-        Class to be able to assign different actions
-        through the buttons creation iteration
-    """
+    """ Used in the MySettingsWindow class / Playlists tab below """
     def __init__(self, parent, playlist_index):
         super().__init__()
         self.setParent(parent)
@@ -67,11 +64,23 @@ class ButtonJumpToPlaylist(QPushButton):
         br.playlists_all.setCurrentIndex(self.playlist_index)
 
 
+class ButtonRemovePlaylistTitle(ButtonJumpToPlaylist):
+    """ Used in the MySettingsWindow class / Playlists tab below """
+    def __init__(self, parent, playlist_index):
+        super().__init__(parent, playlist_index)
+        self.setText('r')
+        self.setToolTip('Remove playlist title')
+        self.clicked.connect(self.button_action)
+
+    def button_action(self):
+        playlist_title = cv.playlist_list[self.playlist_index]
+        cv.playlist_widget_dic[playlist_title]['line_edit'].setText('')
+
+
+
 @logger_runtime
 class MySettingsWindow(QWidget):
-    """ No logging at startup
-        It is created once the Settings button clicked
-    """
+    """ It is created once the Settings button clicked """
     def __init__(self):
         super().__init__()
 
@@ -383,7 +392,7 @@ class MySettingsWindow(QWidget):
                     {..}
             """
             for general_dic_key, general_dic_value in cv.general_settings_dic.items():
-                #
+
                 item_text, item_value, line_edit_text = get_dic_values_after_widget_creation(general_dic_value)
 
                 if item_text in cv.gen_sett_jump_text_list:
@@ -462,10 +471,11 @@ class MySettingsWindow(QWidget):
         WIDGET_PL_POS_X = WIDGETS_POS_X
         widget_pl_pos_y = WIDGETS_POS_Y
         PL_LABEL_LINE_EDIT_POS_X_DIFF = 100
-        PL_LINE_EDIT_WIDGET_LENGTH = 190
+        PL_LINE_EDIT_WIDGET_LENGTH = 170
         PL_LINE_EDIT_BUTTON_POS_X_DIFF = 10
         BUTTON_POS_X = WIDGET_PL_POS_X + PL_LABEL_LINE_EDIT_POS_X_DIFF + \
                        PL_LINE_EDIT_WIDGET_LENGTH + PL_LINE_EDIT_BUTTON_POS_X_DIFF
+        BUTTON_2ND_POS_X = BUTTON_POS_X + 25
         number_counter = 1
 
         # AT GENERAL AND HOTKEYS TAB THE LOWEST DIC. KAY-VALUE PAIR WERE ITERATED
@@ -495,10 +505,24 @@ class MySettingsWindow(QWidget):
                 LINE_EDIT_HIGHT
                 )
 
+            ''' BUTTONS - REMOVE PLAYLIST TITLE '''
+            cv.playlist_widget_dic[pl]['button_remove_playlist_title'] = ButtonRemovePlaylistTitle(
+                tab_playlist,
+                number_counter-1)
+            cv.playlist_widget_dic[pl]['button_remove_playlist_title'].setGeometry(
+                BUTTON_POS_X,
+                widget_pl_pos_y,
+                LINE_EDIT_HIGHT,
+                LINE_EDIT_HIGHT
+            )
+            if not line_edit_widget.text():
+                cv.playlist_widget_dic[pl]['button_remove_playlist_title'].setEnabled(False)
+
+
             ''' BUTTONS - JUMP TO PLAYLIST '''
             cv.playlist_widget_dic[pl]['button_jump_to_playlist'] = ButtonJumpToPlaylist(tab_playlist, number_counter-1)
             cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setGeometry(
-                BUTTON_POS_X,
+                BUTTON_2ND_POS_X,
                 widget_pl_pos_y,
                 LINE_EDIT_HIGHT,
                 LINE_EDIT_HIGHT
@@ -587,12 +611,14 @@ class MySettingsWindow(QWidget):
                     if new_playlist_title and not prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 1)
                         cv.playlists_without_title_to_hide_index_list.remove(playlist_index)
+                        cv.playlist_widget_dic[pl]['button_remove_playlist_title'].setEnabled(True)
                         cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(True)
 
                     # NEW TITLE: EMPTY, PREV: TITLE - VISIBLE
                     elif not new_playlist_title and prev_playlist_title:
                         br.playlists_all.setTabVisible(playlist_index, 0)
                         cv.playlists_without_title_to_hide_index_list.append(playlist_index)
+                        cv.playlist_widget_dic[pl]['button_remove_playlist_title'].setEnabled(False)
                         cv.playlist_widget_dic[pl]['button_jump_to_playlist'].setEnabled(False)
                         if cv.clear_playlist_at_playlist_remove:
                             clear_playlist_at_playlist_remove_action(pl)
