@@ -410,6 +410,8 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 ### Python 3 - used: 3.12
 - https://www.python.org/
 - For the `Python-PyQt` compatibility matrix visit: [https://wiki.qt.io/Qt_for_Python](https://wiki.qt.io/Qt_for_Python)
+  - According to the compatibility matrix for `PyQT 6.5.3` + `Python 3.11` should be used (`Python 3.12` working fine)
+- [Status of Python versions](https://devguide.python.org/versions/)
 
 ### PyQt version history
 - 6.5.3 (10/2023) - In use
@@ -441,10 +443,11 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 - Without `FFmpeg`
   - The `Thumbnail View button` is disabled
   - The media player is still fully functioning 
-- WINDOWS
-    - [Install FFmpeg on Windows 10/11](https://techtactician.com/how-to-install-ffmpeg-and-add-it-to-path-on-windows/)
-- LINUX
-    - Via `Software Manager`
+- `FFmpeg` installation:
+  - WINDOWS
+      - [Install FFmpeg on Windows 10/11](https://techtactician.com/how-to-install-ffmpeg-and-add-it-to-path-on-windows/)
+  - LINUX
+      - Via `Software Manager`
 
 
 ### OS
