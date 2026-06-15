@@ -449,6 +449,23 @@ same media is already loaded) and jumps to the "add media the playlist phase"
   - LINUX
       - Via `Software Manager`
 
+### LINUX - Install specific Python and virtual environment version
+Used:
+- [How do I install a different Python version using apt-get?](https://askubuntu.com/a/682875)
+- [Creating venv with python 3.12](https://askubuntu.com/a/1563105)
+```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.11
+```
+```
+sudo apt install python3.11-venv
+```
+```
+python3.11 -m venv your_venv_name
+```
+
+More info: [Qt for Python - Getting Started](https://doc.qt.io/qtforpython-6/gettingstarted.html)
 
 ### OS
 - Tested on Windows 11, Linux Mint 22
