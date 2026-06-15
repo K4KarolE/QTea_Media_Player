@@ -303,18 +303,17 @@ class PlaysFunc:
 
 
     @logger_check
-    def auto_play_next_track(self):
+    def play_decider(self):
+        """ To handle the media status changed signal when the base is played at startup
+            src / av_player / media_status_changed_action() / play_decider()
+
+            At the end of media:
+            play_decider() >> play_next_track() >> play_track() >> play_track_second_part()
+
+            When "play at startup" is on, the first "play_decider()" run is not displayed in the log
         """
-        AT STARTUP:
-        - The function first triggered once the base is played (src/av_player)
-        - On every playlist the last/previously played row will be selected (src/playlists.py)
-        - The last playing playlist will be set active/displayed (src/playlists.py)
-        - If 'Play at startup' active (Settings / General), track will be played automatically
-        """
-        # END OF THE MEDIA >> PLAY NEXT TRACK
         if br.av_player.base_played_end_of_media_signal_ignored:
-            # To play from the start at next time playing the same track
-            # Not from (full duration - 5 sec) position
+            # To make sure the fully played track position is set to 0
             if cv.continue_playback and not cv.adding_records_at_moment:
                 update_raw_current_duration_db(0, cv.playing_track_index)
             self.play_next_track()

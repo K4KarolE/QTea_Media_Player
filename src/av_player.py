@@ -637,6 +637,7 @@ class AVPlayer(QWidget):
                 - etc.
         """
         if self.is_loaded_media_validation_passed():
+            logger_sum("Media status: Loaded media")
             # DURATION
             if cv.track_current_duration > 0 and cv.continue_playback:
                 br.av_player.player.setPosition(cv.track_current_duration)
@@ -653,7 +654,8 @@ class AVPlayer(QWidget):
             br.play_funcs.play_track_second_part()
 
         elif self.is_end_of_media_validation_passed():
-            br.play_funcs.auto_play_next_track()
+            logger_sum("Media status: End of media")
+            br.play_funcs.play_decider()
 
         elif not self.base_played:
             self.play_base_and_play_at_startup()
