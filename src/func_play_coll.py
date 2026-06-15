@@ -39,17 +39,17 @@ class PlaysFunc:
 
     def result_ready_action(self):
         """
-            Used for separate the "style update" and "set source" functions
-            Otherwise the style update of the name, queue and duration list widget items would
-            be so slow/sluggish that style updates would look out of sync, not act as a single row
+        Used for separate the "style update" and "set source" functions
+        Otherwise the style update of the name, queue and duration list widget items would
+        be so slow/sluggish that style updates would look out of sync, not act as a single row
 
-            play_track() / self.thread_play_track_set_source.start()
-            >> self.played_and_queued_track_style_update() and result_ready.emit()
-            >> this function
+        play_track() / self.thread_play_track_set_source.start()
+        >> self.played_and_queued_track_style_update() and result_ready.emit()
+        >> this function
 
-            Playing the same file - The same file can be added multiple times to the playlists
-            The media status changed signal is not fired and the "self.play_track_second_part()"
-            is not called when the same file path is set as source, solution:
+        Playing the same file - The same file can be added multiple times to the playlists
+        The media status changed signal is not fired and the "self.play_track_second_part()"
+        is not called when the same file path is set as source, solution:
         """
         if self.track_path == self.track_path_previous:
             br.av_player.player.setPosition(cv.track_current_duration)
@@ -57,8 +57,24 @@ class PlaysFunc:
         else:
             br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
+
     @logger_check
     def play_track(self, playing_track_index=None):
+        """
+        Double-click on a new track in the playlist:
+        play_track() >> br.av_player.player.setSource >> media is loaded - mediaStatusChanged signal
+        >> media_status_changed_action() >> play_track_second_part()
+
+        The playing track reaching the end point:
+        end of media - mediaStatusChanged signal >> media_status_changed_action() >> play_decider()
+        >> play_next_track() >> play_track() >> from this point same as above
+
+        Why organise the play track function into multiple pieces:
+        - Separate the "style update" and "set source" functions, more info in the "result_ready_action()" above
+        - To make sure the media is already loaded before
+            - Audio and subtitle tracks creation
+            - Start playing
+        """
         # PyQt playing the first audio_track of the video by default
         #  -> reset our variable when playing new track
         cv.audio_track_played = 0
@@ -124,11 +140,12 @@ class PlaysFunc:
 
 
     def played_and_queued_track_style_update(self):
-        """ SCENARIOS TO AVOID + SOLUTIONS:
-            1, last, played track in the playlist removed
-                -> next startup: start the 1st track in the playlist
-            2, playing track, clear playlist, restart app
-                -> next startup: empty playlist displayed, no autoplay
+        """
+        SCENARIOS TO AVOID + SOLUTIONS:
+        1, last, played track in the playlist removed
+            -> next startup: start the 1st track in the playlist
+        2, playing track, clear playlist, restart app
+            -> next startup: empty playlist displayed, no autoplay
         """
         if 0 <= cv.playing_pl_last_track_index < cv.playing_pl_tracks_count:
 
@@ -157,13 +174,12 @@ class PlaysFunc:
 
     def add_to_shuffle_played_list(self):
         """
-            "Shuffle playlist" is ON:
-            The playing track is added to the "shuffle_played_tracks_list"
-            which is used
-                - to make sure the next played track is not played previously since
-                the "Shuffle" is turned on
-                - when the "Previous Track" button is clicked: to be able to go back
-                to/play the tracks played previously on the "Shuffle"
+        "Shuffle playlist" is ON:
+        The playing track is added to the "shuffle_played_tracks_list" which is used
+            - to make sure the next played track is not played previously since
+            the "Shuffle" is turned on
+            - when the "Previous Track" button is clicked: to be able to go back
+            to/play the tracks played previously on the "Shuffle"
         """
         if not cv.is_play_prev_track_clicked:
             if cv.playing_track_index not in cv.shuffle_played_tracks_list:
@@ -178,11 +194,12 @@ class PlaysFunc:
 
     @logger_check
     def play_track_second_part(self):
-        """ Media was set as source in the previous "play_track" function which triggers
-            the src / av_player / mediaStatusChanged signal calling this function
-            Otherwise the Audio and Subtitles tracks amount generated
-            before the media is loaded >> zero >> not able to switch Audio or
-            Subtitles via hotkeys
+        """
+        Media was set as source in the previous "play_track" function which triggers
+        the src / av_player / mediaStatusChanged signal calling this function
+        Otherwise the Audio and Subtitles tracks amount generated
+        before the media is loaded >> zero >> not able to switch Audio or
+        Subtitles via hotkeys
         """
         # PLAYING THE SAME FILE - support variable - more info in the "self.result_ready_action()" above
         self.track_path_previous = self.track_path
@@ -243,6 +260,7 @@ class PlaysFunc:
             br.window_queue_and_search.setWindowTitle(base_window_title)
 
 
+    @logger_check
     def play_next_track(self):
         if not cv.playing_pl_name:
             # Scenario: app started without autoplay + play next button clicked
@@ -273,12 +291,11 @@ class PlaysFunc:
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
             # REPEAT SINGLE TRACK - NO BUTTON CLICK    
-            elif (cv.repeat_playlist == 0 and
-                  br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+            elif cv.repeat_playlist == 0 and br.av_player.is_media_status_end_of_media():
                 cv.track_current_duration = 0
                 br.av_player.player.setPosition(0)
                 br.av_player.player.play()
-            # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK
+            # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK OR END OF MEDIA
             elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and
                   cv.repeat_playlist in [0,1,2]):
                 cv.playing_track_index += 1
@@ -292,7 +309,7 @@ class PlaysFunc:
             # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
             # -> HIDE BLACK SCREEN & DISPLAY LOGO         
             elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
-                  br.av_player.player.mediaStatus() == br.av_player.player.MediaStatus.EndOfMedia):
+                  br.av_player.is_media_status_end_of_media()):
                 disable_minimal_interface()
                 br.av_player.stopped = True
                 br.av_player.player.setPosition(0)
@@ -304,13 +321,14 @@ class PlaysFunc:
 
     @logger_check
     def play_decider(self):
-        """ To handle the media status changed signal when the base is played at startup
-            src / av_player / media_status_changed_action() / play_decider()
+        """
+        To handle the media status changed signal when the base is played at startup
+        src / av_player / media_status_changed_action() / play_decider()
 
-            At the end of media:
-            play_decider() >> play_next_track() >> play_track() >> play_track_second_part()
+        At the end of media:
+        play_decider() >> play_next_track() >> play_track() >> play_track_second_part()
 
-            When "play at startup" is on, the first "play_decider()" run is not displayed in the log
+        When "play at startup" is on, the first "play_decider()" run is not displayed in the log
         """
         if br.av_player.base_played_end_of_media_signal_ignored:
             # To make sure the fully played track position is set to 0
@@ -369,14 +387,14 @@ class PlaysFunc:
 
 
     def generate_playing_track_index(self, playing_track_index):
-        ''' 
+        """
         SCENARIO A - playing_track_index == None:
         - Double-click on a track in a playlist
         - Autoplay at startup
 
         SCENARIO B - playing_track_index == row number:
         - Play next/prev buttons
-        '''
+        """
         if playing_track_index == None: # Scenario - A
             cv.playing_playlist_index = cv.active_playlist_index
             update_playing_playlist_vars_and_widgets()
