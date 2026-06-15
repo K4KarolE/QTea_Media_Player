@@ -594,7 +594,7 @@ class AVPlayer(QWidget):
 
 
     def play_base_and_play_at_startup(self):
-        if not self.base_played and self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
+        if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
             self.player.play()
             self.base_played = True
             logger_sum('Base has been played - App is running - sum')
@@ -655,7 +655,8 @@ class AVPlayer(QWidget):
         elif self.is_end_of_media_validation_passed():
             br.play_funcs.auto_play_next_track()
 
-        else: self.play_base_and_play_at_startup()
+        elif not self.base_played:
+            self.play_base_and_play_at_startup()
 
 
 
