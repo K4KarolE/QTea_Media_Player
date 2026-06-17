@@ -1,3 +1,5 @@
+import sys
+
 from PyQt6.QtCore import QEvent
 from PyQt6.QtWidgets import QApplication
 
@@ -17,8 +19,8 @@ QApplication.setDesktopSettingsAware(False)
 @logger_runtime
 class MyApp(QApplication):
 
-    def __init__(self, argv):
-        super().__init__(argv)
+    def __init__(self):
+        super().__init__(sys.argv)
         self.installEventFilter(self)
         self.app_moved_while_fullscreen_mode = False
         self.applicationStateChanged.connect(lambda: self.application_state_changed_action())

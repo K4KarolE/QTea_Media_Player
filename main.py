@@ -22,7 +22,7 @@ from src import (
 def main():
     logger_sum('App started')
 
-    br.app = MyApp(sys.argv)
+    br.app = MyApp()
     br.icon = MyIcon()
     br.window = MyWindow()
     br.av_player = AVPlayer()
