@@ -397,7 +397,6 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 - OS theme overriding the app`s theme:
   - LINUX: Only affecting the header of the app
   - WINDOWS 11: None - no theme overriding
-- WINDOWS 11 only: Terminal popping up when generating thumbnails
 - WINDOWS 11 only: Video playing + stop + start another video >> the previous video's last played frame is displayed before the new video starts playing
 - `QMediaPlayer` - Memory Leak: `QMediaPlayer.setSource()` function can increase the memory usage,
 [QTBUG-36671](https://bugreports.qt.io/browse/QTBUG-36671)

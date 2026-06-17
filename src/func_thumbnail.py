@@ -3,6 +3,7 @@ from pathlib import Path
 from time import time
 import glob
 import os
+import subprocess
 
 from .class_bridge import br
 from .class_data import (
@@ -271,7 +272,9 @@ def create_thumbnails_and_update_widgets(index):
             at_seconds = get_time_frame_taken_from(vid_duration)
             target_path = Path(PATH_THUMBNAILS, thumbnail_img_name)
             ffmpeg_action = f'ffmpeg -n -loglevel error -ss {at_seconds} -i "{file_path}" {vid_scale} -frames:v 1 "{target_path}"'
-            os.system(ffmpeg_action)
+            if cv.os_linux:
+                os.system(ffmpeg_action)
+            else: subprocess.run(ffmpeg_action, creationflags=subprocess.CREATE_NO_WINDOW)
             if Path(result).is_file():
                 thumbnail_history["completed"][thumbnail_img_name] = current_time
             else:
