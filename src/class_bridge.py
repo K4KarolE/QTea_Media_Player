@@ -4,6 +4,14 @@ from dataclasses import dataclass
 
 @dataclass
 class Bridge:
+    """
+    To be able to reach all the widgets through the whole application and to avoid circular imports
+
+    Example: At the "QApplication" creation (main: br.app = MyApp()) the "MyApp" class uses
+    an instance (br.av_player) of the "AVPlayer" class which is not created at that point
+
+    A "QWidget" (AVPlayer or any) can not be created before the "QApplication" class instance (MyApp)
+    """
     app: object = None
 
     icon: object = None
