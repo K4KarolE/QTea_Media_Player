@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QListWidgetItem, QApplication
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
-from . import logger_sum
+from .logger import logger_sum
 from .class_bridge import br
 from .class_data import connection, cur, save_json
 from .class_data import cv, settings
@@ -26,12 +26,12 @@ def move_window_to_middle_of_current_screen(self):
         self.move(pos_x_middle, pos_y_middle)
 
 
-'''
+"""
 More info about the ACTIVE and PLAYING playlist
 separation in the src / cons_and_vars.py
-'''
+"""
 def update_active_playlist_vars_and_widgets():
-    ''' Used / update values after playlist change '''
+    """ Used / update values after playlist change """
     cv.active_db_table = cv.playlist_list[cv.active_playlist_index] # cv.active_db_table = playlist_3 / playlist_1 /  ..
     cv.active_pl_title = settings['playlists'][cv.active_db_table]['playlist_title']
     cv.active_pl_last_track_index = settings['playlists'][cv.active_db_table]['last_track_index']
@@ -47,7 +47,7 @@ def update_active_playlist_vars_and_widgets():
 
 
 def update_playing_playlist_vars_and_widgets():
-    ''' Used / update values after a track started in a new playlist '''
+    """ Used / update values after a track started in a new playlist """
     cv.playing_db_table = cv.playlist_list[cv.playing_playlist_index] # cv.playing_db_table = playlist_4 / playlist_2, ..
     cv.playing_pl_title = settings['playlists'][cv.playing_db_table]['playlist_title']
     cv.playing_pl_last_track_index = settings['playlists'][cv.playing_db_table]['last_track_index']
@@ -90,11 +90,11 @@ def save_active_pl_last_track_index():
 
 
 def place_record_into_db(duration, path):
-    '''
+    """
     A DB record: row_id, duration, current_duration, path
     row_id populating automatically
-    QListwidget list first index: 0 // SQLite DB first index: 1
-    '''
+    QListWidget list first index: 0 // SQLite DB first index: 1
+    """
     cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.add_track_to_db_table), (duration, 0, str(path)))
 
 def save_db():
@@ -102,14 +102,14 @@ def save_db():
 
 
 def update_raw_current_duration_db(raw_current_duration, list_row_id):
-    '''
-        When the function is used:
-        If the `Continue playback` is enabled,
-        every 5 seconds the duration of the currently
-        playing track is saved, so the next startup
-        the track can be played from them latest point*
-        * = -(0-5) seconds
-    '''
+    """
+    When the function is used:
+    If the `Continue playback` is enabled,
+    every 5 seconds the duration of the currently
+    playing track is saved, so the next startup
+    the track can be played from them latest point*
+    * = -(0-5) seconds
+    """
     cur.execute("UPDATE {0} SET current_duration = {1} WHERE row_id = {2}".format(cv.playing_db_table, raw_current_duration, list_row_id+1))
     connection.commit()
 
@@ -234,10 +234,10 @@ def add_new_list_item(new_item_text, list_widget, align_center = None, track_pat
 
 
 def add_queue_window_list_widgets_header(new_item, list_widget):
-    '''
-        Used to generate the queue playlist first row, titles of the columns:
-        Order Number | Track title | Playlist | Duration
-    '''
+    """
+    Used to generate the queue playlist first row, titles of the columns:
+    Order Number | Track title | Playlist | Duration
+    """
     list_item_size = QSize()
     list_item_size.setHeight(25)
     list_item_size.setWidth(0)
@@ -286,10 +286,10 @@ def update_duration_sum_var_after_multiple_tracks_remove(row_min, row_max):
 
 def queue_window_add_track(row_index: int = None):
     """
-        On the (main window / any playlist) a track
-        added to the queue --> track`s information populating
-        on the Queue & Search window / Queue tab / queue list:
-        Order Number | Track title | Playlist | Duration
+    On the (main window / any playlist) a track
+    added to the queue --> track`s information populating
+    on the Queue & Search window / Queue tab / queue list:
+    Order Number | Track title | Playlist | Duration
     """
     if row_index is None:
         title = Path(cv.active_pl_name.currentItem().track_path).stem
@@ -305,12 +305,12 @@ def queue_window_add_track(row_index: int = None):
 
 
 def queue_tab_add_track_from_search_tab(playlist, track_index):
-    ''' 
-        On the Queue & Search window / Search tab / search result 
-        a track added to the queue --> track`s information
-        populating on the Queue tab / queue list:
-        Order Number | Track title | Playlist | Duration
-    '''
+    """
+    On the Queue & Search window / Search tab / search result
+    a track added to the queue --> track`s information
+    populating on the Queue tab / queue list:
+    Order Number | Track title | Playlist | Duration
+    """
     playlist_title = cv.playlist_widget_dic[playlist]['playlist_title']
     name_list_widget = cv.playlist_widget_dic[playlist]['name_list_widget'].item(track_index)
     title = Path(name_list_widget.track_path).stem
@@ -323,13 +323,13 @@ def queue_tab_add_track_from_search_tab(playlist, track_index):
 
 
 def queue_window_remove_track(current_queue_index):
-    '''
-        Remove de-queued track from the
-        Queue & Search window / Queue tab / queue list
-    
-        +1: Queue playlist first row, titles of the columns:
-        Order Number | Track title | Playlist | Duration
-    '''
+    """
+    Remove de-queued track from the
+    Queue & Search window / Queue tab / queue list
+
+    +1: Queue playlist first row, titles of the columns:
+    Order Number | Track title | Playlist | Duration
+    """
     current_window_queue_index = current_queue_index + 1    
     for item in cv.queue_widget_dic:
         cv.queue_widget_dic[item]['list_widget'].takeItem(current_window_queue_index)
@@ -341,17 +341,18 @@ def queue_window_remove_track(current_queue_index):
 
 
 def queue_add_remove_track():
-    """queue_tracking_title - unique value pair/list to track the queued records
-        queue_tracking_title = [current playlist, current row/track index] = [playlist_3, 6]
-        queue_playlists_list = [queue_tracking_title 1, queue_tracking_title 2, ...]
+    """
+    queue_tracking_title - unique value pair/list to track the queued records
+    queue_tracking_title = [current playlist, current row/track index] = [playlist_3, 6]
+    queue_playlists_list = [queue_tracking_title 1, queue_tracking_title 2, ...]
 
-        queue_playlists_list - collecting all the playlist where at least one track is queued
-        queue_playlists_list = [playlist_5, playlist_2, ..]
+    queue_playlists_list - collecting all the playlist where at least one track is queued
+    queue_playlists_list = [playlist_5, playlist_2, ..]
 
-        add record to queue -> queue_tracking_title generated -> added to the queue_playlists_list
-                            -> current playlist added to the queue_playlists_list
-                            -> queue list widget text/order number update
-                            -> list widgets style update
+    add record to queue -> queue_tracking_title generated -> added to the queue_playlists_list
+                        -> current playlist added to the queue_playlists_list
+                        -> queue list widget text/order number update
+                        -> list widgets style update
     """
     if is_track_selection_multiple():
         queue_add_remove_multiple_tracks()
@@ -452,12 +453,13 @@ def queue_add_remove_single_track():
                 update_queued_track_style(cv.current_track_index)
 
             # THUMBNAIL VIEW
-            """ Before a track can be queued in the thumbnail view (or in
-                the standard playlist; queue list and search list are differ)
-                has to be selected >> "selected thumbnail style" will be
-                still in place even when the track got queued
-                Once another thumbnail is selected the "queued thumbnail" style"
-                will be applied to the queued track
+            """ 
+            Before a track can be queued in the thumbnail view (or in
+            the standard playlist; queue list and search list are differ)
+            has to be selected >> "selected thumbnail style" will be
+            still in place even when the track got queued
+            Once another thumbnail is selected the "queued thumbnail" style"
+            will be applied to the queued track
             """
             if thumbnail_widget:
                 thumbnail_widget.is_queued = True
@@ -605,9 +607,9 @@ def update_dequeued_track_thumbnail_from_queue_window(playlist: str, track_index
         thumbnail_widget.set_queue_number(None)
         thumbnail_widget.is_queued = False
         """
-            If it is playing >> stays playing thumbnail style
-            If it is selected or selected and playing >> stays selected thumbnail style
-            Otherwise >> default thumbnail style
+        If it is playing >> stays playing thumbnail style
+        If it is selected or selected and playing >> stays selected thumbnail style
+        Otherwise >> default thumbnail style
         """
         if not thumbnail_widget.is_playing and not thumbnail_widget.is_selected:
             thumbnail_widget.set_default_thumbnail_style()
@@ -719,9 +721,10 @@ def clear_multi_selection_when_track_starts_inside_the_selection():
 
 
 def clear_multi_selection():
-    """ Used in the "src / list_widget_playlists" context menu and
-        before switching to thumbnail view via Thumbnail view button
-        action: "src / buttons / button_thumbnail_clicked()"
+    """
+    Used in the "src / list_widget_playlists" context menu and
+    before switching to thumbnail view via Thumbnail view button
+    action: "src / buttons / button_thumbnail_clicked()"
     """
     if is_track_selection_multiple():
         cv.active_pl_name.clearSelection()
@@ -850,9 +853,10 @@ def clear_queue_update_all_occurrences():
 
 
 def clear_queue_update_for_current_playlist():
-    """ Used in the context menu for both standard playlist and thumbnail view
-        It is a modified version of the "queue_add_remove_multiple_tracks()"
-        function from above (src / func_coll / .)
+    """
+    Used in the context menu for both standard playlist and thumbnail view
+    It is a modified version of the "queue_add_remove_multiple_tracks()"
+    function from above (src / func_coll / .)
     """
     queued_items_row_index_list = []
     for track_info in cv.queue_tracks_list:
@@ -964,12 +968,12 @@ def disable_minimal_interface():
 
 def clear_playlist_at_playlist_remove_action(playlist_name: str):   # playlist_name = playlist_3 / ..
     """
-        Used in "src / window_settings / playlists_fields_to_save()" when
-        the playlist is removed ("Settings window / Playlists": title removed + "Save" button clicked)
-        and the "cv.clear_playlist_at_playlist_remove" boolean is enabled via
-        "Settings window / General / Automatically clear playlist when it is removed" field
+    Used in "src / window_settings / playlists_fields_to_save()" when
+    the playlist is removed ("Settings window / Playlists": title removed + "Save" button clicked)
+    and the "cv.clear_playlist_at_playlist_remove" boolean is enabled via
+    "Settings window / General / Automatically clear playlist when it is removed" field
 
-        The "queue" and "playing playlist" validations actioned before this function is called
+    The "queue" and "playing playlist" validations actioned before this function is called
     """
     if cv.playlist_widget_dic[playlist_name]['name_list_widget'].count() > 0:
         # DB
