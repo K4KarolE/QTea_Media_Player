@@ -23,11 +23,12 @@ from .message_box import MyMessageBoxError
 
 
 class ThumbnailWidget(QWidget):
-    """ A thumbnail widget represents one media (video, audio)
-        It contains a square frame, an image, the title of the media and the queue number placeholder (or the number)
-        Audio: thumbnail widget contains the default audio icon which not related to the audio file
-        Video: thumbnail widget contains an image generated from the video if possible, if not, it holds the default
-        video icon
+    """
+    A thumbnail widget represents one media (video, audio)
+    It contains a square frame, an image, the title of the media and the queue number placeholder (or the number)
+    Audio: thumbnail widget contains the default audio icon which not related to the audio file
+    Video: thumbnail widget contains an image generated from the video if possible, if not, it holds the default
+    video icon
     """
     def __init__(self, file_name, index):
         super().__init__()
@@ -83,8 +84,8 @@ class ThumbnailWidget(QWidget):
 
 
     def eventFilter(self, source, event):
-        """ ContextMenu triggered by the right click
-            on the thumbnail widget
+        """
+        To compile the context menu, displayed once right-clicked on a thumbnail widget
         """
         if event.type() == QEvent.Type.ContextMenu:
             menu = QMenu()
@@ -124,6 +125,22 @@ class ThumbnailWidget(QWidget):
 
 
     def context_menu_clicked(self, q):
+        """
+        Context menu displayed once right-clicked on a thumbnail widget
+
+        Why not to use "match-case" statement instead of "if/elif q.text() == list(self.context_menu_dic)[1]":
+        The match-case statement does not allow indexing, instead of simple value comparisons.
+
+        ERROR:
+        match q.text()
+            case list(self.context_menu_dic)[1]:    # [1] >> issue
+                to_do
+
+        WORKING, but losing the "match-case" syntax simplicity:
+        match q.text()
+            case x if x == list(self.context_menu_dic)[1]:      # x if x ==
+                to_do
+        """
         # PLAY
         if q.text() in ['Play', 'Pause']:
             try:
@@ -207,15 +224,17 @@ class ThumbnailWidget(QWidget):
         cv.thumbnail_widget_resize_and_move_to_pos_func_holder()
 
     def mousePressEvent(self, a0):
-        """ Thumbnail playlist change (new widget selected / double-clicked) >>
-            standard playlist change >> thumbnail playlist style update
-            via src / func_thumbnail / update_thumbnail_style_at_row_change
+        """
+        Thumbnail playlist change (new widget selected / double-clicked) >>
+        standard playlist change >> thumbnail playlist style update
+        via src / func_thumbnail / update_thumbnail_style_at_row_change
         """
         cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
-        """ mousePressEvent() / setCurrentRow() + mouseDoubleClickEvent()
-            >> using the standard playlist to play the track via thumbnail
+        """
+        mousePressEvent() / setCurrentRow() + mouseDoubleClickEvent()
+        >> using the standard playlist to play the track via thumbnail
         """
         br.button_play_pause.button_play_pause_via_list()
 

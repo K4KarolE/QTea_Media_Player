@@ -90,28 +90,30 @@ class MyListWidget(QListWidget):
 
 
     def set_multi_selection_settings(self):
-        """ Applied once the playlist is created in src / playlists / playlists_creation()
-            Used to sync the multi selected rows between the playlist columns (different playlist list widgets):
-            active_pl_name, active_pl_queue, active_pl_duration
+        """
+        Applied once the playlist is created in src / playlists / playlists_creation()
+        Used to sync the multi selected rows between the playlist columns (different playlist list widgets):
+        active_pl_name, active_pl_queue, active_pl_duration
         """
         self.itemSelectionChanged.connect(lambda: self.selection_changed_multi_selection_action())
 
 
     def selection_changed_multi_selection_action(self):
-        """ In the used playlist column (one of list widgets: active_pl_name, active_pl_queue, active_pl_duration)
-            the multi selection is automatically applied once the user using the SHIFT key and click combo
-            This function is used to sync the multi selection between the rest of the playlist list widgets
-            The "is_multi_row_selection_sync_needed" variable helps to avoid recursive selection
+        """
+        In the used playlist column (one of list widgets: active_pl_name, active_pl_queue, active_pl_duration)
+        the multi selection is automatically applied once the user using the SHIFT key and click combo
+        This function is used to sync the multi selection between the rest of the playlist list widgets
+        The "is_multi_row_selection_sync_needed" variable helps to avoid recursive selection
 
-            Why not use only the "itemSelectionChanged" signal for row and selection change
-            instead of the "src/playlists/currentRowChanged" + "self.itemSelectionChanged" + "self.clicked" signals?
+        Why not use only the "itemSelectionChanged" signal for row and selection change
+        instead of the "src/playlists/currentRowChanged" + "self.itemSelectionChanged" + "self.clicked" signals?
 
-            The "currentRowChanged" and "self.clicked" signals are way faster than the "itemSelectionChanged" signal:
-            A,
-            Clicking inside / outside an existing selection >> clears the selection apart from the current row by
-            default, but the "self.selectedItems()" list still holds the selected list widgets this point
-            B, Creating a selection >> triggers the "currentRowChanged" signal, but the "self.selectedItems()" list
-            still NOT holds the selected list widgets at this point
+        The "currentRowChanged" and "self.clicked" signals are way faster than the "itemSelectionChanged" signal:
+        A,
+        Clicking inside / outside an existing selection >> clears the selection apart from the current row by
+        default, but the "self.selectedItems()" list still holds the selected list widgets this point
+        B, Creating a selection >> triggers the "currentRowChanged" signal, but the "self.selectedItems()" list
+        still NOT holds the selected list widgets at this point
         """
         if (self.is_multi_row_selection_sync_needed and len(self.selectedItems()) > 1 and
                 not cv.is_multi_selected_drag_drop_in_action):
@@ -132,22 +134,24 @@ class MyListWidget(QListWidget):
 
 
     def sort_selected_items_and_gen_row_index_list(self):
-        """ The multi selection direction matters
-            If the first selected list widget item`s row number smaller than the
-            last selected item`s row number (selecting upwards), the first element
-            of the "list_widget.selected_items" will not be in order:
-            "list_widget.selected_items" by row number example: [13, 9, 10, 11, 12]
-       """
+        """
+        The multi selection direction matters
+        If the first selected list widget item`s row number smaller than the
+        last selected item`s row number (selecting upwards), the first element
+        of the "list_widget.selected_items" will not be in order:
+        "list_widget.selected_items" by row number example: [13, 9, 10, 11, 12]
+        """
         self.selected_items.sort(key=lambda x: self.row(x))
         self.selected_items_row_index_list = [self.row(n) for n in self.selected_items]
 
 
     def mouseReleaseEvent(self, event):
-        """ Once clicked outside a multi selection >> the multi selection will be
-            reduced to a single row / single selection >> to make sure the support selection lists
-            mirror this change / lists' values have been removed
-            Otherwise when the current, single selected row in the previous multi row selection interval
-            >> the row(name, queue, duration) style will not be synced via "playlists / row_changed_sync_pl()"
+        """
+        Once clicked outside a multi selection >> the multi selection will be
+        reduced to a single row / single selection >> to make sure the support selection lists
+        mirror this change / lists' values have been removed
+        Otherwise when the current, single selected row in the previous multi row selection interval
+        >> the row(name, queue, duration) style will not be synced via "playlists / row_changed_sync_pl()"
         """
         if self.currentRow() not in self.selected_items_row_index_list:
             cv.active_pl_name.selected_items_row_index_list = []
@@ -155,10 +159,11 @@ class MyListWidget(QListWidget):
             cv.active_pl_duration.selected_items_row_index_list = []
 
 
-    """ The "keyPressEvent" and "keyReleaseEvent" functions for avoid using
-        non-continuous selection via "Control key" + "left click"
-        Playlist actions like move, delete selected items are created for
-        continuous selection only (for now)
+    """
+    The "keyPressEvent" and "keyReleaseEvent" functions for avoid using
+    non-continuous selection via "Control key" + "left click"
+    Playlist actions like move, delete selected items are created for
+    continuous selection only (for now)
     """
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Control:
@@ -178,8 +183,8 @@ class MyListWidget(QListWidget):
 
 
     def eventFilter(self, source, event):
-        """ ContextMenu triggered by the right click
-            on the list widget
+        """
+        To compile the context menu, displayed once right-clicked on the non-empty playlist
         """
         if event.type() == QEvent.Type.ContextMenu and cv.active_pl_tracks_count:
             menu = QMenu()
@@ -220,6 +225,22 @@ class MyListWidget(QListWidget):
 
 
     def context_menu_clicked(self, q):
+        """
+        Context menu displayed once right-clicked on the non-empty playlist
+
+        Why not to use "match-case" statement instead of "if/elif q.text() == list(self.context_menu_dic)[1]":
+        The match-case statement does not allow indexing, instead of simple value comparisons.
+
+        ERROR:
+        match q.text()
+            case list(self.context_menu_dic)[1]:    # [1] >> issue
+                to_do
+
+        WORKING, but losing the "match-case" syntax simplicity:
+        match q.text()
+            case x if x == list(self.context_menu_dic)[1]:      # x if x ==
+                to_do
+        """
         # PLAY
         if q.text() in ['Play', 'Pause']:
             try:

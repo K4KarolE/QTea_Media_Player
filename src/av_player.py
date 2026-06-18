@@ -27,14 +27,13 @@ from .func_coll import (
 from .logger import logger, logger_runtime, logger_sum
 from .message_box import MyMessageBoxError
 
-'''
+"""
 PLAY EMPTY SOUND WORKAROUND (self.base_played)
 - At least one file needs to be played from start to finish
 before be able to switch tracks without crashing:
     - At the AVPlayer class instance creation, dummy "song" loaded, played (<1s, no sound)
     - After the 1st dummy track played, no error while switching media
-- It is solved in `PyQt 6.10` - see `PyQt version history` section in README
-'''
+"""
 @logger_runtime
 class AVPlayer(QWidget):
     def __init__(self):
@@ -94,7 +93,7 @@ class AVPlayer(QWidget):
                 'icon': None,
                 'menu_sub': '',
                 'audio_tracks': []
-                },
+            },
             f'{self.audio_device_menu_title}': {
                 'icon': None,
                 'menu_sub': '',
@@ -104,18 +103,18 @@ class AVPlayer(QWidget):
                 'icon': None,
                 'menu_sub': '',
                 'subtitle_tracks': []
-                },
+            },
             f'{self.full_screen_menu_title}': {
                 'icon': None,
                 'menu_sub': '',
                 'screens': [],
                 'screens_pos_x': []
-                },
+            },
             'Quit': {'icon': br.icon.quit},
-            }
-
+        }
     @logger_runtime
     def set_base_track_as_source(self):
+        """ More information above the class """
         self.player.setSource(QUrl.fromLocalFile('skins/base.mp3'))
 
 
@@ -138,7 +137,6 @@ class AVPlayer(QWidget):
 
 
     def eventFilter(self, source, event):
-
         if source == self.video_output:
             if event.type() == QEvent.Type.ContextMenu:
 
@@ -270,6 +268,22 @@ class AVPlayer(QWidget):
 
 
     def context_menu_clicked(self, q):
+        """
+        Context menu displayed once right-clicked on the active video area (video in playing or paused state)
+
+        Why not to use "match-case" statement instead of "if/elif q.text() == list(self.context_menu_dic)[1]":
+        The match-case statement does not allow indexing, instead of simple value comparisons.
+
+        ERROR:
+        match q.text()
+            case list(self.context_menu_dic)[1]:    # [1] >> issue
+                to_do
+
+        WORKING, but losing the "match-case" syntax simplicity:
+        match q.text()
+            case x if x == list(self.context_menu_dic)[1]:      # x if x ==
+                to_do
+        """
         audio_tracks_list = self.context_menu_dic[self.audio_track_menu_title]['audio_tracks']
         audio_devices_list = self.context_menu_dic[self.audio_device_menu_title]['audio_devices']
         subtitle_tracks_list = self.context_menu_dic[self.subtitle_track_menu_title]['subtitle_tracks']
@@ -347,13 +361,14 @@ class AVPlayer(QWidget):
 
 
     def generate_subtitle_track_title(self, sub_track):
-        ''' QMediaMetaData --> Subtitle track info
-            Examples:
-                Hungarian - forced[sub]
-                Hungarian - [sub]
-                English - [sub]
-                English - SDH[sub]
-        '''
+        """
+        QMediaMetaData --> Subtitle track info
+        Examples:
+            Hungarian - forced[sub]
+            Hungarian - [sub]
+            English - [sub]
+            English - SDH[sub]
+        """
         title = sub_track.stringValue(sub_track.Key.Title)
         subtitle_language = sub_track.stringValue(sub_track.Key.Language)
 
@@ -365,11 +380,12 @@ class AVPlayer(QWidget):
 
 
     def generate_audio_track_title(self, audio_track):
-        ''' QMediaMetaData --> Audio track info
-            Examples:
-                Hungarian - AC3 5.1 @ 448 kbps
-                English - DTS 5.1 @ 1510 kbps
-        '''
+        """
+        QMediaMetaData --> Audio track info
+        Examples:
+            Hungarian - AC3 5.1 @ 448 kbps
+            English - DTS 5.1 @ 1510 kbps
+        """
         title = audio_track.stringValue(audio_track.Key.Title)
         audio_language = audio_track.stringValue(audio_track.Key.Language)
 
@@ -382,12 +398,12 @@ class AVPlayer(QWidget):
 
     def full_screen_onoff_toggle(self):
         """ 
-            Used when double-clicked on the video area
-            1st "if" scenario:
-                - full screen on another display
-                - video area hidden in the app
-            >> video area needs to be shown before moving back the video output
-            br.image_logo.hide(): fullscreen video was on the additional display
+        Used when double-clicked on the video area
+        1st "if" scenario:
+            - full screen on another display
+            - video area hidden in the app
+        >> video area needs to be shown before moving back the video output
+        br.image_logo.hide(): fullscreen video was on the additional display
         """
         if not self.video_area_visible:
             br.button_toggle_video.button_toggle_video_clicked()
@@ -404,9 +420,10 @@ class AVPlayer(QWidget):
 
 
     def full_screen_to_screen_toggle(self):
-        """ Used in the right-clicked on the
-            video area / Full Screen / available screen(s)
-            br.image_logo.show(): fullscreen video on the additional display
+        """
+        Used in the right-clicked on the
+        video area / Full Screen / available screen(s)
+        br.image_logo.show(): fullscreen video on the additional display
         """
         self.video_output.setFullScreen(False)
         self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
@@ -415,11 +432,11 @@ class AVPlayer(QWidget):
 
 
     """
-        Covering screen updates like:
-        1: app on primary screen, full screen video on secondary screen
-            >> secondary screen removed
-        2: app on primary screen, full screen video on secondary screen
-            >> primary screen removed
+    Covering screen updates like:
+    1: app on primary screen, full screen video on secondary screen
+        >> secondary screen removed
+    2: app on primary screen, full screen video on secondary screen
+        >> primary screen removed
     """
     def screen_primary_changed(self):
         """ Triggered by the primaryScreenChanged signal """
@@ -428,8 +445,9 @@ class AVPlayer(QWidget):
         self.primary_screen_changed = True
 
     def screen_back_to_default(self):
-        """ Triggered by the screenRemoved signal
-            br.image_logo.show(): fullscreen video was on the additional display
+        """
+        Triggered by the screenRemoved signal
+        br.image_logo.show(): fullscreen video was on the additional display
         """
         if not self.primary_screen_changed:
             if self.video_output.isVisible():
@@ -444,12 +462,12 @@ class AVPlayer(QWidget):
 
 
     def text_display_on_video(self, time, text):
-        ''' 
-            To display text as a subtitle
-            Muted, Repeat, Shuffle: src / buttons.py
-            Volume: src / sliders.py / MyVolumeSlider class / update_volume()
-            Track title: src / func_play_coll.py / PlaysFunc class / play_track()
-        '''
+        """
+        To display text as a subtitle
+        Muted, Repeat, Shuffle: src / buttons.py
+        Volume: src / sliders.py / MyVolumeSlider class / update_volume()
+        Track title: src / func_play_coll.py / PlaysFunc class / play_track()
+        """
         if cv.subtitle_tracks_amount: self.player.setActiveSubtitleTrack(-1)
         self.video_output.videoSink().setSubtitleText(text)
         self.timer.start(time)
@@ -528,9 +546,7 @@ class AVPlayer(QWidget):
 
 
     def generate_video_resolution_from_meta_data(self):
-        """ self.player.hasVideo() validation placed before
-            this function is called
-        """
+        """ The "self.player.hasVideo()" validation placed before this function is called """
         vid_res_string = self.player.metaData().stringValue(QMediaMetaData.Key.Resolution)
         vid_res_list = vid_res_string.split('x')
         if len(vid_res_list) == 2:
@@ -553,19 +569,21 @@ class AVPlayer(QWidget):
 
 
     def resize_window_minimal_interface_enabled(self):
-        """ Avoiding black bars around the video area
-            in the Minimal Interface mode via height
-            adjusted to the window width
-            In use in every "window size toggle" position
+        """
+        Avoiding black bars around the video area
+        in the Minimal Interface mode via height
+        adjusted to the window width
+        In use in every "window size toggle" position
         """
         if cv.minimal_interface_enabled:
             self.resize_window_height_to_match_video_res_ratio()
 
 
     def resize_window_height_to_match_video_res_ratio(self):
-        """ Avoiding black bars around the video area
-            in the Minimal Interface mode by default and
-            in non Min.Int. mode via hotkey only
+        """
+        Avoiding black bars around the video area
+        in the Minimal Interface mode by default and
+        in non Min.Int. mode via hotkey only
         """
         if cv.minimal_interface_enabled:
             player_bottom_section_height = 0
@@ -621,20 +639,21 @@ class AVPlayer(QWidget):
 
 
     def media_status_changed_action(self):
-        """ DURATION
-            Set player`s duration to the latest point
-            more info about the cv.counter_for_duration variable:
-            src / func_play_coll / PlaysFunc
+        """
+        DURATION
+        Set player`s duration to the latest point
+        more info about the cv.counter_for_duration variable:
+        src / func_play_coll / PlaysFunc
 
-            PLAY TRACK SECOND PART
-            Start playing a track >> src / func_play_coll / PlaysFunc / play_track()
-            >> br.av_player.player.setSource
-            >> mediaStatusChanged signal >> media_status_changed_action()
-            >> br.play_funcs.play_track_second_part() includes:
-                - InvalidMedia handling
-                - Audio and Subtitle tracks amount creation
-                - Play
-                - etc.
+        PLAY TRACK SECOND PART
+        Start playing a track >> src / func_play_coll / PlaysFunc / play_track()
+        >> br.av_player.player.setSource
+        >> mediaStatusChanged signal >> media_status_changed_action()
+        >> br.play_funcs.play_track_second_part() includes:
+            - InvalidMedia handling
+            - Audio and Subtitle tracks amount creation
+            - Play
+            - etc.
         """
         if self.is_loaded_media_validation_passed():
             logger_sum("Media status: Loaded media")
@@ -662,26 +681,22 @@ class AVPlayer(QWidget):
 
 
 
-""" 
-The class used for duration calculation only
-
-LEARNED:
-QWidget can not be created earlier than the app = QApplication(sys.argv)
-"""
+@logger_runtime
 class TrackDuration(QWidget):
-
+    """ The class used for duration calculation only """
     def __init__(self):
         super().__init__()
         self.player = QMediaPlayer()
         self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action_duration())
 
     def media_status_changed_action_duration(self):
-        """ Media is loaded > duration is ready to be generated
-            in the src / thread_add_media
+        """
+        Media is loaded > duration is ready to be generated
+        in the src / thread_add_media
 
-            Invalid media status triggers once for adding multiple media at the same time
-            and triggers twice for adding single media
-            It is handled in the "src / thread_add_media / return_thread_generated_values"
+        Invalid media status triggers once for adding multiple media at the same time
+        and triggers twice for adding single media
+        It is handled in the "src / thread_add_media / return_thread_generated_values"
         """
         if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
             br.window.thread_add_media.return_thread_generated_values()
