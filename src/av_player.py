@@ -1,4 +1,4 @@
-""" AVPlayer and TrackDuration classes creation """
+""" AVPlayer and TrackDuration classes """
 
 from PyQt6.QtMultimedia import (
     QAudioOutput,
@@ -29,10 +29,24 @@ from .message_box import MyMessageBoxError
 
 """
 PLAY EMPTY SOUND WORKAROUND (self.base_played)
-- At least one file needs to be played from start to finish
-before be able to switch tracks without crashing:
-    - At the AVPlayer class instance creation, dummy "song" loaded, played (<1s, no sound)
+At least one media file needs to be played from start to
+finish before be able to switch tracks without crashing:
+    - Once the app is running >> "src / application / applicationStateChanged signal
+        >> application_state_changed_action() / br.av_player.set_base_track_as_source() 
+        >> the dummy "song" loaded, played (<1s, no sound)
     - After the 1st dummy track played, no error while switching media
+
+The same issue, another workaround in Jarod Mica's GitHub/PySide6 repo:
+https://github.com/JarodMica/audiobook_maker/blob/5790f7eeb2eaa4b2ccd92ba497ba75f61ba9ab64/src/view.py#L1685
+
+From the above repo:
+def release_media_player_resources(self):
+    # Reinitialize the media player to release any file handles
+    # This way is NECESSARY to prevent the gui from freezing (for some unknown reason)
+    self.media_player = QMediaPlayer()
+    self.audio_output = QAudioOutput()
+    self.media_player.setAudioOutput(self.audio_output)
+    self.media_player.mediaStatusChanged.connect(self.on_audio_finished)
 """
 @logger_runtime
 class AVPlayer(QWidget):
@@ -137,6 +151,10 @@ class AVPlayer(QWidget):
 
 
     def eventFilter(self, source, event):
+        """
+        To compile the context menu
+        Displayed once right-clicked on the active video area (video in playing or paused state)
+        """
         if source == self.video_output:
             if event.type() == QEvent.Type.ContextMenu:
 
