@@ -636,9 +636,11 @@ def remove_track_from_playlist():
 
         # SCENARIO: removing playing track on standard pl and switching to thumbnail view
         # to make sure the playing thumbnail style is not used
-        if cv.playing_track_index in range(row_min, row_max+1):
+        if (cv.playing_track_index in range(row_min, row_max+1) and
+            br.av_player.is_current_pl_playing_pl_with_playing_or_paused_state()):
             cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed'] = False
             br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
+            br.button_stop.button_stop_clicked()
 
         # PLAYLIST
         for row_index in reversed(range(row_min, row_max+1)):
@@ -988,14 +990,9 @@ def clear_playlist_at_playlist_remove_action(playlist_name: str):   # playlist_n
 
 
 def stop_play_when_playing_track_removed(is_clear_playlist: bool):
-     if _is_current_actively_playing_playlist():
+     if br.av_player.is_current_pl_playing_pl_with_playing_or_paused_state():
         if is_clear_playlist:
             br.button_stop.button_stop_clicked()
         else:
             if cv.current_track_index == cv.playing_track_index:
                 br.button_stop.button_stop_clicked()
-
-def _is_current_actively_playing_playlist():
-    return (cv.active_db_table == cv.playing_db_table and
-             (br.av_player.player.isPlaying() or br.av_player.paused))
-

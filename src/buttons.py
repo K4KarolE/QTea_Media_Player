@@ -100,7 +100,7 @@ class MyButtons(QPushButton):
 
         # Playing track in the playlist
         if clear_playlist_needed and cv.conf_msg_at_clear_playlist_with_playing_track:
-            if cv.active_db_table == cv.playing_db_table and br.av_player.player.isPlaying():
+            if br.av_player.is_current_pl_playing_pl_with_playing_or_paused_state():
                 if not MyMessageBoxWarning('played').clicked_continue():
                     clear_playlist_needed = False
 
@@ -134,7 +134,7 @@ class MyButtons(QPushButton):
             cv.shuffle_played_tracks_list.clear()
         # WINDOW TITLE
         if cv.active_db_table == cv.playing_db_table:
-            if br.av_player.player.isPlaying() or br.av_player.paused:
+            if br.av_player.is_playing_or_paused():
                 br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
             else:
                 br.window.setWindowTitle('QTea Media Player')

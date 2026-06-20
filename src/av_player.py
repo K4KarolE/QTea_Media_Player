@@ -136,6 +136,10 @@ class AVPlayer(QWidget):
         return self.player.isPlaying() or self.paused
 
 
+    def is_current_pl_playing_pl_with_playing_or_paused_state(self):
+        return cv.active_db_table == cv.playing_db_table and self.is_playing_or_paused()
+
+
     def set_audio_output(self):
         """
         Triggered when the audio output device has changed

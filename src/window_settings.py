@@ -568,7 +568,7 @@ class MySettingsWindow(QWidget):
                     not new_playlist_title and
                     prev_playlist_title and
                     playlist_index == cv.playing_playlist_index and
-                    (br.av_player.player.isPlaying() or br.av_player.paused)
+                    br.av_player.is_playing_or_paused()
                     ):
                         cv.playlist_widget_dic[pl]['line_edit'].setText(prev_playlist_title)
                         MyMessageBoxError(
