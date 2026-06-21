@@ -189,7 +189,10 @@ thumbnail_history = open_thumbnail_history_json()
 
 
 def get_all_playlist_path_from_db(playlist_n):
-    connection = sqlite3.connect('../../../playlist.db')
+    if sys.platform == 'linux':
+        db_name = 'playlist_db_linux.db'
+    else: db_name = 'playlist_db_win.db'
+    connection = sqlite3.connect(f'{path_project}/{db_name}')
     sql_cursor = connection.cursor()
     result_all = sql_cursor.execute("SELECT * FROM {0}".format(playlist_n)).fetchall()
     duration_list = [duration[1] for duration in result_all]
