@@ -1,4 +1,4 @@
-''' DURATION SLIDER AND VOLUME SLIDER CLASSES '''
+""" Duration slider and volume slider classes """
 
 from PyQt6.QtCore import Qt, QEvent, QPoint
 from PyQt6.QtWidgets import QSlider, QStyle, QLabel
@@ -14,7 +14,7 @@ from .logger import logger_runtime
 
 @logger_runtime
 class MySlider(QSlider):
-    ''' Duration slider '''
+    """ Duration slider """
     def __init__(self):
         super().__init__()
         self.setOrientation(Qt.Orientation.Horizontal)
@@ -46,7 +46,7 @@ class MySlider(QSlider):
                             "border-radius: 4px;"
                             "}"
                         )
-        br.av_player.player.positionChanged.connect(self.play_slider_set_value)
+        br.av_player.player.positionChanged.connect(self.player_position_changed_action)
 
         self.hover_over_duration_info_label = QLabel(self)
         self.hover_over_duration_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -63,14 +63,13 @@ class MySlider(QSlider):
                                                         )
 
 
-    def play_slider_set_value(self):
-        ''' PLAYER/DURATION --> SLIDER POSITION '''
+    def player_position_changed_action(self):
+        """" PLAYER/DURATION --> SLIDER POSITION """
         if br.av_player.base_played_end_of_media_signal_ignored:
-            self.setValue(br.av_player.player.position())
+                self.setValue(br.av_player.player.position())
 
 
     def eventFilter(self, source, event):
-
         if br.av_player.is_playing_or_paused():
             if event.type() == QEvent.Type.MouseButtonPress:
                 self.pressed = True
@@ -80,7 +79,7 @@ class MySlider(QSlider):
                 self.pressed = False
 
             if event.type() == QHoverEvent.Type.HoverEnter:
-                if br.av_player.player.isPlaying() or br.av_player.paused:
+                if br.av_player.is_playing_or_paused():
                     self.hover_over_duration_info_label.show()
 
             if event.type() == QHoverEvent.Type.HoverLeave:
