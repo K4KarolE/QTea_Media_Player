@@ -655,13 +655,15 @@ def remove_track_from_playlist():
         # TRACKS COUNT
         cv.active_pl_tracks_count = cv.active_pl_name.count()
 
-        # THUMBNAIL STYLE UPDATE HELPER ASSIGNMENTS
-        # In the src / playlists / row_changed_sync_pl function the
-        # cv.current_track_index = current_playlist_l.. .currentRow() assignment increasing the
-        # cv.current_track_index value with one from the second iteration when removing a track
-        # from the playlist >> causing error in the selected thumbnail tracking / thumbnail view
-        # Fixing the issue with new assignments after the list widget items removal
-        if cv.active_pl_tracks_count:
+        """
+        THUMBNAIL STYLE UPDATE HELPER ASSIGNMENTS
+        In the src / playlists / row_changed_sync_pl function the
+        cv.current_track_index = current_playlist_l.. .currentRow() assignment increasing the
+        cv.current_track_index value with one from the second iteration when removing a track
+        from the playlist >> causing error in the selected thumbnail tracking / thumbnail view
+        Fixing the issue with new assignments after the list widget items removal
+        """
+        if cv.active_pl_tracks_count and cv.active_pl_name.currentRow() != -1:
             cv.current_track_index = cv.active_pl_name.currentRow()
             cv.active_pl_name.item(cv.current_track_index).setSelected(True)
             cv.active_pl_last_selected_track_index = cv.active_pl_name.currentRow()
@@ -696,6 +698,22 @@ def remove_track_from_playlist():
                 cv.active_pl_name.item(track_row_db - 1).setText(list_name)
 
         cv.track_change_on_main_playlist_new_search_needed = True
+        set_thumbnail_generation_needed_to(True)
+
+
+def set_thumbnail_generation_needed_to(value: bool, playlist=None):
+    """
+    To make sure if media added or removed from the default playlist,
+    the next time the thumbnail button is clicked, new thumbnail page
+    is generated before it is displayed
+
+    The "playlist = cv.active_db_table" as the function argument,
+    would result "playlist = None" at startup
+    >> assignment: "playlist = cv.active_db_table" inside the function
+    """
+    if not playlist:
+        playlist = cv.active_db_table
+    cv.playlist_widget_dic[playlist]['thumbnail_window_validation']['thumbnail_generation_needed'] = value
 
 
 def is_track_selection_multiple():
@@ -996,3 +1014,10 @@ def stop_play_when_playing_track_removed(is_clear_playlist: bool):
         else:
             if cv.current_track_index == cv.playing_track_index:
                 br.button_stop.button_stop_clicked()
+
+
+def is_track_index_inside_playlist(playlist, track_index):
+    if playlist == "active_pl":
+        return -1 < track_index < cv.active_pl_tracks_count
+    else:
+        return -1 < track_index < cv.playing_pl_tracks_count
