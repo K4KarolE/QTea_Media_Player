@@ -125,16 +125,27 @@ class ThreadAddMedia(QThread):
 
         if self.track_path_list:
             self.track_path_list_action()
+            """ 
+            To select the first row once the first media is added to the playlist
+            Adding media to an empty playlist, there is no row selected by default
+            """
+            if cv.add_track_to_pl_name.currentRow() == -1:
+                cv.add_track_to_pl_name.setCurrentRow(0)
+
         else:
             cv.adding_records_at_moment = False
             if is_active_and_add_to_track_playlist_same():
                 cv.active_pl_tracks_count = cv.add_track_to_pl_name.count()
             if self.invalid_media_self_track_path_list:
+                """
+                To list all the invalid media at the end of the "add media" process
+                
+                The "invalid_media_self_track_path_list" set back to the default empty list
+                in the "self.generate_invalid_media_error_msg_text()" to make sure
+                the message window displayed only once for a single invalid media
+                otherwise it would be displayed twice
+                """
                 MyMessageBoxError('Invalid Media' , self.generate_invalid_media_error_msg_text())
-                # invalid_media_self_track_path_list set back to the default empty list
-                # in the self.generate_invalid_media_error_msg_text() to make sure
-                # the message window displayed only once for a single invalid media
-                # otherwise it would be displayed twice
 
 
     def track_path_list_action(self):
