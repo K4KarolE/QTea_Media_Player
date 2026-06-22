@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 from time import time
+import cv2
 import glob
 import os
 import subprocess
@@ -14,6 +15,7 @@ from .class_data import (
     settings
     )
 from .func_coll import cur as sql_cursor
+from .logger import logger_sum
 from .thumbnail_widget import ThumbnailWidget
 from .message_box import (
     MyMessageBoxConfirmation,
@@ -243,15 +245,7 @@ def scroll_to_active_item_thumbnail_pl():
 
 # THUMBNAIL PL
 def create_thumbnails_and_update_widgets(index):
-    """ Triggered / used via thread: src / thread_thumbnail
-    ffmpeg: https://ffmpeg.org/ffmpeg.html
-    -vf: video filter
-    -n: skip existing files
-    -loglevel error: only error messages displayed
-    -frames:v number (output): Set the number of video frames to output.
-    -ss position: when used as an input option (before -i), seeks in this input file to position.
-    """
-    vid_scale = f"-vf scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease"
+    """ Used via a thread in "src / thread_thumbnail" """
     file_path = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["file_path"]
     # AUDIO
     if Path(file_path).suffix in ['.mp3', '.flac']:
@@ -271,19 +265,78 @@ def create_thumbnails_and_update_widgets(index):
         else:
             at_seconds = get_time_frame_taken_from(vid_duration)
             target_path = Path(PATH_THUMBNAILS, thumbnail_img_name)
-            ffmpeg_action = f'ffmpeg -n -loglevel error -ss {at_seconds} -i "{file_path}" {vid_scale} -frames:v 1 "{target_path}"'
-            if cv.os_linux:
-                os.system(ffmpeg_action)
-            else: subprocess.run(ffmpeg_action, creationflags=subprocess.CREATE_NO_WINDOW)
+
+            generate_and_save_image_via_opencv_with_ffmpeg_backup(file_path, at_seconds, target_path)
+
             if Path(result).is_file():
                 thumbnail_history["completed"][thumbnail_img_name] = current_time
             else:
                 thumbnail_history["failed"][thumbnail_img_name] = current_time
                 result = "failed"
+                logger_sum(f"Error: Could not create thumbnail image for:    {Path(file_path).stem}")
     return str(result)
 
 
-# NONE / create_thumbnails_and_update_widgets()
+# THUMBNAIL PL / create_thumbnails_and_update_widgets()
+def generate_and_save_image_via_opencv_with_ffmpeg_backup(file_path, at_seconds, target_path):
+    """
+    Batch generating thumbnail images with OpenCV significantly
+    faster than with FFmpeg, for more information visit:
+        "docs / learning / get_image_from_video_with_opencv.py"
+        "docs / learning / thumbnail_view / thumbnail_img_creation_ffmpeg.py"
+    """
+    # LOAD VIDEO
+    cap = cv2.VideoCapture(file_path)
+    if not cap.isOpened():
+        if cv.is_ffmpeg_installed:
+            generate_and_save_image_via_ffmpeg(file_path, at_seconds, target_path)
+            return
+        return
+
+    # GET FRAME
+    cap.set(cv2.CAP_PROP_POS_MSEC, at_seconds * 1000)
+    ret, frame = cap.read()
+    if not ret:
+        if cv.is_ffmpeg_installed:
+            generate_and_save_image_via_ffmpeg(file_path, at_seconds, target_path)
+            return
+        return
+
+    # RESIZE FRAME
+    frame_height, frame_width, _ = frame.shape
+    frame_width_new = cv.thumbnail_img_size
+    frame_height_new = int(frame_height * frame_width_new / frame_width)
+    frame = cv2.resize(frame, (frame_width_new, frame_height_new))
+
+    # SAVE IMAGE
+    cv2.imwrite(target_path, frame)  # Save frame as an image
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+# THUMBNAIL PL / generate_and_save_image_via_opencv()
+def generate_and_save_image_via_ffmpeg(file_path, at_seconds, target_path):
+    """
+    Used when OpenCV failed to generate the thumbnail image + the user previously added FFmpeg to the system PATH
+
+    FFmpeg: https://ffmpeg.org/ffmpeg.html
+    -vf: video filter
+    -n: skip existing files
+    -loglevel error: only error messages displayed
+    -frames:v number (output): Set the number of video frames to output.
+    -ss position: when used as an input option (before -i), seeks in this input file to position.
+    """
+    at_seconds = timedelta(seconds=at_seconds)
+    vid_scale = f"-vf scale={cv.thumbnail_img_size}:{cv.thumbnail_img_size}:force_original_aspect_ratio=decrease"
+    ffmpeg_action = f'ffmpeg -n -loglevel error -ss {at_seconds} -i "{file_path}" {vid_scale} -frames:v 1 "{target_path}"'
+    if cv.os_linux:
+        os.system(ffmpeg_action)
+    else:
+        subprocess.run(ffmpeg_action, creationflags=subprocess.CREATE_NO_WINDOW)
+
+
+# THUMBNAIL PL / create_thumbnails_and_update_widgets()
 def get_time_frame_taken_from(vid_duration):
     if vid_duration:
         vid_duration = int(int(vid_duration)/1000)
@@ -295,7 +348,7 @@ def get_time_frame_taken_from(vid_duration):
             at_seconds_raw = int(vid_duration/2)
     else:
         at_seconds_raw = 0
-    return timedelta(seconds=at_seconds_raw)
+    return at_seconds_raw
 
 
 # ACTIVE PL
@@ -353,11 +406,10 @@ def thumbnail_repositioning_after_playlist_change():
 
 # ACTIVE PL
 def update_thumbnail_view_button_style_after_playlist_change():
-    if cv.is_ffmpeg_installed:
-        if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].isVisible():
-            br.button_thumbnail.set_style_thumbnail_button_active()
-        else:
-            br.button_thumbnail.set_style_settings_button()
+    if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].isVisible():
+        br.button_thumbnail.set_style_thumbnail_button_active()
+    else:
+        br.button_thumbnail.set_style_settings_button()
 
 
 # PLAYING PL
