@@ -1,11 +1,11 @@
-''' 
+"""
 SETTINGS WINDOW displayed once the settings button
 (cog icon) clicked under the playlists section
 
 TERMINOLOGY
 In the rest of the files the TABS(Playlists) has been referred as playlists, playlist_all, playlist_index, ..
 In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
-'''
+"""
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
@@ -28,7 +28,6 @@ from .func_coll import (
     clear_playlist_at_playlist_remove_action,
     inactive_track_font_style,
     move_window_to_middle_of_current_screen,
-    update_active_playlist_vars_and_widgets,
     update_playing_playlist_vars_and_widgets
     )
 from .message_box import MyMessageBoxError
