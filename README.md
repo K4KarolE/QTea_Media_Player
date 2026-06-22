@@ -44,6 +44,9 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
     - [Audio delay - LINUX only](#audio-delay---linux-only)
     - [No solution yet](#could-not-find-solution-yet)
 - [Requirements](#requirements)
+  - Python
+  - PyQt
+  - Linux
 
 
 <div align="left">
@@ -242,16 +245,12 @@ from the full screen mode.
 
 ## Thumbnail View
 ### General
-- If `FFmpeg` is installed, the `Thumbnail View` button is active under the Playlist area.
-  - Otherwise, the button is inactive and "FFmpeg installation needed" message is displayed
-once the cursor is over the button.
-  - There is more information below in the `Requirements` section.
 - Adding/removing media to/from a playlist where the `Thumbnail View` is active: automatically switching back to the 
 standard playlist view.
 - Once the `Thumbnail View` button is clicked, the thumbnail generation is running for the current playlist until
 it is completed.
   - Or the `Thumbnail View` button is clicked again "on" the same or "on" another playlist.
-- The `Thumbnail View` and standard playlist view are in sync regarding the selection and currently playing and
+- The `Thumbnail View` and standard playlist view are in sync regarding the single selection and currently playing and
 selected track style.
 ### Thumbnail generation
 - Every audio file has the same, default audio thumbnail.
@@ -437,17 +436,6 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 ### Additional dependency for Linux
 ``` sudo apt install libxcb-cursor-dev ```
 
-### FFmpeg [(link)](https://ffmpeg.org/)
-- `FFmpeg` used to generate thumbnail images from the video media
-- Without `FFmpeg`
-  - The `Thumbnail View button` is disabled
-  - The media player is still fully functioning 
-- `FFmpeg` installation:
-  - WINDOWS
-      - [Install FFmpeg on Windows 10/11](https://techtactician.com/how-to-install-ffmpeg-and-add-it-to-path-on-windows/)
-  - LINUX
-      - Via `Software Manager`
-
 ### LINUX - Install specific Python and virtual environment version
 Used:
 - [How do I install a different Python version using apt-get?](https://askubuntu.com/a/682875)
@@ -455,13 +443,13 @@ Used:
 ```
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
-sudo apt install python3.11
+sudo apt install python3.12
 ```
 ```
-sudo apt install python3.11-venv
+sudo apt install python3.12-venv
 ```
 ```
-python3.11 -m venv your_venv_name
+python3.12 -m venv your_venv_name
 ```
 
 More info: [Qt for Python - Getting Started](https://doc.qt.io/qtforpython-6/gettingstarted.html)
