@@ -164,7 +164,7 @@ class PlaysFunc:
             save_playing_playlist_and_playing_last_track_index()
 
         elif cv.playing_pl_tracks_count:  # last played track index > playlist amount
-            cv.playing_pl_last_track_index = 0
+            cv.playing_pl_last_track_index = cv.playing_pl_name.currentRow()
             self.update_new_track_style()
             save_playing_playlist_and_playing_last_track_index()
 
