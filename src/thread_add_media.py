@@ -8,8 +8,9 @@ from .class_bridge import br
 from .func_coll import (
     generate_duration_to_display,
     is_active_and_add_to_track_playlist_same,
+    set_thumbnail_generation_needed_to,
     update_add_track_to_pl_widget_vars
-    )
+)
 from .logger import logger_check
 from .message_box import MyMessageBoxError
 
@@ -45,6 +46,7 @@ class ThreadAddMedia(QThread):
 
     def run(self):
         update_add_track_to_pl_widget_vars()
+        set_thumbnail_generation_needed_to(True)
 
         #########################
         # TRACK PATH COLLECTION #
