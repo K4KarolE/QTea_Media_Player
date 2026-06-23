@@ -157,7 +157,6 @@ class PlaysFunc:
             else:
                 update_queued_track_style(cv.playing_pl_last_track_index)
 
-            update_thumbnail_style_at_play_track()
             cv.playing_pl_last_track_index = cv.playing_track_index
             if cv.active_db_table == cv.playing_db_table:
                 cv.active_pl_last_track_index = cv.playing_track_index

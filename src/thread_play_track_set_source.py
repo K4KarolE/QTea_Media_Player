@@ -1,5 +1,6 @@
 from PyQt6.QtCore import QThread, pyqtSignal
 from .class_bridge import br
+from .func_thumbnail import update_thumbnail_style_at_play_track
 
 """
     Used for separate the "style update" and "set source" functions
@@ -17,5 +18,6 @@ class ThreadPlayTrackSetSource(QThread):
         super().__init__()
 
     def run(self):
+        update_thumbnail_style_at_play_track()
         br.play_funcs.played_and_queued_track_style_update()
         self.result_ready.emit()
