@@ -37,7 +37,10 @@ class MyIcon:
                                         .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
         self.thumbnail_playing_audio = (QPixmap(f'skins/{cv.skin_selected}/audio_playing.png')
                                         .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
-        
+
+        self.thumbnail_backup = (QPixmap(f'skins/{cv.skin_selected}/queue.png')
+                                        .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
+
 
         self.speaker = QIcon(f'skins/{cv.skin_selected}/speaker.png')
         self.speaker_muted = QIcon(f'skins/{cv.skin_selected}/speaker_muted.png')
