@@ -67,7 +67,7 @@ class ThumbnailMainWindow(QScrollArea):
         return super().resizeEvent(a0)
 
     def scroll_to_current_item_active_pl(self):
-        if (not is_new_thumbnail_generation_necessary() and
+        if (not is_new_thumbnail_generation_necessary(cv.active_db_table) and
                 is_track_index_inside_playlist(cv.active_db_table, cv.current_track_index)):
             thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
             thumbnail_widget = thumbnail_widget_dic[cv.current_track_index]['widget']
