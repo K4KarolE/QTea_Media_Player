@@ -78,7 +78,7 @@ def stop_another_playlist_thumbnail_thread():
     if cv.thumbnail_db_table:
         widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
         if widgets_window.thread_thumbnails_update.isRunning() and cv.thumbnail_db_table != cv.active_db_table:
-            widgets_window.thread_thumbnails_update.terminate()
+            widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(False)
             save_thumbnail_history_json()
 
 
@@ -383,7 +383,7 @@ def stop_thumbnail_thread():
     if cv.thumbnail_db_table:
         widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
         if widgets_window.thread_thumbnails_update.isRunning():
-            widgets_window.thread_thumbnails_update.terminate()
+            widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(True)
             save_thumbnail_history_json()
 
 
