@@ -253,6 +253,13 @@ class ThumbnailWidget(QWidget):
     def update_to_playing_audio_img(self):
         self.label_image.setPixmap(br.icon.thumbnail_playing_audio)
 
+    def update_to_playing_default_img(self):
+        """
+        Till the thumbnail image is ready
+        More info below at "set_playing_thumbnail_img()"
+        """
+        self.label_image.setPixmap(br.icon.thumbnail_backup)
+
 
     def set_default_thumbnail_style(self):
         self.is_selected = False
@@ -325,7 +332,14 @@ class ThumbnailWidget(QWidget):
             self.update_to_default_video_img()
 
     def set_playing_thumbnail_img(self):
+        """
+        Last option: thumbnail generation is still running and the thumbnail image
+        is not created yet for the thumbnail widget which got double-clicked (track started playing)
+        >> dummy icon set as thumbnail till the image is ready
+        """
         if self.thumbnail_type == "audio":
             self.update_to_playing_audio_img()
         elif self.thumbnail_type == "video_failed":
             self.update_to_playing_video_img()
+        elif not self.thumbnail_type:
+            self.update_to_playing_default_img()
