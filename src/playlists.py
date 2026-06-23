@@ -19,6 +19,7 @@ from .func_coll import (
     add_new_list_item,
     generate_duration_to_display,
     generate_track_list_detail,
+    is_thumbnail_playlist_visible,
     is_track_selection_multiple,
     save_json,
     save_playing_pl_last_track_index,
@@ -150,7 +151,7 @@ class MyPlaylists(QTabWidget):
             Will sync the selection for the other 2 columns/list widgets
             in the src / list_widget_playlists
         """
-        if not self.is_current_row_in_multi_selection(list_widget):
+        if not self.is_current_row_in_multi_selection(list_widget) or is_thumbnail_playlist_visible("active_pl"):
             cv.row_change_action_counter += 1
             if cv.row_change_action_counter % 3 == 1:
                 cv.row_change_action_counter = 1

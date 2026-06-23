@@ -1021,3 +1021,9 @@ def is_track_index_inside_playlist(playlist, track_index):
         return -1 < track_index < cv.active_pl_tracks_count
     else:
         return -1 < track_index < cv.playing_pl_tracks_count
+
+
+def is_thumbnail_playlist_visible(playlist):
+    playlist = {"active_pl": cv.active_db_table,
+                "playing_pl": cv.playing_db_table}[playlist]
+    return cv.playlist_widget_dic[playlist]['thumbnail_window'].isVisible()
