@@ -11,13 +11,14 @@ from .class_data import cv
 from .class_bridge import br
 from .func_coll import (
     active_track_font_style,
-    inactive_track_font_style,
     clear_queue_update_all_occurrences,
     clear_queue_update_for_current_playlist,
+    inactive_track_font_style,
     open_track_folder_via_context_menu,
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
-    remove_track_from_playlist
+    remove_track_from_playlist,
+    set_thumbnail_generation_needed_to
     )
 from .message_box import MyMessageBoxError
 
@@ -183,7 +184,7 @@ class ThumbnailWidget(QWidget):
                 if self.index == cv.playing_track_index:
                     cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed'] = False
                 remove_track_from_playlist()
-                self.deleteLater()
+                set_thumbnail_generation_needed_to(False)
                 self.remove_thumbnail_track_grouped()
             except:
                 MyMessageBoxError(
@@ -211,17 +212,44 @@ class ThumbnailWidget(QWidget):
                     'The file or the file`s home folder has been renamed / removed.  '
                 )
 
+
     def remove_thumbnail_track_grouped(self):
+        """
+        For every thumbnail widget coming after the current / removed one:
+            Phase 1:
+            - Update the ".index" value and track title (taking the title from the standard playlist)
+
+            Phase 2:
+            - In the "thumbnail_widgets_dic" assign up the key-value pairs
+                >> the last two key-value pair in the dic. will be the same
+
+        Phase 3:
+        - Delete the widget
+        - Remove the last key-value pair in the dic.
+
+        Phase 4:
+        - Reposition th widgets to make sure the empty area
+         created by the widget remove will be filled
+        """
         thumbnail_widgets_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+
+        # Phase 1
         for index in range(self.index, cv.active_pl_tracks_count):
-            # Get and set the title from the standard playlist
             new_title = cv.active_pl_name.item(index).text()
             thumbnail_widgets_dic[index + 1]['widget'].index = index
             thumbnail_widgets_dic[index + 1]['widget'].text.setText(new_title)
-            # Renaming the keys of the dict. - moving down the elements
-            # to make sure there are no gaps in the dict. keys
-            thumbnail_widgets_dic[index] = thumbnail_widgets_dic.pop(index + 1)
+
+        # Phase 2
+        for index in range(self.index, cv.active_pl_tracks_count):
+            thumbnail_widgets_dic[index] = thumbnail_widgets_dic[index + 1]
+
+        # Phase 3
+        self.deleteLater()
+        thumbnail_widgets_dic.pop(len(list(thumbnail_widgets_dic)) - 1)
+
+        #Phase 4:
         cv.thumbnail_widget_resize_and_move_to_pos_func_holder()
+
 
     def mousePressEvent(self, a0):
         """
