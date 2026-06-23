@@ -13,7 +13,12 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
-from .func_thumbnail import thumbnail_widget_resize_and_move_to_pos, save_thumbnail_history_json
+from .func_thumbnail import (
+    is_new_thumbnail_generation_necessary,
+    is_track_index_inside_playlist,
+    save_thumbnail_history_json,
+    thumbnail_widget_resize_and_move_to_pos,
+)
 from .thread_thumbnail import ThreadThumbnail
 
 
@@ -62,13 +67,16 @@ class ThumbnailMainWindow(QScrollArea):
         return super().resizeEvent(a0)
 
     def scroll_to_current_item_active_pl(self):
-        if cv.current_track_index != -1:
-            thumbnail_widget = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'][cv.current_track_index]['widget']
+        if (not is_new_thumbnail_generation_necessary() and
+                is_track_index_inside_playlist(cv.active_db_table, cv.current_track_index)):
+            thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
+            thumbnail_widget = thumbnail_widget_dic[cv.current_track_index]['widget']
             self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
 
     def scroll_to_current_item_playing_pl(self):
-        thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
-        if thumbnail_widget_dic:
+        if (not is_new_thumbnail_generation_necessary(cv.playing_db_table) and
+                is_track_index_inside_playlist(cv.active_db_table, cv.current_track_index)):
+            thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
             thumbnail_widget = thumbnail_widget_dic[cv.playing_track_index]['widget']
             min_pos = self.scroll_bar_ver.value()
             max_pos = self.scroll_bar_ver.value() + br.playlists_all.height() - cv.thumbnail_height
