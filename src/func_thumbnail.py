@@ -233,35 +233,38 @@ def scroll_to_active_item_thumbnail_pl():
 # THUMBNAIL PL
 def create_thumbnails_and_update_widgets(index):
     """ Used via a thread in "src / thread_thumbnail" """
-    file_path = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["file_path"]
-    # AUDIO
-    if Path(file_path).suffix in ['.mp3', '.flac']:
-        result = "audio"
-    # VIDEO
-    else:
-        vid_duration = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["duration"]
-        thumbnail_img_name = f'{cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["file_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
-        result = Path(PATH_THUMBNAILS, thumbnail_img_name)
-
-        if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
-            if Path(result).is_file():
-                thumbnail_history["completed"][thumbnail_img_name] = current_time
-            else:
-                thumbnail_history["failed"][thumbnail_img_name] = current_time
-                result = "failed"
+    if thumbnail_widget_dic := cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'].get(index):
+        file_path = thumbnail_widget_dic["file_path"]
+        # AUDIO
+        if Path(file_path).suffix in ['.mp3', '.flac']:
+            result = "audio"
+        # VIDEO
         else:
-            at_seconds = get_time_frame_taken_from(vid_duration)
-            target_path = Path(PATH_THUMBNAILS, thumbnail_img_name)
+            vid_duration = thumbnail_widget_dic["duration"]
+            thumbnail_img_name = f'{thumbnail_widget_dic["file_name"]}.{vid_duration}.{cv.thumbnail_img_size}.jpg'
+            result = Path(PATH_THUMBNAILS, thumbnail_img_name)
 
-            generate_and_save_image_via_opencv_with_ffmpeg_backup(file_path, at_seconds, target_path)
-
-            if Path(result).is_file():
-                thumbnail_history["completed"][thumbnail_img_name] = current_time
+            if thumbnail_img_name in thumbnail_history["completed"] or thumbnail_img_name in thumbnail_history["failed"]:
+                if Path(result).is_file():
+                    thumbnail_history["completed"][thumbnail_img_name] = current_time
+                else:
+                    thumbnail_history["failed"][thumbnail_img_name] = current_time
+                    result = "failed"
             else:
-                thumbnail_history["failed"][thumbnail_img_name] = current_time
-                result = "failed"
-                logger_sum(f"Error: Could not create thumbnail image for:    {Path(file_path).stem}")
-    return str(result)
+                at_seconds = get_time_frame_taken_from(vid_duration)
+                target_path = Path(PATH_THUMBNAILS, thumbnail_img_name)
+
+                generate_and_save_image_via_opencv_with_ffmpeg_backup(file_path, at_seconds, target_path)
+
+                if Path(result).is_file():
+                    thumbnail_history["completed"][thumbnail_img_name] = current_time
+                else:
+                    thumbnail_history["failed"][thumbnail_img_name] = current_time
+                    result = "failed"
+                    logger_sum(f"Error: Could not create thumbnail image for:    {Path(file_path).stem}")
+        return str(result)
+    else:
+        return None
 
 
 # THUMBNAIL PL / create_thumbnails_and_update_widgets()
