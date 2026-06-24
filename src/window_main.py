@@ -211,7 +211,10 @@ class MyWindow(QWidget):
                 cv.volume = 1
             self.volume_update()
         elif cv.volume == 1:
-            br.av_player.text_display_on_video(1000, "Volume:  100%")
+            if cv.is_speaker_muted:
+                br.av_player.text_display_on_video(1000, 'Muted: ON')
+            else:
+                br.av_player.text_display_on_video(1000, "Volume:  100%")
 
 
     def volume_down_action(self):
