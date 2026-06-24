@@ -41,7 +41,6 @@ def start_thumbnail_thread_grouped_action():
         Standard playlist >> Thumbnail playlist
     """
     if is_new_thumbnail_generation_necessary(cv.active_db_table):
-        stop_another_playlist_thumbnail_thread()
         update_thumbnail_support_vars_before_thumbnail_thread()
         remove_thumbnail_widgets_window_and_thumbnail_dic()
         create_new_thumbnail_widgets_window()
@@ -68,21 +67,6 @@ def is_new_thumbnail_generation_necessary(playlist):
           thumbnail_window_validation['thumbnail_generation_needed']):
         return True
     return False
-
-
-# THUMBNAIL PL / start_thumbnail_thread_grouped_action()
-def stop_another_playlist_thumbnail_thread():
-    """ To make sure there are no multiple thumbnail generation
-        is running for different playlists
-        If one is running while another thumbnail generation
-        is triggered via the Thumbnail View button, the currently
-        running will be stopped and the new one will start
-    """
-    if cv.thumbnail_db_table:
-        widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
-        if widgets_window.thread_thumbnails_update.isRunning() and cv.thumbnail_db_table != cv.active_db_table:
-            widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(False)
-            save_thumbnail_history_json()
 
 
 # THUMBNAIL PL / start_thumbnail_thread_grouped_action()
@@ -378,15 +362,23 @@ def switch_to_standard_active_playlist_from_thumbnail_pl():
 
 
 # THUMBNAIL PL
-def stop_thumbnail_thread():
+def stop_thumbnail_thread(playlist):
     """ Scenarios:
-        - Thumbnail generation is in progress + switching back to the standard playlist
-        - Before removing thumbnails
+        - Thumbnail generation is in progress + thumbnail button clicked again >>
+            stop running thumbnail generation + switching back to the standard playlist
+        - Stop running thumbnail generation thread before "Purge" / removing thumbnails on the Settings window
+
+        "if playlist:" - the very first time thumbnail button clicked the "cv.thumbnail_db_table" is None
+            "button_thumbnail_clicked()":
+                After the "stop_thumbnail_thread(cv.thumbnail_db_table)" function the
+                "cv.thumbnail_db_table = cv.active_db_table" reassignment actioned in
+                "start_thumbnail_thread_grouped_action() / update_thumbnail_support_vars_before_thumbnail_thread()"
     """
-    if cv.thumbnail_db_table:
-        widgets_window = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window
+    if playlist:
+        widgets_window = cv.playlist_widget_dic[playlist]['thumbnail_window'].widgets_window
         if widgets_window.thread_thumbnails_update.isRunning():
             widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(True)
+            set_thumbnail_generation_needed_to(True, playlist)
             save_thumbnail_history_json()
 
 
@@ -502,7 +494,7 @@ def msg_box_wrapper_for_remove_all_thumbnails_and_clear_history():
 
  # NONE / msg_box_wrapper_for_remove_all_thumbnails_and_clear_history()
 def remove_all_thumbnails_and_clear_history():
-    stop_thumbnail_thread()
+    stop_thumbnail_thread(cv.thumbnail_db_table)
     switch_all_pl_to_standard_from_thumbnails_view(True)
     try:
         # THUMBNAIL - FILES

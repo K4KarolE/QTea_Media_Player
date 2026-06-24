@@ -187,6 +187,16 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - THUMBNAIL '''
     def button_thumbnail_clicked(self):
+        """
+        The "stop_thumbnail_thread(cv.thumbnail_db_table)" >>  actioned on
+        another playlist where thumbnail thread is running
+
+        To make sure only one thumbnail generation is in place at one at the time
+
+        After the "stop_thumbnail_thread(cv.thumbnail_db_table)" function the
+        "cv.thumbnail_db_table = cv.active_db_table" reassignment actioned in
+        "start_thumbnail_thread_grouped_action() / update_thumbnail_support_vars_before_thumbnail_thread()" below
+        """
         if cv.active_pl_name.count() > 0:
             if cv.active_pl_name.isVisible():
                 clear_multi_selection()
@@ -194,6 +204,7 @@ class MyButtons(QPushButton):
                 cv.active_pl_queue.hide()
                 cv.active_pl_duration.hide()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
+                stop_thumbnail_thread(cv.thumbnail_db_table)
                 start_thumbnail_thread_grouped_action()
                 self.set_style_thumbnail_button_active()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
@@ -203,7 +214,7 @@ class MyButtons(QPushButton):
                 cv.active_pl_queue.show()
                 cv.active_pl_duration.show()
                 cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
-                stop_thumbnail_thread()
+                stop_thumbnail_thread(cv.active_db_table)
                 self.set_style_settings_button()
                 # Scroll to the current row
                 # Otherwise the top of the playlist is displayed
