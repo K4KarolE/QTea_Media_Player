@@ -98,38 +98,39 @@ class WidgetsWindow(QWidget):
                            )
 
     def thumbnail_img_ready(self, index: int, result: str):
-        thumbnail_widget = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["widget"]
-        if result == "audio":
-            thumbnail_widget.update_to_default_audio_img()
-            thumbnail_widget.thumbnail_type = "audio"
-        elif result == "failed":
-            thumbnail_widget.update_to_default_video_img()
-            thumbnail_widget.thumbnail_type = "video_failed"
-        else:
-            thumbnail_widget.update_img(result)
-            thumbnail_widget.thumbnail_type = "video_completed" # not in use, yet
+        if thumbnail_widget_dic := cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'].get(index):
+            thumbnail_widget = thumbnail_widget_dic["widget"]
+            if result == "audio":
+                thumbnail_widget.update_to_default_audio_img()
+                thumbnail_widget.thumbnail_type = "audio"
+            elif result == "failed":
+                thumbnail_widget.update_to_default_video_img()
+                thumbnail_widget.thumbnail_type = "video_failed"
+            else:
+                thumbnail_widget.update_img(result)
+                thumbnail_widget.thumbnail_type = "video_completed" # not in use, yet
 
-        """ Updating playing and selected track style, thumbnail image
-            The "failed" and "audio" validations are in the
-            thumbnail_widget.set_ functions
-        """
-        # QUEUED
-        if [cv.thumbnail_db_table, index] in cv.queue_tracks_list:
-            thumbnail_widget.set_queued_track_thumbnail_style()
-            thumbnail_widget.is_queued = True
-            queue_number = cv.queue_tracks_list.index([cv.thumbnail_db_table, index]) + 1
-            thumbnail_widget.set_queue_number(queue_number)
+            """ Updating playing and selected track style, thumbnail image
+                The "failed" and "audio" validations are in the
+                thumbnail_widget.set_ functions
+            """
+            # QUEUED
+            if [cv.thumbnail_db_table, index] in cv.queue_tracks_list:
+                thumbnail_widget.set_queued_track_thumbnail_style()
+                thumbnail_widget.is_queued = True
+                queue_number = cv.queue_tracks_list.index([cv.thumbnail_db_table, index]) + 1
+                thumbnail_widget.set_queue_number(queue_number)
 
-        # PLAYED
-        if index == cv.thumbnail_last_played_track_index and index != cv.thumbnail_last_selected_track_index:
-            if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
-                thumbnail_widget.set_playing_thumbnail_style()
-                thumbnail_widget.set_playing_thumbnail_img()
+            # PLAYED
+            if index == cv.thumbnail_last_played_track_index and index != cv.thumbnail_last_selected_track_index:
+                if cv.playlist_widget_dic[cv.active_db_table]['played_thumbnail_style_update_needed']:
+                    thumbnail_widget.set_playing_thumbnail_style()
+                    thumbnail_widget.set_playing_thumbnail_img()
 
-        # SELECTED
-        if index == cv.thumbnail_last_selected_track_index:
-            thumbnail_widget.set_selected_thumbnail_style()
-            thumbnail_widget.set_default_thumbnail_img()
+            # SELECTED
+            if index == cv.thumbnail_last_selected_track_index:
+                thumbnail_widget.set_selected_thumbnail_style()
+                thumbnail_widget.set_default_thumbnail_img()
 
-        if index > 0 and index % 20 == 0:
-            save_thumbnail_history_json()
+            if index > 0 and index % 20 == 0:
+                save_thumbnail_history_json()
