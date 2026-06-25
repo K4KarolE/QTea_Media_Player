@@ -98,6 +98,19 @@ class WidgetsWindow(QWidget):
                            )
 
     def thumbnail_img_ready(self, index: int, result: str):
+        """
+        First 2 "if": workaround solution for already running thumbnail generation on a playlist and start
+        a new process on another playlist >> will update the "cv.thumbnail_db_table" middle of thumbnail
+        generation >> the first thumbnail view playlist last thumbnail will be displayed on the new playlist
+        thumbnail view instead on the first playlist as it should be
+        """
+        if not cv.thumbnail_db_table_place_holder:
+            cv.thumbnail_db_table_place_holder = cv.thumbnail_db_table  # first thumbnail view triggered
+        if cv.thumbnail_db_table_place_holder != cv.thumbnail_db_table:
+            if index != 0:
+                cv.thumbnail_db_table_place_holder = cv.thumbnail_db_table
+                return
+
         if thumbnail_widget_dic := cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'].get(index):
             thumbnail_widget = thumbnail_widget_dic["widget"]
             if result == "audio":

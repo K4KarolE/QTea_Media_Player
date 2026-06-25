@@ -75,7 +75,10 @@ def update_thumbnail_support_vars_before_thumbnail_thread():
         it snapshots the crucial vars to make sure
         switching playlist is not causing any issue
         while the thumbnail generation is still in progress
+
+        "cv.thumbnail_db_table_place_holder": more info in "thumbnail_window / thumbnail_img_ready()"
     """
+    cv.thumbnail_db_table_place_holder = cv.thumbnail_db_table
     cv.thumbnail_db_table = cv.active_db_table
     cv.thumbnail_pl_tracks_count = cv.active_pl_name.count()
     cv.thumbnail_last_played_track_index = cv.active_pl_last_track_index

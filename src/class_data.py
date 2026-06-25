@@ -152,6 +152,8 @@ class Data:
     thumbnail_widget_last_selected: object = None
     thumbnail_widget_last_played: object = None
 
+    thumbnail_db_table_place_holder: str = None
+
     # take over the value of active_db_table, active_pl_last_track_index
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
