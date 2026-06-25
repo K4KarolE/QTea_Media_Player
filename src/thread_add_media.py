@@ -12,7 +12,7 @@ from .func_coll import (
     update_add_track_to_pl_widget_vars
 )
 from .logger import logger_check
-from .message_box import MyMessageBoxError
+from .message_box import MyMessageBoxError, MyMessageBoxConfirmation
 
 
 class ThreadAddMedia(QThread):
@@ -45,6 +45,11 @@ class ThreadAddMedia(QThread):
 
 
     def run(self):
+        if self.track_path_list and cv.add_track_to_db_table != cv.active_db_table:
+            MyMessageBoxConfirmation('Add media', 'Not able to media to this playlist\n'
+                                              'while already adding media to another playlist.')
+            return
+
         update_add_track_to_pl_widget_vars()
         set_thumbnail_generation_needed_to(True)
 
