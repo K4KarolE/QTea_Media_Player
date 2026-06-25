@@ -17,7 +17,6 @@ from .func_coll import (
     connection, # db
     )
 from .func_thumbnail import (
-    msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished,
     start_thumbnail_thread_grouped_action,
     stop_thumbnail_thread,
     switch_to_standard_active_playlist_from_thumbnail_pl,
@@ -25,7 +24,7 @@ from .func_thumbnail import (
     )
 from .window_settings import MySettingsWindow
 from .logger import logger_runtime
-from .message_box import MyMessageBoxWarning
+from .message_box import MyMessageBoxWarning, MyMessageBoxConfirmation
 
 
 
@@ -197,28 +196,37 @@ class MyButtons(QPushButton):
         "cv.thumbnail_db_table = cv.active_db_table" reassignment actioned in
         "start_thumbnail_thread_grouped_action() / update_thumbnail_support_vars_before_thumbnail_thread()" below
         """
-        if cv.active_pl_name.count() > 0:
-            if cv.active_pl_name.isVisible():
-                clear_multi_selection()
-                cv.active_pl_name.hide()
-                cv.active_pl_queue.hide()
-                cv.active_pl_duration.hide()
-                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
-                stop_thumbnail_thread(cv.thumbnail_db_table)
-                start_thumbnail_thread_grouped_action()
-                self.set_style_thumbnail_button_active()
-                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
-                msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished()
-            else:
-                cv.active_pl_name.show()
-                cv.active_pl_queue.show()
-                cv.active_pl_duration.show()
-                cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
-                stop_thumbnail_thread(cv.active_db_table)
-                self.set_style_settings_button()
-                # Scroll to the current row
-                # Otherwise the top of the playlist is displayed
-                cv.active_pl_duration.scrollToItem(cv.active_pl_duration.item(cv.active_pl_last_selected_track_index))
+        if cv.add_track_to_db_table == cv.active_db_table and br.window.thread_add_media.track_path_list:
+            MyMessageBoxConfirmation('Adding media & Thumbnail view',
+                                     'Not able to switch to Thumbnail view mode\n'
+                                              'while adding media to the playlist.')
+            return
+
+        if not cv.active_pl_tracks_count:
+            MyMessageBoxConfirmation('Media', 'Media has to be added to the playlist\n'
+                                              'before able to switch to Thumbnail view mode.')
+            return
+
+        if cv.active_pl_name.isVisible():
+            clear_multi_selection()
+            cv.active_pl_name.hide()
+            cv.active_pl_queue.hide()
+            cv.active_pl_duration.hide()
+            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
+            stop_thumbnail_thread(cv.thumbnail_db_table)
+            start_thumbnail_thread_grouped_action()
+            self.set_style_thumbnail_button_active()
+            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
+        else:
+            cv.active_pl_name.show()
+            cv.active_pl_queue.show()
+            cv.active_pl_duration.show()
+            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].hide()
+            stop_thumbnail_thread(cv.active_db_table)
+            self.set_style_settings_button()
+            # Scroll to the current row
+            # Otherwise the top of the playlist is displayed
+            cv.active_pl_duration.scrollToItem(cv.active_pl_duration.item(cv.active_pl_last_selected_track_index))
 
 
     ''' BUTTON PLAYLIST - THUMBNAIL VIEW - SET STYLE '''
