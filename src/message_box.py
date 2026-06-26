@@ -3,6 +3,14 @@ from PyQt6.QtWidgets import QMessageBox
 
 from .class_bridge import br
 
+"""
+Icons like "Information", "NoIcon" in "self.setIcon(QMessageBox.Icon.Information)" can cause 
+app crash with error message:
+"QBackingStore::endPaint() called with active painter; did you forget to destroy it or call QPainter::end() on it?"
+
+"QMessageBox.Icon.Warning" looks alright.
+"""
+
 
 class MyMessageBoxError(QMessageBox):
     def __init__(self, tab_title, message):
@@ -67,7 +75,7 @@ class MyMessageBoxConfirmation(QMessageBox):
         super().__init__()
         self.setWindowTitle(window_title)
         self.setWindowIcon(br.icon.settings)
-        self.setIcon(QMessageBox.Icon.Information)
+        # self.setIcon(QMessageBox.Icon.Information)    # more info above
         self.setText(message)
         self.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
