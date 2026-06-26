@@ -1,11 +1,15 @@
 # QTea
-*test.py
+*test*.py
 *virtual*
 *copy*
 settings.json
 *.db
 *.log
 thumbnails/
+ffmpeg/
+package/
+*.deb
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

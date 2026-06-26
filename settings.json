@@ -1,16 +1,16 @@
 {
-  "last_used_playlist": 8,
-  "playing_playlist": 8,
+  "last_used_playlist": 4,
+  "playing_playlist": 1,
   "playing_playlist_empty": true,
   "repeat_playlist": 1,
   "shuffle_playlist_on": false,
-  "volume": 0.38,
+  "volume": 1,
   "is_speaker_muted": false,
   "skin_selected": "default",
   "general_settings": {
     "always_on_top": true,
     "continue_playback": true,
-    "play_at_startup": true,
+    "play_at_startup": false,
     "small_jump": 6000,
     "medium_jump": 17000,
     "big_jump": 180000,
@@ -25,12 +25,12 @@
     "window_alt_size_repositioning": true,
     "window_auto_resize_to_video_resolution": false,
     "default_audio_track": 1,
-    "thumbnail_img_size": 200,
+    "thumbnail_img_size": 100,
     "thumbnail_remove_older_than": 60,
-    "search_result_parent_dicts_size": 30,
+    "search_result_parent_dicts_size": 15,
     "add_dir_ignore_file_titles_including": "Sample",
     "clear_playlist_at_playlist_remove": true,
-    "conf_msg_at_clear_playlist_with_playing_track": true
+    "conf_msg_at_clear_playlist_with_playing_track": false
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",
@@ -87,47 +87,47 @@
     "playlist_0": {
       "playlist_title": "TV #1",
       "playlist_index": 0,
-      "last_track_index": 84
+      "last_track_index": 65
     },
     "playlist_1": {
       "playlist_title": "TV #2",
       "playlist_index": 1,
-      "last_track_index": 82
+      "last_track_index": 0
     },
     "playlist_2": {
       "playlist_title": "TV #3",
       "playlist_index": 2,
-      "last_track_index": 16
+      "last_track_index": 5
     },
     "playlist_3": {
       "playlist_title": "TV #4",
       "playlist_index": 3,
-      "last_track_index": 19
+      "last_track_index": 1
     },
     "playlist_4": {
       "playlist_title": "FILM #1",
       "playlist_index": 4,
-      "last_track_index": 0
+      "last_track_index": 13
     },
     "playlist_5": {
       "playlist_title": "FILM #2",
       "playlist_index": 5,
-      "last_track_index": 16
+      "last_track_index": 0
     },
     "playlist_6": {
       "playlist_title": "MUSIC #1",
       "playlist_index": 6,
-      "last_track_index": 640
+      "last_track_index": 11
     },
     "playlist_7": {
       "playlist_title": "MUSIC #2",
       "playlist_index": 7,
-      "last_track_index": 19
+      "last_track_index": 5
     },
     "playlist_8": {
       "playlist_title": "MUSIC #3",
       "playlist_index": 8,
-      "last_track_index": 151
+      "last_track_index": 172
     },
     "playlist_9": {
       "playlist_title": "",
@@ -162,7 +162,7 @@
     "playlist_15": {
       "playlist_title": "",
       "playlist_index": 15,
-      "last_track_index": 0
+      "last_track_index": 5
     },
     "playlist_16": {
       "playlist_title": "",
@@ -232,7 +232,7 @@
     "playlist_29": {
       "playlist_title": "",
       "playlist_index": 29,
-      "last_track_index": 2
+      "last_track_index": 10
     }
   }
 }

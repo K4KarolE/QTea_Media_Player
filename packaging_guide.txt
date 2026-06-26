@@ -1,0 +1,58 @@
+Source used: https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-linux-pyinstaller/
+by Martin Fitzpatrick
+
+Thank you Martin!
+
+INSIDE THE VIRT. ENV.
+
+# Building a basic app
+# Creaing "build", "dist" folders and "qtea-media-player.spec" file
+---------------------------------------------
+pyinstaller -n "qtea-media-player" app.py
+
+
+# ADD DATA TO DIST FOLDER
+Copy folders and files to the "dist / qtea-media-player" folder
+-----------------------------------------------------
+cp -r skins dist/qtea-media-player/
+cp -r thumbnails dist/qtea-media-player/
+cp -r log_file.log dist/qtea-media-player/
+cp -r playlist_db_linux.db dist/qtea-media-player/
+cp -r settings.json dist/qtea-media-player/
+
+
+# CREATE THE "PACKAGE" FOLDER AND SUBFOLDERS
+---------------------------------------------
+mkdir -p package/opt
+mkdir -p package/usr/share/applications
+mkdir -p package/usr/share/icons/hicolor/96x96/apps
+
+
+# COPY FILES TO "PACKAGE"
+-------------------------
+cp -r skins/default/window_icon.png package/usr/share/icons/hicolor/96x96/apps/qtea-media-player.png
+cp -r dist/qtea-media-player package/opt/qtea-media-player
+cp -r qtea-media-player.desktop package/usr/share/applications
+
+
+# PERMISSIONS
+--------------
+find package/opt/qtea-media-player -type f -exec chmod 644 -- {} +
+find package/opt/qtea-media-player -type d -exec chmod 755 -- {} +
+find package/usr/share -type f -exec chmod 644 -- {} +
+chmod +x package/opt/qtea-media-player/qtea-media-player
+
+
+# PACKAGING - CREATING .DEB
+----------------------------
+fpm -C package -s dir -t deb -n "qtea-media-player" -v 0.1.0 -p qtea-media-player-4.deb
+
+
+# INSTALL
+----------
+sudo dpkg -i qtea-media-player-4.deb
+
+
+# UNINSTALL - IF NEEDED
+------------------------
+sudo apt remove qtea-media-player

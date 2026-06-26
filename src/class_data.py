@@ -376,11 +376,6 @@ class Data:
             'value': window_auto_resize_to_video_resolution,
             'line_edit_widget': ''
         },
-        'default_audio_track': {
-            'text': 'Default audio track',
-            'value': default_audio_track,
-            'line_edit_widget': ''
-        },
         'thumbnail_img_size': {
             'text': 'Thumbnail image size',
             'value': thumbnail_img_size,
@@ -391,14 +386,14 @@ class Data:
             'value': thumbnail_remove_older_than,
             'line_edit_widget': ''
         },
+        'default_audio_track': {
+            'text': 'Default audio track',
+            'value': default_audio_track,
+            'line_edit_widget': ''
+        },
         'search_result_parent_dicts_size': {
             'text': 'Search result - parent\nfolders` text length',
             'value': search_result_parent_dicts_size,
-            'line_edit_widget': ''
-        },
-        'add_dir_ignore_file_titles_including': {
-            'text': 'Add directory - ignore\nfile titles including',
-            'value': add_dir_ignore_file_titles_including,
             'line_edit_widget': ''
         },
         'clear_playlist_at_playlist_remove': {
@@ -409,6 +404,11 @@ class Data:
         'conf_msg_at_clear_playlist_with_playing_track': {
             'text': 'Confirmation message\nbefore clear playlist with\nplaying track',
             'value': conf_msg_at_clear_playlist_with_playing_track,
+            'line_edit_widget': ''
+        },
+        'add_dir_ignore_file_titles_including': {
+            'text': 'Add directory - ignore\nfile titles including',
+            'value': add_dir_ignore_file_titles_including,
             'line_edit_widget': ''
         }
     }
@@ -737,10 +737,10 @@ class Data:
         FILE_TYPES_LIST - used to sort the files in the file dialog window
                         - `AT - Add Track` button
     '''
-    AUDIO_FILES_EXTS = "*.aac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.wav"
+    AUDIO_FILES_EXTS = "*.aiff *.alac *.dts *.flac *.m4a *.midi *.mp3 *.ogg *.ogx *.opus *.wav *.wma"
     AUDIO_FILES = f"Audio files ({AUDIO_FILES_EXTS})"
 
-    VIDEO_FILES_EXTS= "*.avi *.flv *.mkv *.mov *.mpg *.mp4 *.mpeg *.mts *.webm *.wmv"
+    VIDEO_FILES_EXTS= "*.avi *.flv *.mkv *.mov *.mpg *.mp4 *.mpeg *.mts *.vob *.ogv *.webm *.wmv *.3gp"
     VIDEO_FILES = f"Video files ({VIDEO_FILES_EXTS})"
 
     MEDIA_FILES = f"Media files ({AUDIO_FILES_EXTS} {VIDEO_FILES_EXTS})"
