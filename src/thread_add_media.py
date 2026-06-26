@@ -37,7 +37,8 @@ class ThreadAddMedia(QThread):
         self.source = None
         self.track_path_list = []
         self.invalid_media_self_track_path_list = []
-        self.last_track_added = "" 
+        self.ignored_media_self_track_title_list = []
+        self.last_track_added = ""
         # self.last_track_added - Used to avoid the below scenario:
         # Adding the same media after each other >> the duration player's mediaStatusChanged
         # signal will not be triggered >> the second media will not be added and the
@@ -84,15 +85,27 @@ class ThreadAddMedia(QThread):
         if self.track_path_list:
             self.track_path_list_action()
 
+        if self.ignored_media_self_track_title_list:
+            """
+            To list first 50 ignored files set up by the user via
+            Settings window / General tab / "Add directory - ignore file titles including" field
+            
+            ** not added to the playlist
+            """
+            MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
+
+
 
     def add_dir(self, dir_path):
         cv.adding_records_at_moment = True
         for dir_path_b, _, file_names in os.walk(dir_path):
             file_names.sort()
             for file in file_names:
-                if not self.is_file_title_ignored(file) and Path(file).suffix in cv.MEDIA_FILES:
-                        track_path = str(Path(dir_path_b, file))
-                        self.track_path_list.append(track_path)
+                if self.is_file_title_ignored(file):
+                    self.ignored_media_self_track_title_list.append(file)
+                elif Path(file).suffix in cv.MEDIA_FILES:
+                    track_path = str(Path(dir_path_b, file))
+                    self.track_path_list.append(track_path)
 
     def is_file_title_ignored(self, file):
         return (cv.add_dir_ignore_file_titles_including and
@@ -141,8 +154,10 @@ class ThreadAddMedia(QThread):
 
         else:
             cv.adding_records_at_moment = False
+
             if is_active_and_add_to_track_playlist_same():
                 cv.active_pl_tracks_count = cv.add_track_to_pl_name.count()
+
             if self.invalid_media_self_track_path_list:
                 """
                 To list all the invalid media at the end of the "add media" process
@@ -180,7 +195,35 @@ class ThreadAddMedia(QThread):
 
     def generate_invalid_media_error_msg_text(self):
         string_to_print = "Not able to add the below invalid media: \n\n"
-        for _ in self.invalid_media_self_track_path_list:
+
+        truncated_msg_list = self.truncate_msg_list(self.invalid_media_self_track_path_list)
+
+        for _ in truncated_msg_list:
             string_to_print = string_to_print + Path(_).name + '\n'
         self.invalid_media_self_track_path_list = []
         return string_to_print
+
+
+    def generate_ignored_media_info_msg_text(self):
+        if len(cv.add_dir_ignore_file_titles_including) > 15:
+            keyword = cv.add_dir_ignore_file_titles_including[0:15] + '..'
+        else: keyword = cv.add_dir_ignore_file_titles_including
+
+        truncated_msg_list = self.truncate_msg_list(self.ignored_media_self_track_title_list)
+
+        string_to_print = ('The below media has been ignored by the\n'
+                            f'keyword "{keyword}" added on the\n'
+                           'Settings window / General tab.\n\n')
+        for _ in truncated_msg_list:
+            string_to_print = string_to_print + _ + '\n'
+        self.ignored_media_self_track_title_list = []
+        return string_to_print
+
+
+    def truncate_msg_list(self, msg_list):
+        limit = 50
+        if len(msg_list) > limit:
+            new_msg_list = msg_list[:limit]
+            new_msg_list.append("...")
+            return new_msg_list
+        return msg_list
