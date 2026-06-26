@@ -172,12 +172,30 @@ class MySettingsWindow(QWidget):
         WIDGET_HOTKEY_POS_X = WIDGETS_POS_X
         widget_hotkey_pos_y = WIDGETS_POS_Y
         HOTKEY_LABEL_LINE_EDIT_POS_X_DIFF = 180
+        LINE_BREAK_AFTER_LIST_HOTK = [
+            'big_jump_forward',
+            'display_track_info_on_video',
+            'audio_output_device_rotate',
+            'subtitle_tracks_rotate',
+            'next_track',
+            'window_size_toggle',
+            'playlist_select_next_pl',
+            'remove_black_bars_around_video',]
+        LINE_BREAK_SIZE_HOTK = 20
+        LINE_BREAK_SEPERATOR_HOTK = "\n " + "_" * 35
 
         for hotkey_dic_key, hotkey_dic_value in cv.hotkey_settings_dic.items():
 
             item_text, item_value = get_dic_values_before_widget_creation(hotkey_dic_value)
 
             ''' LABEL '''
+            # Adding seperator to the line break
+            # In the Settings window it looks like there is a separator below the field title
+            # The field title and the separator are one QLabel object
+            item_text_original = item_text
+            if hotkey_dic_key in LINE_BREAK_AFTER_LIST_HOTK:
+                item_text += LINE_BREAK_SEPERATOR_HOTK
+
             item_label = QLabel(tab_hotkey, text=item_text)
             item_label.setFont(inactive_track_font_style)
             item_label.move(WIDGET_HOTKEY_POS_X, widget_hotkey_pos_y)
@@ -196,11 +214,20 @@ class MySettingsWindow(QWidget):
                 LINE_EDIT_HIGHT
                 )
 
-            lines_amount = item_text.count('\n') + 1  # line break in text - multiple lines
+            # Adding extra space after a multi line QLabel field title like:
+            # "Automatically clear playlist
+            #  when it is removed"            #
+            lines_amount = item_text_original.count('\n') + 1  # line break in too long text - multiple lines
             if lines_amount != 1:
-                lines_amount = lines_amount * 0.8
+                multi_line_compensation = lines_amount * 12
+            else:
+                multi_line_compensation = 0
 
-            widget_hotkey_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF * lines_amount)
+            widget_hotkey_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF + multi_line_compensation)
+
+            # To make gap between different sections, item: 'always_on_top', 'continue_playback'
+            if hotkey_dic_key in LINE_BREAK_AFTER_LIST_HOTK:
+                widget_hotkey_pos_y += LINE_BREAK_SIZE_HOTK
 
         cv.hotkey_settings_last_widget_pos_y = widget_hotkey_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
@@ -263,19 +290,34 @@ class MySettingsWindow(QWidget):
         WIDGET_GENERAL_POS_X = WIDGETS_POS_X
         widget_general_pos_y = WIDGETS_POS_Y
         GENERAL_LABEL_LINE_EDIT_POS_X_DIFF = 195
+        LINE_BREAK_AFTER_LIST_GEN = [
+            'play_at_startup',
+            'big_jump',
+            'window_auto_resize_to_video_resolution',
+            'thumbnail_remove_older_than',
+            'conf_msg_at_clear_playlist_with_playing_track']
+        LINE_BREAK_SIZE_GEN = 20
+        LINE_BREAK_SEPERATOR_GEN = "\n " + "_" * 34
 
-        for item, dic_value in cv.general_settings_dic.items():
+        for gen_dic_key, dic_value in cv.general_settings_dic.items():
 
             item_text, item_value = get_dic_values_before_widget_creation(dic_value)
 
             ''' LABEL '''
+            # Adding seperator to the line break
+            # In the Settings window it looks like there is a separator below the field title
+            # The field title and the separator are one QLabel object
+            item_text_original = item_text
+            if gen_dic_key in LINE_BREAK_AFTER_LIST_GEN:
+                item_text += LINE_BREAK_SEPERATOR_GEN
+
             item_label = QLabel(tab_general, text=item_text)
             item_label.setFont(inactive_track_font_style)
             item_label.move(WIDGET_GENERAL_POS_X, widget_general_pos_y)
 
             ''' LINE EDIT '''
-            cv.general_settings_dic[item]['line_edit_widget'] = QLineEdit(tab_general)
-            line_edit_widget = cv.general_settings_dic[item]['line_edit_widget']
+            cv.general_settings_dic[gen_dic_key]['line_edit_widget'] = QLineEdit(tab_general)
+            line_edit_widget = cv.general_settings_dic[gen_dic_key]['line_edit_widget']
 
             # JUMP VALUES
             if 'jump' in item_text:
@@ -293,11 +335,21 @@ class MySettingsWindow(QWidget):
                 LINE_EDIT_HIGHT
                 )
 
-            lines_amount = item_text.count('\n') + 1    # line break in text - multiple lines
+            # Adding extra space after a multi line QLabel field title like:
+            # "Automatically clear playlist
+            #  when it is removed"
+            lines_amount = item_text_original.count('\n') + 1    # line break in too long text - multiple lines
             if lines_amount != 1:
-                lines_amount = lines_amount * 0.8
+                multi_line_compensation = lines_amount * 12
+            else:
+                multi_line_compensation = 0
 
-            widget_general_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF * lines_amount)
+
+            widget_general_pos_y += int(WIDGETS_NEXT_LINE_POS_Y_DIFF + multi_line_compensation)
+
+            # To make gap between different sections, item: 'always_on_top', 'continue_playback'
+            if gen_dic_key in LINE_BREAK_AFTER_LIST_GEN:
+                widget_general_pos_y += LINE_BREAK_SIZE_GEN
 
         cv.general_settings_last_widget_pos_y = widget_general_pos_y + EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
 
