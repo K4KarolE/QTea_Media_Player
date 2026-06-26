@@ -30,7 +30,8 @@
     "search_result_parent_dicts_size": 15,
     "add_dir_ignore_file_titles_including": "Sample",
     "clear_playlist_at_playlist_remove": true,
-    "conf_msg_at_clear_playlist_with_playing_track": false
+    "conf_msg_at_clear_playlist_with_playing_track": false,
+    "add_dir_ignored_file_titles_conf_msg": true
   },
   "hotkey_settings": {
     "small_jump_backward": "Left",

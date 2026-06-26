@@ -302,6 +302,8 @@ class Data:
     window_min_height: int = settings['general_settings']['window_min_height']
 
     add_dir_ignore_file_titles_including: str = settings['general_settings']['add_dir_ignore_file_titles_including']
+    add_dir_ignored_file_titles_conf_msg: bool = settings['general_settings']['add_dir_ignored_file_titles_conf_msg']
+
     clear_playlist_at_playlist_remove: bool = settings['general_settings']['clear_playlist_at_playlist_remove']
     conf_msg_at_clear_playlist_with_playing_track: bool = settings['general_settings']['conf_msg_at_clear_playlist_with_playing_track']
 
@@ -410,6 +412,11 @@ class Data:
             'text': 'Add directory - ignore\nfile titles including',
             'value': add_dir_ignore_file_titles_including,
             'line_edit_widget': ''
+        },
+        'add_dir_ignored_file_titles_conf_msg': {
+            'text': 'Add directory - ignored\nfile titles confirmation\nmessage',
+            'value': add_dir_ignored_file_titles_conf_msg,
+            'line_edit_widget': ''
         }
     }
 
@@ -423,7 +430,8 @@ class Data:
         general_settings_dic['window_alt_size_repositioning']['text'],
         general_settings_dic['window_auto_resize_to_video_resolution']['text'],
         general_settings_dic['clear_playlist_at_playlist_remove']['text'],
-        general_settings_dic['conf_msg_at_clear_playlist_with_playing_track']['text']
+        general_settings_dic['conf_msg_at_clear_playlist_with_playing_track']['text'],
+        general_settings_dic['add_dir_ignored_file_titles_conf_msg']['text']
         ]
     
     gen_sett_window_width_text_list = [

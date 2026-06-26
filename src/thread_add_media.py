@@ -92,7 +92,8 @@ class ThreadAddMedia(QThread):
             
             ** not added to the playlist
             """
-            MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
+            if cv.add_dir_ignored_file_titles_conf_msg:
+                MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
 
 
 
