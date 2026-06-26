@@ -316,6 +316,11 @@ class PlaysFunc:
                 br.image_logo.show()
                 br.button_play_pause.setIcon(br.icon.start)
                 br.button_duration_info.disable_and_set_to_zero()
+                # DISPLAY PLAYLIST
+                if not br.av_player.playlist_visible:
+                    br.layout_vert_right_qframe.show()
+                    br.av_player.playlist_visible = True
+                    br.button_toggle_video.setDisabled(False)
 
 
     @logger_check
