@@ -17,6 +17,7 @@ from .func_coll import (
     connection, # db
     )
 from .func_thumbnail import (
+    is_thumbnail_threads_reached_limit,
     start_thumbnail_thread_grouped_action,
     stop_thumbnail_thread,
     switch_to_standard_active_playlist_from_thumbnail_pl,
@@ -207,13 +208,12 @@ class MyButtons(QPushButton):
                                               'before able to switch to Thumbnail view mode.')
             return
 
-        if cv.active_pl_name.isVisible():
+        if cv.active_pl_name.isVisible() and not is_thumbnail_threads_reached_limit():
             clear_multi_selection()
             cv.active_pl_name.hide()
             cv.active_pl_queue.hide()
             cv.active_pl_duration.hide()
             cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
-            stop_thumbnail_thread(cv.thumbnail_db_table)
             start_thumbnail_thread_grouped_action()
             self.set_style_thumbnail_button_active()
             cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()

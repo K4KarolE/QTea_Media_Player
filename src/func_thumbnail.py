@@ -386,6 +386,21 @@ def stop_thumbnail_thread(playlist):
             widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(True)
             set_thumbnail_generation_needed_to(True, playlist)
             save_thumbnail_history_json()
+        if playlist in cv.thumbnail_active_threads_playlists:
+            cv.thumbnail_active_threads_playlists.remove(playlist)
+
+
+# THUMBNAIL PL
+def is_thumbnail_threads_reached_limit():
+    if cv.thumbnail_max_threads <  len(cv.thumbnail_active_threads_playlists) + 1:
+        MyMessageBoxConfirmation(
+            'Max thumbnail threads reached',
+            'The maximum of playlists with active thumbnail generation has been reached.\n\n'
+                    'Visit Settings window / General tab to update the limit.\n\n'
+                    'Please note, the image generation is CPU and memory heavy process.')
+        return True
+    return False
+
 
 
 # ACTIVE PL
