@@ -4,6 +4,8 @@ from datetime import datetime
 from pathlib import Path
 
 """
+In the test "opencv-python" was used, in the app "opencv-python-headless" is in place.
+
 TEST RESULT - TV SHOW ALL SEASONS - 200+ videos
     cap.release() out of loop: 10.93 seconds
     cap.release() in loop: 10.01 seconds
@@ -59,7 +61,7 @@ for video_path in list_vids_path:
     cv2.imwrite(frame_filename, frame)  # Save frame as an image
 
     cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows() # not for "opencv-python-headless"
 
 print(f"Frames extracted and saved successfully")
 end_time = datetime.now().timestamp()

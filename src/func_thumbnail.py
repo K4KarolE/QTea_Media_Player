@@ -304,8 +304,7 @@ def generate_and_save_image_via_opencv_with_ffmpeg_backup(file_path, at_seconds,
     # SAVE IMAGE
     cv2.imwrite(target_path, frame)  # Save frame as an image
 
-    cap.release()
-    cv2.destroyAllWindows()
+    cap.release()   # "cv2.destroyAllWindows()" removed, not for "opencv-python-headless"
 
 
 # THUMBNAIL PL / generate_and_save_image_via_opencv()

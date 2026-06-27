@@ -1,4 +1,4 @@
 PyQt6==6.5.3
 PyQt6-Qt6==6.5.3
 PyQt6-sip==13.6.0
-opencv-python==4.13.0.92
+opencv-python-headless==4.13.0.92
