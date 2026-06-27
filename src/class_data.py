@@ -457,7 +457,6 @@ class Data:
         ]
   
     general_settings_amount: int = len(list(general_settings_dic))
-    general_settings_last_widget_pos_y: int = 0  # to calc. the parent widget height
 
 
     '''
@@ -703,7 +702,6 @@ class Data:
     }
 
     hotkeys_list = list(hotkey_settings_dic)
-    hotkey_settings_last_widget_pos_y: int = 0  # to calc. the parent widget height
 
 
     ''' 
@@ -801,7 +799,6 @@ class Data:
             }
       
     playlist_list = list(playlist_widget_dic)
-    playlist_settings_last_widget_pos_y: int = 0     # to calc. the parent widget height
 
     ''' To make sure if an invalid** "playing_playlist_index" is saved at the last use of the app,
         still able to start the app with the first playlist
