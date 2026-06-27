@@ -21,7 +21,7 @@ class GeneralTab(CommonTabValues):
             'play_at_startup',
             'big_jump',
             'window_auto_resize_to_video_resolution',
-            'thumbnail_remove_older_than',
+            'thumbnail_max_threads',
             'conf_msg_at_clear_playlist_with_playing_track']
         LINE_BREAK_SIZE_GEN = 20
         LINE_BREAK_SEPERATOR_GEN = "\n " + "_" * 34
@@ -241,3 +241,4 @@ class GeneralTab(CommonTabValues):
         cv.clear_playlist_at_playlist_remove = sett_gen['clear_playlist_at_playlist_remove']
         cv.conf_msg_at_clear_playlist_with_playing_track = sett_gen['conf_msg_at_clear_playlist_with_playing_track']
         cv.add_dir_ignored_file_titles_conf_msg = sett_gen['add_dir_ignored_file_titles_conf_msg']
+        cv.thumbnail_max_threads = sett_gen['thumbnail_max_threads']

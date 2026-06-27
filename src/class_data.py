@@ -167,6 +167,8 @@ class Data:
     thumbnail_pos_base_x: int = 5
     thumbnail_pos_base_y: int = 5
     thumbnail_remove_older_than: int = settings['general_settings']['thumbnail_remove_older_than']
+    thumbnail_max_threads: int = settings['general_settings']['thumbnail_max_threads']
+    thumbnail_active_threads_playlists = []
     if os_linux:
         scroll_bar_size: int = 10
     else:
@@ -386,6 +388,11 @@ class Data:
         'thumbnail_remove_older_than': {
             'text': 'Remove unused thumbnails\nolder than (days)',
             'value': thumbnail_remove_older_than,
+            'line_edit_widget': ''
+        },
+        'thumbnail_max_threads': {
+            'text': 'Max of thumbnail threads\nPlaylists with active\nthumbnail generation',
+            'value': thumbnail_max_threads,
             'line_edit_widget': ''
         },
         'default_audio_track': {

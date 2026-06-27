@@ -27,6 +27,7 @@
     "default_audio_track": 1,
     "thumbnail_img_size": 100,
     "thumbnail_remove_older_than": 60,
+    "thumbnail_max_threads": 1,
     "search_result_parent_dicts_size": 15,
     "add_dir_ignore_file_titles_including": "Sample",
     "clear_playlist_at_playlist_remove": true,
