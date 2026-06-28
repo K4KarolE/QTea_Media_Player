@@ -138,6 +138,14 @@ class GeneralTab(CommonTabValues):
                         f'The "{item_text}" value should be between 100 and 500.')
                     pass_validation = False
 
+            elif item_text == cv.general_settings_dic['thumbnail_max_threads']['text']:
+                if not line_edit_text.isdecimal() or int(line_edit_text) not in range(1, 6):
+                    item_text = item_text.replace('\n', ' ')
+                    MyMessageBoxError(
+                        'GENERAL TAB',
+                        f'The "{item_text}" value should be between 1 and 5.')
+                    pass_validation = False
+
             elif item_text == cv.general_settings_dic['thumbnail_remove_older_than']['text']:
                 if not line_edit_text.lstrip('-').isdecimal() or int(line_edit_text) not in range(-1, 365):
                     item_text = item_text.replace('\n', ' ')
