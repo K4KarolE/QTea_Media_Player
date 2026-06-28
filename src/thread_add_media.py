@@ -8,6 +8,7 @@ from .class_bridge import br
 from .func_coll import (
     generate_duration_to_display,
     is_active_and_add_to_track_playlist_same,
+    save_db,
     set_thumbnail_generation_needed_to,
     update_add_track_to_pl_widget_vars
 )
@@ -47,8 +48,8 @@ class ThreadAddMedia(QThread):
 
     def run(self):
         if self.track_path_list and cv.add_track_to_db_table != cv.active_db_table:
-            MyMessageBoxConfirmation('Add media', 'Not able to media to this playlist\n'
-                                              'while already adding media to another playlist.')
+            MyMessageBoxConfirmation('Add media', 'Not able to add media to this playlist while\n'
+                                              'the same process is running on another playlist.')
             return
 
         update_add_track_to_pl_widget_vars()
@@ -113,13 +114,11 @@ class ThreadAddMedia(QThread):
                 cv.add_dir_ignore_file_titles_including.lower() in file.lower())
 
 
-    @logger_check
     def player_set_source(self, track_path):
         """ Triggers the src / av_player / TrackDuration class / mediaStatusChanged signal """
         br.av_player_duration.player.setSource(QUrl.fromLocalFile(track_path))
 
 
-    @logger_check
     def return_thread_generated_values(self, invalid_media = False):
         """ Triggered via the src / av_player / TrackDuration class`
             mediaStatusChanged signal
@@ -154,6 +153,7 @@ class ThreadAddMedia(QThread):
                 cv.add_track_to_pl_name.setCurrentRow(0)
 
         else:
+            save_db()
             cv.adding_records_at_moment = False
 
             if is_active_and_add_to_track_playlist_same():

@@ -198,8 +198,9 @@ def add_media_grouped_actions(track_path, raw_duration):
     cv.playlist_widget_dic[cv.add_track_to_db_table]['active_pl_sum_duration'] = cv.add_track_to_pl_sum_duration
     duration = generate_duration_to_display(raw_duration)
 
+    # The DB will be saved in "thread_add_media / return_thread_generated_values()"
+    # at the end of "add media" process
     place_record_into_db(raw_duration, track_path)
-    save_db()
 
     track_name = Path(track_path).stem
     row_id = cv.add_track_to_pl_name.count() + 1
