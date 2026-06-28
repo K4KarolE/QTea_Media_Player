@@ -1,3 +1,5 @@
+import os
+
 from PyQt6.QtWidgets import QListWidgetItem, QApplication
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
@@ -947,12 +949,17 @@ def open_track_folder_via_context_menu(current_row, db_table):
 
 
 def play_track_with_default_player_via_context_menu(current_row, db_table):
+    """
+    Learned: it has to be "opencv-python-headless" installed" instead of "opencv-python"
+    otherwise with the "Linux + default player: VLC" combo
+    >> error, not able to open / play the file
+    """
     file_path = get_path_db(current_row, db_table)
     if Path(file_path).is_file():
         if cv.os_linux:
             subprocess.Popen(["xdg-open", file_path])
         else:
-            subprocess.Popen(["explorer", file_path])
+            os.startfile(file_path)
     else:
         MyMessageBoxError(
             'Not able to play the file',
