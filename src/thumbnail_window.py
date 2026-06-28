@@ -16,16 +16,16 @@ from .class_data import cv
 from .func_thumbnail import (
     is_new_thumbnail_generation_necessary,
     is_track_index_inside_playlist,
-    save_thumbnail_history_json,
     thumbnail_widget_resize_and_move_to_pos,
 )
 from .thread_thumbnail import ThreadThumbnail
 
 
 class ThumbnailMainWindow(QScrollArea):
-    def __init__(self):
+    def __init__(self, playlist):
         super().__init__()
         # setMinimumWidth declared in ui_create / ''' TOP RIGHT - PLAYLIST / BUTTONS / DURATION ''' section
+        self.playlist = playlist
         self.timer = QTimer()
         self.timer.timeout.connect(lambda : self.timer_action())
         self.scroll_bar_ver = QScrollBar()
@@ -43,11 +43,16 @@ class ThumbnailMainWindow(QScrollArea):
                            "background: white;"
                            "}"
                            )
-        self.create_widgets_window()
+        self.widgets_window = None
 
 
     def create_widgets_window(self):
-        self.widgets_window = WidgetsWindow()  # holding all the thumbnail widgets
+        """
+        Widgets Window creation triggered by the Thumbnail view button
+        button_thumbnail_clicked() / start_thumbnail_thread_grouped_action() /
+        create_new_thumbnail_widgets_window()
+        """
+        self.widgets_window = WidgetsWindow(self.playlist)  # holding all the thumbnail widgets
         self.widgets_window.resize(self.width(), self.height())
         self.setWidget(self.widgets_window)
 
@@ -68,14 +73,20 @@ class ThumbnailMainWindow(QScrollArea):
 
     def scroll_to_current_item_active_pl(self):
         if (not is_new_thumbnail_generation_necessary(cv.active_db_table) and
-                is_track_index_inside_playlist(cv.active_db_table, cv.current_track_index)):
+                is_track_index_inside_playlist('active_pl', cv.current_track_index)):
             thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
             thumbnail_widget = thumbnail_widget_dic[cv.current_track_index]['widget']
             self.scroll_bar_ver.setValue(thumbnail_widget.y() - cv.thumbnail_height)
 
     def scroll_to_current_item_playing_pl(self):
+        """
+        Scenario: playing next track on the playing playlist with thumbnail view
+        while another playlist is active / in use >> go back to the playing playlist
+        and the current playing track / thumbnail will be visible
+        Can be really useful when the "Shuffle" play mode is on
+        """
         if (not is_new_thumbnail_generation_necessary(cv.playing_db_table) and
-                is_track_index_inside_playlist(cv.active_db_table, cv.current_track_index)):
+                is_track_index_inside_playlist('playing_pl', cv.playing_track_index)):
             thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
             thumbnail_widget = thumbnail_widget_dic[cv.playing_track_index]['widget']
             min_pos = self.scroll_bar_ver.value()
@@ -86,10 +97,11 @@ class ThumbnailMainWindow(QScrollArea):
 
 
 class WidgetsWindow(QWidget):
-    def __init__(self):
+    def __init__(self, playlist):
         super().__init__()
+        self.playlist = playlist
         self.resize(cv.window_width, cv.window_height)
-        self.thread_thumbnails_update = ThreadThumbnail()
+        self.thread_thumbnails_update = ThreadThumbnail(self.playlist)
         self.thread_thumbnails_update.result_ready.connect(self.thumbnail_img_ready)
         self.setStyleSheet("QWidget"
                            "{"
@@ -98,20 +110,8 @@ class WidgetsWindow(QWidget):
                            )
 
     def thumbnail_img_ready(self, index: int, result: str):
-        """
-        First 2 "if": workaround solution for already running thumbnail generation on a playlist and start
-        a new process on another playlist >> will update the "cv.thumbnail_db_table" middle of thumbnail
-        generation >> the first thumbnail view playlist last thumbnail will be displayed on the new playlist
-        thumbnail view instead on the first playlist as it should be
-        """
-        if not cv.thumbnail_db_table_place_holder:
-            cv.thumbnail_db_table_place_holder = cv.thumbnail_db_table  # first thumbnail view triggered
-        if cv.thumbnail_db_table_place_holder != cv.thumbnail_db_table:
-            if index != 0:
-                cv.thumbnail_db_table_place_holder = cv.thumbnail_db_table
-                return
-
-        if thumbnail_widget_dic := cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'].get(index):
+        """ Update the thumbnail widget with the generated image and the appropriate thumbnail style """
+        if thumbnail_widget_dic := cv.playlist_widget_dic[self.playlist]['thumbnail_widgets_dic'].get(index):
             thumbnail_widget = thumbnail_widget_dic["widget"]
             if result == "audio":
                 thumbnail_widget.update_to_default_audio_img()
@@ -128,10 +128,10 @@ class WidgetsWindow(QWidget):
                 thumbnail_widget.set_ functions
             """
             # QUEUED
-            if [cv.thumbnail_db_table, index] in cv.queue_tracks_list:
+            if [self.playlist, index] in cv.queue_tracks_list:
                 thumbnail_widget.set_queued_track_thumbnail_style()
                 thumbnail_widget.is_queued = True
-                queue_number = cv.queue_tracks_list.index([cv.thumbnail_db_table, index]) + 1
+                queue_number = cv.queue_tracks_list.index([self.playlist, index]) + 1
                 thumbnail_widget.set_queue_number(queue_number)
 
             # PLAYED
@@ -144,6 +144,3 @@ class WidgetsWindow(QWidget):
             if index == cv.thumbnail_last_selected_track_index:
                 thumbnail_widget.set_selected_thumbnail_style()
                 thumbnail_widget.set_default_thumbnail_img()
-
-            if index > 0 and index % 20 == 0:
-                save_thumbnail_history_json()

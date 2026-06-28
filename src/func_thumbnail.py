@@ -95,7 +95,7 @@ def remove_thumbnail_widgets_window_and_thumbnail_dic():
         and supporting dictionary will be removed
         ** by deleting their parent window
     """
-    if cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window']:
+    if cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window:
         cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window'].widgets_window.deleteLater()
         cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'] = {}
 
@@ -234,9 +234,9 @@ def scroll_to_active_item_thumbnail_pl():
 """
 
 # THUMBNAIL PL
-def create_thumbnails_and_update_widgets(index):
+def create_thumbnails_and_update_widgets(playlist, index):
     """ Used via a thread in "src / thread_thumbnail" """
-    if thumbnail_widget_dic := cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'].get(index):
+    if thumbnail_widget_dic := cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic'].get(index):
         file_path = thumbnail_widget_dic["file_path"]
         # AUDIO
         if Path(file_path).suffix in ['.mp3', '.flac']:
@@ -367,7 +367,7 @@ def switch_to_standard_active_playlist_from_thumbnail_pl():
 
 
 # THUMBNAIL PL
-def stop_thumbnail_thread(playlist):
+def stop_thumbnail_thread(playlist=None):
     """ Scenarios:
         - Thumbnail generation is in progress + thumbnail button clicked again >>
             stop running thumbnail generation + switching back to the standard playlist
@@ -381,12 +381,22 @@ def stop_thumbnail_thread(playlist):
     """
     if playlist:
         widgets_window = cv.playlist_widget_dic[playlist]['thumbnail_window'].widgets_window
-        if widgets_window.thread_thumbnails_update.isRunning():
+        if widgets_window and widgets_window.thread_thumbnails_update.isRunning():
             widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(True)
             set_thumbnail_generation_needed_to(True, playlist)
             save_thumbnail_history_json()
         if playlist in cv.thumbnail_active_threads_playlists:
             cv.thumbnail_active_threads_playlists.remove(playlist)
+    else:
+        # "Purge thumbnail" via Settings window
+        # msg_box_wrapper_for_remove_all_thumbnails_and_clear_history() / remove_all_thumbnails_and_clear_history()
+        if cv.thumbnail_active_threads_playlists:
+            for playlist in cv.thumbnail_active_threads_playlists:
+                widgets_window = cv.playlist_widget_dic[playlist]['thumbnail_window'].widgets_window
+                widgets_window.thread_thumbnails_update.set_is_thumbnail_thread_stopped(True)
+                set_thumbnail_generation_needed_to(True, playlist)
+            save_thumbnail_history_json()
+            cv.thumbnail_active_threads_playlists = []
 
 
 # THUMBNAIL PL
@@ -514,7 +524,7 @@ def msg_box_wrapper_for_remove_all_thumbnails_and_clear_history():
 
  # NONE / msg_box_wrapper_for_remove_all_thumbnails_and_clear_history()
 def remove_all_thumbnails_and_clear_history():
-    stop_thumbnail_thread(cv.thumbnail_db_table)
+    stop_thumbnail_thread()
     switch_all_pl_to_standard_from_thumbnails_view(True)
     try:
         # THUMBNAIL - FILES

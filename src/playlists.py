@@ -279,7 +279,7 @@ class MyPlaylists(QTabWidget):
             duration_list_widget.row_selection_sync_list_widgets_list = [name_list_widget, queue_list_widget]
 
 
-            cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow()
+            cv.playlist_widget_dic[pl]['thumbnail_window'] = ThumbnailMainWindow(pl)
             cv.playlist_widget_dic[pl]['thumbnail_window'].hide()
 
 
