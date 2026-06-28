@@ -8,6 +8,7 @@ import sys
 import os
 
 from PyQt6.QtCore import QT_VERSION_STR
+from .logger import logger_sum
 
 
 def open_json():
@@ -27,9 +28,12 @@ def open_thumbnail_history_json():
     return json_dic
 
 def save_thumbnail_history_json():
-    with open(PATH_THUMBNAIL_HISTORY, 'w') as f:
-        dump(thumbnail_history, f, indent=2)
-    return
+    try:
+        with open(PATH_THUMBNAIL_HISTORY, 'w') as f:
+            dump(thumbnail_history, f, indent=2)
+        return
+    except: logger_sum('ERROR: Could not save the "_thumbnail_history.json" file')
+
 
 WORKING_DIRECTORY = Path().resolve()
 PATH_JSON_SETTINGS = Path(WORKING_DIRECTORY, 'settings.json')
@@ -391,7 +395,7 @@ class Data:
             'line_edit_widget': ''
         },
         'thumbnail_max_threads': {
-            'text': 'Max of thumbnail threads\nPlaylists with active\nthumbnail generation',
+            'text': 'Max of thumbnail threads\n(playlists with active\nthumbnail generation)',
             'value': thumbnail_max_threads,
             'line_edit_widget': ''
         },
@@ -462,8 +466,7 @@ class Data:
     gen_sett_string_text_list = [
         general_settings_dic['add_dir_ignore_file_titles_including']['text']
         ]
-  
-    general_settings_amount: int = len(list(general_settings_dic))
+
 
 
     '''
