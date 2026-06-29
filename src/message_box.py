@@ -4,11 +4,21 @@ from PyQt6.QtWidgets import QMessageBox
 from .class_bridge import br
 
 """
-Icons like "Information", "NoIcon" in "self.setIcon(QMessageBox.Icon.Information)" can cause 
-app crash with error message:
-"QBackingStore::endPaint() called with active painter; did you forget to destroy it or call QPainter::end() on it?"
+LEARNED:
+It looks like the msg box can not handle text with a line break where 
+the second line (any later in the text) is longer than the first one.
 
-"QMessageBox.Icon.Warning" looks alright.
+Example:
+string_to_print = ('            random text'
+                  '            longer random text')
+                  
+Adding "\n" line break at end of the first line does not fix the issue
+
+Solution: 
+- add extra whitespace at the end of the first line
+    to make the msg box wider: 'random text      '
+- truncate all the text following the first line if you think
+    the length of the text can be greater than the first line
 """
 
 
@@ -75,7 +85,7 @@ class MyMessageBoxConfirmation(QMessageBox):
         super().__init__()
         self.setWindowTitle(window_title)
         self.setWindowIcon(br.icon.settings)
-        # self.setIcon(QMessageBox.Icon.Information)    # more info above
+        self.setIcon(QMessageBox.Icon.Information)
         self.setText(message)
         self.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Sheet)
