@@ -206,23 +206,31 @@ class ThreadAddMedia(QThread):
 
 
     def generate_ignored_media_info_msg_text(self):
+        """ More info on the line truncation: src / message_box """
+        # Truncate the keyword to make sure explanation
+        # text is suitable for the msg box
         if len(cv.add_dir_ignore_file_titles_including) > 15:
             keyword = cv.add_dir_ignore_file_titles_including[0:15] + '..'
         else: keyword = cv.add_dir_ignore_file_titles_including
-
-        truncated_msg_list = self.truncate_msg_list(self.ignored_media_self_track_title_list)
-
-        string_to_print = ('The below media has been ignored by the\n'
+        string_to_print = ('The below media has been ignored by the    \n'
                             f'keyword "{keyword}" added on the\n'
                            'Settings window / General tab.\n\n')
-        for _ in truncated_msg_list:
-            string_to_print = string_to_print + _ + '\n'
+
+        # Truncate the ignored files list to make sure the
+        # msg box will not be much bigger then the app itself
+        truncated_msg_list = self.truncate_msg_list(self.ignored_media_self_track_title_list)
+
+        # Truncate the ignored file titles
+        for ignored_file_name in truncated_msg_list:
+            if len(ignored_file_name) > 35:
+                ignored_file_name = f'{ignored_file_name[0:23]} .. {ignored_file_name[-11:]}'
+            string_to_print = f'{string_to_print}{ignored_file_name}\n'
         self.ignored_media_self_track_title_list = []
         return string_to_print
 
 
     def truncate_msg_list(self, msg_list):
-        limit = 50
+        limit = 40
         if len(msg_list) > limit:
             new_msg_list = msg_list[:limit]
             new_msg_list.append("...")
