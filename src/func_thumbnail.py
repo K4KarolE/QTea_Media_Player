@@ -58,13 +58,12 @@ def is_new_thumbnail_generation_necessary(playlist):
     after a full completion of the thumbnail gen. thread / all
     the thumbnails are generated for the thumbnail playlist
     """
-    thumbnail_window_validation = cv.playlist_widget_dic[playlist]['thumbnail_window_validation']
     if cv.active_pl_name.count() == 0:
         return False
     elif not cv.playlist_widget_dic[playlist]['thumbnail_widgets_dic']:
         return True
-    elif (thumbnail_window_validation['thumbnail_img_size'] != cv.thumbnail_img_size or
-          thumbnail_window_validation['thumbnail_generation_needed']):
+    elif (cv.playlist_widget_dic[playlist]['thumbnail_img_size'] != cv.thumbnail_img_size or
+          cv.playlist_widget_dic[playlist]['thumbnail_generation_needed']):
         return True
     return False
 
@@ -128,11 +127,8 @@ def generate_thumbnail_dic():
             cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic'][index]["duration"] = duration_list[index]
 
         # Used to validate if a new thumbnail generation needed
-        thumbnail_window_validation = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_window_validation']
-        thumbnail_window_validation['tracks_count'] = cv.thumbnail_pl_tracks_count
-        thumbnail_window_validation['duration_sum'] = cv.playlist_widget_dic[cv.thumbnail_db_table]['active_pl_sum_duration']
-        thumbnail_window_validation['thumbnail_img_size'] = cv.thumbnail_img_size
-        thumbnail_window_validation['thumbnail_generation_needed'] = False
+        cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_img_size'] = cv.thumbnail_img_size
+        cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_generation_needed'] = False
 
 
         cv.thumbnail_widget_dic = cv.playlist_widget_dic[cv.thumbnail_db_table]['thumbnail_widgets_dic']

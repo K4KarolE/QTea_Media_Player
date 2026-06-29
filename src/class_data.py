@@ -777,10 +777,6 @@ class Data:
         To make sure un-played track`s thumbnail view style is correct
         SCENARIO: app started >> non-playing playlist is active + one of the row is selected
         >> switch to thumbnail view >> only the selected thumbnail style is in use
-    'thumbnail_window_validation':
-        Once the Thumbnail View button is triggered, the current playlist`s properties saved
-        in this dictionary to able to determine, if later there is any change made on the playlist
-        which requires new thumbnail generation
     '''
     playlist_widget_dic = {}
 
@@ -796,12 +792,8 @@ class Data:
             'played_thumbnail_style_update_needed': False,
             'active_pl_sum_duration': 0,
             'thumbnail_window': '',
-            'thumbnail_window_validation': {
-                'tracks_count': 0,
-                'duration_sum': 0,
-                'thumbnail_img_size': 0,
-                'thumbnail_generation_needed': True
-            },
+            'thumbnail_img_size': 0,
+            'thumbnail_generation_needed': True,
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': '',     # used in the Settings window / Playlists
             'button_remove_playlist_title': '',    # used in the Settings window / Playlists

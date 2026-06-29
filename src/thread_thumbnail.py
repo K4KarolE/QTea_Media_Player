@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from .class_data import cv, save_thumbnail_history_json
+from .func_coll import set_thumbnail_generation_needed_to
 from .func_thumbnail import create_thumbnails_and_update_widgets
 
 
@@ -21,8 +22,7 @@ class ThreadThumbnail(QThread):
         """
         cv.thumbnail_active_threads_playlists.append(self.playlist)
         thumbnail_widgets_dic = cv.playlist_widget_dic[self.playlist]['thumbnail_widgets_dic']
-        thumbnail_window_validation = cv.playlist_widget_dic[self.playlist]['thumbnail_window_validation']
-        thumbnail_window_validation['thumbnail_generation_needed'] = True   # un-completed thumbnail thread
+        set_thumbnail_generation_needed_to(True, self.playlist) # un-completed thumbnail thread
         if thumbnail_widgets_dic:
             for index in thumbnail_widgets_dic:
                 if not self.is_thumbnail_thread_stopped:
@@ -36,7 +36,7 @@ class ThreadThumbnail(QThread):
                 else:
                     return
             save_thumbnail_history_json()
-            thumbnail_window_validation['thumbnail_generation_needed'] = False  # completed thumbnail thread
+            set_thumbnail_generation_needed_to(False, self.playlist)   # completed thumbnail thread
 
             if self.playlist in cv.thumbnail_active_threads_playlists:
                 cv.thumbnail_active_threads_playlists.remove(self.playlist)

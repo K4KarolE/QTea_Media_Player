@@ -716,7 +716,7 @@ def set_thumbnail_generation_needed_to(value: bool, playlist=None):
     """
     if not playlist:
         playlist = cv.active_db_table
-    cv.playlist_widget_dic[playlist]['thumbnail_window_validation']['thumbnail_generation_needed'] = value
+    cv.playlist_widget_dic[playlist]['thumbnail_generation_needed'] = value
 
 
 def is_track_selection_multiple():
