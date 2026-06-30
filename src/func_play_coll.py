@@ -336,7 +336,7 @@ class PlaysFunc:
         """
         if br.av_player.base_played_end_of_media_signal_ignored:
             # To make sure the fully played track position is set to 0
-            if cv.continue_playback and not cv.adding_records_at_moment:
+            if cv.continue_playback:
                 update_raw_current_duration_db(0, cv.playing_track_index)
             self.play_next_track()
         else:

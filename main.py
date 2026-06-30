@@ -12,7 +12,6 @@ from src import (
     MyVolumeSlider,
     MyWindow,
     PlaysFunc,
-    TrackDuration,
     generate_buttons,
     generate_ui,
     logger_sum
@@ -26,7 +25,6 @@ def main():
     br.icon = MyIcon()
     br.window = MyWindow()
     br.av_player = AVPlayer()
-    br.av_player_duration = TrackDuration()
     br.play_slider = MySlider()
     br.image_logo = MyImage('logo.png', 200)
     br.play_funcs = PlaysFunc()

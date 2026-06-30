@@ -129,9 +129,6 @@ class Data:
     volume_slider_value: int = 0
     current_track_index: int = 0
     currently_playing_track_info_in_window_title: str = ''
-    # to disable current duration autosave while
-    # files from directory are added
-    adding_records_at_moment: bool = False
     PLIST_BUTTONS_HEIGHT: int = 0 # src/buttons_create
     # LINUX
     player_paused_position: int = 0
@@ -797,10 +794,12 @@ class Data:
             'thumbnail_widgets_dic': {},    # filled via func_thumbnail/generate_thumbnail_dic()
             'line_edit': '',     # used in the Settings window / Playlists
             'button_remove_playlist_title': '',    # used in the Settings window / Playlists
-            'button_jump_to_playlist': ''   # used in the Settings window / Playlists
+            'button_jump_to_playlist': '',   # used in the Settings window / Playlists
+            'add_media_thread': None
             }
       
     playlist_list = list(playlist_widget_dic)
+    add_media_playlist_list = []
 
     ''' To make sure if an invalid** "playing_playlist_index" is saved at the last use of the app,
         still able to start the app with the first playlist

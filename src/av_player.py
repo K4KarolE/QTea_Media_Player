@@ -706,8 +706,9 @@ class AVPlayer(QWidget):
 @logger_runtime
 class TrackDuration(QWidget):
     """ The class used for duration calculation only """
-    def __init__(self):
+    def __init__(self, playlist):
         super().__init__()
+        self.playlist = playlist
         self.player = QMediaPlayer()
         self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action_duration())
 
@@ -721,6 +722,6 @@ class TrackDuration(QWidget):
         It is handled in the "src / thread_add_media / return_thread_generated_values"
         """
         if self.player.mediaStatus() == QMediaPlayer.MediaStatus.LoadedMedia:
-            br.window.thread_add_media.return_thread_generated_values()
+            cv.playlist_widget_dic[self.playlist]['add_media_thread'].return_thread_generated_values()
         elif self.player.mediaStatus() == QMediaPlayer.MediaStatus.InvalidMedia:
-            br.window.thread_add_media.return_thread_generated_values(invalid_media = True)
+            cv.playlist_widget_dic[self.playlist ]['add_media_thread'].return_thread_generated_values(invalid_media = True)

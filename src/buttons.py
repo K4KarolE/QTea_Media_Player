@@ -26,7 +26,7 @@ from .func_thumbnail import (
 from .window_settings import MySettingsWindow
 from .logger import logger_runtime
 from .message_box import MyMessageBoxWarning, MyMessageBoxConfirmation
-
+from .thread_add_media import ThreadAddMedia
 
 
 class MyButtons(QPushButton):
@@ -49,7 +49,6 @@ class MyButtons(QPushButton):
             self.setIconSize(QSize(cv.icon_size, cv.icon_size))
 
 
-
     '''
     ########################
         PLAYLIST SECTION
@@ -64,8 +63,10 @@ class MyButtons(QPushButton):
         dialog_add_track.exec()
         if dialog_add_track.result():
             switch_to_standard_active_playlist_from_thumbnail_pl()
-            br.window.thread_add_media.source = dialog_add_track.selectedFiles()[0]
-            br.window.thread_add_media.start()
+            if not cv.playlist_widget_dic[cv.active_db_table]['add_media_thread']:
+                cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'] = ThreadAddMedia()
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].source = dialog_add_track.selectedFiles()[0]
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].start()
 
 
     ''' BUTTON PLAYLIST - ADD DIRECTORY '''
@@ -77,8 +78,10 @@ class MyButtons(QPushButton):
         dialog_add_dir.exec()
         if dialog_add_dir.result():
             switch_to_standard_active_playlist_from_thumbnail_pl()
-            br.window.thread_add_media.source = dialog_add_dir.selectedFiles()[0]
-            br.window.thread_add_media.start()
+            if not cv.playlist_widget_dic[cv.active_db_table]['add_media_thread']:
+                cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'] = ThreadAddMedia()
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].source = dialog_add_dir.selectedFiles()[0]
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].start()
 
 
     ''' BUTTON PLAYLIST - REMOVE SINGLE TRACK '''
@@ -197,7 +200,7 @@ class MyButtons(QPushButton):
         "cv.thumbnail_db_table = cv.active_db_table" reassignment actioned in
         "start_thumbnail_thread_grouped_action() / update_thumbnail_support_vars_before_thumbnail_thread()" below
         """
-        if cv.add_track_to_db_table == cv.active_db_table and br.window.thread_add_media.track_path_list:
+        if cv.active_db_table in cv.add_media_playlist_list:
             MyMessageBoxConfirmation('Adding media & Thumbnail view',
                                      'Not able to switch to Thumbnail view mode\n'
                                               'while adding media to the playlist.')

@@ -140,14 +140,7 @@ def generate_thumbnail_dic():
 
 # THUMBNAIL PL / generate_thumbnail_dic()
 def get_all_playlist_path_from_db():
-    """ Get all the media of the playlist switched to thumbnail view
-        Scenario - outside this function:
-        If the thumbnail view button clicked when adding media to
-        the standard playlist is still in progress, the thumbnail view
-        track list will be less than the standard playlist and a
-        warning message will be displayed via:
-        msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished()
-    """
+    """ Get all the media of the playlist when switched to thumbnail view """
     result_all = sql_cursor.execute("SELECT * FROM {0}".format(cv.thumbnail_db_table)).fetchall()
     duration_list = [duration[1] for duration in result_all]
     path_list = [path[3] for path in result_all]
@@ -493,19 +486,6 @@ def update_thumbnail_style_at_row_change():
     # UPDATE LAST SELECTED TRACK DIC AND VARS
     cv.playlist_widget_dic[cv.active_db_table]['last_selected_track_index'] = cv.current_track_index
     cv.active_pl_last_selected_track_index = cv.current_track_index
-
-
-# BOTH
-def msg_box_for_thumbnail_view_when_adding_tracks_to_pl_unfinished():
-    if cv.add_track_to_db_table == cv.thumbnail_db_table:
-        if br.window.thread_add_media.isRunning():
-            MyMessageBoxConfirmation(
-                'Adding media is unfinished',
-                '\nPlease note, QTea is still adding media to the playlist.\n\n'
-                'The thumbnail view will not mirror the standard playlist completely.\n\n'
-                'Come back to the thumbnail view later for the full list once\n'
-                'the addition is completed.'
-                )
 
 
 # NONE

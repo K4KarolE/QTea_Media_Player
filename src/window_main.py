@@ -5,7 +5,6 @@ from PyQt6.QtWidgets import QApplication, QWidget
 from .class_bridge import br
 from .class_data import cv
 from .func_coll import (
-    add_media_grouped_actions,
     disable_minimal_interface,
     queue_add_remove_track,
     toggle_minimal_interface,
@@ -33,13 +32,7 @@ class MyWindow(QWidget):
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()
         self.move_window_to_middle()
-        self.thread_add_media = ThreadAddMedia()
-        self.thread_add_media.result_ready.connect(self.add_track_to_playlist_via_thread)
         self.new_window_size_diff_percent = 0.05
-
-
-    def add_track_to_playlist_via_thread(self, track_path, raw_duration):
-        add_media_grouped_actions(track_path, raw_duration)
 
 
     def hotkeys_creation(self):
@@ -167,8 +160,10 @@ class MyWindow(QWidget):
             event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
             switch_to_standard_active_playlist_from_thumbnail_pl()
-            self.thread_add_media.source = event.mimeData().urls()
-            self.thread_add_media.start()
+            if not cv.playlist_widget_dic[cv.active_db_table]['add_media_thread']:
+                cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'] = ThreadAddMedia()
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].source = event.mimeData().urls()
+            cv.playlist_widget_dic[cv.active_db_table]['add_media_thread'].start()
 
 
     def get_current_duration_info(self):

@@ -4,10 +4,10 @@ from PyQt6.QtWidgets import QListWidgetItem, QApplication
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
-from .logger import logger_sum
 from .class_bridge import br
 from .class_data import connection, cur, save_json
 from .class_data import cv, settings
+from .logger import logger_sum
 from .message_box import MyMessageBoxError
 
 from pathlib import Path
@@ -61,20 +61,6 @@ def update_playing_playlist_vars_and_widgets():
     cv.playing_pl_tracks_count = cv.playing_pl_name.count()
 
 
-def update_add_track_to_pl_widget_vars():
-    """
-    To carry the values from the active_pl_name, active_pl_queue, active_pl_duration list widget vars.
-    when adding a directory with huge amount of media to the playlist, which can take a while
-    to process + switching playlist in the meanwhile
-    >> avoid to add the rest of the media added to the new playlist
-    """
-    cv.add_track_to_db_table = cv.active_db_table
-    cv.add_track_to_pl_name = cv.active_pl_name
-    cv.add_track_to_pl_queue = cv.active_pl_queue
-    cv.add_track_to_pl_duration = cv.active_pl_duration
-    cv.add_track_to_pl_sum_duration = cv.active_pl_sum_duration
-
-
 def save_playing_playlist_and_playing_last_track_index():
     settings['playing_playlist'] = cv.active_playlist_index
     settings['playlists'][cv.playing_db_table]['last_track_index'] = cv.playing_pl_last_track_index
@@ -91,13 +77,13 @@ def save_active_pl_last_track_index():
     save_json()
 
 
-def place_record_into_db(duration, path):
+def place_record_into_db(playlist, duration, path):
     """
     A DB record: row_id, duration, current_duration, path
     row_id populating automatically
     QListWidget list first index: 0 // SQLite DB first index: 1
     """
-    cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(cv.add_track_to_db_table), (duration, 0, str(path)))
+    cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(playlist), (duration, 0, str(path)))
 
 def save_db():
     connection.commit()
@@ -194,27 +180,19 @@ def generate_track_list_detail(db_track_record):
     return track_row_db, track_name, track_path, duration_to_display
 
 
-def add_media_grouped_actions(track_path, raw_duration):
-    if is_active_and_add_to_track_playlist_same():
-        cv.active_pl_sum_duration += raw_duration
-    cv.playlist_widget_dic[cv.add_track_to_db_table]['active_pl_sum_duration'] = cv.add_track_to_pl_sum_duration
-    duration = generate_duration_to_display(raw_duration)
-
+def add_media_grouped_actions(playlist, track_path, raw_duration):
     # The DB will be saved in "thread_add_media / return_thread_generated_values()"
     # at the end of "add media" process
-    place_record_into_db(raw_duration, track_path)
+    place_record_into_db(playlist, raw_duration, track_path)
 
     track_name = Path(track_path).stem
-    row_id = cv.add_track_to_pl_name.count() + 1
+    row_id = cv.playlist_widget_dic[playlist]['name_list_widget'].count() + 1
     new_track_name = f'{row_id}. {track_name}'
+    duration = generate_duration_to_display(raw_duration)
 
-    add_new_list_item(new_track_name, cv.add_track_to_pl_name, None, track_path)
-    add_new_list_item('', cv.add_track_to_pl_queue)
-    add_new_list_item(duration, cv.add_track_to_pl_duration)
-
-
-def is_active_and_add_to_track_playlist_same():
-    return cv.add_track_to_pl_name == cv.active_pl_name
+    add_new_list_item(new_track_name, cv.playlist_widget_dic[playlist]['name_list_widget'], None, track_path)
+    add_new_list_item('',  cv.playlist_widget_dic[playlist]['queue_list_widget'])
+    add_new_list_item(duration,  cv.playlist_widget_dic[playlist]['duration_list_widget'])
 
 
 def add_new_list_item(new_item_text, list_widget, align_center = None, track_path = None):

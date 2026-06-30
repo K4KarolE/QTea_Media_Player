@@ -3,16 +3,15 @@ import os
 
 from PyQt6.QtCore import pyqtSignal, QThread, QUrl
 
+from .av_player import TrackDuration
 from .class_data import cv
 from .class_bridge import br
 from .func_coll import (
+    add_media_grouped_actions,
     generate_duration_to_display,
-    is_active_and_add_to_track_playlist_same,
     save_db,
-    set_thumbnail_generation_needed_to,
-    update_add_track_to_pl_widget_vars
+    set_thumbnail_generation_needed_to
 )
-from .logger import logger_check
 from .message_box import MyMessageBoxError, MyMessageBoxConfirmation
 
 
@@ -35,24 +34,24 @@ class ThreadAddMedia(QThread):
 
     def __init__(self):
         super().__init__()
+        self.playlist = cv.active_db_table
         self.source = None
         self.track_path_list = []
         self.invalid_media_self_track_path_list = []
         self.ignored_media_self_track_title_list = []
         self.last_track_added = ""
+        self.av_player_duration = TrackDuration(self.playlist)
         # self.last_track_added - Used to avoid the below scenario:
         # Adding the same media after each other >> the duration player's mediaStatusChanged
         # signal will not be triggered >> the second media will not be added and the
         # duration player get blocked / unresponsive >> not able to add another media
-
+        self.result_ready.connect(self.add_track_to_playlist_via_thread)
+        # MyMessageBoxConfirmation(self.playlist, self.playlist)
 
     def run(self):
-        if self.track_path_list and cv.add_track_to_db_table != cv.active_db_table:
-            MyMessageBoxConfirmation('Add media', 'Not able to add media to this playlist while\n'
-                                              'the same process is running on another playlist.')
-            return
+        if self.playlist not in cv.add_media_playlist_list:
+            cv.add_media_playlist_list.append(self.playlist)
 
-        update_add_track_to_pl_widget_vars()
         set_thumbnail_generation_needed_to(True)
 
         #########################
@@ -97,9 +96,11 @@ class ThreadAddMedia(QThread):
                 MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
 
 
+    def add_track_to_playlist_via_thread(self, track_path, raw_duration):
+        add_media_grouped_actions(self.playlist, track_path, raw_duration)
+
 
     def add_dir(self, dir_path):
-        cv.adding_records_at_moment = True
         for dir_path_b, _, file_names in os.walk(dir_path):
             file_names.sort()
             for file in file_names:
@@ -116,7 +117,7 @@ class ThreadAddMedia(QThread):
 
     def player_set_source(self, track_path):
         """ Triggers the src / av_player / TrackDuration class / mediaStatusChanged signal """
-        br.av_player_duration.player.setSource(QUrl.fromLocalFile(track_path))
+        self.av_player_duration.player.setSource(QUrl.fromLocalFile(track_path))
 
 
     def return_thread_generated_values(self, invalid_media = False):
@@ -134,13 +135,16 @@ class ThreadAddMedia(QThread):
                 self.track_path_list.pop(0)
                 self.last_track_added = None
         else:
-            raw_duration = br.av_player_duration.player.duration()
+            raw_duration = self.av_player_duration.player.duration()
 
             self.result_ready.emit(self.track_path_list[0], raw_duration)
             self.last_track_added = self.track_path_list[0]
             self.track_path_list.pop(0)
 
-            cv.add_track_to_pl_sum_duration += raw_duration
+            cv.playlist_widget_dic[self.playlist]['active_pl_sum_duration'] += raw_duration
+            if cv.active_db_table == self.playlist:
+                cv.active_pl_sum_duration += raw_duration
+
             self.update_duration_sum_widget()
 
         if self.track_path_list:
@@ -149,15 +153,16 @@ class ThreadAddMedia(QThread):
             To select the first row once the first media is added to the playlist
             Adding media to an empty playlist, there is no row selected by default
             """
-            if cv.add_track_to_pl_name.currentRow() == -1:
-                cv.add_track_to_pl_name.setCurrentRow(0)
+            if cv.playlist_widget_dic[self.playlist]['name_list_widget'].currentRow() == -1:
+                cv.playlist_widget_dic[self.playlist]['name_list_widget'].setCurrentRow(0)
 
         else:
             save_db()
-            cv.adding_records_at_moment = False
+            if self.playlist in cv.add_media_playlist_list:
+                cv.add_media_playlist_list.remove(self.playlist)
 
-            if is_active_and_add_to_track_playlist_same():
-                cv.active_pl_tracks_count = cv.add_track_to_pl_name.count()
+            if cv.active_db_table == self.playlist:
+                cv.active_pl_tracks_count = cv.playlist_widget_dic[self.playlist]['name_list_widget'].count()
 
             if self.invalid_media_self_track_path_list:
                 """
@@ -190,8 +195,9 @@ class ThreadAddMedia(QThread):
             or change back to the playlist where and while
             adding tracks was still in progress
         """
-        if is_active_and_add_to_track_playlist_same():
-            br.duration_sum_widg.setText(generate_duration_to_display(cv.add_track_to_pl_sum_duration))
+        if cv.active_db_table == self.playlist:
+            current_pl_duration = cv.playlist_widget_dic[self.playlist]['active_pl_sum_duration']
+            br.duration_sum_widg.setText(generate_duration_to_display(current_pl_duration))
 
 
     def generate_invalid_media_error_msg_text(self):
