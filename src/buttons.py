@@ -253,7 +253,10 @@ class MyButtons(QPushButton):
 
     ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''
     def set_style_duration_info_button(self):
-        self.setFont(QFont('Times', 14, 600))
+        if cv.os_linux:
+            font_bold = 600
+        else: font_bold = 100
+        self.setFont(QFont('Times', 14, font_bold))
         self.setFlat(True)
         self.setStyleSheet(
                         "QPushButton"
