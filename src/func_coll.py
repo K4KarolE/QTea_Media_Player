@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 from PyQt6.QtWidgets import QListWidgetItem, QApplication
 from PyQt6.QtCore import Qt, QSize
@@ -86,7 +87,14 @@ def place_record_into_db(playlist, duration, path):
     cur.execute("INSERT INTO {0}(duration, current_duration, path) VALUES (?, ?, ?)".format(playlist), (duration, 0, str(path)))
 
 def save_db():
-    connection.commit()
+    try:
+        connection.commit()
+    except:
+        try:
+            sleep(0.5)
+            connection.commit()
+        except:
+            logger_sum('ERROR: Could not save the sqlite database')
 
 
 def update_raw_current_duration_db(raw_current_duration, list_row_id):
@@ -916,6 +924,16 @@ def open_track_folder_via_context_menu(current_row, db_table):
     file_dir_path = Path(file_path).parent
     if Path(file_dir_path).is_dir():
         if cv.os_linux:
+            """
+            Linux Mint 22.3 x86_64, "python-nemo" need to be removed via "Software manager" / ..
+            Otherwise, running the app
+                - Via source code: error message (below) still opens the folder
+                - Via packaged and installed: not opens the folder, no error message
+                
+            ImportError: could not import gobject (error was: ModuleNotFoundError("No module named 'gi'"))
+            ** (nemo:34862): WARNING **: 18:53:10.122: pygobject initialization failed 
+            ** (nemo:34862): WARNING **: 18:53:10.122: nemo_python_init_python failed
+            """
             subprocess.Popen(["xdg-open", file_dir_path])
         else:
             subprocess.Popen(["explorer", file_dir_path])
