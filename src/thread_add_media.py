@@ -46,6 +46,7 @@ class ThreadAddMedia(QThread):
         # signal will not be triggered >> the second media will not be added and the
         # duration player get blocked / unresponsive >> not able to add another media
         self.result_ready.connect(self.add_track_to_playlist_via_thread)
+        self.finished.connect(self.thread_finished_action)  # Ignored media msg box
 
 
     def run(self):
@@ -84,16 +85,6 @@ class ThreadAddMedia(QThread):
         ##################################
         if self.track_path_list:
             self.track_path_list_action()
-
-        if self.ignored_media_self_track_title_list:
-            """
-            To list first 50 ignored files set up by the user via
-            Settings window / General tab / "Add directory - ignore file titles including" field
-            
-            ** not added to the playlist
-            """
-            if cv.add_dir_ignored_file_titles_conf_msg:
-                MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
 
 
     def add_track_to_playlist_via_thread(self, track_path, raw_duration):
@@ -244,3 +235,18 @@ class ThreadAddMedia(QThread):
             new_msg_list.append("...")
             return new_msg_list
         return msg_list
+
+
+    def thread_finished_action(self):
+        if self.ignored_media_self_track_title_list:
+            """
+            To list first 40 ignored files set up by the user via
+            Settings window / General tab / "Add directory - ignore file titles including" field
+
+            ** not added to the playlist
+            
+            Adding the msg box function at the end of "run()" >> randomly crashing the app
+            Solution: using the "finished" signal
+            """
+            if cv.add_dir_ignored_file_titles_conf_msg:
+                MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
