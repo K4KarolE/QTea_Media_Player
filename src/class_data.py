@@ -133,9 +133,6 @@ class Data:
     # LINUX
     player_paused_position: int = 0
     os_linux: bool = os_linux
-    # PyQt version number
-    # Used to differentiate functionalities between minor PyQt versions
-    pyqt_minor_version_number = int(QT_VERSION_STR.split('.')[1])  # 6.5.3 >> 5
 
     """ THUMBNAILS / THUMBNAIL VIEW """
     is_ffmpeg_installed: bool = shutil.which("ffmpeg")

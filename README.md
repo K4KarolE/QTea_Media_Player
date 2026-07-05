@@ -39,9 +39,7 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 - [File types](#file-types)
 - [Workarounds](#workarounds)
     - [Dummy track](#dummy-track)
-    - [Dummy playlist tab](#dummy-playlist-tab)
     - [Information displayed as subtitle](#information-displayed-as-subtitle)
-    - [Audio delay - LINUX only](#audio-delay---linux-only)
     - [No solution yet](#could-not-find-solution-yet)
 - [Requirements](#requirements)
   - Python
@@ -348,39 +346,11 @@ Achieved:
 - Side effect: no visible side effect
 - It is solved in `PyQt 6.10` - see `PyQt version history` section below for the reason the `6.10` version is not in use
 
-### Dummy playlist tab
-- Issue: if the last playlist tab is hidden, the whole playlist tab list is not reachable via the arrow buttons 
-- Solution: The last, dummy, disabled playlist tab always visible
-    - More info: `src / playlists.py`
-    - Side effect: disabled, not clickable, small pice is visible on the right side of the playlists bar
-
 ### Information displayed as subtitle
 - Issue: the video scene composition not following the layout, frame size change
     - Window <- QFrame <- Layout <- QGraphicsView <- QGraphicsScene <- QGraphicsVideoItem
 - Solution: the information (track title, volume, ..) displayed as subtitle on the video screen
     - Side effect: When the video is not playing, the information is not displayed
-
-### Audio delay - Linux only
-- Issue: video or audio paused + continue playing
-    - Video continue normally
-    - Audio is not playing for a while (2-10s)
-- Solution: saving the current player`s position at pause and apply it at the continue phase
-
-### Audio device change - Linux and Windows
-- It is solved in `PyQt 6.10.0` and above
-- Issue: Switching audio output device on PC/laptop while the app is in playing/paused state + play next track >> freezes the app, error message:
-    ```
-    [AVHWFramesContext @ 00000202E043C100] Static surface pool size exceeded.
-    [h264 @ 00000202CD315540] get_buffer() failed
-    [h264 @ 00000202CD315540] thread_get_buffer() failed
-    [h264 @ 00000202CD315540] decode_slice_header error
-    [h264 @ 00000202CD315540] no frame!
-    ```
-- Solution:
-  - The app`s audio output is not following the system's audio output update
-  - Right-click on the video area (if visible) and select the preferred audio device in the context menu or
-  - Use the dedicated hotkey to select the next audio output or
-  - Restart the app
 
 ### Adding the same media twice
 - Issue: Adding the same media after each other:
@@ -397,46 +367,31 @@ same media is already loaded) and jumps to the "add media the playlist phase"
   - LINUX: Only affecting the header of the app
   - WINDOWS 11: None - no theme overriding
 - WINDOWS 11 only: Video playing + stop + start another video >> the previous video's last played frame is displayed before the new video starts playing
-- `QMediaPlayer` - Memory Leak: `QMediaPlayer.setSource()` function can increase the memory usage,
+- `QMediaPlayer` - Memory Leak: `QMediaPlayer's` `.setSource()` function can increase the memory usage,
 [QTBUG-36671](https://bugreports.qt.io/browse/QTBUG-36671)
   - Can occur when: 
     - Adding media to the player
     - Playing new media
+  - Minimalist "try to fix" test in "docs / learning / player_basic_memory_leak_fix_try.py"
 
 
 ## Requirements
 ### Python 3 - used: 3.12
 - https://www.python.org/
 - For the `Python-PyQt` compatibility matrix visit: [https://wiki.qt.io/Qt_for_Python](https://wiki.qt.io/Qt_for_Python)
-  - According to the compatibility matrix for `PyQT 6.5.3` + `Python 3.11` should be used (`Python 3.12` working fine)
 - [Status of Python versions](https://devguide.python.org/versions/)
 
-### PyQt version history
-- 6.5.3 (10/2023) - In use
-
-- 6.10.0 (10/2025) - Not in use
-    - Issue 1: OS theme overriding the app`s theme
-    - Issue 2: Duration slider not responding at startup when "Play at startup" is enabled or randomly once the app is running
-        - Error message:
-            ```
-            QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::Demuxer::unnamed
-            QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::StreamDecoder::unnamed
-            QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::StreamDecoder::unnamed
-            QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::VideoRenderer::unnamed
-            QObject::disconnect: wildcard call disconnects from destroyed signal of QFFmpeg::AudioRenderer::unnamed
-            ```
-        - Quick fix: stop and play again
-
-### Install PyQt dependencies
+### Install dependencies (PyQt6, OpenCV)
 ``` pip install -r requirements.txt ```
 
-### Install testing dependency
+### Install testing dependency - not necessary to use the app
 ``` pip install pytest==9.0.2 ```
 
-### Additional dependency for Linux
-``` sudo apt install libxcb-cursor-dev ```
+### For Linux Mint
+- For the installed version: To be able to use right-click menu / "Open item's folder" option,
+"python-nemo" needs to be removed via "Software manager"
 
-### LINUX - Install specific Python and virtual environment version
+### LINUX - Install specific Python and virtual environment version - Ubuntu / Debian / Linux Mint
 Used:
 - [How do I install a different Python version using apt-get?](https://askubuntu.com/a/682875)
 - [Creating venv with python 3.12](https://askubuntu.com/a/1563105)
@@ -458,4 +413,4 @@ More info: [Qt for Python - Getting Started](https://doc.qt.io/qtforpython-6/get
 - Tested on Windows 11, Linux Mint 22
 
 ## Thank you all who worked on the modules used in this project!
-## Thank you all Winamp, VLC player and Total/Double Commander contributors!
+## Thank you all Winamp, VLC player, Total/Double Commander, FFmpeg, OpenCV, PyInstaller and PyQt contributors!

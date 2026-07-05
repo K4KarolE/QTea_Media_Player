@@ -145,13 +145,9 @@ class AVPlayer(QWidget):
         Triggered when the audio output device has changed
         example: speaker >> headset
         """
-        # Windows and Linux issue, more info in
-        # the README / Workarounds section
-        # It is solved in PyQt 6.10.0 and above
-        if cv.pyqt_minor_version_number >= 10:
-            self.audio_output = QAudioOutput()
-            self.player.setAudioOutput(self.audio_output)
-            self.audio_output.setVolume(cv.volume)
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(cv.volume)
 
 
     def eventFilter(self, source, event):

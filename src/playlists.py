@@ -83,7 +83,6 @@ class MyPlaylists(QTabWidget):
         cv.current_track_index = cv.active_pl_last_track_index
 
         br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
-        self.add_dummy_playlist()
         self.hide_playlists_with_no_title()
         # Multi rows selection & moving
         self.rows_moved_triggered_counter:int = 1
@@ -114,17 +113,6 @@ class MyPlaylists(QTabWidget):
                             "}"
                         )
 
-
-    ''' WORKAROUND / LEARNED '''
-    ''' 
-    The last tab added to the TABS widget should NOT be hidden
-    it will make the right tab selection arrow inactive/unusable to
-    select the un-hidden tabs beyond the visible tabs
-    workaround --> we leave the last tab always visible and disabled
-    '''
-    def add_dummy_playlist(self):
-        self.addTab(QWidget(), '')
-        self.setTabEnabled(cv.playlists_amount, False)
 
     def hide_playlists_with_no_title(self):
         for index in cv.playlists_without_title_to_hide_index_list:

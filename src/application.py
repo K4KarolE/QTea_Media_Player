@@ -13,6 +13,8 @@ https://doc.qt.io/qt-6/qguiapplication.html#setDesktopSettingsAware
 """
 if cv.os_linux:
     QApplication.setDesktopSettingsAware(False)
+else:
+    sys.argv += ['-platform', 'windows:darkmode=1']
 
 
 
@@ -25,6 +27,8 @@ class MyApp(QApplication):
         self.app_moved_while_fullscreen_mode = False
         self.applicationStateChanged.connect(lambda: self.application_state_changed_action())
         self.is_app_status_changed = False
+        if not cv.os_linux:
+            self.setStyle("Fusion")     # To avoid system theme >> qt app theme
 
 
     def application_state_changed_action(self):
