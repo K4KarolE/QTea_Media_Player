@@ -72,6 +72,8 @@ class ThumbnailMainWindow(QScrollArea):
         return super().resizeEvent(a0)
 
     def scroll_to_current_item_active_pl(self):
+        if not self.widgets_window:
+            return
         if (not is_new_thumbnail_generation_necessary(cv.active_db_table) and
                 is_track_index_inside_playlist('active_pl', cv.current_track_index)):
             thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
@@ -85,6 +87,8 @@ class ThumbnailMainWindow(QScrollArea):
         and the current playing track / thumbnail will be visible
         Can be really useful when the "Shuffle" play mode is on
         """
+        if not self.widgets_window:
+            return
         if (not is_new_thumbnail_generation_necessary(cv.playing_db_table) and
                 is_track_index_inside_playlist('playing_pl', cv.playing_track_index)):
             thumbnail_widget_dic = cv.playlist_widget_dic[cv.playing_db_table]['thumbnail_widgets_dic']
