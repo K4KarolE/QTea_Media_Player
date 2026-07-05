@@ -45,11 +45,27 @@ class PlaysFunc:
 
         play_track() / self.thread_play_track_set_source.start()
         >> self.played_and_queued_track_style_update() and result_ready.emit()
-        >> this function
+        >> this function (>> MediaStatus.LoadedMedia >> play_track_second_part())
 
         Playing the same file - The same file can be added multiple times to the playlists
         The media status changed signal is not fired and the "self.play_track_second_part()"
         is not called when the same file path is set as source, solution:
+
+        Memory leak:
+            `QMediaPlayer.setSource()` function can increase the memory usage (br.av_player.player.setSource below)
+
+            Tried to remove and recrate the player, issue still occurs:
+            else:
+                br.av_player.player.stop()
+                br.av_player.player.setSource(QUrl())
+                br.av_player.video_output.deleteLater()
+                br.av_player.audio_output.deleteLater()
+                br.av_player.player.deleteLater()
+                sleep(1)
+                br.av_player.create_new_player() // br.av_player = AVPlayer()
+                br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+
+            Minimalist "try to fix" test in "docs/learning/player_basic_memory_leak_fix_try.py"
         """
         if self.track_path == self.track_path_previous:
             br.av_player.player.setPosition(cv.track_current_duration)
