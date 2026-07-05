@@ -246,7 +246,9 @@ def generate_buttons():
         '00:00 / 00:00',
         'Click to switch',
         )
-    br.button_duration_info.move(play_buttons_x_pos(9.5), 0)
+    if cv.os_linux: pos_y = 0
+    else: pos_y = 2
+    br.button_duration_info.move(play_buttons_x_pos(9.5), pos_y)
     br.button_duration_info.clicked.connect(button_duration_info_clicked)
     br.button_duration_info.set_style_duration_info_button()
     br.button_duration_info.setDisabled(True)

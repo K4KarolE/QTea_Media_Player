@@ -211,8 +211,7 @@ def update_window_widgets_size(last_thumbnail_pos_y):
 
 # THUMBNAIL PL
 def scroll_to_active_item_thumbnail_pl():
-    if cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']:
-        cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
+    cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
 
 
 

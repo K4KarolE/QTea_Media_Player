@@ -20,6 +20,7 @@ from .func_thumbnail import (
     is_thumbnail_threads_reached_limit,
     start_thumbnail_thread_grouped_action,
     stop_thumbnail_thread,
+    scroll_to_active_item_thumbnail_pl,
     switch_to_standard_active_playlist_from_thumbnail_pl,
     update_thumbnail_support_vars_before_playlist_clear
     )
@@ -219,7 +220,7 @@ class MyButtons(QPushButton):
             cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].show()
             start_thumbnail_thread_grouped_action()
             self.set_style_thumbnail_button_active()
-            cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].scroll_to_current_item_active_pl()
+            scroll_to_active_item_thumbnail_pl()
         else:
             cv.active_pl_name.show()
             cv.active_pl_queue.show()
@@ -254,9 +255,11 @@ class MyButtons(QPushButton):
     ''' BUTTON PLAYLIST - DURATION INFO - SET STYLE '''
     def set_style_duration_info_button(self):
         if cv.os_linux:
-            font_bold = 600
-        else: font_bold = 100
-        self.setFont(QFont('Times', 14, font_bold))
+            font_style = QFont('Times', 15, 600)
+        else: 
+            font_style = QFont('Times New Roman', 15, 600)
+        font_style.setStyleHint(QFont.StyleHint.Monospace)  # backup font style
+        self.setFont(font_style)
         self.setFlat(True)
         self.setStyleSheet(
                         "QPushButton"
