@@ -759,6 +759,7 @@ class Data:
     MEDIA_FILES = f"Media files ({AUDIO_FILES_EXTS} {VIDEO_FILES_EXTS})"
     FILE_TYPES_LIST = [MEDIA_FILES, AUDIO_FILES, VIDEO_FILES, "All files (*.*)"]
     
+    MEDIA_FILES_EXTS_LIST = [n.strip("*") for n in AUDIO_FILES_EXTS.split() + VIDEO_FILES_EXTS.split()]
 
 
     ''' PLAYLISTS '''

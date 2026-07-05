@@ -46,7 +46,7 @@ class ThreadAddMedia(QThread):
         # signal will not be triggered >> the second media will not be added and the
         # duration player get blocked / unresponsive >> not able to add another media
         self.result_ready.connect(self.add_track_to_playlist_via_thread)
-        # MyMessageBoxConfirmation(self.playlist, self.playlist)
+
 
     def run(self):
         if self.playlist not in cv.add_media_playlist_list:
@@ -104,11 +104,13 @@ class ThreadAddMedia(QThread):
         for dir_path_b, _, file_names in os.walk(dir_path):
             file_names.sort()
             for file in file_names:
-                if self.is_file_title_ignored(file):
-                    self.ignored_media_self_track_title_list.append(file)
-                elif Path(file).suffix in cv.MEDIA_FILES:
-                    track_path = str(Path(dir_path_b, file))
-                    self.track_path_list.append(track_path)
+                if Path(file).suffix in cv.MEDIA_FILES_EXTS_LIST:
+                    if self.is_file_title_ignored(file):
+                        self.ignored_media_self_track_title_list.append(file)
+                    else:
+                        track_path = str(Path(dir_path_b, file))
+                        self.track_path_list.append(track_path)
+                
 
     def is_file_title_ignored(self, file):
         return (cv.add_dir_ignore_file_titles_including and
