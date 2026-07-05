@@ -73,10 +73,10 @@ class MySlider(QSlider):
         if br.av_player.is_playing_or_paused():
             if event.type() == QEvent.Type.MouseButtonPress:
                 self.pressed = True
-                self.set_slider_value(event)
 
             if event.type() == QEvent.Type.MouseButtonRelease:
                 self.pressed = False
+                self.set_slider_value(event)
 
             if event.type() == QHoverEvent.Type.HoverEnter:
                 if br.av_player.is_playing_or_paused():
