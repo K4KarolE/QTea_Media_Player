@@ -16,7 +16,9 @@ import subprocess
 
 
 inactive_track_font_style = QFont('Arial', 11, 500)
+inactive_track_font_style.setStyleHint(QFont.StyleHint.Monospace)   # backup font style
 active_track_font_style = QFont('Arial', 11, 600)
+active_track_font_style.setStyleHint(QFont.StyleHint.Monospace)
 
 
 def move_window_to_middle_of_current_screen(self):
