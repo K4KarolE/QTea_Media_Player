@@ -21,7 +21,7 @@ from .func_coll import (
     update_queued_tracks_order_number,
     update_raw_current_duration_db
     )
-from .func_thumbnail import update_thumbnail_style_at_play_track
+
 from .logger import *
 from .thread_play_track_set_source import ThreadPlayTrackSetSource
 from .message_box import MyMessageBoxError
@@ -47,10 +47,6 @@ class PlaysFunc:
         >> self.played_and_queued_track_style_update() and result_ready.emit()
         >> this function (>> MediaStatus.LoadedMedia >> play_track_second_part())
 
-        Playing the same file - The same file can be added multiple times to the playlists
-        The media status changed signal is not fired and the "self.play_track_second_part()"
-        is not called when the same file path is set as source, solution:
-
         Memory leak:
             `QMediaPlayer.setSource()` function can increase the memory usage (br.av_player.player.setSource below)
 
@@ -66,6 +62,10 @@ class PlaysFunc:
                 br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
             Minimalist "try to fix" test in "docs/learning/player_basic_memory_leak_fix_try.py"
+
+        Playing the same file - The same file can be added multiple times to the playlists
+        The media status changed signal is not fired and the "self.play_track_second_part()"
+        is not called when the same file path is set as source, solution:
         """
         if self.track_path == self.track_path_previous:
             br.av_player.player.setPosition(cv.track_current_duration)
@@ -134,7 +134,6 @@ class PlaysFunc:
 
                 # PLAYER
                 # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
-                br.av_player.stopped = False
                 self.thread_play_track_set_source.start()
 
 
@@ -244,6 +243,7 @@ class PlaysFunc:
         # PLAY
         self.audio_tracks_use_default()
         br.av_player.player.play()
+        br.av_player.stopped = False
 
         # DISPLAY TRACK TITLE ON VIDEO
         if br.av_player.video_output.isVisible():
@@ -306,13 +306,13 @@ class PlaysFunc:
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
             # REPEAT SINGLE TRACK - NO BUTTON CLICK    
-            elif cv.repeat_playlist == 0 and br.av_player.is_media_status_end_of_media():
+            elif cv.repeat_playlist == 0:
                 cv.track_current_duration = 0
                 br.av_player.player.setPosition(0)
                 br.av_player.player.play()
             # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK OR END OF MEDIA
             elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and
-                  cv.repeat_playlist in [0,1,2]):
+                  cv.repeat_playlist in [1,2]):
                 cv.playing_track_index += 1
                 self.play_track(cv.playing_track_index)
             # REPEAT PLAYLIST    
@@ -322,9 +322,8 @@ class PlaysFunc:
                 self.play_track(cv.playing_track_index)
             # SET THE CURRENT TRACK BACK TO STARTING POINT
             # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
-            # -> HIDE BLACK SCREEN & DISPLAY LOGO         
-            elif (cv.playing_pl_tracks_count == cv.playing_track_index + 1 and
-                  br.av_player.is_media_status_end_of_media()):
+            # -> HIDE BLACK SCREEN & DISPLAY LOGO
+            elif cv.playing_pl_tracks_count == cv.playing_track_index + 1:
                 disable_minimal_interface()
                 br.av_player.stopped = True
                 br.av_player.player.setPosition(0)
