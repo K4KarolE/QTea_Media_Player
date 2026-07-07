@@ -608,7 +608,7 @@ def update_dequeued_track_thumbnail_from_queue_window(playlist: str, track_index
 
 def remove_track_from_playlist():
     """
-    Remove actioned via Remove Track button or right click in the playlist / menu / Remove
+    Remove actioned via Remove Track button, via hotkey or right click in the playlist / menu / Remove
     -> new sum duration = sum duration - removed tracks` duration
     -> update queue order numbers if the removed tracked was queued
     -> remove the track's list widget items(name, queue, duration)
@@ -690,6 +690,9 @@ def remove_track_from_playlist():
 
         cv.track_change_on_main_playlist_new_search_needed = True
         set_thumbnail_generation_needed_to(True)
+        cv.active_pl_name.selected_items_row_index_list = []
+        cv.active_pl_queue.selected_items_row_index_list = []
+        cv.active_pl_duration.selected_items_row_index_list = []
 
 
 def set_thumbnail_generation_needed_to(value: bool, playlist=None):
@@ -719,16 +722,16 @@ def is_track_selection_multiple():
 def clear_multi_selection_when_track_starts_inside_the_selection():
     """ Used in the "func_play_coll / play_track()" """
     if cv.playing_track_index in cv.playing_pl_name.selected_items_row_index_list:
-            cv.playing_pl_name.clearSelection()
-            cv.playing_pl_duration.clearSelection()
-            cv.playing_pl_queue.clearSelection()
-            cv.playing_pl_name.selected_items_row_index_list = []
-            cv.playing_pl_queue.selected_items_row_index_list = []
-            cv.playing_pl_duration.selected_items_row_index_list = []
-            # To make sure, when using "Add to the Queue" shortkey after the selection
-            # clearance, the correct track is added to the queue
-            if cv.active_db_table == cv.playing_db_table:
-                cv.current_track_index = cv.playing_track_index
+        cv.playing_pl_name.clearSelection()
+        cv.playing_pl_duration.clearSelection()
+        cv.playing_pl_queue.clearSelection()
+        cv.playing_pl_name.selected_items_row_index_list = []
+        cv.playing_pl_queue.selected_items_row_index_list = []
+        cv.playing_pl_duration.selected_items_row_index_list = []
+        # To make sure, when using "Add to the Queue" shortkey after the selection
+        # clearance, the correct track is added to the queue
+        if cv.active_db_table == cv.playing_db_table:
+            cv.current_track_index = cv.playing_track_index
 
 
 def clear_multi_selection():
