@@ -324,8 +324,17 @@ class PlaysFunc:
             # LAST VIDEO TRACK IN PLAYLIST AND REPEAT INACTIVE
             # -> HIDE BLACK SCREEN & DISPLAY LOGO
             elif cv.playing_pl_tracks_count == cv.playing_track_index + 1:
+                """
+                br.av_player.player.stop():
+                PyQt 6.11 workaround to be able to stop the last track in the playlist
+                repeat itself once it reached the end / was not needed in PyQt 6.5.3
+                
+                Once the media playing ends not just the "Media status: End of media" signal is triggered,
+                but the "Media status: Loaded media" signal too
+                """
                 disable_minimal_interface()
                 br.av_player.stopped = True
+                br.av_player.player.stop()
                 br.av_player.player.setPosition(0)
                 br.av_player.video_output.hide()
                 br.image_logo.show()
