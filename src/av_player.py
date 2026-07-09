@@ -645,13 +645,13 @@ class AVPlayer(QWidget):
 
 
     def is_loaded_media_validation_passed(self):
-        if self.base_played and self.is_media_status_loaded() and not self.stopped:
+        if self.base_played and self.is_media_status_loaded():
             return True
         return False
 
 
     def is_end_of_media_validation_passed(self):
-        if self.base_played and self.is_media_status_end_of_media() and not self.stopped:
+        if self.base_played and self.is_media_status_end_of_media():
             return True
         return False
 
