@@ -132,8 +132,15 @@ class PlaysFunc:
                 cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
                 br.play_slider.setMaximum(cv.track_full_duration)
 
-                # PLAYER
-                # self.thread_play_track_set_source.start() >> style update >> set source >> self.play_track_second_part()
+                """
+                PLAYER
+                self.thread_play_track_set_source.start() >> style update
+                >> set source >> self.play_track_second_part() >> playing media
+                
+                "br.av_player.stopped" to avoid "Media status: Loaded media" signal when the media is stopped
+                More info in the "src / av_player / media_status_changed_action()" function
+                """
+                br.av_player.stopped = False
                 self.thread_play_track_set_source.start()
 
 
