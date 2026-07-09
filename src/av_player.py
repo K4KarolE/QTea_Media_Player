@@ -673,34 +673,35 @@ class AVPlayer(QWidget):
             - Play
             - etc.
         """
-        if self.is_loaded_media_validation_passed():
-            logger_sum("Media status: Loaded media")
-            # DURATION
-            if cv.track_current_duration > 0 and cv.continue_playback:
-                br.av_player.player.setPosition(cv.track_current_duration)
-            # DURATION INFO - BUTTON
-            br.button_duration_info.setEnabled(True)
-            # WINDOW RESIZE
-            if self.player.hasVideo():
-                self.generate_video_resolution_from_meta_data()
-                self.resize_window_to_video_resolution()
-            else:
-                self.vid_width, self.vid_height = None, None
-            # TO PLAY A TRACK (continues)
-            # play_track() >> play_track_second_part() >> track is played
-            br.play_funcs.play_track_second_part()
+        if not self.stopped:
+            if self.is_loaded_media_validation_passed():
+                logger_sum("Media status: Loaded media")
+                # DURATION
+                if cv.track_current_duration > 0 and cv.continue_playback:
+                    br.av_player.player.setPosition(cv.track_current_duration)
+                # DURATION INFO - BUTTON
+                br.button_duration_info.setEnabled(True)
+                # WINDOW RESIZE
+                if self.player.hasVideo():
+                    self.generate_video_resolution_from_meta_data()
+                    self.resize_window_to_video_resolution()
+                else:
+                    self.vid_width, self.vid_height = None, None
+                # TO PLAY A TRACK (continues)
+                # play_track() >> play_track_second_part() >> track is played
+                br.play_funcs.play_track_second_part()
 
-        elif self.is_end_of_media_validation_passed():
-            """
-            br.av_player.player.stop():
-            PyQt 6.11 workaround to be able to play the next track / was not needed in PyQt 6.5.3
-            """
-            logger_sum("Media status: End of media")
-            br.av_player.player.stop()
-            br.play_funcs.play_decider()
+            elif self.is_end_of_media_validation_passed():
+                """
+                br.av_player.player.stop():
+                PyQt 6.11 workaround to be able to play the next track / was not needed in PyQt 6.5.3
+                """
+                logger_sum("Media status: End of media")
+                br.av_player.player.stop()
+                br.play_funcs.play_decider()
 
-        elif not self.base_played:
-            self.play_base_and_play_at_startup()
+            elif not self.base_played:
+                self.play_base_and_play_at_startup()
 
 
 
