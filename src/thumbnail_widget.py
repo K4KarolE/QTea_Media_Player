@@ -256,7 +256,17 @@ class ThumbnailWidget(QWidget):
         Thumbnail playlist change (new widget selected / double-clicked) >>
         standard playlist change >> thumbnail playlist style update
         via src / func_thumbnail / update_thumbnail_style_at_row_change
+
+        ".clearSelection()" - Scenario:
+        - Thumbnail view already generated + adding media to the playlist >> auto switch to default playlist view
+        - Enable thumbnail view again + click any other non-active thumbnail
+        >> On the thumbnail view one thumbnail / track is selected but on the default playlist there are two,
+        the current and the previous track are selected >> the default playlist and thumbnail view are out of sync
+        >> Removing thumbnail / track on the thumbnail view >> removes multiple tracks on the default playlist
         """
+        cv.active_pl_name.clearSelection()
+        cv.active_pl_duration.clearSelection()
+        cv.active_pl_queue.clearSelection()
         cv.active_pl_name.setCurrentRow(self.index)
 
     def mouseDoubleClickEvent(self, a0):
