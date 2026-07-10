@@ -251,6 +251,7 @@ class PlaysFunc:
         self.audio_tracks_use_default()
         br.av_player.player.play()
         br.av_player.stopped = False
+        br.av_player.is_end_of_media = False
 
         # DISPLAY TRACK TITLE ON VIDEO
         if br.av_player.video_output.isVisible():
@@ -284,6 +285,22 @@ class PlaysFunc:
 
     @logger_check
     def play_next_track(self):
+        """
+        Information for the "REPEAT SINGLE TRACK - NO BUTTON CLICK" section:
+        Repeat the same media again >> the track is already loaded in
+        >> no "set source" is needed >> self.play_track_second_part() >> playing media
+
+        Can not use the below "shortcut" solution, otherwise after one repeat play +
+        playing another track >> the player freezes
+            cv.track_current_duration = 0
+            br.av_player.player.setPosition(0)
+            br.av_player.player.play()
+
+        Why use "br.av_player.is_end_of_media" instead of "br.av_player.is_media_status_end_of_media()":
+        Even though "end of media" >> src / av_player() / signal media_status_changed_action()
+        >> self.play_decider() >> SELF.PLAY_NEXT_TRACK() at this point the player
+        already has a different media status than "end of media"
+        """
         if not cv.playing_pl_name:
             # Scenario: app started without autoplay + play next button clicked
             cv.playing_pl_name = cv.active_pl_name
@@ -312,14 +329,13 @@ class PlaysFunc:
                 next_track_index = random.choice(random_choice_list)
                 cv.playing_track_index = next_track_index
                 self.play_track(next_track_index)
-            # REPEAT SINGLE TRACK - NO BUTTON CLICK    
-            elif cv.repeat_playlist == 0:
-                cv.track_current_duration = 0
-                br.av_player.player.setPosition(0)
-                br.av_player.player.play()
+            # REPEAT SINGLE TRACK - NO BUTTON CLICK
+            # More information above
+            elif cv.repeat_playlist == 0 and br.av_player.is_end_of_media:
+                self.play_track_second_part()
             # MORE TRACKS IN THE PLAYLIST - BUTTON CLICK OR END OF MEDIA
             elif (cv.playing_pl_tracks_count != cv.playing_track_index + 1 and
-                  cv.repeat_playlist in [1,2]):
+                  cv.repeat_playlist in [0,1,2]):
                 cv.playing_track_index += 1
                 self.play_track(cv.playing_track_index)
             # REPEAT PLAYLIST    

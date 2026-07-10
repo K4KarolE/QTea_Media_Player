@@ -78,6 +78,7 @@ class AVPlayer(QWidget):
         # SETTINGS
         self.paused = False
         self.stopped = False
+        self.is_end_of_media = False
         self.playlist_visible = True
         self.video_area_visible = True
         self.vid_width = None
@@ -702,11 +703,14 @@ class AVPlayer(QWidget):
 
         elif self.is_end_of_media_validation_passed():
             """
-            br.av_player.player.stop():
+            self.player.stop():
             PyQt 6.11 workaround to be able to play the next track / was not needed in PyQt 6.5.3
+            
+            self.is_end_of_media - more info in src / func_play_coll / play_next_track()
             """
             logger_sum("Media status: End of media")
-            br.av_player.player.stop()
+            self.player.stop()
+            self.is_end_of_media = True
             br.play_funcs.play_decider()
 
         elif not self.base_played:
