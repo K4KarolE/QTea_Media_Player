@@ -109,16 +109,17 @@ class MyButtons(QPushButton):
                     clear_playlist_needed = False
 
         if clear_playlist_needed:
+            self.stop_add_media_thread()
             switch_to_standard_active_playlist_from_thumbnail_pl()
             update_thumbnail_support_vars_before_playlist_clear()
-            self._clear_playlist()
+            self.clear_playlist()
             cv.playlist_widget_dic[cv.active_db_table]['active_pl_sum_duration'] = 0
             cv.active_pl_sum_duration = 0
             br.duration_sum_widg.setText(generate_duration_to_display(cv.active_pl_sum_duration))
 
 
     @staticmethod
-    def _clear_playlist():
+    def clear_playlist():
         """ Used in the "button_remove_all_track()" above """
         stop_play_when_playing_track_removed(True)
         switch_to_standard_active_playlist_from_thumbnail_pl()
@@ -142,6 +143,12 @@ class MyButtons(QPushButton):
                 br.window.setWindowTitle(f'REMOVED - {br.window.windowTitle()}')
             else:
                 br.window.setWindowTitle('QTea Media Player')
+
+    @staticmethod
+    def stop_add_media_thread():
+       if add_media_thread := cv.playlist_widget_dic[cv.active_db_table].get('add_media_thread'):
+            if add_media_thread.track_path_list: # = thread is running
+                add_media_thread.stop_thread()
 
 
     ''' BUTTON PLAYLIST - SETTINGS BUTTON / WINDOW '''

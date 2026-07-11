@@ -36,6 +36,7 @@ class ThreadAddMedia(QThread):
         super().__init__()
         self.playlist = cv.active_db_table
         self.source = None
+        self.is_stopped = False
         self.track_path_list = []
         self.invalid_media_self_track_path_list = []
         self.ignored_media_self_track_title_list = []
@@ -50,6 +51,7 @@ class ThreadAddMedia(QThread):
 
 
     def run(self):
+        self.is_stopped = False
         if self.playlist not in cv.add_media_playlist_list:
             cv.add_media_playlist_list.append(self.playlist)
 
@@ -122,6 +124,8 @@ class ThreadAddMedia(QThread):
             and triggers twice for adding single media >>
             hence the "if self.track_path_list" validation
         """
+        if self.is_stopped:
+            return
         if invalid_media:
             if self.track_path_list:
                 self.invalid_media_self_track_path_list.append(self.track_path_list[0])
@@ -250,3 +254,8 @@ class ThreadAddMedia(QThread):
             """
             if cv.add_dir_ignored_file_titles_conf_msg:
                 MyMessageBoxConfirmation('Ignored Media', self.generate_ignored_media_info_msg_text())
+
+
+    def stop_thread(self):
+        self.is_stopped = True
+        self.track_path_list = []

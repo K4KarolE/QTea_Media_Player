@@ -58,7 +58,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - CLEAR PLAYLIST '''
     br.button_remove_all_track = MyButtons(
         'CP',
-        f'Clear Playlist ({cv.playlist_remove_all_track})'
+        f'Clear Playlist & Stop adding media ({cv.playlist_remove_all_track})'
         )
     br.button_remove_all_track.setGeometry(button_x_pos(3)-PLIST_BUTTONS_X_DIFF, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
     br.button_remove_all_track.clicked.connect(br.button_remove_all_track.button_remove_all_track)
