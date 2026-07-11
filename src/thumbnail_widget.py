@@ -120,6 +120,11 @@ class ThumbnailWidget(QWidget):
             if cv.active_db_table not in cv.queue_playlists_list:
                 menu.actions()[3].setEnabled(False)
 
+            # To avoid remove thumbnail / track
+            # while the thumbnail generation is running
+            if self.is_thumbnail_thread_running_active_pl():
+                menu.actions()[4].setEnabled(False)
+
             menu.triggered[QAction].connect(self.context_menu_clicked)
             menu.exec(event.globalPos())
         return super().eventFilter(source, event)
@@ -381,3 +386,8 @@ class ThumbnailWidget(QWidget):
             self.update_to_playing_video_img()
         elif not self.thumbnail_type:
             self.update_to_playing_default_img()
+
+
+    def is_thumbnail_thread_running_active_pl(self):
+        widgets_window = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_window'].widgets_window
+        return widgets_window.thread_thumbnails_update.isRunning()
