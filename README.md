@@ -344,7 +344,6 @@ Achieved:
 - Solution: dummy, empty track (< 1 second) played at startup
 - More info: `src / av_player.py`
 - Side effect: no visible side effect
-- It is solved in `PyQt 6.10` - see `PyQt version history` section below for the reason the `6.10` version is not in use
 
 ### Information displayed as subtitle
 - Issue: the video scene composition not following the layout, frame size change
@@ -361,6 +360,14 @@ the second media will not be added to the playlist
 same media is already loaded) and jumps to the "add media the playlist phase" 
 (`src / thread_add_media / return_thread_generated_values()`)
 
+### Unnecessary "player.mediaStatusChanged" signal triggers
+- Issue: `QMediaPlayer.MediaStatus.LoadedMedia` state is used to play media, unfortunately it is triggered by:
+  - At the end of a media
+  - Playing + pause + playing again + jump via hotkey or slider click
+- Solution: to avoid the scenarios above the `cv.ignore_loaded_media_signal` and `br.av_player.stopped` support
+variables are used
+- PyQt 6.11 issue, was not in place in PyQt 6.5.3
+
 ## Could not find solution yet
 - The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 - OS theme overriding the app`s theme:
@@ -376,7 +383,7 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 
 
 ## Requirements
-### Python 3 - used: 3.12
+### Python 3 - used: 3.14.6
 - https://www.python.org/
 - For the `Python-PyQt` compatibility matrix visit: [https://wiki.qt.io/Qt_for_Python](https://wiki.qt.io/Qt_for_Python)
 - [Status of Python versions](https://devguide.python.org/versions/)
