@@ -70,13 +70,21 @@ class MySlider(QSlider):
 
 
     def eventFilter(self, source, event):
+        """
+        cv.ignore_loaded_media_signal:
+        PyQt 6.11 / was not in PyQt 6.5.3
+        playing + pause + playing again + jump via hotkey or slider click
+        >> unnecessary loaded media signal is triggered
+        """
         if br.av_player.is_playing_or_paused():
             if event.type() == QEvent.Type.MouseButtonPress:
                 self.pressed = True
+                cv.ignore_loaded_media_signal = True
 
             if event.type() == QEvent.Type.MouseButtonRelease:
                 self.pressed = False
                 self.set_slider_value(event)
+                cv.ignore_loaded_media_signal = False
 
             if event.type() == QHoverEvent.Type.HoverEnter:
                 if br.av_player.is_playing_or_paused():

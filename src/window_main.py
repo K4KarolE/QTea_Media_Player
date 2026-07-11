@@ -173,13 +173,21 @@ class MyWindow(QWidget):
 
 
     def jump_action(self, jump_size: int, direction: str):
+        """
+        cv.ignore_loaded_media_signal:
+        PyQt 6.11 / was not in PyQt 6.5.3
+        playing + pause + playing again + jump via hotkey or slider click
+        >> unnecessary loaded media signal is triggered
+        """
         if br.av_player.is_playing_or_paused():
+            cv.ignore_loaded_media_signal = True
             if direction == 'backward':
                 new_pos = br.av_player.player.position() + jump_size * -1
             else:
                 new_pos = br.av_player.player.position() + jump_size
             br.av_player.player.setPosition(new_pos)
             br.av_player.text_display_on_video(1000, self.get_current_duration_info())
+            cv.ignore_loaded_media_signal = False
 
 
     ''' 

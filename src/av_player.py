@@ -683,9 +683,15 @@ class AVPlayer(QWidget):
         Media stopped triggers the "Media status: Loaded media" signal
         To avoid it, there is the "self.stopped" condition in the
         is_loaded_media_validation_passed() and is_end_of_media_validation_passed() functions
-
         Some reason this condition can not be moved outside to the media_status_changed_action() function
+
+        cv.ignore_loaded_media_signal:
+        PyQt 6.11 / was not in PyQt 6.5.3
+        playing + pause + playing again + jump via hotkey or slider click
+        >> unnecessary loaded media signal is triggered
         """
+        if cv.ignore_loaded_media_signal:
+            return
         if self.is_loaded_media_validation_passed():
             logger_sum("Media status: Loaded media")
             # DURATION

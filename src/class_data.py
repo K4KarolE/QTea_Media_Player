@@ -115,6 +115,8 @@ class Data:
     screen_saver_idle_delay_default_value = screen_saver_idle_delay_default_value
     desktop_env_for_screen_saver = desktop_env_for_screen_saver
 
+    ignore_loaded_media_signal: bool = False
+
     # Used in a scenario: multi selection + clicked on the last / current row
     last_clicked_track_index: int = -1
     # Click one of the list widgets (name, queue, duration) >> sync the other two with no recursion
