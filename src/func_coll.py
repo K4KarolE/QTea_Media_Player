@@ -425,7 +425,7 @@ def queue_add_remove_single_track():
         cv.queue_tracking_title = [cv.active_db_table, cv.current_track_index]
         # THUMBNAIL VIEW
         thumbnail_widget_dic = cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic']
-        if thumbnail_widget_dic:
+        if thumbnail_widget_dic and thumbnail_widget_dic.get(cv.current_track_index):
             thumbnail_widget = thumbnail_widget_dic[cv.current_track_index]['widget']
         else: thumbnail_widget = None
 
