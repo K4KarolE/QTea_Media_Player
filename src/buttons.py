@@ -329,7 +329,7 @@ class MyButtons(QPushButton):
             br.av_player.video_output.setFullScreen(False)
             br.av_player.video_output.setCursor(Qt.CursorShape.ArrowCursor)
             cv.screen_index_for_fullscreen = -1
-        br.av_player.stopped = True
+        cv.ignore_loaded_media_signal = True
         br.av_player.player.stop()
         br.av_player.paused = False
         br.button_play_pause.setIcon(br.icon.start)

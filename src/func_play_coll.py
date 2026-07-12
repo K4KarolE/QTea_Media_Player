@@ -137,10 +137,10 @@ class PlaysFunc:
                 self.thread_play_track_set_source.start() >> style update
                 >> set source >> self.play_track_second_part() >> playing media
                 
-                "br.av_player.stopped" to avoid "Media status: Loaded media" signal when the media is stopped
+                "cv.ignore_loaded_media_signal" to avoid unnecessary "Media status: Loaded media" signal
                 More info in the "src / av_player / media_status_changed_action()" function
                 """
-                br.av_player.stopped = False
+                cv.ignore_loaded_media_signal = False
                 self.thread_play_track_set_source.start()
 
 
@@ -250,7 +250,10 @@ class PlaysFunc:
         # PLAY
         self.audio_tracks_use_default()
         br.av_player.player.play()
-        br.av_player.stopped = False
+        # cv.ignore_loaded_media_signal, br.av_player.is_end_of_media:
+        # To avoid unnecessary "Media status: Loaded media" signal
+        # More info in the "README / Workarounds / Unnecessary "player.mediaStatusChanged" signal triggers" section
+        cv.ignore_loaded_media_signal = False
         br.av_player.is_end_of_media = False
 
         # DISPLAY TRACK TITLE ON VIDEO
@@ -348,15 +351,16 @@ class PlaysFunc:
             # -> HIDE BLACK SCREEN & DISPLAY LOGO
             elif cv.playing_pl_tracks_count == cv.playing_track_index + 1:
                 """
-                br.av_player.player.stop():
-                PyQt 6.11 workaround to be able to stop the last track in the playlist
-                repeat itself once it reached the end / was not needed in PyQt 6.5.3
+                cv.ignore_loaded_media_signal:
+                Workaround to avoid unnecessary "loaded media" signal and be able to stop the last track in the playlist
                 
                 Once the media playing ends not just the "Media status: End of media" signal is triggered,
                 but the "Media status: Loaded media" signal too
+                
+                PyQt 6.11 issue / was not in PyQt 6.5.3
                 """
                 disable_minimal_interface()
-                br.av_player.stopped = True
+                cv.ignore_loaded_media_signal = True
                 br.av_player.player.stop()
                 br.av_player.player.setPosition(0)
                 br.av_player.video_output.hide()

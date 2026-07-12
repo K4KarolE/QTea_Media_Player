@@ -77,7 +77,6 @@ class AVPlayer(QWidget):
         self.player.mediaStatusChanged.connect(lambda: self.media_status_changed_action())
         # SETTINGS
         self.paused = False
-        self.stopped = False
         self.is_end_of_media = False
         self.playlist_visible = True
         self.video_area_visible = True
@@ -647,23 +646,37 @@ class AVPlayer(QWidget):
 
     def is_loaded_media_validation_passed(self):
         """
-        "self.stopped" condition to avoid "Media status: Loaded media" signal when the media is stopped
+        cv.ignore_loaded_media_signal condition to avoid unnecessary "Media status: Loaded media" signal
 
-        Some reason this condition can not be moved outside to the media_status_changed_action() function
+        Some reason this condition can not be moved outside to the media_status_changed_action() function,
+        otherwise when a repeat single track is on + one replay + play another media >> player loaded but not playing
+
+        Mor info in media_status_changed_action() below
         """
-        if self.base_played and self.is_media_status_loaded() and not self.stopped:
-            return True
+        if self.base_played and self.is_media_status_loaded():
+            if not cv.ignore_loaded_media_signal:
+                return True
+            else:
+                cv.ignore_loaded_media_signal = False
+                return False
         return False
 
 
     def is_end_of_media_validation_passed(self):
         """
-        "self.stopped" condition to avoid "Media status: Loaded media" signal when the media is stopped
+        cv.ignore_loaded_media_signal condition to avoid unnecessary "Media status: Loaded media" signal
 
-        Some reason this condition can not be moved outside to the media_status_changed_action() function
+        Some reason this condition can not be moved outside to the media_status_changed_action() function,
+        otherwise when a repeat single track is on + one replay + play another media >> player loaded but not playing
+
+        Mor info in media_status_changed_action() below
         """
-        if self.base_played and self.is_media_status_end_of_media() and not self.stopped:
-            return True
+        if self.base_played and self.is_media_status_end_of_media():
+            if not cv.ignore_loaded_media_signal:
+                return True
+            else:
+                cv.ignore_loaded_media_signal = False
+                return False
         return False
 
 
@@ -680,18 +693,15 @@ class AVPlayer(QWidget):
             - etc.
         ||>> or PlaysFunc / play_decider() >> play_next_track()
 
-        Media stopped triggers the "Media status: Loaded media" signal
-        To avoid it, there is the "self.stopped" condition in the
-        is_loaded_media_validation_passed() and is_end_of_media_validation_passed() functions
-        Some reason this condition can not be moved outside to the media_status_changed_action() function
 
-        cv.ignore_loaded_media_signal:
-        PyQt 6.11 / was not in PyQt 6.5.3
-        playing + pause + playing again + jump via hotkey or slider click
-        >> unnecessary loaded media signal is triggered
+        cv.ignore_loaded_media_signal
+        As condition it is inside is_loaded_media_validation_passed() and is_end_of_media_validation_passed()
+        to avoid the below scenarios where unnecessary loaded media signal is triggered:
+        - playing + pause + playing again + jump via hotkey or slider click
+        - or playing media stopped
+        - at the end of media
+        PyQt 6.11 issue / was not in PyQt 6.5.3
         """
-        if cv.ignore_loaded_media_signal:
-            return
         if self.is_loaded_media_validation_passed():
             logger_sum("Media status: Loaded media")
             # DURATION

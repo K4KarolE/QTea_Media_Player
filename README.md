@@ -362,11 +362,12 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 
 ### Unnecessary "player.mediaStatusChanged" signal triggers
 - Issue: `QMediaPlayer.MediaStatus.LoadedMedia` state is used to play media, unfortunately it is triggered by:
+  - Playing media stopped (via stop button)
   - At the end of a media
   - Playing + pause + playing again + jump via hotkey or slider click
-- Solution: to avoid the scenarios above the `cv.ignore_loaded_media_signal` and `br.av_player.stopped` support
-variables are used
-- PyQt 6.11 issue, was not in place in PyQt 6.5.3
+- Solution: `cv.ignore_loaded_media_signal` and `br.av_player.is_end_of_media` support variables are used
+to avoid the scenarios above
+- PyQt 6.11 issue, was not in PyQt 6.5.3
 
 ## Could not find solution yet
 - The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
