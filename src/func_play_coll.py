@@ -1,7 +1,7 @@
 from pathlib import Path
 import random
 
-from PyQt6.QtCore import QUrl
+from PyQt6.QtCore import QUrl, QTimer
 
 from .class_bridge import br
 from .class_data import cv
@@ -29,6 +29,11 @@ from .message_box import MyMessageBoxError
 
 class PlaysFunc:
     def __init__(self):
+        # self.player_position & self.timer:
+        # more info at after_playing_the_same_track_workaround() below
+        self.player_position = 0
+        self.timer = QTimer()
+        self.timer.timeout.connect(lambda: self.after_playing_the_same_media_workaround())
         self.track_path = ""
         self.track_path_previous = ""
         # Thread for "style update" and "set source" separation
@@ -248,8 +253,12 @@ class PlaysFunc:
         cv.subtitle_tracks_amount = len(br.av_player.player.subtitleTracks())
 
         # PLAY
+        # self.player_position & self.timer.start():
+        # more info at after_playing_the_same_track_workaround() below
         self.audio_tracks_use_default()
+        self.player_position = br.av_player.player.position()
         br.av_player.player.play()
+        self.timer.start(100)
         # cv.ignore_loaded_media_signal, br.av_player.is_end_of_media:
         # To avoid unnecessary "Media status: Loaded media" signal
         # More info in the "README / Workarounds / Unnecessary "player.mediaStatusChanged" signal triggers" section
@@ -273,6 +282,20 @@ class PlaysFunc:
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
 
+    def after_playing_the_same_media_workaround(self):
+        """
+        Scenario:
+        Same media double-clicked / started multiple times + start playing another media
+        >> the new media is loaded, but the player stuck at the current position >> media is not playing
+        Workaround:
+        Compare the default and the delayed positions of the player, if same >> player stuck at the current position
+        >> pause and play the media >> media is playing
+        """
+        if self.player_position == br.av_player.player.position():
+            br.av_player.player.pause()
+            logger_sum("After playing the same media workaround")
+            br.av_player.player.play()
+        self.timer.stop()
 
     def update_window_title(self, track_path, no_error):
         cv.track_title = Path(track_path).stem

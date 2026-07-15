@@ -369,6 +369,13 @@ same media is already loaded) and jumps to the "add media the playlist phase"
 to avoid the scenarios above
 - PyQt 6.11 issue, was not in PyQt 6.5.3
 
+### Player stuck with the new media after double-clicked the previous, same media twice
+- Issue: same media double-clicked / started multiple times + start playing another media >> 
+the new media is loaded, but the player stuck at the current position >> media is not playing
+- Solution: compare the default and the delayed positions of the player, if same >> 
+player stuck at the current position >> pause and play the media >> media is playing
+  - `src / func_play_coll / after_playing_the_same_media_workaround()` 
+
 ## Could not find solution yet
 - The video`s own subtitles are not displayed correctly, VLC player recommended for subbed movies
 - OS theme overriding the app`s theme:
