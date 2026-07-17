@@ -10,11 +10,24 @@ from .logger import *
 """
 To avoid system theme >> qt app theme
 https://doc.qt.io/qt-6/qguiapplication.html#setDesktopSettingsAware
+
+windll - myappid:
+To get the packaged application taskbar icon from the window icon,
+otherwise the taskbar icon is the default python group icon 
+
+Taskbar Icons section in:
+https://www.pythonguis.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/
 """
 if cv.os_linux:
     QApplication.setDesktopSettingsAware(False)
 else:
     sys.argv += ['-platform', 'windows:darkmode=1']
+    try:
+        from ctypes import windll
+        myappid = 'qtea-media-player'
+        windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    except ImportError:
+        logger_check("ctypes import - Packaged app`s taskbar icon issue")
 
 
 
