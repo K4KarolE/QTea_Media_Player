@@ -7,7 +7,7 @@ from .logger import logger_runtime
 @logger_runtime
 class MyIcon:
     def __init__(self):
-        self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.png')
+        self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.ico')
 
         self.start = QIcon(f'skins/{cv.skin_selected}/start.png')
         self.pause = QIcon(f'skins/{cv.skin_selected}/pause.png')
@@ -25,7 +25,7 @@ class MyIcon:
         self.thumbnail = QIcon(f'skins/{cv.skin_selected}/thumbnail.png')
 
         default_thumbnail_img_size = 50
-        self.thumbnail_default = (QPixmap(f'skins/{cv.skin_selected}/window_icon.png')
+        self.thumbnail_default = (QPixmap(f'skins/{cv.skin_selected}/qtea_logo.png')
                                   .scaledToWidth(default_thumbnail_img_size, Qt.TransformationMode.SmoothTransformation))
 
         self.thumbnail_default_video = (QPixmap(f'skins/{cv.skin_selected}/video.png')
