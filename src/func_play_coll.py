@@ -11,6 +11,7 @@ from .func_coll import (
     disable_minimal_interface,
     generate_duration_to_display,
     get_all_from_db,
+    get_path_db,
     inactive_track_font_style,
     list_item_style_update,
     queue_window_remove_track,
@@ -96,57 +97,80 @@ class PlaysFunc:
             - Audio and subtitle tracks creation
             - Start playing
         """
-        # PyQt playing the first audio_track of the video by default
-        #  -> reset our variable when playing new track
-        cv.audio_track_played = 0
+        if self.is_file_available_at_non_playing_playlist(playing_track_index):
 
-        # If the "Start from the latest point" is enabled:
-        # Saving the current duration in every 5 second
-        # -> reset our assist variable when playing new track
-        cv.counter_for_duration = 0
+            # PyQt playing the first audio_track of the video by default
+            #  -> reset our variable when playing new track
+            cv.audio_track_played = 0
 
-        update_playing_playlist_vars_and_widgets()
+            # If the "Start from the latest point" is enabled:
+            # Saving the current duration in every 5 second
+            # -> reset our assist variable when playing new track
+            cv.counter_for_duration = 0
 
-        # playing_track_index --> cv.playing_track_index
-        self.generate_playing_track_index(playing_track_index)
+            update_playing_playlist_vars_and_widgets()
 
-        # TO MAKE SURE UN-PLAYED TRACK`S THUMBNAIL VIEW STYLE IS CORRECT
-        # SCENARIO: app started >> non-playing playlist is active + one of the row is selected
-        # >> switch to thumbnail view >> only the selected thumbnail style is in use
-        cv.playlist_widget_dic[cv.playing_db_table]['played_thumbnail_style_update_needed'] = True
+            # playing_track_index --> cv.playing_track_index
+            self.generate_playing_track_index(playing_track_index)
 
-        # QUEUE
-        self.queue_update()
+            # TO MAKE SURE UN-PLAYED TRACK`S THUMBNAIL VIEW STYLE IS CORRECT
+            # SCENARIO: app started >> non-playing playlist is active + one of the row is selected
+            # >> switch to thumbnail view >> only the selected thumbnail style is in use
+            cv.playlist_widget_dic[cv.playing_db_table]['played_thumbnail_style_update_needed'] = True
 
-        # STYLE
-        # The "self.played_and_queued_track_style_update()" actioned in the
-        # "src / thread_play_track_set_source" and triggered via the
-        # "self.thread_play_track_set_source.start()" function below
+            # QUEUE
+            self.queue_update()
 
-        # PATH / DURATION / SLIDER
-        cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
+            # STYLE
+            # The "self.played_and_queued_track_style_update()" actioned in the
+            # "src / thread_play_track_set_source" and triggered via the
+            # "self.thread_play_track_set_source.start()" function below
 
-        # FILE NOT REACHABLE
-        if cv.playing_pl_tracks_count:  # To make sure error message not displayed for empty Playing playlist
-            if self.track_path == -1 or not Path(self.track_path).is_file():
+            # PATH / DURATION / SLIDER
+            cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
+
+            # FILE NOT REACHABLE
+            if cv.playing_pl_tracks_count:  # To make sure error message not displayed for empty Playing playlist
+                if self.track_path == -1 or not Path(self.track_path).is_file():
+                    MyMessageBoxError(
+                        'Not able to play the file',
+                        'The file or the file`s home folder has been renamed / removed. '
+                    )
+                else:
+                    cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
+                    br.play_slider.setMaximum(cv.track_full_duration)
+
+                    """
+                    PLAYER
+                    self.thread_play_track_set_source.start() >> style update
+                    >> set source >> self.play_track_second_part() >> playing media
+                    
+                    "cv.ignore_loaded_media_signal" to avoid unnecessary "Media status: Loaded media" signal
+                    More info in the "src / av_player / media_status_changed_action()" function
+                    """
+                    cv.ignore_loaded_media_signal = False
+                    self.thread_play_track_set_source.start()
+
+
+    def is_file_available_at_non_playing_playlist(self, playing_track_index):
+        """
+        To avoid updating "playing playlist" vars and widgets when
+        on "playlist A" "media A" is playing +  on "playlist B" "media B" double-clicked
+        where "media B" is removed / renamed
+
+        Not able to play "media B" >> "playlist A" still the playing playlist
+
+        playing_track_index is None = playlist item double-clicked
+        """
+        if playing_track_index is None and cv.active_db_table != cv.playing_db_table:
+            file_path = get_path_db(cv.current_track_index, cv.active_db_table)
+            if not Path(file_path).is_file():
                 MyMessageBoxError(
                     'Not able to play the file',
                     'The file or the file`s home folder has been renamed / removed. '
                 )
-            else:
-                cv.track_full_duration_to_display = generate_duration_to_display(cv.track_full_duration)
-                br.play_slider.setMaximum(cv.track_full_duration)
-
-                """
-                PLAYER
-                self.thread_play_track_set_source.start() >> style update
-                >> set source >> self.play_track_second_part() >> playing media
-                
-                "cv.ignore_loaded_media_signal" to avoid unnecessary "Media status: Loaded media" signal
-                More info in the "src / av_player / media_status_changed_action()" function
-                """
-                cv.ignore_loaded_media_signal = False
-                self.thread_play_track_set_source.start()
+                return False
+        return True
 
 
     def queue_update(self):
