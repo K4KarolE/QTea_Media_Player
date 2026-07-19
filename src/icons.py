@@ -6,6 +6,9 @@ from .logger import logger_runtime
 
 @logger_runtime
 class MyIcon:
+    """
+    The qtea_logo_svg.svg file is not listed below, it is used in packaging for Linux
+    """
     def __init__(self):
         self.window_icon = QIcon(f'skins/{cv.skin_selected}/window_icon.ico')
 
