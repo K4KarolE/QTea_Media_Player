@@ -162,7 +162,7 @@ class PlaysFunc:
 
         playing_track_index is None = playlist item double-clicked
         """
-        if playing_track_index is None and cv.active_db_table != cv.playing_db_table:
+        if cv.playing_pl_tracks_count and playing_track_index is None and cv.active_db_table != cv.playing_db_table:
             file_path = get_path_db(cv.current_track_index, cv.active_db_table)
             if not Path(file_path).is_file():
                 MyMessageBoxError(
