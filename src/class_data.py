@@ -157,6 +157,7 @@ class Data:
     # take over the value of active_db_table, active_pl_last_track_index
     # >> avoid error while generating thumbnails + switching playlists
     thumbnail_img_size: int = settings['general_settings']['thumbnail_img_size']
+    thumbnail_img_size_min, thumbnail_img_size_max = 100, 500
     thumbnail_main_window_width: int = 0
     thumbnail_main_window_height: int = 0
     widg_and_img_diff: int = 0
