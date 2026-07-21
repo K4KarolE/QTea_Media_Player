@@ -17,6 +17,7 @@ from .func_coll import (
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
     remove_track_from_playlist,
+    save_thumbnail_size_set_by_context_menu,
     stop_play_when_playing_track_removed
 )
 from .message_box import MyMessageBoxError
@@ -49,6 +50,8 @@ class MyListWidget(QListWidget):
         # if the current track is playing or not
         self.context_menu_queue_title = ''
         self.context_menu_queue_icon = None
+        self.thumbnail_image_size_string_list = [str(n) for n in range(100, cv.thumbnail_img_size_max + 1, 100)]
+        self.dic_thumbnail_img_size_title = 'Thumbnail image size'
         self.context_menu_dic = {
             'Temp_play_pause_title': {'icon': None},
             'Temp_queue_dequeue_title': {'icon': None},
@@ -57,7 +60,11 @@ class MyListWidget(QListWidget):
             'Clear multi selection': {'icon': br.icon.clear_multi_selection},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
-            'Play track with default player': {'icon': br.icon.start_with_default_player}
+            'Play track with default player': {'icon': br.icon.start_with_default_player},
+            f'{self.dic_thumbnail_img_size_title}': {
+                'icon': None,
+                'menu_sub': ''
+                }
             }
 
 
@@ -197,14 +204,33 @@ class MyListWidget(QListWidget):
                     else:
                         menu_title = 'Play'
                         icon = br.icon.start
+
                 # Queue / Dequeue
                 elif menu_title == 'Temp_queue_dequeue_title':
                     self.generate_queue_or_dequeue_context_menu_items()
                     icon = self.context_menu_queue_icon
                     menu_title = self.context_menu_queue_title
+
+                # Thumbnail image size
+                elif menu_title == self.dic_thumbnail_img_size_title:
+                    self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
+                    # When "thumbnail image size" set on the "Settings Window / General / free text field"
+                    if str(cv.thumbnail_img_size) not in self.thumbnail_image_size_string_list:
+                        self.thumbnail_image_size_string_list.append(str(cv.thumbnail_img_size))
+                        self.thumbnail_image_size_string_list.sort()
+                    for img_size in self.thumbnail_image_size_string_list:
+                        if int(img_size) == cv.thumbnail_img_size:
+                            qaction_to_add = QAction(br.icon.selected, img_size, self)
+                        else:
+                            qaction_to_add = QAction(img_size, self)
+                        self.context_menu_dic[self.dic_thumbnail_img_size_title]['menu_sub'].addAction(qaction_to_add)
                 else:
                     icon = menu_icon['icon']
-                menu.addAction(QAction(icon, menu_title, self))
+
+                if menu_title != self.dic_thumbnail_img_size_title:
+                    menu.addAction(QAction(icon, menu_title, self))
+                    if menu_title == 'Play track with default player':
+                        menu.addSeparator()
 
             # Disable "Clear queue" when there is no queued track at all
             if not cv.queue_playlists_list:
@@ -310,3 +336,8 @@ class MyListWidget(QListWidget):
                     'Not able to play the file',
                     'The file or the file`s home folder has been renamed / removed.  '
                     )
+
+        # THUMBNAIL IMAGE SIZE - QUICK SETUP
+        elif q.text() in self.thumbnail_image_size_string_list:
+            if int(q.text()) != cv.thumbnail_img_size:
+                save_thumbnail_size_set_by_context_menu(int(q.text()))
