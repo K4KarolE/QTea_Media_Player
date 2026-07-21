@@ -1036,3 +1036,25 @@ def is_thumbnail_playlist_visible(playlist):
     playlist = {"active_pl": cv.active_db_table,
                 "playing_pl": cv.playing_db_table}[playlist]
     return cv.playlist_widget_dic[playlist]['thumbnail_window'].isVisible()
+
+
+def save_thumbnail_size_set_by_context_menu(thumbnail_size: int):
+    """
+    Triggered by the right-click on the default playlist view item
+    or the on thumbnail playlist view widget and select one of the
+    "Thumbnail image size - quick setup" sub items: 100, 200, etc
+    """
+    if not cv.active_pl_name.isVisible():
+        br.button_thumbnail.button_thumbnail_clicked()
+    set_thumbnail_generation_needed_to(True)
+    cv.thumbnail_img_size = thumbnail_size
+    cv.thumbnail_width = cv.thumbnail_img_size + cv.widg_and_img_diff
+    cv.thumbnail_height = cv.thumbnail_img_size + cv.widg_and_img_diff
+    cv.general_settings_dic['thumbnail_img_size']['value'] = thumbnail_size
+    settings['general_settings']['thumbnail_img_size'] = thumbnail_size
+    save_json()
+    # To make sure the "Settings window" displays the new value
+    if br.window_settings:
+        br.window_settings.close()
+        br.window_settings.deleteLater()
+        br.window_settings = None
