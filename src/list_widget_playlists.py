@@ -339,5 +339,8 @@ class MyListWidget(QListWidget):
 
         # THUMBNAIL IMAGE SIZE - QUICK SETUP
         elif q.text() in self.thumbnail_image_size_string_list:
-            if int(q.text()) != cv.thumbnail_img_size:
-                save_thumbnail_size_set_by_context_menu(int(q.text()))
+            try:
+                if int(q.text()) != cv.thumbnail_img_size:
+                    save_thumbnail_size_set_by_context_menu(int(q.text()))
+            except:
+                MyMessageBoxError('Error', 'Sorry, something went wrong.')

@@ -6,8 +6,7 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
-from .class_data import connection, cur, save_json
-from .class_data import cv, settings
+from .class_data import connection, cur, cv, save_json, settings
 from .logger import logger_sum
 from .message_box import MyMessageBoxError
 
@@ -1045,7 +1044,7 @@ def save_thumbnail_size_set_by_context_menu(thumbnail_size: int):
     "Thumbnail image size - quick setup" sub items: 100, 200, etc
     """
     if not cv.active_pl_name.isVisible():
-        br.button_thumbnail.button_thumbnail_clicked()
+        br.button_thumbnail.click()
     set_thumbnail_generation_needed_to(True)
     cv.thumbnail_img_size = thumbnail_size
     cv.thumbnail_width = cv.thumbnail_img_size + cv.widg_and_img_diff
