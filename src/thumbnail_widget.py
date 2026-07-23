@@ -18,6 +18,7 @@ from .func_coll import (
     play_track_with_default_player_via_context_menu,
     queue_add_remove_track,
     remove_track_from_playlist,
+    save_thumbnail_size_set_by_context_menu,
     set_thumbnail_generation_needed_to
     )
 from .message_box import MyMessageBoxError
@@ -57,12 +58,15 @@ class ThumbnailWidget(QWidget):
         # QUEUE NUMBER
         self.queue_number = QLabel('#')
         self.queue_number.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-
+        # LAYOUT
         self.layout.addWidget(self.queue_number, 1)
         self.layout.addWidget(self.label_image, 95)
         self.layout.addWidget(self.text, 2)
         self.setLayout(self.layout)
+
         self.set_default_thumbnail_style()
+        self.thumbnail_image_size_string_list = [str(n) for n in range(100, cv.thumbnail_img_size_max + 1, 100)]
+        self.dic_thumbnail_img_size_title = 'Thumbnail image size'
         # CONTEXT MENU
         # The "Play/Pause", and "Queue/Dequeue" titles and icons are generated in the "eventFilter()" below depend on
         # is the current track in the playing state or is the current track already queued
@@ -73,7 +77,11 @@ class ThumbnailWidget(QWidget):
             'Clear queue for this playlist only': {'icon': br.icon.clear_queue_current_playlist},
             'Remove': {'icon': br.icon.remove},
             'Open item`s folder': {'icon': br.icon.folder},
-            'Play track with default player': {'icon': br.icon.start_with_default_player}
+            'Play track with default player': {'icon': br.icon.start_with_default_player},
+            f'{self.dic_thumbnail_img_size_title}': {
+                'icon': None,
+                'menu_sub': ''
+            }
         }
         self.show()
 
@@ -107,9 +115,27 @@ class ThumbnailWidget(QWidget):
                     else:
                         menu_title = 'Queue'
                         icon = br.icon.queue_blue
+                # Thumbnail image size
+                elif menu_title == self.dic_thumbnail_img_size_title:
+                    self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
+                    # When "thumbnail image size" set on the "Settings Window / General / free text field"
+                    if str(cv.thumbnail_img_size) not in self.thumbnail_image_size_string_list:
+                        self.thumbnail_image_size_string_list.append(str(cv.thumbnail_img_size))
+                        self.thumbnail_image_size_string_list.sort()
+                    for img_size in self.thumbnail_image_size_string_list:
+                        if int(img_size) == cv.thumbnail_img_size:
+                            qaction_to_add = QAction(br.icon.selected, img_size, self)
+                        else:
+                            qaction_to_add = QAction(img_size, self)
+                        self.context_menu_dic[self.dic_thumbnail_img_size_title]['menu_sub'].addAction(
+                            qaction_to_add)
                 else:
                     icon = menu_icon['icon']
-                menu.addAction(QAction(icon, menu_title, self))
+
+                if menu_title != self.dic_thumbnail_img_size_title:
+                    menu.addAction(QAction(icon, menu_title, self))
+                    if menu_title == 'Play track with default player':
+                        menu.addSeparator()
 
             # Disable "Clear queue" when there is no queued track at all
             if not cv.queue_playlists_list:
@@ -216,6 +242,16 @@ class ThumbnailWidget(QWidget):
                     'Not able to play the file',
                     'The file or the file`s home folder has been renamed / removed.  '
                 )
+
+        # THUMBNAIL IMAGE SIZE
+        elif q.text() in self.thumbnail_image_size_string_list:
+            try:
+                if int(q.text()) != cv.thumbnail_img_size:
+                    save_thumbnail_size_set_by_context_menu(int(q.text()))
+                    self.destroy()
+                    self.deleteLater()
+            except:
+                MyMessageBoxError('Error', 'Sorry, something went wrong.')
 
 
     def remove_thumbnail_track_grouped(self):
