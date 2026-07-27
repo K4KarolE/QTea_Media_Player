@@ -420,6 +420,8 @@ class PlaysFunc:
                     br.av_player.playlist_visible = True
                     br.button_toggle_video.setDisabled(False)
 
+            br.button_play_pause.button_play_pause_set_icon_paused()
+
 
     @logger_check
     def play_decider(self):
