@@ -18,16 +18,17 @@ otherwise the taskbar icon is the default python group icon
 Taskbar Icons section in:
 https://www.pythonguis.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/
 """
-if cv.os_linux:
-    QApplication.setDesktopSettingsAware(False)
-else:
-    sys.argv += ['-platform', 'windows:darkmode=1']
-    try:
-        from ctypes import windll
-        myappid = 'qtea-media-player'
-        windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-    except ImportError:
-        logger_check("ctypes import - Packaged app`s taskbar icon issue")
+if cv.skin_selected != 'system':
+    if cv.os_linux:
+        QApplication.setDesktopSettingsAware(False)
+    else:
+        sys.argv += ['-platform', 'windows:darkmode=1']
+        try:
+            from ctypes import windll
+            myappid = 'qtea-media-player'
+            windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except ImportError:
+            logger_check("ctypes import - Packaged app`s taskbar icon issue")
 
 
 
@@ -40,7 +41,7 @@ class MyApp(QApplication):
         self.app_moved_while_fullscreen_mode = False
         self.applicationStateChanged.connect(lambda: self.application_state_changed_action())
         self.is_app_status_changed = False
-        if not cv.os_linux:
+        if not cv.os_linux and cv.skin_selected != 'system':
             self.setStyle("Fusion")     # To avoid system theme >> qt app theme
 
 
