@@ -93,6 +93,9 @@ class Data:
     """ SUPPORTING VARIABLES """
     track_title: str = None  # to display on video
     skin_selected: str = settings['skin_selected']
+    if skin_selected == 'system':
+        skin_dir: str = 'default'
+    else: skin_dir: str = skin_selected
     repeat_playlist: int = settings['repeat_playlist']
     shuffle_playlist_on: bool = settings['shuffle_playlist_on']
     shuffle_played_tracks_list = []
