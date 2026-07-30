@@ -6,6 +6,7 @@ from PyQt6.QtGui import QHoverEvent, QFont
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import (
     generate_duration_to_display,
     update_and_save_volume_slider_value
@@ -26,23 +27,26 @@ class MySlider(QSlider):
         self.setStyleSheet(
                         "QSlider::groove"
                             "{"
-                            "background: #C2C2C2;"
+                            f"background: {tm.slider_duration_groove};"
                             "height: 10px;"
                             "border-radius: 4px;"
                             "}"
 
                         "QSlider::handle"
                             "{"
-                            "border: 1px solid grey;"
+                            f"border: 1px solid grey;"
                             f"border-radius: 8px;"
-                            "background: QLinearGradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
+                            f"background: QLinearGradient(x1:0, y1:0, x2:0, y2:1,"
+                            f"stop:0 {tm.slider_duration_handle_pos_0_1},"
+                            f"stop:0.4 {tm.slider_duration_handle_pos_0_1},"
+                            f"stop:1 {tm.slider_duration_handle_pos_2});"
                             "width: 15px;"
                             f"margin: -3 px;  /* if <0: expand outside the groove */"
                             "}"
 
                         "QSlider::sub-page"
                             "{"
-                            "background: #287DCC;"
+                            f"background: {tm.slider_duration_sub_page};"
                             "border-radius: 4px;"
                             "}"
                         )
@@ -146,7 +150,7 @@ class MyVolumeSlider(QSlider):
         self.setStyleSheet(
                         "QSlider::groove"
                             "{"
-                            "background: #C2C2C2;"
+                             f"background: {tm.slider_volume_groove};"
                             "height: 8px;"
                             "border-radius: 3px;"
                             "}"
@@ -154,13 +158,16 @@ class MyVolumeSlider(QSlider):
                             "{"
                             "border: 1px solid grey;"
                             "border-radius: 2px;"
-                            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C2C2C2, stop:1 #E8E8E8);"
+                            "background: QLinearGradient(x1:0, y1:0, x2:0, y2:1,"
+                            f"stop:0 {tm.slider_volume_handle_pos_0_1},"
+                            f"stop:0.4 {tm.slider_volume_handle_pos_0_1},"
+                            f"stop:1 {tm.slider_volume_handle_pos_2});"
                             "width: 15px;"
                             "margin: 0 px;  /* expand outside the groove */"
                             "}"
                         "QSlider::sub-page"
                             "{"
-                            "background: #287DCC;"
+                            f"background: {tm.slider_volume_sub_page};"
                             "border-radius: 4px;"
                             "}"
                         )

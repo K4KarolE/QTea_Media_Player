@@ -6,12 +6,12 @@ from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QScrollBar,
-    QTabWidget,
-    QWidget
+    QTabWidget
     )
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import (
     connection, # db
     cur, # db
@@ -92,17 +92,21 @@ class MyPlaylists(QTabWidget):
         self.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            "background-color: #287DCC;" 
-                            "color: white;"   # font
-                            "border: 2px solid #F0F0F0;"
+                            f"background-color: {tm.tab_playlist_selected_bg};" 
+                            f"color: {tm.tab_playlist_selected_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_selected_border};"
                             "border-radius: 5px;"
                             "padding: 6px"
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
-                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
-                            "color: black;"   # font
-                            "border: 2px solid #F0F0F0;"
+                            f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                            f"stop: 0 {tm.tab_playlist_bg_1},"
+                            f"stop: 0.4 {tm.tab_playlist_bg_2},"
+                            f"stop: 0.8 {tm.tab_playlist_bg_3},"
+                            f"stop: 1 {tm.tab_playlist_bg_4});"
+                            f"color: {tm.tab_playlist_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_border};"
                             "border-radius: 6px;"
                             "padding: 6px"
                             "}"

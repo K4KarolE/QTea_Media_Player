@@ -5,6 +5,7 @@ from PyQt6.QtCore import QUrl, QTimer
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import (
     active_track_font_style,
     clear_multi_selection_when_track_starts_inside_the_selection,
@@ -521,20 +522,20 @@ class PlaysFunc:
         list_item_style_update(
             cv.playing_pl_name.item(cv.playing_pl_last_track_index),
             inactive_track_font_style,
-            'black',
-            'white'
+            tm.row_inactive_text,
+            tm.row_inactive
         )
         list_item_style_update(
             cv.playing_pl_queue.item(cv.playing_pl_last_track_index),
             inactive_track_font_style,
-            'black',
-            'white'
+            tm.row_inactive_text,
+            tm.row_inactive
         )
         list_item_style_update(
             cv.playing_pl_duration.item(cv.playing_pl_last_track_index),
             inactive_track_font_style,
-            'black',
-            'white'
+            tm.row_inactive_text,
+            tm.row_inactive
         )
 
 
@@ -542,20 +543,20 @@ class PlaysFunc:
         list_item_style_update(
             cv.playing_pl_name.item(cv.playing_track_index),
             active_track_font_style,
-            'white',
-            '#287DCC'
+            tm.row_playing_text,
+            tm.row_playing
         )
 
         list_item_style_update(
             cv.playing_pl_queue.item(cv.playing_track_index),
             active_track_font_style,
-            'white',
-            '#287DCC'
+            tm.row_playing_text,
+            tm.row_playing
         )
 
         list_item_style_update(
             cv.playing_pl_duration.item(cv.playing_track_index),
             active_track_font_style,
-            'white',
-            '#287DCC'
+            tm.row_playing_text,
+            tm.row_playing
         )

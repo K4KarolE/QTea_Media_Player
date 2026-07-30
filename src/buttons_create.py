@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QPushButton
 from .buttons import MyButtons
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import inactive_track_font_style
 from .logger import logger_runtime
 
@@ -115,10 +116,9 @@ def generate_buttons():
 
     ''' DURATION SUM INFO - Not used as a button '''
     br.duration_sum_widg = QPushButton('DURATION')
-    br.duration_sum_widg.setDisabled(1)
+    br.duration_sum_widg.setDisabled(True)
     br.duration_sum_widg.setFont(inactive_track_font_style)
-    if cv.os_linux:
-        br.duration_sum_widg.setStyleSheet("color: black;")
+    br.duration_sum_widg.setStyleSheet(f"color: {tm.duration_sum_widget_text};")
 
 
 

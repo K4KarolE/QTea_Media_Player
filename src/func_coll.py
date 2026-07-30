@@ -7,6 +7,7 @@ from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
 from .class_data import connection, cur, cv, save_json, settings
+from .class_theme import tm
 from .logger import logger_sum
 from .message_box import MyMessageBoxError
 
@@ -215,8 +216,8 @@ def add_new_list_item(new_item_text, list_widget, align_center = None, track_pat
     list_item_style_update(
         list_item,
         inactive_track_font_style,
-        'black',
-        'white')
+        tm.row_inactive_text,
+        tm.row_inactive)
     if align_center:
         list_item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVertical_Mask)
     else:
