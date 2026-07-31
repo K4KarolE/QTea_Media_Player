@@ -92,7 +92,7 @@ def generate_buttons():
         'Thumbnail View',
         br.icon.thumbnail
     )
-    br.button_thumbnail.setGeometry(button_x_pos(6.0) - PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH,
+    br.button_thumbnail.setGeometry(button_x_pos(6.0) - PLIST_BUTTONS_X_DIFF - 5, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH,
                                    cv.PLIST_BUTTONS_HEIGHT)
     br.button_thumbnail.clicked.connect(lambda: br.button_thumbnail.button_thumbnail_clicked())
 
