@@ -182,16 +182,16 @@ cv.thumbnail_widget_resize_and_move_to_pos_func_holder = thumbnail_widget_resize
 
 # ACTIVE & THUMBNAIL PL / thumbnail_widget_resize_and_move_to_pos()
 def generate_thumbnail_widget_new_width():
-    """ Thumbnail widget width depends on:
-        Thumbnail playlist`s width / thumbnail img size / thumbnail amount
-     """
+    """
+    Thumbnail widget width depends on:
+    Thumbnail playlist`s width / thumbnail img size / thumbnails amount
+    """
     available_space = cv.thumbnail_main_window_width - cv.scroll_bar_size - 2 * cv.thumbnail_pos_base_x + cv.thumbnail_pos_gap
     thumbnail_and_gap = cv.thumbnail_width + cv.thumbnail_pos_gap
     thumbnails_in_row_possible = int(available_space / thumbnail_and_gap)
     thumbnail_count = len(cv.playlist_widget_dic[cv.active_db_table]['thumbnail_widgets_dic'])
-    if thumbnail_count <= thumbnails_in_row_possible:
-        thumbnail_width_diff = 0
-    else:
+    thumbnail_width_diff = 0  # scenario: thumbnail_count <= thumbnails_in_row_possible
+    if thumbnail_count > thumbnails_in_row_possible > 0:
         thumbnail_width_diff = int((available_space - thumbnails_in_row_possible * thumbnail_and_gap) / thumbnails_in_row_possible)
     cv.thumbnail_new_width = cv.thumbnail_width + thumbnail_width_diff
 
