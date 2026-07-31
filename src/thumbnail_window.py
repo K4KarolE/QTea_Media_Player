@@ -38,11 +38,6 @@ class ThumbnailMainWindow(QScrollArea):
         self.setVerticalScrollBar(self.scroll_bar_ver)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.setStyleSheet("QScrollArea"
-                           "{"
-                           "background: white;"
-                           "}"
-                           )
         self.widgets_window = None
 
 
@@ -107,11 +102,6 @@ class WidgetsWindow(QWidget):
         self.resize(cv.window_width, cv.window_height)
         self.thread_thumbnails_update = ThreadThumbnail(self.playlist)
         self.thread_thumbnails_update.result_ready.connect(self.thumbnail_img_ready)
-        self.setStyleSheet("QWidget"
-                           "{"
-                           "background: white;"
-                           "}"
-                           )
 
     def thumbnail_img_ready(self, index: int, result: str):
         """ Update the thumbnail widget with the generated image and the appropriate thumbnail style """

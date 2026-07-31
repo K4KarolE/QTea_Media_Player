@@ -484,9 +484,9 @@ def update_queued_track_style(current_track_index):
     for list_widget in cv.active_pl_list_widgets_list:
         list_item_style_update(
             list_widget.item(current_track_index), 
-            inactive_track_font_style,
-            'black',
-            '#D5DFE2'
+            active_track_font_style,
+            tm.row_queued_text,
+            tm.row_queued
             )
 
 def update_dequeued_track_style_from_queue_window(playlist, track_index):

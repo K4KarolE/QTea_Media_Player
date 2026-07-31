@@ -100,7 +100,7 @@ class MyPlaylists(QTabWidget):
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
-                            f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                             f"stop: 0 {tm.tab_playlist_bg_1},"
                             f"stop: 0.4 {tm.tab_playlist_bg_2},"
                             f"stop: 0.8 {tm.tab_playlist_bg_3},"
@@ -284,6 +284,7 @@ class MyPlaylists(QTabWidget):
             layout.addWidget(cv.playlist_widget_dic[pl]['thumbnail_window'])
             cv.playlist_widget_dic[pl]['qframe'].setStyleSheet("QFrame"
                                                                 "{"
+                                                                f"background-color: {tm.row_inactive};"
                                                                 "border: 0px;"
                                                                 "}"
                                                                 )
@@ -336,24 +337,24 @@ class MyPlaylists(QTabWidget):
         name_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
+                                    f"background: {tm.row_selected};" 
+                                    f"color: {tm.row_selected_text};"   # font
                                     "}"
                                 )
 
         queue_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
+                                    f"background: {tm.row_selected};" 
+                                    f"color: {tm.row_selected_text};"   # font
                                     "}"
                                 )
 
         duration_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    "background: #CCE8FF;" 
-                                    "color: black;"   # font
+                                    f"background: {tm.row_selected};"
+                                    f"color: {tm.row_selected_text};"   # font
                                     "}"
                                 )
 

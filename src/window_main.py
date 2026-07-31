@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QApplication, QWidget
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import (
     disable_minimal_interface,
     queue_add_remove_track,
@@ -33,6 +34,7 @@ class MyWindow(QWidget):
         self.hotkeys_creation()
         self.move_window_to_middle()
         self.new_window_size_diff_percent = 0.05
+        self.setStyleSheet(f"background-color: {tm.window};")
 
 
     def hotkeys_creation(self):

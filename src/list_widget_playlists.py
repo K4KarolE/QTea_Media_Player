@@ -36,11 +36,10 @@ class MyListWidget(QListWidget):
         self.selected_items = []
         self.selected_items_row_index_list = []
         self.installEventFilter(self)
-        self.setStyleSheet(
-                            "QListWidget::item:selected"
+        self.setStyleSheet("QListWidget::item:selected"
                                 "{"
-                                f"background: {tm.row_selected};" 
-                                f"color: {tm.row_selected_text};"   
+                                f"background: {tm.row_selected};"
+                                f"color: {tm.row_selected_text};"
                                 "}"
                             )
         # CONTEXT MENU
