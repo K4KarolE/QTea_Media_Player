@@ -59,13 +59,39 @@ class Theme:
         highlighted_text = get_color_hex('highlighted_text')
         mid = get_color_hex('mid')
 
+        """ WINDOW """
+        window = base
+
+
+        """ THUMBNAIL """
+        thumbnail_window = mid
+
+        thumbnail_widget = base
+        thumbnail_widget_text = text
+        thumbnail_widget_border = text
+
+        thumbnail_widget_selected = text
+        thumbnail_widget_selected_border = highlighted_text
+        thumbnail_widget_selected_text = base
+
+        thumbnail_widget_playing = highlight
+        thumbnail_widget_playing_border = highlight
+        thumbnail_widget_playing_text = highlighted_text
+
+        thumbnail_widget_queue = text
+        thumbnail_widget_queue_text = base
+
+
         """ PLAYLIST ROWS """
-        row_inactive = base
+        row_inactive = mid
         row_inactive_text = text
         row_selected = text
         row_selected_text = base
         row_playing = highlight
         row_playing_text = highlighted_text
+        row_queued = text
+        row_queued_text = base
+
 
         """ SLIDERS """
         slider_duration_groove = alternate_base
@@ -77,6 +103,7 @@ class Theme:
         slider_volume_sub_page = highlight
         slider_volume_handle_pos_0_1 = alternate_base
         slider_volume_handle_pos_2 = alternate_base
+
 
         """ PLAYLIST TAB """
         tab_playlist_bg_1 = mid
@@ -115,6 +142,29 @@ class Theme:
 
 
     else:
+        """ WINDOW """
+        window = skin_settings['window']
+
+
+        """ THUMBNAIL """
+        thumbnail_window = skin_settings['thumbnail_window']
+
+        thumbnail_widget = skin_settings['thumbnail_widget']
+        thumbnail_widget_text = skin_settings['thumbnail_widget_text']
+        thumbnail_widget_border = skin_settings['thumbnail_widget_border']
+
+        thumbnail_widget_selected = skin_settings['thumbnail_widget_selected']
+        thumbnail_widget_selected_border = skin_settings['thumbnail_widget_selected_border']
+        thumbnail_widget_selected_text = skin_settings['thumbnail_widget_selected_text']
+
+        thumbnail_widget_playing = skin_settings['thumbnail_widget_playing']
+        thumbnail_widget_playing_border = skin_settings['thumbnail_widget_playing_border']
+        thumbnail_widget_playing_text = skin_settings['thumbnail_widget_playing_text']
+
+        thumbnail_widget_queue = skin_settings['thumbnail_widget_queue']
+        thumbnail_widget_queue_text = skin_settings['thumbnail_widget_queue_text']
+
+
         """ PLAYLIST ROWS """
         row_inactive = skin_settings['row_inactive']
         row_inactive_text = skin_settings['row_inactive_text']
@@ -122,6 +172,9 @@ class Theme:
         row_selected_text = skin_settings['row_selected_text']
         row_playing = skin_settings['row_playing']
         row_playing_text = skin_settings['row_playing_text']
+        row_queued = skin_settings['row_queued']
+        row_queued_text = skin_settings['row_queued_text']
+
 
         """ SLIDERS """
         slider_duration_groove = skin_settings['slider_duration_groove']
@@ -133,6 +186,7 @@ class Theme:
         slider_volume_sub_page = skin_settings['slider_volume_sub_page']
         slider_volume_handle_pos_0_1 = skin_settings['slider_volume_handle_pos_0_1']
         slider_volume_handle_pos_2 = skin_settings['slider_volume_handle_pos_2']
+
 
         """ PLAYLIST TAB """
         tab_playlist_bg_1 = skin_settings['tab_playlist_bg_1']
