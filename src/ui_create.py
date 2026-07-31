@@ -187,6 +187,9 @@ def generate_ui():
     volume_qframe.setFixedSize(br.volume_slider.width(), 30)
     volume2_vert_layout.addWidget(volume_qframe)
 
+    br.volume_slider.setParent(volume_qframe)
+    br.volume_slider.move(0,5)
+
     br.volume_percent_label = QLabel(str(int(cv.volume*100)) + '%', parent=volume_qframe)
     br.volume_percent_label.setFont(QFont('Arial', 9, 600))
     br.volume_percent_label.setStyleSheet("color: grey;") # blue: #287DCC
