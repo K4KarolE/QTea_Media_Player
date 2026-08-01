@@ -51,5 +51,17 @@
   "buttons_settings_bg_3": "#C2C2C2",
   "buttons_settings_border": "grey",
   "buttons_settings_font": "grey",
-  "buttons_settings_pressed_bg": "#C2C2C2"
+  "buttons_settings_pressed_bg": "#C2C2C2",
+  "window_settings": "light grey",
+  "window_settings_inner_window": "#F9F9F9",
+  "window_settings_inner_window_border": "#C2C2C2",
+  "window_settings_line_edit": "white",
+  "window_settings_line_edit_text": "black",
+  "window_settings_line_edit_border": "grey",
+  "window_settings_button": "light grey",
+  "window_settings_button_border": "grey",
+  "window_settings_button_text": "grey",
+  "window_settings_button_pressed_bg": "#C2C2C2",
+  "window_settings_button_pressed_text": "grey",
+  "window_settings_scrollbar": "#F9F9F9"
 }

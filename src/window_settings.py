@@ -21,6 +21,7 @@ from .class_data import (
     settings,
     save_json
     )
+from .class_theme import tm
 from .func_coll import (
     move_window_to_middle_of_current_screen,
     update_playing_playlist_vars_and_widgets
@@ -54,6 +55,7 @@ class MySettingsWindow(QWidget):
         self.setFixedHeight(WINDOW_HEIGHT)
         self.setWindowIcon(br.icon.settings)
         self.setWindowTitle("Settings")
+        self.setStyleSheet(f"background-color: {tm.window};")
 
 
         '''
@@ -70,22 +72,24 @@ class MySettingsWindow(QWidget):
         tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            "background-color: #287DCC;" 
-                            "color: white;"   # font
-                            "border: 2px solid #F0F0F0;"
-                            "border-radius: 4px;"
+                            f"background-color: {tm.tab_playlist_selected_bg};" 
+                            f"color: {tm.tab_playlist_selected_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_selected_border};"
+                            "border-radius: 5px;"
                             "padding: 6px"
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
-                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,\
-                             stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
-                            "color: black;"   # font
-                            "border: 2px solid #F0F0F0;"
-                            "border-radius: 4px;"
+                            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                            f"stop: 0 {tm.tab_playlist_bg_1},"
+                            f"stop: 0.4 {tm.tab_playlist_bg_2},"
+                            f"stop: 0.8 {tm.tab_playlist_bg_3},"
+                            f"stop: 1 {tm.tab_playlist_bg_4});"
+                            f"color: {tm.tab_playlist_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_border};"
+                            "border-radius: 6px;"
                             "padding: 6px"
                             "}"
-                        # border set up @ QScrollArea
                         "QTabWidget::pane"
                             "{" 
                             "position: absolute;"
@@ -123,11 +127,13 @@ class MySettingsWindow(QWidget):
             widgets_window.setStyleSheet(
                             "QWidget"
                                 "{"
-                                "background-color: #F9F9F9;"
+                                f"background-color: {tm.window_settings_inner_window};"
                                 "}"
                             "QLineEdit"
                                 "{"
-                                "background-color: white;"
+                                f"border: 1px solid {tm.window_settings_line_edit_border};"
+                                f"background-color: {tm.window_settings_line_edit};"
+                                f"color: {tm.window_settings_line_edit_text};" # text
                                 "}"
                                 )
 
@@ -136,8 +142,7 @@ class MySettingsWindow(QWidget):
             scroll_area.setStyleSheet(
                                 "QScrollArea"
                                     "{"
-                                    "background-color: #F9F9F9;" 
-                                    "border: 1px solid #C2C2C2;"
+                                    f"border: 1px solid {tm.window_settings_inner_window_border};"
                                     "border-radius: 2px;"
                                     "}"
                                 )
@@ -147,6 +152,7 @@ class MySettingsWindow(QWidget):
             scroll_bar.setStyleSheet(
                                     "QScrollBar::vertical"
                                         "{"
+                                        f"background-color: {tm.window_settings_scrollbar};"
                                         "width: 10px;"
                                         "}"
                                     "QScrollBar::horizontal"
@@ -206,7 +212,21 @@ class MySettingsWindow(QWidget):
             tabs_dic[tab]['scroll_area'].setWidget(tabs_dic[tab]['widgets_window'])
             tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
 
-
+        """
+        BUTTONS
+        """
+        def set_button_style(button):
+            button.setStyleSheet("QPushButton"
+                                       "{"
+                                       f"background-color: {tm.window_settings_button};"
+                                       f"border: 1px solid {tm.window_settings_button_border};"
+                                       "border-radius: 4px;"
+                                       "}"
+                                   "QPushButton::pressed"
+                                       "{"
+                                       f"background-color: {tm.window_settings_button_pressed_bg};"
+                                       "}"
+                                   )
         '''
         ####################
             BUTTON - SAVE      
@@ -260,6 +280,7 @@ class MySettingsWindow(QWidget):
         button_save = QPushButton(self, text='Save')
         button_save.setGeometry(BUTTON_SAVE_POS_X, BUTTON_SAVE_POS_Y, BUTTON_SAVE_WIDTH, BUTTON_SAVE_HEIGHT)
         button_save.clicked.connect(button_save_clicked)
+        set_button_style(button_save)
 
 
         '''
@@ -282,6 +303,7 @@ class MySettingsWindow(QWidget):
         button_purge_thumbnails.clicked.connect(
             msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
             )
+        set_button_style(button_purge_thumbnails)
 
 
 

@@ -32,7 +32,10 @@ palette_dic = {
     "button_text": QPalette.ColorRole.ButtonText,
     "highlight": QPalette.ColorRole.Highlight,
     "highlighted_text": QPalette.ColorRole.HighlightedText,
-    "mid": QPalette.ColorRole.Mid
+    "mid": QPalette.ColorRole.Mid,
+    "mid_light": QPalette.ColorRole.Midlight,
+    "light": QPalette.ColorRole.Light,
+    "dark": QPalette.ColorRole.Dark
 }
 
 
@@ -58,6 +61,9 @@ class Theme:
         highlight = get_color_hex('highlight')
         highlighted_text = get_color_hex('highlighted_text')
         mid = get_color_hex('mid')
+        mid_light = get_color_hex('mid_light')
+        light = get_color_hex('light')
+        dark = get_color_hex('dark')
 
         """ WINDOW """
         window = base
@@ -139,6 +145,20 @@ class Theme:
         buttons_playlist_font = text
         buttons_playlist_pressed_bg = highlight
 
+
+        """ SETTINGS WINDOW """
+        window_settings = base
+        window_settings_inner_window = mid
+        window_settings_inner_window_border = alternate_base
+        window_settings_line_edit = mid
+        window_settings_line_edit_text = text
+        window_settings_line_edit_border = text
+        window_settings_button = button
+        window_settings_button_border = text
+        window_settings_button_text = text
+        window_settings_button_pressed_bg = highlight
+        window_settings_button_pressed_text = text
+        window_settings_scrollbar = mid
 
 
     else:
@@ -222,5 +242,19 @@ class Theme:
         buttons_settings_font = skin_settings['buttons_settings_font']
         buttons_settings_pressed_bg = skin_settings['buttons_settings_pressed_bg']
 
+
+        """ SETTINGS WINDOW """
+        window_settings = skin_settings['window_settings']
+        window_settings_inner_window = skin_settings['window_settings_inner_window']
+        window_settings_inner_window_border = skin_settings['window_settings_inner_window_border']
+        window_settings_line_edit = skin_settings['window_settings_line_edit']
+        window_settings_line_edit_text = skin_settings['window_settings_line_edit_text']
+        window_settings_line_edit_border = skin_settings['window_settings_line_edit_border']
+        window_settings_button = skin_settings['window_settings_button']
+        window_settings_button_border = skin_settings['window_settings_button_border']
+        window_settings_button_text = skin_settings['window_settings_button_text']
+        window_settings_button_pressed_bg = skin_settings['window_settings_button_pressed_bg']
+        window_settings_button_pressed_text = skin_settings['window_settings_button_pressed_text']
+        window_settings_scrollbar = skin_settings['window_settings_scrollbar']
 
 tm = Theme()
