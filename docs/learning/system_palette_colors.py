@@ -43,18 +43,29 @@ class MainWindow(QWidget):
         layout.addLayout(form)
 
         roles = {
-            "Window": QPalette.ColorRole.Window,
-            "WindowText": QPalette.ColorRole.WindowText,
-            "Text": QPalette.ColorRole.Text,
-            "Base": QPalette.ColorRole.Base,
+            "Accent": QPalette.ColorRole.Accent,
             "AlternateBase": QPalette.ColorRole.AlternateBase,
+            "Base": QPalette.ColorRole.Base,
+            "BrightText": QPalette.ColorRole.BrightText,
             "Button": QPalette.ColorRole.Button,
             "ButtonText": QPalette.ColorRole.ButtonText,
+            "Dark": QPalette.ColorRole.Dark,
             "Highlight": QPalette.ColorRole.Highlight,
             "HighlightedText": QPalette.ColorRole.HighlightedText,
-            "Accent": QPalette.ColorRole.Accent,
+            "Light": QPalette.ColorRole.Light,
+            "Link": QPalette.ColorRole.Link,
+            "LinkVisited": QPalette.ColorRole.LinkVisited,
             "Mid": QPalette.ColorRole.Mid,
-            "MidLight": QPalette.ColorRole.Midlight
+            "MidLight": QPalette.ColorRole.Midlight,
+            "NColorRoles": QPalette.ColorRole.NColorRoles,
+            "NoRole": QPalette.ColorRole.NoRole,
+            "PlaceholderText": QPalette.ColorRole.PlaceholderText,
+            "Shadow": QPalette.ColorRole.Shadow,
+            "Text": QPalette.ColorRole.Text,
+            "ToolTipBase": QPalette.ColorRole.ToolTipBase,
+            "ToolTipText": QPalette.ColorRole.ToolTipText,
+            "Window": QPalette.ColorRole.Window,
+            "WindowText": QPalette.ColorRole.WindowText
         }
 
         for name, role in roles.items():
