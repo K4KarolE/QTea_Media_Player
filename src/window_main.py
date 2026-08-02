@@ -34,7 +34,11 @@ class MyWindow(QWidget):
         self.hotkeys_creation()
         self.move_window_to_middle()
         self.new_window_size_diff_percent = 0.05
-        self.setStyleSheet(f"background-color: {tm.window};")
+        self.setObjectName("MainWindow")
+        self.setStyleSheet("QWidget#MainWindow"
+                            "{"
+                            f"background: {tm.window};"
+                            "}")
 
 
     def hotkeys_creation(self):

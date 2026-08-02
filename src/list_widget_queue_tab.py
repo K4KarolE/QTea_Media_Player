@@ -29,7 +29,8 @@ class MyQueueListWidget(QListWidget):
         super().__init__()
         self.play_track = play_track    # queue_play_list_item()
         self.installEventFilter(self)
-        
+        self.setStyleSheet("border: 0px")
+
         self.context_menu_dic = { 
             'Play': {'icon': br.icon.start},
             'Dequeue': {'icon': br.icon.de_queue},

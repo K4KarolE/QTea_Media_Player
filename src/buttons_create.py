@@ -118,7 +118,23 @@ def generate_buttons():
     br.duration_sum_widg = QPushButton('DURATION')
     br.duration_sum_widg.setDisabled(True)
     br.duration_sum_widg.setFont(inactive_track_font_style)
-    br.duration_sum_widg.setStyleSheet(f"color: {tm.duration_sum_widget_text};")
+    br.duration_sum_widg.setStyleSheet(
+                        "QPushButton"
+                            "{"
+                            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                            f"stop: 0 {tm.button_duration_sum_info_bg_0},"
+                            f"stop: 0.2 {tm.button_duration_sum_info_bg_1},"
+                            f"stop: 0.8 {tm.button_duration_sum_info_bg_2},"
+                            f"stop: 1 {tm.button_duration_sum_info_bg_3});"
+                            f"color: {tm.button_duration_sum_info_text};"   # font
+                            f"border: 1px solid {tm.button_duration_sum_info_border};"
+                            "border-radius: 3px;"
+                            "padding-top: 3px;"
+                            "padding-bottom: 3px;"
+                            "padding-left: 14px;"
+                            "padding-right: 14px;"
+                            "}"
+                        )
 
 
 

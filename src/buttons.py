@@ -280,7 +280,7 @@ class MyButtons(QPushButton):
         self.setStyleSheet(
                         "QPushButton"
                             "{"
-                            "color: grey;"   
+                            f"color: {tm.button_duration_info_text};"   
                             "}"
                         )
 
@@ -482,3 +482,23 @@ class MyButtons(QPushButton):
         if cv.is_speaker_muted:
             cv.is_speaker_muted = False
             br.button_speaker.setIcon(br.icon.speaker)
+
+
+    """ BUTTON PLAYING - UNDER VIDEO AREA - SET STYLE """
+    def set_style_playing_button(self):
+        self.setStyleSheet(
+            "QPushButton"
+            "{"
+            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+            f"stop: 0 {tm.buttons_playing_bg_0},"
+            f"stop: 0.2 {tm.buttons_playing_bg_1},"
+            f"stop: 0.8 {tm.buttons_playing_bg_2},"
+            f"stop: 1 {tm.buttons_playing_bg_3});"
+            f"border: 1px solid {tm.buttons_playing_border};"
+            "border-radius: 2px;"
+            "}"
+            "QPushButton::pressed"
+            "{"
+            f"background-color :  {tm.buttons_playing_pressed_bg};"
+            "}"
+        )

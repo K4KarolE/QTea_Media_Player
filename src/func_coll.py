@@ -239,8 +239,8 @@ def add_queue_window_list_widgets_header(new_item, list_widget):
     list_item_style_update(
         list_item,
         inactive_track_font_style,
-        'black',
-        '#D5DFE2')    
+        tm.window_q_and_s_queue_header_text,
+        tm.window_q_and_s_queue_header)
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):

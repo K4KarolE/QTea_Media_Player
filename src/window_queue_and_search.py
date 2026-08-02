@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_coll import (
     inactive_track_font_style,
     add_new_list_item,
@@ -52,6 +53,12 @@ class MyQueueAndSearchWindow(QWidget):
         self.search_criteria = ""
         self.is_empty_search_result = False
         self.empty_search_result_msg = ""
+        self.setObjectName("QueueAndSearchWindow")
+        self.setStyleSheet("QWidget#QueueAndSearchWindow"
+                           "{"
+                           f"background: {tm.window_q_and_s};"
+                           "}"
+                           )
         
         TABS_POS_X, TABS_POS_Y  = 12, 12
         TABS_WIDTH = int(WINDOW_WIDTH - TABS_POS_X *2)
@@ -65,26 +72,28 @@ class MyQueueAndSearchWindow(QWidget):
         self.tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            "background-color: #287DCC;" 
-                            "color: white;"   # font
-                            "border: 2px solid #F0F0F0;"
-                            "border-radius: 4px;"
+                            f"background-color: {tm.tab_playlist_selected_bg};" 
+                            f"color: {tm.tab_playlist_selected_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_selected_border};"
+                            "border-radius: 5px;"
                             "padding: 6px"
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
-                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.3 white, stop: 0.8 #C9C9C9, stop: 1 #C2C2C2);"
-                            "color: black;"   # font
-                            "border: 2px solid #F0F0F0;"
-                            "border-radius: 4px;"
+                            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                            f"stop: 0 {tm.tab_playlist_bg_1},"
+                            f"stop: 0.4 {tm.tab_playlist_bg_2},"
+                            f"stop: 0.8 {tm.tab_playlist_bg_3},"
+                            f"stop: 1 {tm.tab_playlist_bg_4});"
+                            f"color: {tm.tab_playlist_font};"   # font
+                            f"border: 2px solid {tm.tab_playlist_border};"
+                            "border-radius: 6px;"
                             "padding: 6px"
                             "}"
                         "QTabWidget::pane"
                             "{" 
                             "position: absolute;"
                             "top: 0.3em;"
-                            "border: 1px solid #C2C2C2;"
-                            "border-radius: 2px;"
                             "}"
                         )
         
@@ -137,6 +146,7 @@ class MyQueueAndSearchWindow(QWidget):
             else:
                 list_widget.setVerticalScrollBar(scroll_bar_else_ver)
 
+            # Header row: Order Number | Track title | Playlist | Duration
             add_queue_window_list_widgets_header(title, list_widget)
             layout.addWidget(list_widget, ratio)
         
@@ -145,16 +155,16 @@ class MyQueueAndSearchWindow(QWidget):
         cv.queue_widget_dic['playlist_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('playlist_list_widget'))
         cv.queue_widget_dic['duration_list_widget']['list_widget'].currentRowChanged.connect(lambda: self.queue_row_changed_sync('duration_list_widget'))
 
-        frame = QFrame()
-        frame.setStyleSheet(
-                        "QFrame"
+        frame_queue = QFrame()
+        frame_queue.setObjectName("QueueFrame")
+        frame_queue.setStyleSheet("QFrame#QueueFrame"
                             "{"
-                            "border: 0px;"
+                            f"border: 1px solid {tm.window_q_and_s_queue_frame_border};"
                             "}"
                         )
-        frame.setLayout(layout)
+        frame_queue.setLayout(layout)
 
-        self.tabs.addTab(frame, 'Queue')
+        self.tabs.addTab(frame_queue, 'Queue')
 
 
         '''
@@ -182,23 +192,35 @@ class MyQueueAndSearchWindow(QWidget):
         self.search_line_edit.setFixedHeight(SEARCH_WIDGETS_HEIGHT)
         self.search_line_edit.setFont(inactive_track_font_style)
         self.search_line_edit.returnPressed.connect(lambda: self.search_button_clicked())
+        self.search_line_edit.setStyleSheet("QLineEdit"
+                                                "{"
+                                                f"background: {tm.window_q_and_s_search_line_edit};"
+                                                f"color: {tm.window_q_and_s_search_line_edit_text};"
+                                                f"border: 1px solid {tm.window_q_and_s_search_line_edit_border};"
+                                                "border-radius: 6px;"
+                                                "}"
+                                            )
 
         search_button = QPushButton()
         search_button.setIcon(br.icon.search)
         search_button.setFixedSize(28, 28)
         search_button.clicked.connect(lambda: self.search_button_clicked())
         search_button.setStyleSheet(
-                        "QPushButton"
-                            "{"
-                            "background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 0.2 #D5DFE2, stop: 0.8 #D5DFE2, stop: 1 #C2C2C2);"
-                            "border: 1px solid grey;"
-                            "border-radius: 6px;"
-                            "}"
-                        "QPushButton::pressed"
-                            "{"
-                            "background-color : white;"
-                            "}"
-                        )
+                            "QPushButton"
+                                "{"
+                                f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                f"stop: 0 {tm.window_q_and_s_search_button_bg_0},"
+                                f"stop: 0.2 {tm.window_q_and_s_search_button_bg_1},"
+                                f"stop: 0.8 {tm.window_q_and_s_search_button_bg_2},"
+                                f"stop: 1 {tm.window_q_and_s_search_button_bg_3});"
+                                f"border: 1px solid {tm.window_q_and_s_search_button_border};"
+                                "border-radius: 6px;"
+                                "}"
+                            "QPushButton::pressed"
+                                "{"
+                                f"background-color:  {tm.window_q_and_s_search_button_pressed};"
+                                "}"
+                            )
 
 
         ''' BOTTOM WIDGETS '''
@@ -225,25 +247,11 @@ class MyQueueAndSearchWindow(QWidget):
         cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item)
         cv.search_title_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
         cv.search_title_list_widget.setVerticalScrollBar(scroll_bar_search_title_ver)
-        cv.search_title_list_widget.setStyleSheet(
-                                                "QListWidget::item:selected"
-                                                    "{"
-                                                    "background: #CCE8FF;" 
-                                                    "color: black;"   
-                                                    "}"
-                                                )
 
         cv.search_queue_list_widget = MySearchListWidget(self.search_play_list_item)
         cv.search_queue_list_widget.itemDoubleClicked.connect(self.search_play_list_item)
         cv.search_queue_list_widget.setVerticalScrollBar(scroll_bar_search_queue_ver)
         cv.search_queue_list_widget.setFixedWidth(50)
-        cv.search_queue_list_widget.setStyleSheet(
-                                                "QListWidget::item:selected"
-                                                    "{"
-                                                    "background: #CCE8FF;" 
-                                                    "color: black;"   
-                                                    "}"
-                                                )
         
         cv.search_title_list_widget.currentRowChanged.connect(lambda: self.search_row_changed_sync(cv.search_title_list_widget))
         cv.search_queue_list_widget.currentRowChanged.connect(lambda: self.search_row_changed_sync(cv.search_queue_list_widget))
@@ -255,10 +263,12 @@ class MyQueueAndSearchWindow(QWidget):
         layout_search_bottom.addWidget(cv.search_queue_list_widget, 1)
 
         frame_search = QFrame()
+        frame_search.setObjectName("SearchFrame")
         frame_search.setStyleSheet(
-                        "QFrame"
+                        "QFrame#SearchFrame"
                             "{"
-                            "border: 0px;"
+                            f"background: {tm.window_q_and_s_search_frame};"
+                            f"border: 1px solid {tm.window_q_and_s_search_frame_border};"
                             "}"
                         )
         frame_search.setLayout(layout_search_base)
@@ -298,15 +308,21 @@ class MyQueueAndSearchWindow(QWidget):
         for item in cv.queue_widget_dic:
             if item != list_widget_row_changed:
                 if current_row == 0:    # first row: Order number, Title, Queue, Duration
-                    color = '#D5DFE2'
+                    color  = [tm.row_playing, tm.row_playing_text]
                 else:
-                    color = '#CCE8FF'
+                    color = [tm.row_selected, tm.row_selected_text]
                 cv.queue_widget_dic[item]['list_widget'].setCurrentRow(current_row)
                 cv.queue_widget_dic[item]['list_widget'].setStyleSheet(
                                                             "QListWidget::item:selected"
                                                                 "{"
-                                                                f"background: {color};" 
-                                                                "color: black;"   
+                                                                f"background: {color[0]};" 
+                                                                f"color: {color[1]};"   
+                                                                "}"
+                                                            "QListWidget"
+                                                                "{"
+                                                                f"background: {tm.row_inactive};"
+                                                                f"color: {tm.row_inactive_text};"
+                                                                "border: 0px;"
                                                                 "}"
                                                             )
     

@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
+from .class_theme import tm
 from .func_thumbnail import (
     is_new_thumbnail_generation_necessary,
     is_track_index_inside_playlist,
@@ -102,6 +103,7 @@ class WidgetsWindow(QWidget):
         self.resize(cv.window_width, cv.window_height)
         self.thread_thumbnails_update = ThreadThumbnail(self.playlist)
         self.thread_thumbnails_update.result_ready.connect(self.thumbnail_img_ready)
+        self.setStyleSheet(f"background-color: {tm.thumbnail_window};")
 
     def thumbnail_img_ready(self, index: int, result: str):
         """ Update the thumbnail widget with the generated image and the appropriate thumbnail style """

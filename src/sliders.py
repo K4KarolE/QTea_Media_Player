@@ -52,9 +52,14 @@ class MySlider(QSlider):
                         )
         br.av_player.player.positionChanged.connect(self.player_position_changed_action)
 
+        """
+        The parent of the "hover_over_duration_info_label" label
+        is set in the "src / ui_create / BOTTOM" section after the
+        slider added to the layout >> the slider does not overlap
+        the label when using "system" theme
+        """
         self.hover_over_duration_info_label = QLabel(self)
         self.hover_over_duration_info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.hover_over_duration_info_label.setParent(br.window)
         self.hover_over_duration_info_label.setFont(QFont('Arial', 8, 600))
         self.hover_over_duration_info_label.hide()
         self.hover_over_duration_info_label.setStyleSheet(

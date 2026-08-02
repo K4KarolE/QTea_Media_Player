@@ -55,7 +55,7 @@ class MySettingsWindow(QWidget):
         self.setFixedHeight(WINDOW_HEIGHT)
         self.setWindowIcon(br.icon.settings)
         self.setWindowTitle("Settings")
-        self.setStyleSheet(f"background-color: {tm.window};")
+        self.setStyleSheet(f"background: {tm.window};")
 
 
         '''
@@ -152,7 +152,7 @@ class MySettingsWindow(QWidget):
             scroll_bar.setStyleSheet(
                                     "QScrollBar::vertical"
                                         "{"
-                                        f"background-color: {tm.window_settings_scrollbar};"
+                                        f"background: {tm.window_settings_scrollbar};"
                                         "width: 10px;"
                                         "}"
                                     "QScrollBar::horizontal"

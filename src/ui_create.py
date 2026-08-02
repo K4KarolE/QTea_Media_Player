@@ -144,14 +144,10 @@ def generate_ui():
     layout_playlist.addWidget(br.playlists_all)
 
 
-    ''' PLAY BUTTON ICON UPDATE '''
-    if cv.play_at_startup and cv.active_pl_tracks_count > 0:
-        br.button_play_pause.setIcon(br.icon.pause)
-
-
     ''' BOTTOM '''
     # SLIDER
     br.layout_bottom_slider.addWidget(br.play_slider)
+    br.play_slider.hover_over_duration_info_label.setParent(br.window)
 
     # LAYOUT BUTTONS / VOLUME
     layout_bottom_buttons = QVBoxLayout()
@@ -166,6 +162,8 @@ def generate_ui():
     br.play_buttons_list_wrapper.setFixedHeight(50)
     for button in br.play_buttons_list:
         button.setParent(br.play_buttons_list_wrapper)
+        if button != br.button_duration_info:
+            button.set_style_playing_button()
 
     layout_bottom_buttons.addWidget(br.play_buttons_list_wrapper)
 
