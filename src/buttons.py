@@ -346,6 +346,7 @@ class MyButtons(QPushButton):
         cv.ignore_loaded_media_signal = True
         br.av_player.player.stop()
         br.av_player.paused = False
+        br.play_slider.setEnabled(False)
         br.button_play_pause.setIcon(br.icon.start)
         br.av_player.set_screen_saver_on()
         br.button_duration_info.disable_and_set_to_zero()

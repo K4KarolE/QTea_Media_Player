@@ -265,6 +265,7 @@ class PlaysFunc:
             return
         else:
             br.play_slider.setEnabled(True)
+            br.button_play_pause.button_play_pause_set_icon_paused()
             self.update_window_title(self.track_path, True)
 
         # VIDEO AREA / LOGO DISPLAY
@@ -423,8 +424,6 @@ class PlaysFunc:
                     br.av_player.playlist_visible = True
                     br.button_toggle_video.setDisabled(False)
 
-            br.button_play_pause.button_play_pause_set_icon_paused()
-
 
     @logger_check
     def play_decider(self):
@@ -443,6 +442,7 @@ class PlaysFunc:
                 update_raw_current_duration_db(0, cv.playing_track_index)
             self.play_next_track()
         else:
+            br.play_slider.setEnabled(False)
             br.av_player.base_played_end_of_media_signal_ignored = True
 
 
