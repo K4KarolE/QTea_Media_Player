@@ -7,7 +7,6 @@ import sqlite3
 import sys
 import os
 
-from PyQt6.QtCore import QT_VERSION_STR
 from .logger import logger_sum
 
 
