@@ -42,7 +42,7 @@ palette_dic = {
 
 
 @dataclass()
-class Theme:
+class Skins:
 
     if cv.skin_selected == 'system':
         """
@@ -462,4 +462,4 @@ class Theme:
         window_q_and_s_queue_frame_border = skin_settings['window_q_and_s_queue_frame_border']
         # no "window_q_and_s_queue_frame", the inner widget covers all the frame
 
-tm = Theme()
+sk = Skins()
