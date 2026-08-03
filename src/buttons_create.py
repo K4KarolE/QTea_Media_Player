@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QPushButton
 from .buttons import MyButtons
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import inactive_track_font_style
 from .logger import logger_runtime
 
@@ -122,12 +122,12 @@ def generate_buttons():
                         "QPushButton"
                             "{"
                             f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                            f"stop: 0 {tm.button_duration_sum_info_bg_0},"
-                            f"stop: 0.2 {tm.button_duration_sum_info_bg_1},"
-                            f"stop: 0.8 {tm.button_duration_sum_info_bg_2},"
-                            f"stop: 1 {tm.button_duration_sum_info_bg_3});"
-                            f"color: {tm.button_duration_sum_info_text};"   # font
-                            f"border: 1px solid {tm.button_duration_sum_info_border};"
+                            f"stop: 0 {sk.button_duration_sum_info_bg_0},"
+                            f"stop: 0.2 {sk.button_duration_sum_info_bg_1},"
+                            f"stop: 0.8 {sk.button_duration_sum_info_bg_2},"
+                            f"stop: 1 {sk.button_duration_sum_info_bg_3});"
+                            f"color: {sk.button_duration_sum_info_text};"   # font
+                            f"border: 1px solid {sk.button_duration_sum_info_border};"
                             "border-radius: 3px;"
                             "padding-top: 3px;"
                             "padding-bottom: 3px;"

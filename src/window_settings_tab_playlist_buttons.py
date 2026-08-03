@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QPushButton
 
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 
 
 class ButtonJumpToPlaylist(QPushButton):
@@ -18,13 +18,13 @@ class ButtonJumpToPlaylist(QPushButton):
         self.clicked.connect(self.button_action)
         self.setStyleSheet("QPushButton"
                                "{"
-                                f"background-color: {tm.window_settings_button};"
-                                f"border: 1px solid {tm.window_settings_button_border};"
+                                f"background-color: {sk.window_settings_button};"
+                                f"border: 1px solid {sk.window_settings_button_border};"
                                 "border-radius: 4px;"
                                 "}"
                            "QPushButton::pressed"
                                 "{"
-                                f"background-color: {tm.window_settings_button_pressed_bg};"
+                                f"background-color: {sk.window_settings_button_pressed_bg};"
                                 "}"
                            )
 

@@ -5,7 +5,7 @@ from PyQt6.QtGui import QFont
 
 from .class_bridge import br
 from .class_data import save_json, cv, settings
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     clear_multi_selection,
     disable_minimal_interface,
@@ -168,18 +168,18 @@ class MyButtons(QPushButton):
             "QPushButton"
                 "{"
                 f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                f"stop: 0 {tm.buttons_playlist_bg_0},"
-                f"stop: 0.2 {tm.buttons_playlist_bg_1},"
-                f"stop: 0.8 {tm.buttons_playlist_bg_2},"
-                f"stop: 1 {tm.buttons_playlist_bg_3});"
-                f"color: {tm.buttons_playlist_font};"  # font
-                f"border: 1px solid {tm.buttons_playlist_border};"
+                f"stop: 0 {sk.buttons_playlist_bg_0},"
+                f"stop: 0.2 {sk.buttons_playlist_bg_1},"
+                f"stop: 0.8 {sk.buttons_playlist_bg_2},"
+                f"stop: 1 {sk.buttons_playlist_bg_3});"
+                f"color: {sk.buttons_playlist_font};"  # font
+                f"border: 1px solid {sk.buttons_playlist_border};"
                 "border-radius: 4px;"
                 "margin: 3 px;"  # 3 px != 3px, diff. pre. style sheet
                 "}"
             "QPushButton::pressed"
                 "{"
-                f"background-color:  {tm.buttons_playlist_pressed_bg};"
+                f"background-color:  {sk.buttons_playlist_pressed_bg};"
                 "}"
         )
 
@@ -190,18 +190,18 @@ class MyButtons(QPushButton):
                         "QPushButton"
                             "{"
                             f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                            f"stop: 0 {tm.buttons_settings_bg_0},"
-                            f"stop: 0.2 {tm.buttons_settings_bg_1},"
-                            f"stop: 0.8 {tm.buttons_settings_bg_2},"
-                            f"stop: 1 {tm.buttons_settings_bg_3});"
-                            f"color: {tm.buttons_settings_font};"   # font
-                            f"border: 1px solid {tm.buttons_settings_border};"
+                            f"stop: 0 {sk.buttons_settings_bg_0},"
+                            f"stop: 0.2 {sk.buttons_settings_bg_1},"
+                            f"stop: 0.8 {sk.buttons_settings_bg_2},"
+                            f"stop: 1 {sk.buttons_settings_bg_3});"
+                            f"color: {sk.buttons_settings_font};"   # font
+                            f"border: 1px solid {sk.buttons_settings_border};"
                             "border-radius: 4px;"
                             "margin: 3px;" # 3 px != 3px, diff. pre. style sheet
                             "}"
                         "QPushButton::pressed"
                             "{"
-                            f"background-color :  {tm.buttons_settings_pressed_bg};"
+                            f"background-color :  {sk.buttons_settings_pressed_bg};"
                             "}"
                         )
 
@@ -280,7 +280,7 @@ class MyButtons(QPushButton):
         self.setStyleSheet(
                         "QPushButton"
                             "{"
-                            f"color: {tm.button_duration_info_text};"   
+                            f"color: {sk.button_duration_info_text};"   
                             "}"
                         )
 
@@ -491,15 +491,15 @@ class MyButtons(QPushButton):
             "QPushButton"
             "{"
             f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-            f"stop: 0 {tm.buttons_playing_bg_0},"
-            f"stop: 0.2 {tm.buttons_playing_bg_1},"
-            f"stop: 0.8 {tm.buttons_playing_bg_2},"
-            f"stop: 1 {tm.buttons_playing_bg_3});"
-            f"border: 1px solid {tm.buttons_playing_border};"
+            f"stop: 0 {sk.buttons_playing_bg_0},"
+            f"stop: 0.2 {sk.buttons_playing_bg_1},"
+            f"stop: 0.8 {sk.buttons_playing_bg_2},"
+            f"stop: 1 {sk.buttons_playing_bg_3});"
+            f"border: 1px solid {sk.buttons_playing_border};"
             "border-radius: 2px;"
             "}"
             "QPushButton::pressed"
             "{"
-            f"background-color :  {tm.buttons_playing_pressed_bg};"
+            f"background-color :  {sk.buttons_playing_pressed_bg};"
             "}"
         )

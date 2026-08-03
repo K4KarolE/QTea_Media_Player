@@ -21,7 +21,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     inactive_track_font_style,
     add_new_list_item,
@@ -56,7 +56,7 @@ class MyQueueAndSearchWindow(QWidget):
         self.setObjectName("QueueAndSearchWindow")
         self.setStyleSheet("QWidget#QueueAndSearchWindow"
                            "{"
-                           f"background: {tm.window_q_and_s};"
+                           f"background: {sk.window_q_and_s};"
                            "}"
                            )
         
@@ -72,21 +72,21 @@ class MyQueueAndSearchWindow(QWidget):
         self.tabs.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            f"background-color: {tm.tab_playlist_selected_bg};" 
-                            f"color: {tm.tab_playlist_selected_font};"   # font
-                            f"border: 2px solid {tm.tab_playlist_selected_border};"
+                            f"background-color: {sk.tab_playlist_selected_bg};" 
+                            f"color: {sk.tab_playlist_selected_font};"   # font
+                            f"border: 2px solid {sk.tab_playlist_selected_border};"
                             "border-radius: 5px;"
                             "padding: 6px"
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
                             f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                            f"stop: 0 {tm.tab_playlist_bg_1},"
-                            f"stop: 0.4 {tm.tab_playlist_bg_2},"
-                            f"stop: 0.8 {tm.tab_playlist_bg_3},"
-                            f"stop: 1 {tm.tab_playlist_bg_4});"
-                            f"color: {tm.tab_playlist_font};"   # font
-                            f"border: 2px solid {tm.tab_playlist_border};"
+                            f"stop: 0 {sk.tab_playlist_bg_1},"
+                            f"stop: 0.4 {sk.tab_playlist_bg_2},"
+                            f"stop: 0.8 {sk.tab_playlist_bg_3},"
+                            f"stop: 1 {sk.tab_playlist_bg_4});"
+                            f"color: {sk.tab_playlist_font};"   # font
+                            f"border: 2px solid {sk.tab_playlist_border};"
                             "border-radius: 6px;"
                             "padding: 6px"
                             "}"
@@ -159,7 +159,7 @@ class MyQueueAndSearchWindow(QWidget):
         frame_queue.setObjectName("QueueFrame")
         frame_queue.setStyleSheet("QFrame#QueueFrame"
                             "{"
-                            f"border: 1px solid {tm.window_q_and_s_queue_frame_border};"
+                            f"border: 1px solid {sk.window_q_and_s_queue_frame_border};"
                             "}"
                         )
         frame_queue.setLayout(layout)
@@ -194,9 +194,9 @@ class MyQueueAndSearchWindow(QWidget):
         self.search_line_edit.returnPressed.connect(lambda: self.search_button_clicked())
         self.search_line_edit.setStyleSheet("QLineEdit"
                                                 "{"
-                                                f"background: {tm.window_q_and_s_search_line_edit};"
-                                                f"color: {tm.window_q_and_s_search_line_edit_text};"
-                                                f"border: 1px solid {tm.window_q_and_s_search_line_edit_border};"
+                                                f"background: {sk.window_q_and_s_search_line_edit};"
+                                                f"color: {sk.window_q_and_s_search_line_edit_text};"
+                                                f"border: 1px solid {sk.window_q_and_s_search_line_edit_border};"
                                                 "border-radius: 6px;"
                                                 "}"
                                             )
@@ -209,16 +209,16 @@ class MyQueueAndSearchWindow(QWidget):
                             "QPushButton"
                                 "{"
                                 f"background-color : QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                f"stop: 0 {tm.window_q_and_s_search_button_bg_0},"
-                                f"stop: 0.2 {tm.window_q_and_s_search_button_bg_1},"
-                                f"stop: 0.8 {tm.window_q_and_s_search_button_bg_2},"
-                                f"stop: 1 {tm.window_q_and_s_search_button_bg_3});"
-                                f"border: 1px solid {tm.window_q_and_s_search_button_border};"
+                                f"stop: 0 {sk.window_q_and_s_search_button_bg_0},"
+                                f"stop: 0.2 {sk.window_q_and_s_search_button_bg_1},"
+                                f"stop: 0.8 {sk.window_q_and_s_search_button_bg_2},"
+                                f"stop: 1 {sk.window_q_and_s_search_button_bg_3});"
+                                f"border: 1px solid {sk.window_q_and_s_search_button_border};"
                                 "border-radius: 6px;"
                                 "}"
                             "QPushButton::pressed"
                                 "{"
-                                f"background-color:  {tm.window_q_and_s_search_button_pressed};"
+                                f"background-color:  {sk.window_q_and_s_search_button_pressed};"
                                 "}"
                             )
 
@@ -267,8 +267,8 @@ class MyQueueAndSearchWindow(QWidget):
         frame_search.setStyleSheet(
                         "QFrame#SearchFrame"
                             "{"
-                            f"background: {tm.window_q_and_s_search_frame};"
-                            f"border: 1px solid {tm.window_q_and_s_search_frame_border};"
+                            f"background: {sk.window_q_and_s_search_frame};"
+                            f"border: 1px solid {sk.window_q_and_s_search_frame_border};"
                             "}"
                         )
         frame_search.setLayout(layout_search_base)
@@ -308,9 +308,9 @@ class MyQueueAndSearchWindow(QWidget):
         for item in cv.queue_widget_dic:
             if item != list_widget_row_changed:
                 if current_row == 0:    # first row: Order number, Title, Queue, Duration
-                    color  = [tm.row_playing, tm.row_playing_text]
+                    color  = [sk.row_playing, sk.row_playing_text]
                 else:
-                    color = [tm.row_selected, tm.row_selected_text]
+                    color = [sk.row_selected, sk.row_selected_text]
                 cv.queue_widget_dic[item]['list_widget'].setCurrentRow(current_row)
                 cv.queue_widget_dic[item]['list_widget'].setStyleSheet(
                                                             "QListWidget::item:selected"
@@ -320,8 +320,8 @@ class MyQueueAndSearchWindow(QWidget):
                                                                 "}"
                                                             "QListWidget"
                                                                 "{"
-                                                                f"background: {tm.row_inactive};"
-                                                                f"color: {tm.row_inactive_text};"
+                                                                f"background: {sk.row_inactive};"
+                                                                f"color: {sk.row_inactive_text};"
                                                                 "border: 0px;"
                                                                 "}"
                                                             )

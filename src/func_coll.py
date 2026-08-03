@@ -7,7 +7,7 @@ from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
 from .class_data import connection, cur, cv, save_json, settings
-from .class_theme import tm
+from .class_skins import sk
 from .logger import logger_sum
 from .message_box import MyMessageBoxError
 
@@ -216,8 +216,8 @@ def add_new_list_item(new_item_text, list_widget, align_center = None, track_pat
     list_item_style_update(
         list_item,
         inactive_track_font_style,
-        tm.row_inactive_text,
-        tm.row_inactive)
+        sk.row_inactive_text,
+        sk.row_inactive)
     if align_center:
         list_item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVertical_Mask)
     else:
@@ -239,8 +239,8 @@ def add_queue_window_list_widgets_header(new_item, list_widget):
     list_item_style_update(
         list_item,
         inactive_track_font_style,
-        tm.window_q_and_s_queue_header_text,
-        tm.window_q_and_s_queue_header)
+        sk.window_q_and_s_queue_header_text,
+        sk.window_q_and_s_queue_header)
 
 
 def list_item_style_update(list_item, font_style, font_color, font_bg_color):
@@ -485,8 +485,8 @@ def update_queued_track_style(current_track_index):
         list_item_style_update(
             list_widget.item(current_track_index), 
             active_track_font_style,
-            tm.row_queued_text,
-            tm.row_queued
+            sk.row_queued_text,
+            sk.row_queued
             )
 
 def update_dequeued_track_style_from_queue_window(playlist, track_index):

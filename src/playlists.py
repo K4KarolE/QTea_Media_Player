@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     connection, # db
     cur, # db
@@ -92,21 +92,21 @@ class MyPlaylists(QTabWidget):
         self.setStyleSheet(
                         "QTabBar::tab:selected"
                             "{"
-                            f"background-color: {tm.tab_playlist_selected_bg};" 
-                            f"color: {tm.tab_playlist_selected_font};"   # font
-                            f"border: 2px solid {tm.tab_playlist_selected_border};"
+                            f"background-color: {sk.tab_playlist_selected_bg};" 
+                            f"color: {sk.tab_playlist_selected_font};"   # font
+                            f"border: 2px solid {sk.tab_playlist_selected_border};"
                             "border-radius: 5px;"
                             "padding: 6px"
                             "}"
                         "QTabBar::tab:!selected"
                             "{"
                             f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                            f"stop: 0 {tm.tab_playlist_bg_1},"
-                            f"stop: 0.4 {tm.tab_playlist_bg_2},"
-                            f"stop: 0.8 {tm.tab_playlist_bg_3},"
-                            f"stop: 1 {tm.tab_playlist_bg_4});"
-                            f"color: {tm.tab_playlist_font};"   # font
-                            f"border: 2px solid {tm.tab_playlist_border};"
+                            f"stop: 0 {sk.tab_playlist_bg_1},"
+                            f"stop: 0.4 {sk.tab_playlist_bg_2},"
+                            f"stop: 0.8 {sk.tab_playlist_bg_3},"
+                            f"stop: 1 {sk.tab_playlist_bg_4});"
+                            f"color: {sk.tab_playlist_font};"   # font
+                            f"border: 2px solid {sk.tab_playlist_border};"
                             "border-radius: 6px;"
                             "padding: 6px"
                             "}"
@@ -284,7 +284,7 @@ class MyPlaylists(QTabWidget):
             layout.addWidget(cv.playlist_widget_dic[pl]['thumbnail_window'])
             cv.playlist_widget_dic[pl]['qframe'].setStyleSheet("QFrame"
                                                                 "{"
-                                                                f"background-color: {tm.row_inactive};"
+                                                                f"background-color: {sk.row_inactive};"
                                                                 "border: 0px;"
                                                                 "}"
                                                                 )
@@ -337,24 +337,24 @@ class MyPlaylists(QTabWidget):
         name_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    f"background: {tm.row_selected};" 
-                                    f"color: {tm.row_selected_text};"   # font
+                                    f"background: {sk.row_selected};" 
+                                    f"color: {sk.row_selected_text};"   # font
                                     "}"
                                 )
 
         queue_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    f"background: {tm.row_selected};" 
-                                    f"color: {tm.row_selected_text};"   # font
+                                    f"background: {sk.row_selected};" 
+                                    f"color: {sk.row_selected_text};"   # font
                                     "}"
                                 )
 
         duration_list_widget.setStyleSheet(
                                 "QListWidget::item:selected"
                                     "{"
-                                    f"background: {tm.row_selected};"
-                                    f"color: {tm.row_selected_text};"   # font
+                                    f"background: {sk.row_selected};"
+                                    f"color: {sk.row_selected_text};"   # font
                                     "}"
                                 )
 

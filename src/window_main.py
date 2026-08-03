@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QApplication, QWidget
 
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     disable_minimal_interface,
     queue_add_remove_track,
@@ -37,7 +37,7 @@ class MyWindow(QWidget):
         self.setObjectName("MainWindow")
         self.setStyleSheet("QWidget#MainWindow"
                             "{"
-                            f"background: {tm.window};"
+                            f"background: {sk.window};"
                             "}")
 
 

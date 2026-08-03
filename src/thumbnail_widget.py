@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
 
 from .class_data import cv
 from .class_bridge import br
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     active_track_font_style,
     clear_queue_update_all_occurrences,
@@ -347,33 +347,33 @@ class ThumbnailWidget(QWidget):
         self.is_queued = False
         self.set_default_thumbnail_img()
         self.setStyleSheet(
-            f"background-color: {tm.thumbnail_widget};"
-            f"border: 1px solid {tm.thumbnail_widget_border};"
+            f"background-color: {sk.thumbnail_widget};"
+            f"border: 1px solid {sk.thumbnail_widget_border};"
             "border-radius: 2px;"
         )
         self.label_image.setStyleSheet("border: None;")
-        self.set_text_style(self.text, 'inactive', tm.thumbnail_widget_text)
-        self.set_text_style(self.queue_number, 'inactive', tm.thumbnail_widget_text)
+        self.set_text_style(self.text, 'inactive', sk.thumbnail_widget_text)
+        self.set_text_style(self.queue_number, 'inactive', sk.thumbnail_widget_text)
 
 
     def set_selected_thumbnail_style(self):
         self.is_selected = True
         self.set_default_thumbnail_img()
         self.setStyleSheet(
-            f"background-color: {tm.thumbnail_widget_selected};"
-            f"border: 1px solid {tm.thumbnail_widget_border};"
+            f"background-color: {sk.thumbnail_widget_selected};"
+            f"border: 1px solid {sk.thumbnail_widget_border};"
             "border-radius: 2px;"
         )
-        self.set_text_style(self.text, 'inactive', tm.thumbnail_widget_selected_text)
-        self.set_text_style(self.queue_number, 'inactive', tm.thumbnail_widget_selected_text)
+        self.set_text_style(self.text, 'inactive', sk.thumbnail_widget_selected_text)
+        self.set_text_style(self.queue_number, 'inactive', sk.thumbnail_widget_selected_text)
 
 
     def set_queued_track_thumbnail_style(self):
         self.is_queued = True
         self.is_selected = False
-        self.setStyleSheet(f"background-color: {tm.thumbnail_widget_queue};")
-        self.set_text_style(self.text, 'active', tm.thumbnail_widget_queue_text)
-        self.set_text_style(self.queue_number, 'active', tm.thumbnail_widget_queue_text)
+        self.setStyleSheet(f"background-color: {sk.thumbnail_widget_queue};")
+        self.set_text_style(self.text, 'active', sk.thumbnail_widget_queue_text)
+        self.set_text_style(self.queue_number, 'active', sk.thumbnail_widget_queue_text)
 
     def set_queue_number(self, queue_number = None):
         if queue_number:
@@ -386,12 +386,12 @@ class ThumbnailWidget(QWidget):
         self.is_playing = True
         self.set_playing_thumbnail_img()
         self.setStyleSheet(
-            f"background-color: {tm.thumbnail_widget_playing};"
-            f"border: 2px solid {tm.thumbnail_widget_playing_border};"
+            f"background-color: {sk.thumbnail_widget_playing};"
+            f"border: 2px solid {sk.thumbnail_widget_playing_border};"
             "border-radius: 2px;"
         )
-        self.set_text_style(self.text, 'active', tm.thumbnail_widget_playing_text)
-        self.set_text_style(self.queue_number, 'active', tm.thumbnail_widget_playing_text)
+        self.set_text_style(self.text, 'active', sk.thumbnail_widget_playing_text)
+        self.set_text_style(self.queue_number, 'active', sk.thumbnail_widget_playing_text)
 
 
     def set_text_style(self, widget, font_style: str, font_color: str):

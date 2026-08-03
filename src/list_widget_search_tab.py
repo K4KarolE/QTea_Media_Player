@@ -11,7 +11,7 @@ from PyQt6.QtGui import QAction
 
 from .class_bridge import br
 from .class_data import cv
-from .class_theme import tm
+from .class_skins import sk
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_playlist_details_from_search_tab_list,
@@ -34,14 +34,14 @@ class MySearchListWidget(QListWidget):
         self.installEventFilter(self)
         self.setStyleSheet("QListWidget::item:selected"
                                 "{"
-                                f"background: {tm.row_selected};" 
-                                f"color: {tm.row_selected_text};"
+                                f"background: {sk.row_selected};" 
+                                f"color: {sk.row_selected_text};"
                                 "border: 0px;"
                                 "}"
                             "QListWidget"
                                 "{"
-                                 f"background: {tm.row_inactive};"
-                                 f"color: {tm.row_inactive_text};"
+                                 f"background: {sk.row_inactive};"
+                                 f"color: {sk.row_inactive_text};"
                                  "border: 0px;"
                                  "}"
                             )
