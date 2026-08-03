@@ -73,18 +73,6 @@
     "increase_window_size": "Ctrl++",
     "decrease_window_size": "Ctrl+-"
   },
-  "skins": {
-    "default": {
-      "selected_row": {
-        "bg_color": "#CCE8FF",
-        "font_color:": "black"
-      },
-      "un_selected_row": {
-        "bg_color": "#CCE8FF",
-        "font_color:": "black"
-      }
-    }
-  },
   "playlists": {
     "playlist_0": {
       "playlist_title": "TV #1",
