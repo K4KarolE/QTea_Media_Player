@@ -95,6 +95,8 @@ class Data:
     if skin_selected == 'system':
         skin_dir: str = 'default'
     else: skin_dir: str = skin_selected
+    skin_logo_path_list = settings['skin_logo_path_list'] # [skin, file.png]
+    skin_logo_img_size = settings['skin_logo_img_size']
     repeat_playlist: int = settings['repeat_playlist']
     shuffle_playlist_on: bool = settings['shuffle_playlist_on']
     shuffle_played_tracks_list = []

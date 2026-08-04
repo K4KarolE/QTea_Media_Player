@@ -35,6 +35,7 @@ from .logger import logger_runtime
 from .window_settings_tab_general import GeneralTab
 from .window_settings_tab_hotkeys import HotkeysTab
 from .window_settings_tab_playlists import PlaylistsTab
+from .window_settings_tab_skins import SkinsTab
 
 
 
@@ -114,6 +115,9 @@ class MySettingsWindow(QWidget):
         """ TAB - PLAYLIST """
         tab_playlist = PlaylistsTab()
 
+        """ TAB - SKINS """
+        tab_skins = SkinsTab()
+
 
         """ 
         #####################
@@ -185,6 +189,14 @@ class MySettingsWindow(QWidget):
                 'scroll_bar_hor': '',
                 'widgets_window': tab_hotkey.inner_window,
                 'widgets_window_height': tab_hotkey.last_widget_pos_y
+            },
+            'Skins': {
+                'text': 'Skins',
+                'scroll_area': tab_skins.scroll_area,
+                'scroll_bar_ver': '',
+                'scroll_bar_hor': '',
+                'widgets_window': tab_skins.inner_window,
+                'widgets_window_height': tab_skins.last_widget_pos_y
             }
         }
 
@@ -256,6 +268,9 @@ class MySettingsWindow(QWidget):
                 ''' PLAYLISTS TAB FIELDS '''
                 switch_all_pl_to_standard_from_thumbnails_view()
                 tab_playlist.playlists_fields_to_save()
+
+                ''' SKINS TAB FIELDS '''
+                tab_skins.skins_fields_to_save()
 
 
                 ''' 
