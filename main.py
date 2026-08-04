@@ -26,7 +26,7 @@ def main():
     br.window = MyWindow()
     br.av_player = AVPlayer()
     br.play_slider = MySlider()
-    br.image_logo = MyImage(200)
+    br.image_logo = MyImage()
     br.play_funcs = PlaysFunc()
     generate_buttons()
     br.playlists_all = MyPlaylists()

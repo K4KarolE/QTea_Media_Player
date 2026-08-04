@@ -16,17 +16,16 @@ from .logger import logger_runtime
 
 @logger_runtime
 class MyImage(QLabel):
-    def __init__(self, img_size):
+    def __init__(self):
         super().__init__()
-        self.img_size = img_size
         self.image = self.get_image()
         self.setPixmap(self.image)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     def get_image(self):
-        img_path = f'skins/{cv.skin_dir}/images/logo.png'
+        img_path = f'skins/{cv.skin_logo_path_list[0]}/images/{cv.skin_logo_path_list[1]}'
         if Path(img_path).is_file():
-            return QPixmap(img_path).scaledToWidth(self.img_size, Qt.TransformationMode.SmoothTransformation)
+            return QPixmap(img_path).scaledToWidth(int(cv.skin_logo_img_size), Qt.TransformationMode.SmoothTransformation)
         else:
             default_img_path = 'skins/default/images/logo.png'
-            return QPixmap(default_img_path).scaledToWidth(self.img_size, Qt.TransformationMode.SmoothTransformation)
+            return QPixmap(default_img_path).scaledToWidth(int(cv.skin_logo_img_size), Qt.TransformationMode.SmoothTransformation)
