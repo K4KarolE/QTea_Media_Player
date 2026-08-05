@@ -310,6 +310,7 @@ class PlaysFunc:
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
 
+    @logger_check
     def after_playing_the_same_media_workaround(self):
         """
         Scenario:
@@ -319,7 +320,7 @@ class PlaysFunc:
         Compare the default and the delayed positions of the player, if same >> player stuck at the current position
         >> pause and play the media >> media is playing
         """
-        if self.player_position == br.av_player.player.position():
+        if self.player_position == br.av_player.player.position() and not cv.ignore_loaded_media_signal:
             br.av_player.player.pause()
             logger_sum("After playing the same media workaround")
             br.av_player.player.play()
