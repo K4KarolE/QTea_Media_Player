@@ -7,6 +7,7 @@
   "volume": 1.0,
   "is_speaker_muted": false,
   "skin_selected": "default",
+  "skin_icons": "default",
   "skin_logo_img_size": "200",
   "skin_logo_path_list": [
     "default",

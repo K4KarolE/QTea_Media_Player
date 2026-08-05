@@ -92,9 +92,7 @@ class Data:
     """ SUPPORTING VARIABLES """
     track_title: str = None  # to display on video
     skin_selected: str = settings['skin_selected']
-    if skin_selected == 'system':
-        skin_dir: str = 'default'
-    else: skin_dir: str = skin_selected
+    skin_icons: str = settings['skin_icons']
     skin_logo_path_list = settings['skin_logo_path_list'] # [skin, file.png]
     skin_logo_img_size = settings['skin_logo_img_size']
     repeat_playlist: int = settings['repeat_playlist']

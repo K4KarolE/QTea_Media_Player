@@ -23,6 +23,7 @@ class SkinsTab(CommonTabValues):
         self.skins_dir = Path(Path().resolve(), 'skins')
         self.skins_jsons_dir = Path(Path().resolve(), 'skins', 'jsons')
         self.skins_list = self.gen_available_skins_list()
+        self.skins_with_icons_list  = self.gen_skins_with_icons_list()
         self.logo_imgs_dir = self.gen_available_logo_imgs_dir()
         self.img_sizes_list = [str(n) for n in range(200, 420, 20)]
 
@@ -38,16 +39,24 @@ class SkinsTab(CommonTabValues):
         info_widget = QPushButton('Restart needed for the changes take place')
         info_widget.setEnabled(False)
 
+        # SKINS
         self.skins_combo_box = QComboBox()
         self.skins_combo_box.addItems(self.skins_list)
         self.skins_combo_box.setCurrentIndex(self.skins_list.index(cv.skin_selected))
 
+        # ICONS
+        self.skin_icons_combo_box = QComboBox()
+        self.skin_icons_combo_box.addItems(self.skins_with_icons_list)
+        self.skin_icons_combo_box.setCurrentIndex(self.skins_with_icons_list.index(cv.skin_icons))
+
+        # LOGO
         self.logo_imgs_combo_box = QComboBox()
         self.logo_imgs_combo_box.addItems(self.logo_imgs_dir.keys())
         img_rep = f'{cv.skin_logo_path_list[0]} - {cv.skin_logo_path_list[1]}'
         if img_rep in self.logo_imgs_dir.keys():
             self.logo_imgs_combo_box.setCurrentIndex(list(self.logo_imgs_dir.keys()).index(img_rep))
 
+        # LOGO SIZE
         self.img_size_combo_box = QComboBox()
         self.img_size_combo_box.addItems(self.img_sizes_list)
         self.img_size_combo_box.setCurrentIndex(self.img_sizes_list.index(cv.skin_logo_img_size))
@@ -56,6 +65,8 @@ class SkinsTab(CommonTabValues):
             'info_widget': info_widget,
             'skins_combo_box_label': QLabel("Skins"),
             'skins_combo_box': self.skins_combo_box,
+            'skin_icons_combo_box_label': QLabel("Icons"),
+            'skin_icons_combo_box': self.skin_icons_combo_box,
             'images_combo_box_label': QLabel("Logo Images"),
             'images_combo_box': self.logo_imgs_combo_box,
             'img_size_combo_box_label': QLabel("Logo Image Size"),
@@ -76,7 +87,7 @@ class SkinsTab(CommonTabValues):
 
             info_widget.resize(INFO_WIDGET_LENGTH, INFO_WIDGET_HIGHT)
 
-            if key in ['info_widget', 'skins_combo_box', 'images_combo_box']:
+            if key in ['info_widget', 'skins_combo_box','skin_icons_combo_box', 'images_combo_box']:
                 widget_pos_y += (self.WIDGETS_NEXT_LINE_POS_Y_DIFF + GAP)
                 if key == 'info_widget': widget_pos_y += 15
             else:
@@ -104,6 +115,16 @@ class SkinsTab(CommonTabValues):
             for un_skin in unavailable_skins:
                 skins_list.remove(un_skin)
         return skins_list
+
+
+    def gen_skins_with_icons_list(self):
+        skins_with_icons_list = []
+        for skin in self.skins_list:
+            start_icon_path = f'skins/{skin}/start.png'
+            if Path(start_icon_path).is_file():
+                skins_with_icons_list.append(skin)
+        skins_with_icons_list.sort()
+        return skins_with_icons_list
 
 
     def gen_available_logo_imgs_dir(self):
