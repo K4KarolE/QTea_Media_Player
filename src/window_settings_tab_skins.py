@@ -6,12 +6,13 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPushButton,
     QScrollArea,
-    QWidget,
-    )
+    QWidget
+)
 
 from .class_data import cv, settings, save_json
 from .class_skins import sk
 from .func_coll import inactive_track_font_style
+from .images import MySkinsTabImage
 from .window_settings_common import CommonTabValues
 
 
@@ -29,14 +30,14 @@ class SkinsTab(CommonTabValues):
 
         WIDGET_POS_X = self.WIDGETS_POS_X
         widget_pos_y = self.WIDGETS_POS_Y
-        COMBO_BOX_WIDGET_LENGTH = 300
-        INFO_WIDGET_LENGTH = 300
+        COMBO_BOX_WIDGET_LENGTH = 320
+        INFO_WIDGET_LENGTH = 320
         INFO_WIDGET_HIGHT = 30
         WIDGET_HIGHT = 25
         GAP = 15
         number_counter = 1
 
-        info_widget = QPushButton('Restart needed for the changes take place')
+        info_widget = QPushButton('Restart needed for the changes to take place')
         info_widget.setEnabled(False)
 
         # SKINS
@@ -55,11 +56,17 @@ class SkinsTab(CommonTabValues):
         img_rep = f'{cv.skin_logo_path_list[0]} - {cv.skin_logo_path_list[1]}'
         if img_rep in self.logo_imgs_dir.keys():
             self.logo_imgs_combo_box.setCurrentIndex(list(self.logo_imgs_dir.keys()).index(img_rep))
+        self.logo_imgs_combo_box.currentTextChanged.connect(lambda: self.update_logo_image_selected())
 
         # LOGO SIZE
         self.img_size_combo_box = QComboBox()
         self.img_size_combo_box.addItems(self.img_sizes_list)
         self.img_size_combo_box.setCurrentIndex(self.img_sizes_list.index(cv.skin_logo_img_size))
+
+        # LOGO IMAGE DISPLAY
+        logo_imgs_current = self.logo_imgs_combo_box.currentText()
+        img_file_path = self.logo_imgs_dir[logo_imgs_current]
+        self.logo_img_selected = MySkinsTabImage(img_file_path)
 
         skins_tab_widgets_dic = {
             'info_widget': info_widget,
@@ -70,7 +77,8 @@ class SkinsTab(CommonTabValues):
             'images_combo_box_label': QLabel("Logo Images"),
             'images_combo_box': self.logo_imgs_combo_box,
             'img_size_combo_box_label': QLabel("Logo Image Size"),
-            'img_size_combo_box': self.img_size_combo_box
+            'img_size_combo_box': self.img_size_combo_box,
+            'logo_img_selected': self.logo_img_selected
             }
 
         for key in skins_tab_widgets_dic:
@@ -78,12 +86,16 @@ class SkinsTab(CommonTabValues):
             widget.setParent(self.inner_window)
             widget.setFont(inactive_track_font_style)
             self.set_widgets_style(widget)
-            widget.setGeometry(
-                WIDGET_POS_X,
-                widget_pos_y,
-                COMBO_BOX_WIDGET_LENGTH,
-                WIDGET_HIGHT
-                )
+            if key != 'logo_img_selected':
+                widget.setGeometry(
+                    WIDGET_POS_X,
+                    widget_pos_y,
+                    COMBO_BOX_WIDGET_LENGTH,
+                    WIDGET_HIGHT
+                    )
+            else:
+                logo_img_selected_pos_x = WIDGET_POS_X + int((COMBO_BOX_WIDGET_LENGTH-200)/2)
+                widget.move(logo_img_selected_pos_x, widget_pos_y)
 
             info_widget.resize(INFO_WIDGET_LENGTH, INFO_WIDGET_HIGHT)
 
@@ -136,6 +148,12 @@ class SkinsTab(CommonTabValues):
                     if file.split('.')[-1] in ['png', 'jpg', 'jpeg']:
                         logo_imgs_dir[f'{skin} - {file}'] = str(Path(images_dir, file))
         return logo_imgs_dir
+
+
+    def update_logo_image_selected(self):
+        logo_imgs_current = self.logo_imgs_combo_box.currentText()
+        img_file_path = self.logo_imgs_dir[logo_imgs_current]
+        self.logo_img_selected.generate_image(img_file_path)
 
 
     def skins_fields_to_save(self):
