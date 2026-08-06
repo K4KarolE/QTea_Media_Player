@@ -29,3 +29,19 @@ class MyImage(QLabel):
         else:
             default_img_path = 'skins/default/images/logo.png'
             return QPixmap(default_img_path).scaledToWidth(int(cv.skin_logo_img_size), Qt.TransformationMode.SmoothTransformation)
+
+
+class MySkinsTabImage(QLabel):
+    """ Used in the Settings Window / Skins tab """
+    def __init__(self, img_file_path):
+        super().__init__()
+        self.generate_image(img_file_path)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+    def generate_image(self, img_file_path):
+        if Path(img_file_path).is_file():
+            img_ready = QPixmap(img_file_path).scaledToWidth(200, Qt.TransformationMode.SmoothTransformation)
+        else:
+            default_img_path = 'skins/default/images/logo.png'
+            img_ready = QPixmap(default_img_path).scaledToWidth(200, Qt.TransformationMode.SmoothTransformation)
+        self.setPixmap(img_ready)
