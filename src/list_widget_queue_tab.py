@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import  QListWidget, QMenu
 
 from .class_bridge import br
 from .class_data import cv
+from .class_skins import sk
 from .func_coll import (
     clear_queue_update_all_occurrences,
     get_playlist_details_from_queue_tab_list,
@@ -29,7 +30,19 @@ class MyQueueListWidget(QListWidget):
         super().__init__()
         self.play_track = play_track    # queue_play_list_item()
         self.installEventFilter(self)
-        self.setStyleSheet("border: 0px")
+        self.setStyleSheet("QListWidget::item:selected"
+                                "{"
+                                f"background: {sk.row_selected};"
+                                f"color: {sk.row_selected_text};"
+                                "border: 0px;"
+                                "}"
+                            "QListWidget"
+                                "{"
+                                 f"background: {sk.row_inactive};"
+                                 f"color: {sk.row_inactive_text};"
+                                 "border: 0px;"
+                                 "}"
+                            )
 
         self.context_menu_dic = { 
             'Play': {'icon': br.icon.start},
