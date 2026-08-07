@@ -34,8 +34,14 @@ class MyWindow(QWidget):
         self.hotkeys_creation()
         self.move_window_to_middle()
         self.new_window_size_diff_percent = 0.05
+        """
+        It looks like the below restriction has no affect on Linux, just on Windows
+        Avoid to use it, so on Windows, the "duration_sum_widg" and the "button_speaker"
+        widgets background will match the window bg
         self.setObjectName("MainWindow")
-        self.setStyleSheet("QWidget#MainWindow"
+        self.setStyleSheet("QWidget#MainWindow" ..)
+        """
+        self.setStyleSheet("QWidget"
                             "{"
                             f"background: {sk.window};"
                             "}")
