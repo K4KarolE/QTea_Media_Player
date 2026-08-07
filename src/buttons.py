@@ -439,11 +439,13 @@ class MyButtons(QPushButton):
             br.layout_vert_right_qframe.hide()
             br.av_player.playlist_visible = False
             br.button_toggle_video.setDisabled(True)
+            br.button_toggle_video.setFlat(True)
         else:
             if not cv.minimal_interface_enabled:
                 br.layout_vert_right_qframe.show()
                 br.av_player.playlist_visible = True
                 br.button_toggle_video.setDisabled(False)
+                br.button_toggle_video.setFlat(False)
 
 
     ''' BUTTON PLAY SECTION - TOGGLE SHOW/HIDE VIDEO '''
@@ -455,12 +457,14 @@ class MyButtons(QPushButton):
                 br.window.resize(int(cv.window_width/3), br.window.geometry().height())
                 br.window.setMinimumSize(self._window_min_width_no_vid, self._window_min_height_no_vid)
                 br.button_toggle_playlist.setDisabled(True)
+                br.button_toggle_playlist.setFlat(True)
             else:
                 br.window.resize(cv.window_width, br.window.geometry().height())
                 br.window.setMinimumSize(cv.window_min_width, cv.window_min_height)
                 br.layout_vert_left_qframe.show()
                 br.av_player.video_area_visible = True
                 br.button_toggle_playlist.setDisabled(False)
+                br.button_toggle_playlist.setFlat(False)
 
 
     ''' BUTTON PLAY SECTION - SPEAKER/MUTE '''
@@ -489,17 +493,22 @@ class MyButtons(QPushButton):
     def set_style_playing_button(self):
         self.setStyleSheet(
             "QPushButton"
-            "{"
-            f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-            f"stop: 0 {sk.buttons_playing_bg_0},"
-            f"stop: 0.2 {sk.buttons_playing_bg_1},"
-            f"stop: 0.8 {sk.buttons_playing_bg_2},"
-            f"stop: 1 {sk.buttons_playing_bg_3});"
-            f"border: 1px solid {sk.buttons_playing_border};"
-            "border-radius: 2px;"
-            "}"
+                "{"
+                f"background-color: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                f"stop: 0 {sk.buttons_playing_bg_0},"
+                f"stop: 0.2 {sk.buttons_playing_bg_1},"
+                f"stop: 0.8 {sk.buttons_playing_bg_2},"
+                f"stop: 1 {sk.buttons_playing_bg_3});"
+                f"border: 1px solid {sk.buttons_playing_border};"
+                "border-radius: 2px;"
+                "}"
             "QPushButton::pressed"
-            "{"
-            f"background-color :  {sk.buttons_playing_pressed_bg};"
-            "}"
+                "{"
+                f"background-color :  {sk.buttons_playing_pressed_bg};"
+                "}"
+            "QPushButton::flat"
+                "{"
+                f"background-color :  {sk.window};"
+                "border: 0px;"
+                "}"
         )
