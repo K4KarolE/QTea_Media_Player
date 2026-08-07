@@ -43,6 +43,16 @@ palette_dic = {
 
 @dataclass()
 class Skins:
+    """
+    System:
+        Linux:
+            - Dark
+            - Bright
+        Windows:
+            - Dark
+            - Bright
+    JSON defined skin
+    """
 
     if cv.skin_selected == 'system':
         """
@@ -69,270 +79,532 @@ class Skins:
         shadow = get_color_hex('shadow')
         no_color_roles = get_color_hex('no_color_roles')
 
+        if cv.os_linux:
+            # LNX - DARK SYSTEM THEME
+            if int(base.strip('#'), 16) <= 3355449:
+                """ LNX - WINDOW - DARK """
+                window = base
 
-        # DARK SYSTEM THEME
-        if int(base.strip('#'), 16) <= 3355449:
-            """ WINDOW - DARK """
-            window = base
+                """ LNX - THUMBNAIL - DARK """
+                thumbnail_window = mid
 
-            """ THUMBNAIL - DARK """
-            thumbnail_window = mid
+                thumbnail_widget = mid
+                thumbnail_widget_text = text
+                thumbnail_widget_border = text
 
-            thumbnail_widget = mid
-            thumbnail_widget_text = text
-            thumbnail_widget_border = text
+                thumbnail_widget_selected = text
+                thumbnail_widget_selected_border = highlighted_text
+                thumbnail_widget_selected_text = base
 
-            thumbnail_widget_selected = text
-            thumbnail_widget_selected_border = highlighted_text
-            thumbnail_widget_selected_text = base
+                thumbnail_widget_playing = highlight
+                thumbnail_widget_playing_border = highlight
+                thumbnail_widget_playing_text = highlighted_text
 
-            thumbnail_widget_playing = highlight
-            thumbnail_widget_playing_border = highlight
-            thumbnail_widget_playing_text = highlighted_text
+                thumbnail_widget_queue = text
+                thumbnail_widget_queue_text = base
 
-            thumbnail_widget_queue = text
-            thumbnail_widget_queue_text = base
+                """ LNX - PLAYLIST ROWS - DARK """
+                row_inactive = mid
+                row_inactive_text = text
+                row_selected = text
+                row_selected_text = base
+                row_playing = highlight
+                row_playing_text = highlighted_text
+                row_queued = text
+                row_queued_text = base
 
-            """ PLAYLIST ROWS - DARK """
-            row_inactive = mid
-            row_inactive_text = text
-            row_selected = text
-            row_selected_text = base
-            row_playing = highlight
-            row_playing_text = highlighted_text
-            row_queued = text
-            row_queued_text = base
+                """ LNX - SLIDERS - DARK """
+                slider_duration_groove = alternate_base
+                slider_duration_sub_page = highlight
+                slider_duration_handle_pos_0_1 = alternate_base
+                slider_duration_handle_pos_2 = alternate_base
 
-            """ SLIDERS - DARK """
-            slider_duration_groove = alternate_base
-            slider_duration_sub_page = highlight
-            slider_duration_handle_pos_0_1 = alternate_base
-            slider_duration_handle_pos_2 = alternate_base
+                slider_volume_groove = alternate_base
+                slider_volume_sub_page = highlight
+                slider_volume_handle_pos_0_1 = alternate_base
+                slider_volume_handle_pos_2 = alternate_base
 
-            slider_volume_groove = alternate_base
-            slider_volume_sub_page = highlight
-            slider_volume_handle_pos_0_1 = alternate_base
-            slider_volume_handle_pos_2 = alternate_base
+                """ LNX - PLAYLIST TAB - DARK """
+                tab_playlist_bg_1 = mid
+                tab_playlist_bg_2 = mid
+                tab_playlist_bg_3 = alternate_base
+                tab_playlist_bg_4 = alternate_base
+                tab_playlist_border = mid
+                tab_playlist_font = text
 
-            """ PLAYLIST TAB - DARK """
-            tab_playlist_bg_1 = mid
-            tab_playlist_bg_2 = mid
-            tab_playlist_bg_3 = alternate_base
-            tab_playlist_bg_4 = alternate_base
-            tab_playlist_border = mid
-            tab_playlist_font = text
-
-            tab_playlist_selected_bg = highlight
-            tab_playlist_selected_border = highlight
-            tab_playlist_selected_font = highlighted_text
+                tab_playlist_selected_bg = highlight
+                tab_playlist_selected_border = highlight
+                tab_playlist_selected_font = highlighted_text
 
 
-            """ PLAYING BUTTONS - UNDER THE VIDEO AREA - DARK """
-            buttons_playing_bg_0 = mid
-            buttons_playing_bg_1 = mid
-            buttons_playing_bg_2 = alternate_base
-            buttons_playing_bg_3 = alternate_base
-            buttons_playing_border = no_color_roles
-            buttons_playing_pressed_bg = highlight
+                """ LNX - PLAYING BUTTONS - UNDER THE VIDEO AREA - DARK """
+                buttons_playing_bg_0 = mid
+                buttons_playing_bg_1 = mid
+                buttons_playing_bg_2 = alternate_base
+                buttons_playing_bg_3 = alternate_base
+                buttons_playing_border = no_color_roles
+                buttons_playing_pressed_bg = highlight
 
-            """ DURATION INFO BUTTON - UNDER THE VIDEO AREA - DARK """
-            button_duration_info_text = no_color_roles
+                """ LNX - DURATION INFO BUTTON - UNDER THE VIDEO AREA - DARK """
+                button_duration_info_text = no_color_roles
 
-            """ DURATION SUM INFO BUTTON - UNDER PLAYLISTS - DARK """
-            button_duration_sum_info_bg_0 = mid
-            button_duration_sum_info_bg_1 = mid
-            button_duration_sum_info_bg_2 = alternate_base
-            button_duration_sum_info_bg_3 = alternate_base
-            button_duration_sum_info_border = no_color_roles
-            button_duration_sum_info_text = no_color_roles
+                """ LNX - DURATION SUM INFO BUTTON - UNDER PLAYLISTS - DARK """
+                button_duration_sum_info_bg_0 = mid
+                button_duration_sum_info_bg_1 = mid
+                button_duration_sum_info_bg_2 = alternate_base
+                button_duration_sum_info_bg_3 = alternate_base
+                button_duration_sum_info_border = no_color_roles
+                button_duration_sum_info_text = no_color_roles
 
-            """ PLAYLIST BUTTONS - UNDER PLAYLISTS - DARK """
-            buttons_settings_bg_0 = mid
-            buttons_settings_bg_1 = mid
-            buttons_settings_bg_2 = alternate_base
-            buttons_settings_bg_3 = alternate_base
-            buttons_settings_border = no_color_roles
-            buttons_settings_font = text
-            buttons_settings_pressed_bg = highlight
+                """ LNX - PLAYLIST BUTTONS - UNDER PLAYLISTS - DARK """
+                buttons_settings_bg_0 = mid
+                buttons_settings_bg_1 = mid
+                buttons_settings_bg_2 = alternate_base
+                buttons_settings_bg_3 = alternate_base
+                buttons_settings_border = no_color_roles
+                buttons_settings_font = text
+                buttons_settings_pressed_bg = highlight
 
-            """ SETTINGS BUTTONS - UNDER PLAYLISTS - DARK """
-            buttons_playlist_bg_0 = mid
-            buttons_playlist_bg_1 = mid
-            buttons_playlist_bg_2 = alternate_base
-            buttons_playlist_bg_3 = alternate_base
-            buttons_playlist_border = no_color_roles
-            buttons_playlist_font = text
-            buttons_playlist_pressed_bg = highlight
+                """ LNX - SETTINGS BUTTONS - UNDER PLAYLISTS - DARK """
+                buttons_playlist_bg_0 = mid
+                buttons_playlist_bg_1 = mid
+                buttons_playlist_bg_2 = alternate_base
+                buttons_playlist_bg_3 = alternate_base
+                buttons_playlist_border = no_color_roles
+                buttons_playlist_font = text
+                buttons_playlist_pressed_bg = highlight
 
-            """ SETTINGS WINDOW - DARK """
-            window_settings = base
-            window_settings_inner_window = mid
-            window_settings_inner_window_border = no_color_roles
-            window_settings_line_edit = mid
-            window_settings_line_edit_text = text
-            window_settings_line_edit_border = text
-            window_settings_button = button
-            window_settings_button_border = text
-            window_settings_button_text = text
-            window_settings_button_pressed_bg = highlight
-            window_settings_button_pressed_text = text
-            window_settings_scrollbar = mid
+                """ LNX - SETTINGS WINDOW - DARK """
+                window_settings = base
+                window_settings_inner_window = mid
+                window_settings_inner_window_border = no_color_roles
+                window_settings_line_edit = mid
+                window_settings_line_edit_text = text
+                window_settings_line_edit_border = text
+                window_settings_button = button
+                window_settings_button_border = text
+                window_settings_button_text = text
+                window_settings_button_pressed_bg = highlight
+                window_settings_button_pressed_text = text
+                window_settings_scrollbar = mid
 
-            """ QUEUE AND SEARCH WINDOW - DARK """
-            window_q_and_s = base
+                """ LNX - QUEUE AND SEARCH WINDOW - DARK """
+                window_q_and_s = base
 
-            window_q_and_s_search_button_bg_0 = mid
-            window_q_and_s_search_button_bg_1 = mid
-            window_q_and_s_search_button_bg_2 = alternate_base
-            window_q_and_s_search_button_bg_3 = alternate_base
-            window_q_and_s_search_button_border = highlight
-            window_q_and_s_search_button_pressed = highlight
+                window_q_and_s_search_button_bg_0 = mid
+                window_q_and_s_search_button_bg_1 = mid
+                window_q_and_s_search_button_bg_2 = alternate_base
+                window_q_and_s_search_button_bg_3 = alternate_base
+                window_q_and_s_search_button_border = highlight
+                window_q_and_s_search_button_pressed = highlight
 
-            window_q_and_s_search_line_edit = mid
-            window_q_and_s_search_line_edit_text = text
-            window_q_and_s_search_line_edit_border = highlight
+                window_q_and_s_search_line_edit = mid
+                window_q_and_s_search_line_edit_text = text
+                window_q_and_s_search_line_edit_border = highlight
 
-            window_q_and_s_search_frame = alternate_base
-            window_q_and_s_search_frame_border = highlight
+                window_q_and_s_search_frame = alternate_base
+                window_q_and_s_search_frame_border = highlight
 
-            window_q_and_s_queue_header = highlight
-            window_q_and_s_queue_header_text = highlighted_text
+                window_q_and_s_queue_header = highlight
+                window_q_and_s_queue_header_text = highlighted_text
 
-            window_q_and_s_queue_frame_border = highlight
-            # no "window_q_and_s_queue_frame", the inner widget covers all the frame
+                window_q_and_s_queue_frame_border = highlight
+                # no "window_q_and_s_queue_frame", the inner widget covers all the frame
 
-        # BRIGHT SYSTEM THEME
+            # LNX - BRIGHT SYSTEM THEME
+            else:
+                """ LNX - WINDOW - BRIGHT """
+                window = alternate_base
+
+                """ LNX - THUMBNAIL - BRIGHT """
+                thumbnail_window = mid
+
+                thumbnail_widget = mid
+                thumbnail_widget_text = text
+                thumbnail_widget_border = text
+
+                thumbnail_widget_selected = text
+                thumbnail_widget_selected_border = highlighted_text
+                thumbnail_widget_selected_text = base
+
+                thumbnail_widget_playing = highlight
+                thumbnail_widget_playing_border = highlight
+                thumbnail_widget_playing_text = highlighted_text
+
+                thumbnail_widget_queue = text
+                thumbnail_widget_queue_text = base
+
+                """ LNX - PLAYLIST ROWS - BRIGHT """
+                row_inactive = mid
+                row_inactive_text = text
+                row_selected = text
+                row_selected_text = base
+                row_playing = highlight
+                row_playing_text = highlighted_text
+                row_queued = text
+                row_queued_text = base
+
+                """ LNX - SLIDERS - BRIGHT """
+                slider_duration_groove = dark
+                slider_duration_sub_page = highlight
+                slider_duration_handle_pos_0_1 = alternate_base
+                slider_duration_handle_pos_2 = no_color_roles
+
+                slider_volume_groove = dark
+                slider_volume_sub_page = highlight
+                slider_volume_handle_pos_0_1 = alternate_base
+                slider_volume_handle_pos_2 = no_color_roles
+
+                """ LNX - PLAYLIST TAB - BRIGHT """
+                tab_playlist_bg_1 = mid
+                tab_playlist_bg_2 = mid
+                tab_playlist_bg_3 = alternate_base
+                tab_playlist_bg_4 = alternate_base
+                tab_playlist_border = dark
+                tab_playlist_font = text
+
+                tab_playlist_selected_bg = highlight
+                tab_playlist_selected_border = highlight
+                tab_playlist_selected_font = highlighted_text
+
+
+                """ LNX - PLAYING BUTTONS - UNDER THE VIDEO AREA - BRIGHT """
+                buttons_playing_bg_0 = mid
+                buttons_playing_bg_1 = mid
+                buttons_playing_bg_2 = dark
+                buttons_playing_bg_3 = dark
+                buttons_playing_border = no_color_roles
+                buttons_playing_pressed_bg = highlight
+
+                """ LNX - DURATION INFO BUTTON - UNDER THE VIDEO AREA - BRIGHT """
+                button_duration_info_text = no_color_roles
+
+                """ LNX - DURATION SUM INFO BUTTON - UNDER PLAYLISTS - BRIGHT """
+                button_duration_sum_info_bg_0 = mid
+                button_duration_sum_info_bg_1 = mid
+                button_duration_sum_info_bg_2 = dark
+                button_duration_sum_info_bg_3 = dark
+                button_duration_sum_info_border = no_color_roles
+                button_duration_sum_info_text = text
+
+                """ LNX - PLAYLIST BUTTONS - UNDER PLAYLISTS - BRIGHT """
+                buttons_settings_bg_0 = base
+                buttons_settings_bg_1 = mid
+                buttons_settings_bg_2 = dark
+                buttons_settings_bg_3 = dark
+                buttons_settings_border = no_color_roles
+                buttons_settings_font = no_color_roles
+                buttons_settings_pressed_bg = highlight
+
+                """ LNX - SETTINGS BUTTONS - UNDER PLAYLISTS - BRIGHT """
+                buttons_playlist_bg_0 = base
+                buttons_playlist_bg_1 = mid
+                buttons_playlist_bg_2 = dark
+                buttons_playlist_bg_3 = dark
+                buttons_playlist_border = no_color_roles
+                buttons_playlist_font = no_color_roles
+                buttons_playlist_pressed_bg = highlight
+
+                """ LNX - SETTINGS WINDOW - BRIGHT """
+                window_settings = base
+                window_settings_inner_window = mid
+                window_settings_inner_window_border = no_color_roles
+                window_settings_line_edit = mid
+                window_settings_line_edit_text = text
+                window_settings_line_edit_border = text
+                window_settings_button = button
+                window_settings_button_border = text
+                window_settings_button_text = text
+                window_settings_button_pressed_bg = highlight
+                window_settings_button_pressed_text = text
+                window_settings_scrollbar = mid
+
+                """ LNX - QUEUE AND SEARCH WINDOW - BRIGHT """
+                window_q_and_s = base
+
+                window_q_and_s_search_button_bg_0 = mid
+                window_q_and_s_search_button_bg_1 = mid
+                window_q_and_s_search_button_bg_2 = alternate_base
+                window_q_and_s_search_button_bg_3 = alternate_base
+                window_q_and_s_search_button_border = highlight
+                window_q_and_s_search_button_pressed = highlight
+
+                window_q_and_s_search_line_edit = mid
+                window_q_and_s_search_line_edit_text = text
+                window_q_and_s_search_line_edit_border = highlight
+
+                window_q_and_s_search_frame = alternate_base
+                window_q_and_s_search_frame_border = highlight
+
+                window_q_and_s_queue_header = highlight
+                window_q_and_s_queue_header_text = highlighted_text
+
+                window_q_and_s_queue_frame_border = highlight
+                # no "window_q_and_s_queue_frame", the inner widget covers all the frame
         else:
-            """ WINDOW - BRIGHT """
-            window = alternate_base
+            # WIN - DARK SYSTEM THEME
+            if int(base.strip('#'), 16) <= 2960685:
+                """ WIN - WINDOW - DARK """
+                window = dark
 
-            """ THUMBNAIL - BRIGHT """
-            thumbnail_window = mid
+                """ WIN - THUMBNAIL - DARK """
+                thumbnail_window = mid
 
-            thumbnail_widget = mid
-            thumbnail_widget_text = text
-            thumbnail_widget_border = text
+                thumbnail_widget = mid
+                thumbnail_widget_text = text
+                thumbnail_widget_border = text
 
-            thumbnail_widget_selected = text
-            thumbnail_widget_selected_border = highlighted_text
-            thumbnail_widget_selected_text = base
+                thumbnail_widget_selected = text
+                thumbnail_widget_selected_border = highlighted_text
+                thumbnail_widget_selected_text = base
 
-            thumbnail_widget_playing = highlight
-            thumbnail_widget_playing_border = highlight
-            thumbnail_widget_playing_text = highlighted_text
+                thumbnail_widget_playing = highlight
+                thumbnail_widget_playing_border = highlight
+                thumbnail_widget_playing_text = highlighted_text
 
-            thumbnail_widget_queue = text
-            thumbnail_widget_queue_text = base
+                thumbnail_widget_queue = text
+                thumbnail_widget_queue_text = base
 
-            """ PLAYLIST ROWS - BRIGHT """
-            row_inactive = mid
-            row_inactive_text = text
-            row_selected = text
-            row_selected_text = base
-            row_playing = highlight
-            row_playing_text = highlighted_text
-            row_queued = text
-            row_queued_text = base
+                """ WIN - PLAYLIST ROWS - DARK """
+                row_inactive = mid
+                row_inactive_text = text
+                row_selected = text
+                row_selected_text = base
+                row_playing = highlight
+                row_playing_text = highlighted_text
+                row_queued = text
+                row_queued_text = base
 
-            """ SLIDERS - BRIGHT """
-            slider_duration_groove = dark
-            slider_duration_sub_page = highlight
-            slider_duration_handle_pos_0_1 = alternate_base
-            slider_duration_handle_pos_2 = no_color_roles
+                """ WIN - SLIDERS - DARK """
+                slider_duration_groove = mid
+                slider_duration_sub_page = highlight
+                slider_duration_handle_pos_0_1 = alternate_base
+                slider_duration_handle_pos_2 = alternate_base
 
-            slider_volume_groove = dark
-            slider_volume_sub_page = highlight
-            slider_volume_handle_pos_0_1 = alternate_base
-            slider_volume_handle_pos_2 = no_color_roles
+                slider_volume_groove = mid
+                slider_volume_sub_page = highlight
+                slider_volume_handle_pos_0_1 = alternate_base
+                slider_volume_handle_pos_2 = alternate_base
 
-            """ PLAYLIST TAB - BRIGHT """
-            tab_playlist_bg_1 = mid
-            tab_playlist_bg_2 = mid
-            tab_playlist_bg_3 = alternate_base
-            tab_playlist_bg_4 = alternate_base
-            tab_playlist_border = dark
-            tab_playlist_font = text
+                """ WIN - PLAYLIST TAB - DARK """
+                tab_playlist_bg_1 = mid
+                tab_playlist_bg_2 = mid
+                tab_playlist_bg_3 = dark
+                tab_playlist_bg_4 = dark
+                tab_playlist_border = mid
+                tab_playlist_font = text
 
-            tab_playlist_selected_bg = highlight
-            tab_playlist_selected_border = highlight
-            tab_playlist_selected_font = highlighted_text
+                tab_playlist_selected_bg = highlight
+                tab_playlist_selected_border = highlight
+                tab_playlist_selected_font = highlighted_text
 
 
-            """ PLAYING BUTTONS - UNDER THE VIDEO AREA - BRIGHT """
-            buttons_playing_bg_0 = mid
-            buttons_playing_bg_1 = mid
-            buttons_playing_bg_2 = dark
-            buttons_playing_bg_3 = dark
-            buttons_playing_border = no_color_roles
-            buttons_playing_pressed_bg = highlight
+                """ WIN - PLAYING BUTTONS - UNDER THE VIDEO AREA - DARK """
+                buttons_playing_bg_0 = mid
+                buttons_playing_bg_1 = mid
+                buttons_playing_bg_2 = dark
+                buttons_playing_bg_3 = dark
+                buttons_playing_border = no_color_roles
+                buttons_playing_pressed_bg = highlight
 
-            """ DURATION INFO BUTTON - UNDER THE VIDEO AREA - BRIGHT """
-            button_duration_info_text = no_color_roles
+                """ WIN - DURATION INFO BUTTON - UNDER THE VIDEO AREA - DARK """
+                button_duration_info_text = no_color_roles
 
-            """ DURATION SUM INFO BUTTON - UNDER PLAYLISTS - BRIGHT """
-            button_duration_sum_info_bg_0 = mid
-            button_duration_sum_info_bg_1 = mid
-            button_duration_sum_info_bg_2 = dark
-            button_duration_sum_info_bg_3 = dark
-            button_duration_sum_info_border = no_color_roles
-            button_duration_sum_info_text = text
+                """ WIN - DURATION SUM INFO BUTTON - UNDER PLAYLISTS - DARK """
+                button_duration_sum_info_bg_0 = mid
+                button_duration_sum_info_bg_1 = mid
+                button_duration_sum_info_bg_2 = dark
+                button_duration_sum_info_bg_3 = dark
+                button_duration_sum_info_border = no_color_roles
+                button_duration_sum_info_text = no_color_roles
 
-            """ PLAYLIST BUTTONS - UNDER PLAYLISTS - BRIGHT """
-            buttons_settings_bg_0 = base
-            buttons_settings_bg_1 = mid
-            buttons_settings_bg_2 = dark
-            buttons_settings_bg_3 = dark
-            buttons_settings_border = no_color_roles
-            buttons_settings_font = no_color_roles
-            buttons_settings_pressed_bg = highlight
+                """ WIN - PLAYLIST BUTTONS - UNDER PLAYLISTS - DARK """
+                buttons_settings_bg_0 = mid
+                buttons_settings_bg_1 = mid
+                buttons_settings_bg_2 = dark
+                buttons_settings_bg_3 = dark
+                buttons_settings_border = no_color_roles
+                buttons_settings_font = text
+                buttons_settings_pressed_bg = highlight
 
-            """ SETTINGS BUTTONS - UNDER PLAYLISTS - BRIGHT """
-            buttons_playlist_bg_0 = base
-            buttons_playlist_bg_1 = mid
-            buttons_playlist_bg_2 = dark
-            buttons_playlist_bg_3 = dark
-            buttons_playlist_border = no_color_roles
-            buttons_playlist_font = no_color_roles
-            buttons_playlist_pressed_bg = highlight
+                """ WIN - SETTINGS BUTTONS - UNDER PLAYLISTS - DARK """
+                buttons_playlist_bg_0 = mid
+                buttons_playlist_bg_1 = mid
+                buttons_playlist_bg_2 = dark
+                buttons_playlist_bg_3 = dark
+                buttons_playlist_border = no_color_roles
+                buttons_playlist_font = text
+                buttons_playlist_pressed_bg = highlight
 
-            """ SETTINGS WINDOW - BRIGHT """
-            window_settings = base
-            window_settings_inner_window = mid
-            window_settings_inner_window_border = no_color_roles
-            window_settings_line_edit = mid
-            window_settings_line_edit_text = text
-            window_settings_line_edit_border = text
-            window_settings_button = button
-            window_settings_button_border = text
-            window_settings_button_text = text
-            window_settings_button_pressed_bg = highlight
-            window_settings_button_pressed_text = text
-            window_settings_scrollbar = mid
+                """ WIN - SETTINGS WINDOW - DARK """
+                window_settings = window
+                window_settings_inner_window = mid
+                window_settings_inner_window_border = no_color_roles
+                window_settings_line_edit = mid
+                window_settings_line_edit_text = text
+                window_settings_line_edit_border = text
+                window_settings_button = button
+                window_settings_button_border = text
+                window_settings_button_text = text
+                window_settings_button_pressed_bg = highlight
+                window_settings_button_pressed_text = text
+                window_settings_scrollbar = mid
 
-            """ QUEUE AND SEARCH WINDOW - BRIGHT """
-            window_q_and_s = base
+                """ WIN - QUEUE AND SEARCH WINDOW - DARK """
+                window_q_and_s = window
 
-            window_q_and_s_search_button_bg_0 = mid
-            window_q_and_s_search_button_bg_1 = mid
-            window_q_and_s_search_button_bg_2 = alternate_base
-            window_q_and_s_search_button_bg_3 = alternate_base
-            window_q_and_s_search_button_border = highlight
-            window_q_and_s_search_button_pressed = highlight
+                window_q_and_s_search_button_bg_0 = mid
+                window_q_and_s_search_button_bg_1 = mid
+                window_q_and_s_search_button_bg_2 = dark
+                window_q_and_s_search_button_bg_3 = dark
+                window_q_and_s_search_button_border = highlight
+                window_q_and_s_search_button_pressed = highlight
 
-            window_q_and_s_search_line_edit = mid
-            window_q_and_s_search_line_edit_text = text
-            window_q_and_s_search_line_edit_border = highlight
+                window_q_and_s_search_line_edit = mid
+                window_q_and_s_search_line_edit_text = text
+                window_q_and_s_search_line_edit_border = highlight
 
-            window_q_and_s_search_frame = alternate_base
-            window_q_and_s_search_frame_border = highlight
+                window_q_and_s_search_frame = dark
+                window_q_and_s_search_frame_border = highlight
 
-            window_q_and_s_queue_header = highlight
-            window_q_and_s_queue_header_text = highlighted_text
+                window_q_and_s_queue_header = highlight
+                window_q_and_s_queue_header_text = highlighted_text
 
-            window_q_and_s_queue_frame_border = highlight
-            # no "window_q_and_s_queue_frame", the inner widget covers all the frame
+                window_q_and_s_queue_frame_border = highlight
+                # no "window_q_and_s_queue_frame", the inner widget covers all the frame
 
-    # NON SYSTEM THEME
+            # WIN - BRIGHT SYSTEM THEME
+            else:
+                """ WIN - WINDOW - BRIGHT """
+                window = alternate_base
+
+                """ WIN - THUMBNAIL - BRIGHT """
+                thumbnail_window = mid
+
+                thumbnail_widget = mid
+                thumbnail_widget_text = text
+                thumbnail_widget_border = text
+
+                thumbnail_widget_selected = text
+                thumbnail_widget_selected_border = highlighted_text
+                thumbnail_widget_selected_text = base
+
+                thumbnail_widget_playing = highlight
+                thumbnail_widget_playing_border = highlight
+                thumbnail_widget_playing_text = highlighted_text
+
+                thumbnail_widget_queue = text
+                thumbnail_widget_queue_text = base
+
+                """ WIN - PLAYLIST ROWS - BRIGHT """
+                row_inactive = mid
+                row_inactive_text = text
+                row_selected = text
+                row_selected_text = base
+                row_playing = highlight
+                row_playing_text = highlighted_text
+                row_queued = text
+                row_queued_text = base
+
+                """ WIN - SLIDERS - BRIGHT """
+                slider_duration_groove = dark
+                slider_duration_sub_page = highlight
+                slider_duration_handle_pos_0_1 = alternate_base
+                slider_duration_handle_pos_2 = no_color_roles
+
+                slider_volume_groove = dark
+                slider_volume_sub_page = highlight
+                slider_volume_handle_pos_0_1 = alternate_base
+                slider_volume_handle_pos_2 = no_color_roles
+
+                """ WIN - PLAYLIST TAB - BRIGHT """
+                tab_playlist_bg_1 = mid
+                tab_playlist_bg_2 = mid
+                tab_playlist_bg_3 = alternate_base
+                tab_playlist_bg_4 = alternate_base
+                tab_playlist_border = dark
+                tab_playlist_font = text
+
+                tab_playlist_selected_bg = highlight
+                tab_playlist_selected_border = highlight
+                tab_playlist_selected_font = highlighted_text
+
+
+                """ WIN - PLAYING BUTTONS - UNDER THE VIDEO AREA - BRIGHT """
+                buttons_playing_bg_0 = mid
+                buttons_playing_bg_1 = mid
+                buttons_playing_bg_2 = dark
+                buttons_playing_bg_3 = dark
+                buttons_playing_border = no_color_roles
+                buttons_playing_pressed_bg = highlight
+
+                """ WIN - DURATION INFO BUTTON - UNDER THE VIDEO AREA - BRIGHT """
+                button_duration_info_text = no_color_roles
+
+                """ WIN - DURATION SUM INFO BUTTON - UNDER PLAYLISTS - BRIGHT """
+                button_duration_sum_info_bg_0 = mid
+                button_duration_sum_info_bg_1 = mid
+                button_duration_sum_info_bg_2 = dark
+                button_duration_sum_info_bg_3 = dark
+                button_duration_sum_info_border = no_color_roles
+                button_duration_sum_info_text = text
+
+                """ WIN - PLAYLIST BUTTONS - UNDER PLAYLISTS - BRIGHT """
+                buttons_settings_bg_0 = base
+                buttons_settings_bg_1 = mid
+                buttons_settings_bg_2 = dark
+                buttons_settings_bg_3 = dark
+                buttons_settings_border = no_color_roles
+                buttons_settings_font = no_color_roles
+                buttons_settings_pressed_bg = highlight
+
+                """ WIN - SETTINGS BUTTONS - UNDER PLAYLISTS - BRIGHT """
+                buttons_playlist_bg_0 = base
+                buttons_playlist_bg_1 = mid
+                buttons_playlist_bg_2 = dark
+                buttons_playlist_bg_3 = dark
+                buttons_playlist_border = no_color_roles
+                buttons_playlist_font = no_color_roles
+                buttons_playlist_pressed_bg = highlight
+
+                """ WIN - SETTINGS WINDOW - BRIGHT """
+                window_settings = base
+                window_settings_inner_window = mid
+                window_settings_inner_window_border = no_color_roles
+                window_settings_line_edit = mid
+                window_settings_line_edit_text = text
+                window_settings_line_edit_border = text
+                window_settings_button = button
+                window_settings_button_border = text
+                window_settings_button_text = text
+                window_settings_button_pressed_bg = highlight
+                window_settings_button_pressed_text = text
+                window_settings_scrollbar = mid
+
+                """ WIN - QUEUE AND SEARCH WINDOW - BRIGHT """
+                window_q_and_s = base
+
+                window_q_and_s_search_button_bg_0 = mid
+                window_q_and_s_search_button_bg_1 = mid
+                window_q_and_s_search_button_bg_2 = alternate_base
+                window_q_and_s_search_button_bg_3 = alternate_base
+                window_q_and_s_search_button_border = highlight
+                window_q_and_s_search_button_pressed = highlight
+
+                window_q_and_s_search_line_edit = mid
+                window_q_and_s_search_line_edit_text = text
+                window_q_and_s_search_line_edit_border = highlight
+
+                window_q_and_s_search_frame = alternate_base
+                window_q_and_s_search_frame_border = highlight
+
+                window_q_and_s_queue_header = highlight
+                window_q_and_s_queue_header_text = highlighted_text
+
+                window_q_and_s_queue_frame_border = highlight
+                # no "window_q_and_s_queue_frame", the inner widg
+
+    # JSON DEFINED - NON SYSTEM THEME
     else:
         """ WINDOW """
         window = skin_settings['window']
