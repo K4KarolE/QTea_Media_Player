@@ -25,19 +25,24 @@ if cv.skin_selected != 'system':
     skin_settings = open_skin_json()
 
 palette_dic = {
-    "text": QPalette.ColorRole.Text,
-    "base": QPalette.ColorRole.Base,
+    "accent": QPalette.ColorRole.Accent,
     "alternate_base": QPalette.ColorRole.AlternateBase,
-    "button": QPalette.ColorRole.Button,
+    "base": QPalette.ColorRole.Base,
     "button_text": QPalette.ColorRole.ButtonText,
+    "button": QPalette.ColorRole.Button,
+    "dark": QPalette.ColorRole.Dark,
     "highlight": QPalette.ColorRole.Highlight,
     "highlighted_text": QPalette.ColorRole.HighlightedText,
-    "mid": QPalette.ColorRole.Mid,
-    "mid_light": QPalette.ColorRole.Midlight,
     "light": QPalette.ColorRole.Light,
-    "dark": QPalette.ColorRole.Dark,
-    "shadow": QPalette.ColorRole.Shadow,
+    "link_visited": QPalette.ColorRole.LinkVisited,
+    "link": QPalette.ColorRole.Link,
+    "mid_light": QPalette.ColorRole.Midlight,
+    "mid": QPalette.ColorRole.Mid,
     "no_color_roles": QPalette.ColorRole.NColorRoles,
+    "shadow": QPalette.ColorRole.Shadow,
+    "text": QPalette.ColorRole.Text,
+    "tool_tip_base": QPalette.ColorRole.ToolTipBase,
+    "tool_tip_text": QPalette.ColorRole.ToolTipText
 }
 
 
@@ -65,19 +70,25 @@ class Skins:
         def get_color_hex(dic_key, palette=palette):
             return (palette.color(palette_dic[dic_key])).name()
 
-        text = get_color_hex('text')
-        base = get_color_hex('base')
+        accent = get_color_hex('accent')
         alternate_base = get_color_hex('alternate_base')
+        base = get_color_hex('base')
         button = get_color_hex('button')
         button_text = get_color_hex('button_text')
+        dark = get_color_hex('dark')
         highlight = get_color_hex('highlight')
         highlighted_text = get_color_hex('highlighted_text')
+        light = get_color_hex('light')
+        link = get_color_hex('link')
+        link_visited = get_color_hex('link_visited')
         mid = get_color_hex('mid')
         mid_light = get_color_hex('mid_light')
-        light = get_color_hex('light')
-        dark = get_color_hex('dark')
-        shadow = get_color_hex('shadow')
         no_color_roles = get_color_hex('no_color_roles')
+        shadow = get_color_hex('shadow')
+        text = get_color_hex('text')
+        tool_tip_base = get_color_hex('tool_tip_base')
+        tool_tip_text = get_color_hex('tool_tip_text')
+
 
         if cv.os_linux:
             # LNX - DARK SYSTEM THEME
@@ -177,7 +188,7 @@ class Skins:
                 """ LNX - SETTINGS WINDOW - DARK """
                 window_settings = base
                 window_settings_inner_window = mid
-                window_settings_inner_window_border = no_color_roles
+                window_settings_inner_window_border = highlight
                 window_settings_line_edit = mid
                 window_settings_line_edit_text = text
                 window_settings_line_edit_border = text
@@ -476,53 +487,53 @@ class Skins:
             # WIN - BRIGHT SYSTEM THEME
             else:
                 """ WIN - WINDOW - BRIGHT """
-                window = alternate_base
+                window = tool_tip_base
 
                 """ WIN - THUMBNAIL - BRIGHT """
-                thumbnail_window = mid
+                thumbnail_window = base
 
-                thumbnail_widget = mid
+                thumbnail_widget = base
                 thumbnail_widget_text = text
                 thumbnail_widget_border = text
 
-                thumbnail_widget_selected = text
+                thumbnail_widget_selected = highlight
                 thumbnail_widget_selected_border = highlighted_text
                 thumbnail_widget_selected_text = base
 
-                thumbnail_widget_playing = highlight
+                thumbnail_widget_playing = link
                 thumbnail_widget_playing_border = highlight
                 thumbnail_widget_playing_text = highlighted_text
 
-                thumbnail_widget_queue = text
+                thumbnail_widget_queue = mid
                 thumbnail_widget_queue_text = base
 
                 """ WIN - PLAYLIST ROWS - BRIGHT """
-                row_inactive = mid
+                row_inactive = base
                 row_inactive_text = text
-                row_selected = text
+                row_selected = highlight
                 row_selected_text = base
                 row_playing = highlight
-                row_playing_text = highlighted_text
-                row_queued = text
-                row_queued_text = base
+                row_playing_text = base
+                row_queued = mid
+                row_queued_text = text
 
                 """ WIN - SLIDERS - BRIGHT """
-                slider_duration_groove = dark
+                slider_duration_groove = mid
                 slider_duration_sub_page = highlight
-                slider_duration_handle_pos_0_1 = alternate_base
-                slider_duration_handle_pos_2 = no_color_roles
+                slider_duration_handle_pos_0_1 = tool_tip_base
+                slider_duration_handle_pos_2 = mid
 
-                slider_volume_groove = dark
+                slider_volume_groove = mid
                 slider_volume_sub_page = highlight
-                slider_volume_handle_pos_0_1 = alternate_base
-                slider_volume_handle_pos_2 = no_color_roles
+                slider_volume_handle_pos_0_1 = tool_tip_base
+                slider_volume_handle_pos_2 = mid
 
                 """ WIN - PLAYLIST TAB - BRIGHT """
-                tab_playlist_bg_1 = mid
-                tab_playlist_bg_2 = mid
-                tab_playlist_bg_3 = alternate_base
-                tab_playlist_bg_4 = alternate_base
-                tab_playlist_border = dark
+                tab_playlist_bg_1 = base
+                tab_playlist_bg_2 = base
+                tab_playlist_bg_3 = tool_tip_base
+                tab_playlist_bg_4 = mid
+                tab_playlist_border = base
                 tab_playlist_font = text
 
                 tab_playlist_selected_bg = highlight
@@ -531,47 +542,47 @@ class Skins:
 
 
                 """ WIN - PLAYING BUTTONS - UNDER THE VIDEO AREA - BRIGHT """
-                buttons_playing_bg_0 = mid
-                buttons_playing_bg_1 = mid
-                buttons_playing_bg_2 = dark
-                buttons_playing_bg_3 = dark
-                buttons_playing_border = no_color_roles
+                buttons_playing_bg_0 = base
+                buttons_playing_bg_1 = base
+                buttons_playing_bg_2 = tool_tip_base
+                buttons_playing_bg_3 = tool_tip_base
+                buttons_playing_border = mid
                 buttons_playing_pressed_bg = highlight
 
                 """ WIN - DURATION INFO BUTTON - UNDER THE VIDEO AREA - BRIGHT """
-                button_duration_info_text = no_color_roles
+                button_duration_info_text = dark
 
                 """ WIN - DURATION SUM INFO BUTTON - UNDER PLAYLISTS - BRIGHT """
-                button_duration_sum_info_bg_0 = mid
-                button_duration_sum_info_bg_1 = mid
-                button_duration_sum_info_bg_2 = dark
-                button_duration_sum_info_bg_3 = dark
-                button_duration_sum_info_border = no_color_roles
-                button_duration_sum_info_text = text
+                button_duration_sum_info_bg_0 = base
+                button_duration_sum_info_bg_1 = base
+                button_duration_sum_info_bg_2 = tool_tip_base
+                button_duration_sum_info_bg_3 = tool_tip_base
+                button_duration_sum_info_border = dark
+                button_duration_sum_info_text = dark
 
                 """ WIN - PLAYLIST BUTTONS - UNDER PLAYLISTS - BRIGHT """
                 buttons_settings_bg_0 = base
-                buttons_settings_bg_1 = mid
-                buttons_settings_bg_2 = dark
-                buttons_settings_bg_3 = dark
-                buttons_settings_border = no_color_roles
-                buttons_settings_font = no_color_roles
+                buttons_settings_bg_1 = base
+                buttons_settings_bg_2 = tool_tip_base
+                buttons_settings_bg_3 = tool_tip_base
+                buttons_settings_border = dark
+                buttons_settings_font = dark
                 buttons_settings_pressed_bg = highlight
 
                 """ WIN - SETTINGS BUTTONS - UNDER PLAYLISTS - BRIGHT """
                 buttons_playlist_bg_0 = base
-                buttons_playlist_bg_1 = mid
-                buttons_playlist_bg_2 = dark
-                buttons_playlist_bg_3 = dark
-                buttons_playlist_border = no_color_roles
-                buttons_playlist_font = no_color_roles
+                buttons_playlist_bg_1 = base
+                buttons_playlist_bg_2 = tool_tip_base
+                buttons_playlist_bg_3 = tool_tip_base
+                buttons_playlist_border = dark
+                buttons_playlist_font = dark
                 buttons_playlist_pressed_bg = highlight
 
                 """ WIN - SETTINGS WINDOW - BRIGHT """
-                window_settings = base
-                window_settings_inner_window = mid
-                window_settings_inner_window_border = no_color_roles
-                window_settings_line_edit = mid
+                window_settings = window
+                window_settings_inner_window = base
+                window_settings_inner_window_border = highlight
+                window_settings_line_edit = tool_tip_base
                 window_settings_line_edit_text = text
                 window_settings_line_edit_border = text
                 window_settings_button = button
@@ -582,20 +593,20 @@ class Skins:
                 window_settings_scrollbar = mid
 
                 """ WIN - QUEUE AND SEARCH WINDOW - BRIGHT """
-                window_q_and_s = base
+                window_q_and_s = window
 
-                window_q_and_s_search_button_bg_0 = mid
-                window_q_and_s_search_button_bg_1 = mid
-                window_q_and_s_search_button_bg_2 = alternate_base
-                window_q_and_s_search_button_bg_3 = alternate_base
+                window_q_and_s_search_button_bg_0 = base
+                window_q_and_s_search_button_bg_1 = base
+                window_q_and_s_search_button_bg_2 = tool_tip_base
+                window_q_and_s_search_button_bg_3 = tool_tip_base
                 window_q_and_s_search_button_border = highlight
                 window_q_and_s_search_button_pressed = highlight
 
-                window_q_and_s_search_line_edit = mid
+                window_q_and_s_search_line_edit = base
                 window_q_and_s_search_line_edit_text = text
                 window_q_and_s_search_line_edit_border = highlight
 
-                window_q_and_s_search_frame = alternate_base
+                window_q_and_s_search_frame = tool_tip_base
                 window_q_and_s_search_frame_border = highlight
 
                 window_q_and_s_queue_header = highlight
