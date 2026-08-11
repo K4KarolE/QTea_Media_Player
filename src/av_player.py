@@ -636,11 +636,6 @@ class AVPlayer(QWidget):
             logger_sum('Base has been played - App is running - sum')
             if cv.play_at_startup:
                 cv.ignore_loaded_media_signal = True
-                logger_sum("play_base_and_play_at_startup() - before .player.stop()")
-                # avoid unresponsive app at startup
-                # hectic behaviour - not able replicate the frozen app at startup
-                self.player.stop()
-                logger_sum("play_base_and_play_at_startup() - after .player.stop()")
                 self.base_played_end_of_media_signal_ignored = True
                 if cv.active_pl_tracks_count:
                     logger_sum('Last media starts playing')
