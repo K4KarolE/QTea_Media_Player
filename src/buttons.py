@@ -330,7 +330,6 @@ class MyButtons(QPushButton):
 
     # TRIGGERED BY THE DOUBLE-CLICK IN THE PLAYLIST
     def button_play_pause_via_list(self):
-        self.setIcon(br.icon.pause)
         br.play_funcs.play_track()
 
 
@@ -377,7 +376,6 @@ class MyButtons(QPushButton):
                 else:
                     cv.playing_track_index = cv.playing_pl_tracks_count - 1
                     br.play_funcs.play_track(cv.playing_track_index)
-            br.button_play_pause.button_play_pause_set_icon_paused()
 
     def play_shuffle_played_list_track(self):
         """ The "cv.shuffle_played_tracks_list" verification
