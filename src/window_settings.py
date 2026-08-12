@@ -9,6 +9,7 @@ In this file the TAB terminology is kept for the SETTINGS WINDOW tabs
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
+    QComboBox,
     QPushButton,
     QScrollBar,
     QTabWidget,
@@ -23,14 +24,16 @@ from .class_data import (
     )
 from .class_skins import sk
 from .func_coll import (
+    inactive_track_font_style,
     move_window_to_middle_of_current_screen,
+    open_log_file,
     update_playing_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
     msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
     switch_all_pl_to_standard_from_thumbnails_view
     )
-from .logger import logger_runtime
+from .logger import logger_check
 
 from .window_settings_tab_general import GeneralTab
 from .window_settings_tab_hotkeys import HotkeysTab
@@ -39,7 +42,7 @@ from .window_settings_tab_skins import SkinsTab
 
 
 
-@logger_runtime
+@logger_check
 class MySettingsWindow(QWidget):
     """ It is created once the Settings button clicked """
     def __init__(self):
@@ -225,32 +228,35 @@ class MySettingsWindow(QWidget):
             tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
 
         """
-        BUTTONS
+        UNDER TABS SECTION
+        Combo box + button
         """
-        def set_button_style(button):
-            button.setStyleSheet("QPushButton"
-                                       "{"
-                                       f"background-color: {sk.window_settings_button};"
-                                       f"border: 1px solid {sk.window_settings_button_border};"
-                                       "border-radius: 4px;"
-                                       "}"
-                                   "QPushButton::pressed"
-                                       "{"
-                                       f"background-color: {sk.window_settings_button_pressed_bg};"
-                                       "}"
+        def set_widgets_style(widget):
+            widget.setStyleSheet("QPushButton"
+                                   "{"
+                                   f"background-color: {sk.window_settings_button};"
+                                   f"border: 1px solid {sk.row_playing};"
+                                   "border-radius: 4px;"
+                                   "}"
+                                "QPushButton::pressed"
+                                    "{"
+                                    f"background-color: {sk.window_settings_button_pressed_bg};"
+                                    "}"
+                                "QComboBox"
+                                     "{"
+                                    f"border: 1px solid {sk.row_playing};"
+                                    "border-radius: 2px;"
+                                     f"background: {sk.row_inactive};"
+                                     f"color: {sk.row_inactive_text};"
+                                     "}"
+                                "QComboBox::item:selected"
+                                     "{"
+                                     f"background: {sk.row_playing};"
+                                     f"color: {sk.row_playing_text};"
+                                     "}"
                                    )
-        '''
-        ####################
-            BUTTON - SAVE      
-        ####################
-        '''
-        BUTTON_SAVE_WIDTH = 50
-        BUTTON_SAVE_HEIGHT = 25
-        BUTTON_SAVE_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_SAVE_WIDTH
-        BUTTON_SAVE_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_SAVE_HEIGHT
 
-
-        def button_save_clicked():
+        def save_action():
             pl_list_with_title = tab_playlist.playlist_fields_validation_at_least_one_playlist()
 
             if (pl_list_with_title and
@@ -292,34 +298,55 @@ class MySettingsWindow(QWidget):
                 self.hide()
 
 
-        button_save = QPushButton(self, text='Save')
-        button_save.setGeometry(BUTTON_SAVE_POS_X, BUTTON_SAVE_POS_Y, BUTTON_SAVE_WIDTH, BUTTON_SAVE_HEIGHT)
-        button_save.clicked.connect(button_save_clicked)
-        set_button_style(button_save)
+        """ ACTION BUTTON """
+        def action_button_clicked():
+            combo_box_selected = action_combo_box.currentText()
+            action_combo_box_dir[combo_box_selected]()
+
+        BUTTON_ACTION_WIDTH = 50
+        BUTTON_ACTION_HIGHT = 25
+        BUTTON_ACTION_POS_X = WINDOW_WIDTH - TABS_POS_X - BUTTON_ACTION_WIDTH
+        BUTTON_ACTION_POS_Y = WINDOW_HEIGHT - TABS_POS_Y - BUTTON_ACTION_HIGHT
+
+        button_action = QPushButton(self, text='<<<')
+        button_action.setGeometry(
+            BUTTON_ACTION_POS_X,
+            BUTTON_ACTION_POS_Y,
+            BUTTON_ACTION_WIDTH,
+            BUTTON_ACTION_HIGHT)
+        button_action.clicked.connect(lambda: action_button_clicked())
+        set_widgets_style(button_action)
 
 
-        '''
-        #################################
-            BUTTON - PURGE THUMBNAILS     
-        #################################
-        '''
-        BUTTON_PURGE_THUMBNAILS_WIDTH = 130
-        BUTTON_PURGE_THUMBNAILS_HEIGHT = BUTTON_SAVE_HEIGHT
-        BUTTON_PURGE_THUMBNAILS_POS_X = BUTTON_SAVE_POS_X - BUTTON_PURGE_THUMBNAILS_WIDTH - 5
-        BUTTONP_PURGE_THUMBNAILS_POS_Y = BUTTON_SAVE_POS_Y
 
-        button_purge_thumbnails = QPushButton(self, text='Purge Thumbnails')
-        button_purge_thumbnails.setGeometry(
-            BUTTON_PURGE_THUMBNAILS_POS_X,
-            BUTTONP_PURGE_THUMBNAILS_POS_Y,
-            BUTTON_PURGE_THUMBNAILS_WIDTH,
-            BUTTON_PURGE_THUMBNAILS_HEIGHT
-            )
-        button_purge_thumbnails.clicked.connect(
-            msg_box_wrapper_for_remove_all_thumbnails_and_clear_history
-            )
-        set_button_style(button_purge_thumbnails)
+        """ ACTION COMBO BOX """
+        ACTION_COMBO_WIDTH = 140
+        ACTION_COMBO_HEIGHT = BUTTON_ACTION_HIGHT
+        ACTION_COMBO_POS_X = BUTTON_ACTION_POS_X - ACTION_COMBO_WIDTH - 5
+        ACTION_COMBO_POS_Y = BUTTON_ACTION_POS_Y
 
+        action_combo_box_dir = {
+            'Save': save_action,
+            'Purge thumbnails': msg_box_wrapper_for_remove_all_thumbnails_and_clear_history,
+            'Open log file': open_log_file
+        }
+        action_combo_box_item_list = list(action_combo_box_dir)
+        action_combo_box_item_list.sort()
+
+        action_combo_box = QComboBox(self)
+        action_combo_box.setFont(inactive_track_font_style)
+        action_combo_box.addItems(action_combo_box_item_list)
+        action_combo_box.setCurrentIndex(action_combo_box_item_list.index('Save'))
+        action_combo_box.setEditable(True)
+        action_combo_box.lineEdit().setAlignment(Qt.AlignmentFlag.AlignRight)
+        action_combo_box.lineEdit().setReadOnly(True)
+        set_widgets_style(action_combo_box)
+        action_combo_box.setGeometry(
+            ACTION_COMBO_POS_X,
+            ACTION_COMBO_POS_Y,
+            ACTION_COMBO_WIDTH,
+            ACTION_COMBO_HEIGHT
+        )
 
 
     def reposition_window_to_middle(self):
