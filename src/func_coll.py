@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QColor
 
 from .class_bridge import br
-from .class_data import connection, cur, cv, save_json, settings
+from .class_data import connection, cur, cv, PATH_LOG_FILE, save_json, settings
 from .class_skins import sk
 from .logger import logger_sum
 from .message_box import MyMessageBoxError
@@ -1058,3 +1058,17 @@ def save_thumbnail_size_set_by_context_menu(thumbnail_size: int):
         br.window_settings.close()
         br.window_settings.deleteLater()
         br.window_settings = None
+
+
+def open_log_file():
+    """ Used in the Settings window / under tabs section / combo box option - action button """
+    if Path(PATH_LOG_FILE).is_file():
+        if cv.os_linux:
+            subprocess.Popen(["xdg-open", PATH_LOG_FILE])
+        else:
+            os.startfile(PATH_LOG_FILE)
+    else:
+        MyMessageBoxError(
+            'ERROR - log file',
+            'Was not able to open the log file  '
+        )

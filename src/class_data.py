@@ -41,6 +41,8 @@ settings = open_json()
 PATH_THUMBNAILS = str(Path(WORKING_DIRECTORY, 'thumbnails'))
 PATH_THUMBNAIL_HISTORY = Path(PATH_THUMBNAILS, '_thumbnail_history.json')
 
+PATH_LOG_FILE = Path(WORKING_DIRECTORY, 'log_file.log')
+
 """ 
     To make sure if the thumbnail_history json saving is interrupted 
     the app starts next time without any issue / necessary json fix
