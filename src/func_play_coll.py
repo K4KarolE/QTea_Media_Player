@@ -23,6 +23,7 @@ from .func_coll import (
     update_queued_tracks_order_number,
     update_raw_current_duration_db
     )
+from .func_thumbnail import update_thumbnail_style_at_play_track
 
 from .logger import *
 from .thread_play_track_set_source import ThreadPlayTrackSetSource
@@ -33,9 +34,9 @@ class PlaysFunc:
     def __init__(self):
         # self.player_position & self.timer:
         # more info at after_playing_the_same_track_workaround() below
-        self.player_position = 0
+        self.player_start_position = 0
         self.timer = QTimer()
-        self.timer.timeout.connect(lambda: self.after_playing_the_same_media_workaround())
+        self.timer.timeout.connect(lambda: self.if_player_stuck_workaround())
         self.track_path = ""
         self.track_path_previous = ""
         # Thread for "style update" and "set source" separation
@@ -69,16 +70,8 @@ class PlaysFunc:
                 br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
             Minimalist "try to fix" test in "docs/learning/player_basic_memory_leak_fix_try.py"
-
-        Playing the same file - The same file can be added multiple times to the playlists
-        The media status changed signal is not fired and the "self.play_track_second_part()"
-        is not called when the same file path is set as source, solution:
         """
-        if self.track_path == self.track_path_previous:
-            br.av_player.player.setPosition(cv.track_current_duration)
-            self.play_track_second_part()
-        else:
-            br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
+        br.av_player.player.setSource(QUrl.fromLocalFile(str(Path(self.track_path))))
 
 
     @logger_check
@@ -100,39 +93,75 @@ class PlaysFunc:
         """
         if self.is_file_available_at_non_playing_playlist(playing_track_index):
 
-            # PyQt playing the first audio_track of the video by default
-            #  -> reset our variable when playing new track
+            """
+            PyQt playing the first audio_track of the video by default
+            >> reset our variable when playing new track
+            """
             cv.audio_track_played = 0
 
-            # If the "Start from the latest point" is enabled:
-            # Saving the current duration in every 5 second
-            # -> reset our assist variable when playing new track
+            """
+            If the "Start from the latest point" is enabled:
+            Saving the current duration in every 5 second
+            -> reset our assist variable when playing new track
+            """
             cv.counter_for_duration = 0
 
             update_playing_playlist_vars_and_widgets()
 
-            # playing_track_index --> cv.playing_track_index
+            """ 
+            Support vars for the 
+            - "PLAYING THE SAME FILE" section below
+            - "FILE NOT REACHABLE" section below, to set back the "cv.playing_db_table"
+            and "cv.playing_track_index" values if the media file is renamed / removed
+            """
+            prev_playing_db_table = cv.playing_db_table
+            prev_playing_track_index = cv.playing_track_index
+
+            """ playing_track_index --> cv.playing_track_index """
             self.generate_playing_track_index(playing_track_index)
 
-            # TO MAKE SURE UN-PLAYED TRACK`S THUMBNAIL VIEW STYLE IS CORRECT
-            # SCENARIO: app started >> non-playing playlist is active + one of the row is selected
-            # >> switch to thumbnail view >> only the selected thumbnail style is in use
+            """
+            TO MAKE SURE UN-PLAYED TRACK`S THUMBNAIL VIEW STYLE IS CORRECT
+            SCENARIO: app started >> non-playing playlist is active + one of the row is selected
+            >> switch to thumbnail view >> only the selected thumbnail style is in use
+            """
             cv.playlist_widget_dic[cv.playing_db_table]['played_thumbnail_style_update_needed'] = True
 
-            # QUEUE
+            """ QUEUE """
             self.queue_update()
 
-            # STYLE
-            # The "self.played_and_queued_track_style_update()" actioned in the
-            # "src / thread_play_track_set_source" and triggered via the
-            # "self.thread_play_track_set_source.start()" function below
+            """
+            STYLE
+            The "self.played_and_queued_track_style_update()" actioned in the
+            "src / thread_play_track_set_source" and triggered via the
+            "self.thread_play_track_set_source.start()" function below
+            """
 
-            # PATH / DURATION / SLIDER
+            """ GET DURATION / FILE PATH  """
             cv.track_full_duration, cv.track_current_duration, self.track_path = get_all_from_db(cv.playing_track_index, cv.playing_db_table)
 
-            # FILE NOT REACHABLE
+            """
+            PLAYING THE SAME FILE
+            The same file / media can be added multiple times to the same and / or to different playlists
+            The "media status changed" signal is not fired and the "self.play_track_second_part()"
+            is not called when the same file path is set as source, solution:
+            """
+            if self.track_path == self.track_path_previous:
+                if cv.active_db_table == prev_playing_db_table and cv.current_track_index == prev_playing_track_index:
+                    if br.av_player.paused:
+                        br.button_play_pause.click()
+                else:
+                    br.av_player.player.setPosition(cv.track_current_duration)
+                    update_thumbnail_style_at_play_track()
+                    br.play_funcs.played_and_queued_track_style_update()
+                    self.play_track_second_part()
+                return
+
+            """ FILE NOT REACHABLE """
             if cv.playing_pl_tracks_count:  # To make sure error message not displayed for empty Playing playlist
                 if self.track_path == -1 or not Path(self.track_path).is_file():
+                    cv.playing_db_table = prev_playing_db_table
+                    cv.playing_track_index = prev_playing_track_index
                     MyMessageBoxError(
                         'Not able to play the file',
                         'The file or the file`s home folder has been renamed / removed. '
@@ -282,11 +311,11 @@ class PlaysFunc:
 
         # PLAY
         # self.player_position & self.timer.start():
-        # more info at after_playing_the_same_track_workaround() below
+        # more info at if_player_stuck_workaround() below
         self.audio_tracks_use_default()
-        self.player_position = br.av_player.player.position()
+        self.player_start_position = br.av_player.player.position()
         br.av_player.player.play()
-        self.timer.start(100)
+        self.timer.start(300)
         # cv.ignore_loaded_media_signal, br.av_player.is_end_of_media:
         # To avoid unnecessary "Media status: Loaded media" signal
         # More info in the "README / Workarounds / Unnecessary "player.mediaStatusChanged" signal triggers" section
@@ -310,21 +339,21 @@ class PlaysFunc:
         # UPDATING THE QUEUE NUMBERS IN THE SEARCH TAB / RESULTS LIST
         search_result_queue_number_update()
 
-    @logger_check
-    def after_playing_the_same_media_workaround(self):
+
+    def if_player_stuck_workaround(self):
         """
         Scenario:
-        Same media double-clicked / started multiple times + start playing another media
-        >> the new media is loaded, but the player stuck at the current position >> media is not playing
+        If same reason the player was not able to start
         Workaround:
         Compare the default and the delayed positions of the player, if same >> player stuck at the current position
         >> pause and play the media >> media is playing
         """
-        if self.player_position == br.av_player.player.position() and not cv.ignore_loaded_media_signal:
+        if self.player_start_position == br.av_player.player.position():
             br.av_player.player.pause()
-            logger_sum("After playing the same media workaround")
+            logger_sum("Media player stuck workaround")
             br.av_player.player.play()
         self.timer.stop()
+
 
     def update_window_title(self, track_path, no_error):
         cv.track_title = Path(track_path).stem
