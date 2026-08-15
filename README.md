@@ -28,43 +28,21 @@ Inspired by `Winamp`, `VLC media player` and `Total/Double Commander`.
 
 
 <div align="left">
-    <img src="https://github.com/user-attachments/assets/6a14f0a2-48a1-43ea-be04-a2bd1b58d4da">
+    <img src="https://github.com/user-attachments/assets/d4d27136-f11d-4f33-b788-557afc577a0d"">
 </div>
 <br>
 <div align="left">
-    <img src="https://github.com/user-attachments/assets/ffe21b93-1b36-455f-a4a2-bbedaf7eccab">
+    <img src="https://github.com/user-attachments/assets/50e6717d-016e-4420-9852-faeb3d3579fc">
 </div>
 <br>
 <div align="left">
-    <img src="https://github.com/user-attachments/assets/ea884bcb-79fd-4fa4-ab0f-8cd665f416fc">
+    <img src="https://github.com/user-attachments/assets/86b7de98-f6cf-4f98-946d-59106aeff4d0">
 </div>
+
+
+### See all screenshots via `Ctrl` + click [here](https://drive.google.com/drive/folders/1cUC63kud4Y3RS1u2N72MCh0rHkz0r5qV?usp=drive_link)
 <br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/b666dd76-2bc2-4bea-b9b1-16bb6a73031e">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/73c70cea-e2f9-4762-b5c3-c10234b6f29d">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/f5d65ceb-89a0-481b-afea-575d75cd60a6">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/3fea0e96-41ae-4051-a871-ec39cbcd51c0">
-</div>
-<br>
-<div align="left">
-    <img src="https://github.com/user-attachments/assets/919f35d6-3ffb-4c3a-9355-48593501eae3">
-</div>
-<br>
-<div align="left">
-    <img width="260" src="https://github.com/user-attachments/assets/36ebbf70-1db1-490d-9f25-e1c3f6d757f5">
-    <img width="260" src="https://github.com/user-attachments/assets/7d2063db-e3f5-45d3-843f-0b5f1a4a4658">
-    <img width="260" src="https://github.com/user-attachments/assets/f5635faf-9845-467b-9a96-c313c68b825b">
-</div>
-<br>
+
 
 ## Playlists separation
 - `Playing playlist`: playlist, where the current track is in the playing or paused state / 
