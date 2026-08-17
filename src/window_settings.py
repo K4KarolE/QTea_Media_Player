@@ -35,6 +35,7 @@ from .func_thumbnail import (
     )
 from .logger import logger_check
 
+from .window_settings_tab_about import AboutTab
 from .window_settings_tab_general import GeneralTab
 from .window_settings_tab_hotkeys import HotkeysTab
 from .window_settings_tab_playlists import PlaylistsTab
@@ -121,6 +122,9 @@ class MySettingsWindow(QWidget):
         """ TAB - SKINS """
         tab_skins = SkinsTab()
 
+        """ TAB - ABOUT """
+        tab_about = AboutTab()
+
 
         """ 
         #####################
@@ -200,6 +204,14 @@ class MySettingsWindow(QWidget):
                 'scroll_bar_hor': '',
                 'widgets_window': tab_skins.inner_window,
                 'widgets_window_height': tab_skins.last_widget_pos_y
+            },
+            'About': {
+                'text': 'About',
+                'scroll_area': tab_about.scroll_area,
+                'scroll_bar_ver': '',
+                'scroll_bar_hor': '',
+                'widgets_window': tab_about.inner_window,
+                'widgets_window_height': tab_about.last_widget_pos_y
             }
         }
 

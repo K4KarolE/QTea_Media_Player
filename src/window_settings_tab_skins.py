@@ -27,6 +27,7 @@ class SkinsTab(CommonTabValues):
         self.skins_with_icons_list  = self.gen_skins_with_icons_list()
         self.logo_imgs_dir = self.gen_available_logo_imgs_dir()
         self.img_sizes_list = [str(n) for n in range(200, 420, 20)]
+        self.last_widget_pos_y = 0
 
         WIDGET_POS_X = self.WIDGETS_POS_X
         widget_pos_y = self.WIDGETS_POS_Y
@@ -108,7 +109,8 @@ class SkinsTab(CommonTabValues):
 
         self.last_widget_pos_y = widget_pos_y + self.EXTRA_HEIGHT_VALUE_AFTER_LAST_WIDGET_POS_Y
         # to make sure the background covers the whole inner window
-        if self.last_widget_pos_y < 525: self.last_widget_pos_y = 525
+        # 524 >> covers the BG without scroll bar
+        if self.last_widget_pos_y < 524: self.last_widget_pos_y = 524
 
 
     def gen_available_skins_list(self):
