@@ -173,7 +173,8 @@ class PlaysFunc:
                     """
                     PLAYER
                     self.thread_play_track_set_source.start() >> style update
-                    >> set source >> self.play_track_second_part() >> playing media
+                    >> set source >> .. >> self.play_track_second_part() >> playing media
+                    More information at the "play_track" function definition above
                     
                     "cv.ignore_loaded_media_signal" to avoid unnecessary "Media status: Loaded media" signal
                     More info in the "src / av_player / media_status_changed_action()" function
@@ -301,6 +302,9 @@ class PlaysFunc:
         if self.track_path.split('.')[-1] in cv.AUDIO_FILES:     # music_title.mp3 -> mp3
             br.image_logo.show()
             br.av_player.video_output.hide()
+        # Full screen on a secondary display
+        elif br.av_player.is_full_screen() and cv.screen_pos_x_for_fullscreen_via_menu > 0:
+            br.image_logo.show()
         else:
             br.image_logo.hide()
             br.av_player.video_output.show()
@@ -441,6 +445,7 @@ class PlaysFunc:
                 PyQt 6.11 issue / was not in PyQt 6.5.3
                 """
                 disable_minimal_interface()
+                br.av_player.screen_from_full_to_default()
                 cv.ignore_loaded_media_signal = True
                 br.av_player.player.stop()
                 br.av_player.player.setPosition(0)

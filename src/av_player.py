@@ -84,8 +84,8 @@ class AVPlayer(QWidget):
         self.vid_height = None
         # SCREEN UPDATE HANDLING
         self.primary_screen_changed = False
-        br.app.primaryScreenChanged.connect(lambda: self.screen_primary_changed())
-        br.app.screenRemoved.connect(lambda: self.screen_back_to_default())
+        br.app.primaryScreenChanged.connect(lambda: self.screen_primary_changed_action())
+        br.app.screenRemoved.connect(lambda: self.screen_removed_action_screen_back_to_default())
         # CONTEXT MENU
         self.audio_track_menu_title = f'Audio Track  ({cv.audio_tracks_rotate})'
         self.audio_device_menu_title = f'Audio Device  ({cv.audio_output_device_rotate})'
@@ -275,11 +275,7 @@ class AVPlayer(QWidget):
             if event.key() == Qt.Key.Key_Escape:
                 if not self.video_area_visible:
                     br.button_toggle_video.button_toggle_video_clicked()
-                self.video_output.setFullScreen(False)
-                self.video_output.move(0, 0)
-                self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
-                br.image_logo.hide()    # scenario: video fullscreen was on the additional display
-                cv.screen_index_for_fullscreen = -1
+                self.screen_from_full_to_default()
 
         return super().eventFilter(source, event)
 
@@ -426,11 +422,7 @@ class AVPlayer(QWidget):
         if not self.video_area_visible:
             br.button_toggle_video.button_toggle_video_clicked()
         if self.video_output.isFullScreen():
-            self.video_output.setFullScreen(False)
-            self.video_output.move(0, 0)
-            self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
-            cv.screen_index_for_fullscreen = -1
-            br.image_logo.hide()
+            self.screen_from_full_to_default()
         else:
             self.video_output.move(cv.screen_pos_x_for_fullscreen, 5) # 2nd value !=0 all good
             self.video_output.setFullScreen(True)
@@ -446,7 +438,8 @@ class AVPlayer(QWidget):
         self.video_output.setFullScreen(False)
         self.video_output.move(cv.screen_pos_x_for_fullscreen_via_menu, 5) # 2nd value !=0 all good
         self.video_output.setFullScreen(True)
-        br.image_logo.show()
+        if cv.screen_pos_x_for_fullscreen_via_menu > 0:
+            br.image_logo.show()
 
 
     """
@@ -456,25 +449,34 @@ class AVPlayer(QWidget):
     2: app on primary screen, full screen video on secondary screen
         >> primary screen removed
     """
-    def screen_primary_changed(self):
+    def screen_primary_changed_action(self):
         """ Triggered by the primaryScreenChanged signal """
         if not cv.os_linux:
             br.av_player = AVPlayer()
         self.primary_screen_changed = True
 
-    def screen_back_to_default(self):
+
+    def is_full_screen(self):
+        return self.video_output.isFullScreen()
+
+
+    def screen_from_full_to_default(self):
+        if self.is_full_screen():
+            self.video_output.setFullScreen(False)
+            self.video_output.move(0, 0)
+            self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
+            cv.screen_index_for_fullscreen = -1
+            br.image_logo.hide()
+
+
+    def screen_removed_action_screen_back_to_default(self):
         """
         Triggered by the screenRemoved signal
         br.image_logo.show(): fullscreen video was on the additional display
         """
         if not self.primary_screen_changed:
             if self.video_output.isVisible():
-                if self.video_output.isFullScreen():
-                    self.video_output.setFullScreen(0)
-                    self.video_output.move(0, 0)
-                    self.video_output.setCursor(Qt.CursorShape.ArrowCursor)
-                    br.image_logo.hide()
-                    cv.screen_index_for_fullscreen = -1
+                self.screen_from_full_to_default()
         else:
             self.primary_screen_changed = False
 
