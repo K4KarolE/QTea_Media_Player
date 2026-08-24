@@ -114,20 +114,13 @@ class SkinsTab(CommonTabValues):
 
 
     def gen_available_skins_list(self):
-        skins_list = [p.name for p in self.skins_dir.iterdir() if p.is_dir()]
+        """
+        Generate the skin list from the available jsons
+        "skins / jsons" >> skin list + 'System'
+        """
+        skins_list = [p.stem for p in self.skins_jsons_dir.iterdir() if p.is_file() and p.suffix == '.json']
+        skins_list.append('system')
         skins_list.sort()
-        skins_list.remove("jsons")
-        # Checking relevant JSON exists
-        unavailable_skins = []
-        for skin in skins_list:
-            if skin != 'system':
-                file_name = f'{skin}.json'
-                file_path = Path(self.skins_jsons_dir, file_name)
-                if not Path(file_path).is_file():
-                    unavailable_skins.append(skin)
-        if unavailable_skins:
-            for un_skin in unavailable_skins:
-                skins_list.remove(un_skin)
         return skins_list
 
 
