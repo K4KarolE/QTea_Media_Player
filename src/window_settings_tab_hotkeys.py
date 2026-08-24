@@ -94,12 +94,12 @@ class HotkeysTab(CommonTabValues):
                 line_edit_text_all_values.append(line_edit_text)
 
             search_result = cv.search_regex.search(line_edit_text.title())
-            if not search_result:
+            if not search_result and line_edit_text != '':
                 item_text = item_text.replace('\n', ' ')
                 MyMessageBoxError('HOTKEYS TAB', f'The "{item_text}" value is not valid.\n\n' +
-                "Acceptable hotkey format examples:\n" +
-                "`M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`," +
-                "`M+Ctrl+Space`, `Shift+Left`, `M | P`, `M+Ctrl | P`")
+                "Leave the field empty or the acceptable hotkey format:\n\n" +
+                "`M`, `m`, `Ctrl`, `ctRL`, `M+Ctrl`, `Ctrl++`, `Ctrl+-`, `M+Ctrl+Space`, `Shift+Left`\n\n" +
+                "Multiple hotkeys for the same action:   `M | P`, `M+Ctrl | P`")
                 pass_validation = False
 
 
