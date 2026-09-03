@@ -252,8 +252,8 @@ class Skins:
                 row_selected_text = base
                 row_playing = highlight
                 row_playing_text = highlighted_text
-                row_queued = text
-                row_queued_text = base
+                row_queued = dark
+                row_queued_text = text
 
                 """ LNX - SLIDERS - BRIGHT """
                 slider_duration_groove = dark
@@ -319,7 +319,7 @@ class Skins:
                 """ LNX - SETTINGS WINDOW - BRIGHT """
                 window_settings = base
                 window_settings_inner_window = mid
-                window_settings_inner_window_border = no_color_roles
+                window_settings_inner_window_border = highlight
                 window_settings_line_edit = mid
                 window_settings_line_edit_text = text
                 window_settings_line_edit_border = text
@@ -389,13 +389,13 @@ class Skins:
                 """ WIN - SLIDERS - DARK """
                 slider_duration_groove = mid
                 slider_duration_sub_page = highlight
-                slider_duration_handle_pos_0_1 = alternate_base
-                slider_duration_handle_pos_2 = alternate_base
+                slider_duration_handle_pos_0_1 = mid
+                slider_duration_handle_pos_2 = dark
 
                 slider_volume_groove = mid
                 slider_volume_sub_page = highlight
-                slider_volume_handle_pos_0_1 = alternate_base
-                slider_volume_handle_pos_2 = alternate_base
+                slider_volume_handle_pos_0_1 = mid
+                slider_volume_handle_pos_2 = dark
 
                 """ WIN - PLAYLIST TAB - DARK """
                 tab_playlist_bg_1 = mid
@@ -444,13 +444,13 @@ class Skins:
                 buttons_playlist_bg_2 = dark
                 buttons_playlist_bg_3 = dark
                 buttons_playlist_border = no_color_roles
-                buttons_playlist_font = text
+                buttons_playlist_font = no_color_roles
                 buttons_playlist_pressed_bg = highlight
 
                 """ WIN - SETTINGS WINDOW - DARK """
                 window_settings = window
                 window_settings_inner_window = mid
-                window_settings_inner_window_border = no_color_roles
+                window_settings_inner_window_border = highlight
                 window_settings_line_edit = mid
                 window_settings_line_edit_text = text
                 window_settings_line_edit_border = text
@@ -485,6 +485,8 @@ class Skins:
                 # no "window_q_and_s_queue_frame", the inner widget covers all the frame
 
             # WIN - BRIGHT SYSTEM THEME
+            # Not enough color variation in the system bright theme pallette
+            # >> the default skin colors / color code is used (example: "#c2c2c2")
             else:
                 """ WIN - WINDOW - BRIGHT """
                 window = tool_tip_base
@@ -496,22 +498,22 @@ class Skins:
                 thumbnail_widget_text = text
                 thumbnail_widget_border = text
 
-                thumbnail_widget_selected = highlight
+                thumbnail_widget_selected = mid
                 thumbnail_widget_selected_border = highlighted_text
-                thumbnail_widget_selected_text = base
+                thumbnail_widget_selected_text = text
 
                 thumbnail_widget_playing = link
                 thumbnail_widget_playing_border = highlight
                 thumbnail_widget_playing_text = highlighted_text
 
-                thumbnail_widget_queue = mid
-                thumbnail_widget_queue_text = base
+                thumbnail_widget_queue = dark
+                thumbnail_widget_queue_text = text
 
                 """ WIN - PLAYLIST ROWS - BRIGHT """
                 row_inactive = base
                 row_inactive_text = text
-                row_selected = highlight
-                row_selected_text = base
+                row_selected = "#c2c2c2"
+                row_selected_text = text
                 row_playing = highlight
                 row_playing_text = base
                 row_queued = mid
@@ -529,11 +531,11 @@ class Skins:
                 slider_volume_handle_pos_2 = mid
 
                 """ WIN - PLAYLIST TAB - BRIGHT """
-                tab_playlist_bg_1 = base
-                tab_playlist_bg_2 = base
-                tab_playlist_bg_3 = tool_tip_base
-                tab_playlist_bg_4 = mid
-                tab_playlist_border = base
+                tab_playlist_bg_1 = "#ffffff"
+                tab_playlist_bg_2 = "#ffffff"
+                tab_playlist_bg_3 = "#c9c9c9"
+                tab_playlist_bg_4 = "#c2c2c2"
+                tab_playlist_border = "#f0f0f0"
                 tab_playlist_font = text
 
                 tab_playlist_selected_bg = highlight
@@ -590,7 +592,7 @@ class Skins:
                 window_settings_button_text = text
                 window_settings_button_pressed_bg = highlight
                 window_settings_button_pressed_text = text
-                window_settings_scrollbar = mid
+                window_settings_scrollbar = window
 
                 """ WIN - QUEUE AND SEARCH WINDOW - BRIGHT """
                 window_q_and_s = window
@@ -613,7 +615,7 @@ class Skins:
                 window_q_and_s_queue_header_text = highlighted_text
 
                 window_q_and_s_queue_frame_border = highlight
-                # no "window_q_and_s_queue_frame", the inner widg
+                # no "window_q_and_s_queue_frame" needed
 
     # JSON DEFINED - NON SYSTEM THEME
     else:
