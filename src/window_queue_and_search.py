@@ -120,7 +120,7 @@ class MyQueueAndSearchWindow(QWidget):
         scroll_bar_duration_ver.setStyleSheet(
                         "QScrollBar::vertical"
                             "{"
-                            "width: 10px;"
+                            f"width: {cv.scroll_bar_size}px;"
                             "}"
                         )               
         
@@ -240,7 +240,7 @@ class MyQueueAndSearchWindow(QWidget):
         scroll_bar_search_queue_ver.setStyleSheet(
                         "QScrollBar::vertical"
                             "{"
-                            "width: 10px;"
+                            f"width: {cv.scroll_bar_size}px;"
                             "}"
                         )
        

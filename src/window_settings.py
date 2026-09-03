@@ -164,7 +164,7 @@ class MySettingsWindow(QWidget):
                                     "QScrollBar::vertical"
                                         "{"
                                         f"background: {sk.window_settings_scrollbar};"
-                                        "width: 10px;"
+                                        f"width: {cv.scroll_bar_size}px;"
                                         "}"
                                     "QScrollBar::horizontal"
                                         "{"
@@ -332,7 +332,7 @@ class MySettingsWindow(QWidget):
 
 
         """ ACTION COMBO BOX """
-        ACTION_COMBO_WIDTH = 140
+        ACTION_COMBO_WIDTH = 150
         ACTION_COMBO_HEIGHT = BUTTON_ACTION_HIGHT
         ACTION_COMBO_POS_X = BUTTON_ACTION_POS_X - ACTION_COMBO_WIDTH - 5
         ACTION_COMBO_POS_Y = BUTTON_ACTION_POS_Y

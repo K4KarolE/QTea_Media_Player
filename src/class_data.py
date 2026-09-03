@@ -174,10 +174,7 @@ class Data:
     thumbnail_remove_older_than: int = settings['general_settings']['thumbnail_remove_older_than']
     thumbnail_max_threads: int = settings['general_settings']['thumbnail_max_threads']
     thumbnail_active_threads_playlists = []
-    if os_linux:
-        scroll_bar_size: int = 10
-    else:
-        scroll_bar_size: int = 15 # 10: barely visible
+    scroll_bar_size: int = 10
 
 
     '''
