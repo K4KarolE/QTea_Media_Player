@@ -517,8 +517,8 @@ def update_dequeued_track_style(current_track_index):
         list_item_style_update(
             list_widget.item(current_track_index),
             inactive_track_font_style,
-            'black',
-            'white'
+            sk.row_inactive_text,
+            sk.row_inactive,
             )
 
 
