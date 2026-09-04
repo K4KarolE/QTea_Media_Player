@@ -35,6 +35,10 @@ class MyListWidget(QListWidget):
         self.is_control_key_pressed: bool = False
         self.selected_items = []
         self.selected_items_row_index_list = []
+        # setFocusPolicy:
+        # To make sure there is no "outline" around the selected widget
+        # The setStylesheet with "outline: none / 0" did not work 
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus) 
         self.installEventFilter(self)
         self.setStyleSheet("QListWidget::item:selected"
                                 "{"
