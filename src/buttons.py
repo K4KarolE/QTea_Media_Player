@@ -181,6 +181,13 @@ class MyButtons(QPushButton):
                 "{"
                 f"background-color:  {sk.buttons_playlist_pressed_bg};"
                 "}"
+            "QToolTip"
+                "{"
+                f"background-color: {sk.row_inactive};"
+                f"color: {sk.row_inactive_text};"
+                f"border: 1px solid {sk.window_settings_button_border};"
+                f"border-radius: 2px;"
+                "}"
         )
 
 
@@ -202,6 +209,13 @@ class MyButtons(QPushButton):
                         "QPushButton::pressed"
                             "{"
                             f"background-color :  {sk.buttons_settings_pressed_bg};"
+                            "}"
+                        "QToolTip"
+                            "{"
+                            f"background-color: {sk.row_inactive};"
+                            f"color: {sk.row_inactive_text};"
+                            f"border: 1px solid {sk.window_settings_button_border};"
+                            f"border-radius: 2px;"
                             "}"
                         )
 
@@ -281,6 +295,13 @@ class MyButtons(QPushButton):
                         "QPushButton"
                             "{"
                             f"color: {sk.button_duration_info_text};"   
+                            "}"
+                        "QToolTip"
+                            "{"
+                            f"background-color: {sk.row_inactive};"
+                            f"color: {sk.row_inactive_text};"
+                            f"border: 1px solid {sk.window_settings_button_border};"
+                            f"border-radius: 2px;"
                             "}"
                         )
 
@@ -502,5 +523,12 @@ class MyButtons(QPushButton):
                 "{"
                 f"background-color :  {sk.window};"
                 "border: 0px;"
+                "}"
+            "QToolTip"
+                "{"
+                f"background-color: {sk.row_inactive};"
+                f"color: {sk.row_inactive_text};"
+                f"border: 1px solid {sk.window_settings_button_border};"
+                f"border-radius: 2px;"
                 "}"
         )

@@ -301,3 +301,12 @@ def generate_buttons():
     if cv.is_speaker_muted:
         br.button_speaker.setIcon(br.icon.speaker_muted)
         br.av_player.audio_output.setVolume(0)
+    br.button_speaker.setStyleSheet(
+                "QToolTip"
+                "{"
+                f"background-color: {sk.row_inactive};"
+                f"color: {sk.row_inactive_text};"
+                f"border: 1px solid {sk.window_settings_button_border};"
+                f"border-radius: 2px;"
+                "}"
+    )
