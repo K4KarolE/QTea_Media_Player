@@ -140,6 +140,10 @@ class MySettingsWindow(QWidget):
                                 "{"
                                 f"background-color: {sk.window_settings_inner_window};"
                                 "}"
+                            "QLabel"
+                                "{"
+                                f"color: {sk.row_inactive_text};"   # font
+                                "}"
                             "QLineEdit"
                                 "{"
                                 f"border: 1px solid {sk.window_settings_line_edit_border};"
@@ -246,6 +250,7 @@ class MySettingsWindow(QWidget):
         def set_widgets_style(widget):
             widget.setStyleSheet("QPushButton"
                                    "{"
+                                   f"color: {sk.row_inactive_text};"   # font
                                    f"background-color: {sk.window_settings_button};"
                                    f"border: 1px solid {sk.row_playing};"
                                    "border-radius: 4px;"
@@ -254,14 +259,19 @@ class MySettingsWindow(QWidget):
                                     "{"
                                     f"background-color: {sk.window_settings_button_pressed_bg};"
                                     "}"
-                                "QComboBox"
+                                "QComboBox" # before roll-down
                                      "{"
                                     f"border: 1px solid {sk.row_playing};"
                                     "border-radius: 2px;"
                                      f"background: {sk.row_inactive};"
                                      f"color: {sk.row_inactive_text};"
                                      "}"
-                                "QComboBox::item:selected"
+                                "QListView::item"  # after roll-down - menu
+                                     "{"
+                                    f"background: {sk.row_inactive};"
+                                     f"color: {sk.row_inactive_text};"
+                                     "}"
+                                "QListView::item:selected" # after roll-down - selected
                                      "{"
                                      f"background: {sk.row_playing};"
                                      f"color: {sk.row_playing_text};"
