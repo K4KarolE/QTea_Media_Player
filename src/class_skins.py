@@ -197,7 +197,6 @@ class Skins:
                 window_settings_button_text = text
                 window_settings_button_pressed_bg = highlight
                 window_settings_button_pressed_text = text
-                window_settings_scrollbar = mid
 
                 """ LNX - QUEUE AND SEARCH WINDOW - DARK """
                 window_q_and_s = base
@@ -328,7 +327,6 @@ class Skins:
                 window_settings_button_text = text
                 window_settings_button_pressed_bg = highlight
                 window_settings_button_pressed_text = text
-                window_settings_scrollbar = mid
 
                 """ LNX - QUEUE AND SEARCH WINDOW - BRIGHT """
                 window_q_and_s = base
@@ -459,7 +457,6 @@ class Skins:
                 window_settings_button_text = text
                 window_settings_button_pressed_bg = highlight
                 window_settings_button_pressed_text = text
-                window_settings_scrollbar = mid
 
                 """ WIN - QUEUE AND SEARCH WINDOW - DARK """
                 window_q_and_s = window
@@ -592,7 +589,6 @@ class Skins:
                 window_settings_button_text = text
                 window_settings_button_pressed_bg = highlight
                 window_settings_button_pressed_text = text
-                window_settings_scrollbar = window
 
                 """ WIN - QUEUE AND SEARCH WINDOW - BRIGHT """
                 window_q_and_s = window
@@ -722,7 +718,6 @@ class Skins:
         window_settings_button_text = skin_settings['window_settings_button_text']
         window_settings_button_pressed_bg = skin_settings['window_settings_button_pressed_bg']
         window_settings_button_pressed_text = skin_settings['window_settings_button_pressed_text']
-        window_settings_scrollbar = skin_settings['window_settings_scrollbar']
 
         """ QUEUE AND SEARCH WINDOW """
         window_q_and_s = skin_settings['window_q_and_s']
