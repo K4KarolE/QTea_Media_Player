@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import (
 )
 
 from .class_bridge import br
+from .class_skins import sk
 from .func_coll import inactive_track_font_style
 from .window_settings_common import CommonTabValues
 
@@ -16,7 +17,7 @@ class AboutTab(CommonTabValues):
         super().__init__()
         self.scroll_area = QScrollArea()
         self.inner_window = QWidget()
-        self.last_widget_pos_y = 550    # 524 >> covers the BG without scroll bar
+        self.last_widget_pos_y = 590    # 524 >> covers the BG without scroll bar
         current_app_version = ' 0.2.0 Butch'
 
         """
@@ -80,7 +81,8 @@ class AboutTab(CommonTabValues):
         text_label.setOpenExternalLinks(True)
         text_label.setTextFormat(Qt.TextFormat.RichText)
         bottom_layout.addWidget(text_label)
-        text_label_content = """
+        link_text_color_tag = f'style="color: {sk.row_playing};"'
+        text_label_content = f"""
         QTea media player is a free and open source<br>
         media player created by Karoly Egyed.
         <br>
@@ -89,25 +91,24 @@ class AboutTab(CommonTabValues):
         <br><br><br>
         <b>LICENSE</b>
         <br><br>
-        QTea created under the <a href="https://github.com/K4KarolE/QTea_Media_Player/blob/main/LICENSE">MIT</a> license.
+        QTea created under the <a {link_text_color_tag} href="https://github.com/K4KarolE/QTea_Media_Player/blob/main/LICENSE">MIT</a> license.
         <br><br>
         Please note, the <b>PyQt, OpenCV</b> libraries used<br> in the development, have different licenses.<br>
         <br>
-        For more, please visit:       
-        <a href="https://pypi.org/project/PyQt6/">PyQt</a>, 
-        <a href="https://opencv.org/license/">OpenCV</a>
+        For more, please visit:
+        <a {link_text_color_tag} href="https://pypi.org/project/PyQt6/">PyQt</a>, 
+        <a {link_text_color_tag} href="https://opencv.org/license/">OpenCV</a>
         <br><br><br>
+        
         
         <b>CONTACT</b>
         <br><br>
-        Email: k4karole@duck.com
+        If you come across any bug or if you have any<br>
+        feedback, please feel free to raise it, share with<br>
+        me on <a {link_text_color_tag} href="https://github.com/K4KarolE/QTea_Media_Player">GitHub</a> or via email: <a {link_text_color_tag}>k4karole@duck.com</a>.
+        <br><br>
+        Thank you,
         <br>
-        GitHub: <a href="https://github.com/K4KarolE">https://github.com/K4KarolE</a>
-        <br>
-        YouTube: <a href="https://www.youtube.com/@K4KarolE">https://www.youtube.com/@K4KarolE</a>
-        <br>
-        X / Twitter: <a href="https://x.com/K4KarolE_X">https://x.com/K4KarolE_X</a>
-        <br>
-        Instagram: <a href="https://www.instagram.com/k4karole">https://www.instagram.com/k4karole</a>
+        Karoly
         """
         text_label.setText(text_label_content)
