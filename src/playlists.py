@@ -228,7 +228,27 @@ class MyPlaylists(QTabWidget):
             scroll_bar_duration_ver.setStyleSheet(
                             "QScrollBar::vertical"
                                 "{"
+                                f"border: none;"
+                                f"background: {sk.window};"
                                 f"width: {cv.scroll_bar_size}px;"
+                                "}"
+                            "QScrollBar::handle:vertical"
+                                "{"
+                                f"background: {sk.row_inactive};"
+                                f"border: 1px solid {sk.row_inactive_text};"
+                                "min-height: 20px;"
+                                "border-radius: 2px;"
+                                "}"
+                            # up/down arrow surrounding square
+                            "QScrollBar::sub-line:vertical"
+                                "{"
+                                f"background: {sk.window};"
+                                f"border: none;"
+                                "}"
+                            "QScrollBar::add-line:vertical"
+                                "{"
+                                f"background: {sk.window};"
+                                f"border: none;"
                                 "}"
                             )
 
