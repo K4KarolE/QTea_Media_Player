@@ -822,7 +822,7 @@ class Data:
             'list_widget': '',
             'list_widget_title': '#',
             'list_widget_window_ratio': 1,
-            'fixed_width': 30
+            'fixed_width': 40
         },
         'name_list_widget':  {
             'list_widget': '',
