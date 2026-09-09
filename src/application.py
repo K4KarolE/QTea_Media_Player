@@ -22,7 +22,6 @@ if cv.skin_selected != 'system':
     if cv.os_linux:
         QApplication.setDesktopSettingsAware(False)
     else:
-        sys.argv += ['-platform', 'windows:darkmode=1']
         try:
             from ctypes import windll
             myappid = 'qtea-media-player'
