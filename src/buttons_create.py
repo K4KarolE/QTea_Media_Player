@@ -79,7 +79,7 @@ def generate_buttons():
     ''' BUTTON PLAYLIST - SETTINGS '''
     br.button_settings = MyButtons(
         'SE',
-        'Settings window',
+        f'Settings window - Current skin: {cv.skin_selected}',
         br.icon.settings
         )
     br.button_settings.setGeometry(button_x_pos(5.3)-PLIST_BUTTONS_X_DIFF - 6, PLIST_BUTTONS_Y, PLIST_BUTTONS_WIDTH, cv.PLIST_BUTTONS_HEIGHT)
