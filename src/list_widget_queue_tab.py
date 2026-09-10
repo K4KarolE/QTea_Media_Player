@@ -1,10 +1,10 @@
-'''
+"""
 Class created to handle context menu (right-click on
 the list items), in the Queue tab tracklist
 Used it in the src / window_queue_and_search.py
-'''
+"""
 
-from PyQt6.QtCore import QEvent
+from PyQt6.QtCore import QEvent, Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import  QListWidget, QMenu
 
@@ -43,6 +43,10 @@ class MyQueueListWidget(QListWidget):
                                  "border: 0px;"
                                  "}"
                             )
+        # setFocusPolicy:
+        # To make sure there is no "outline" around the selected widget
+        # The setStylesheet with "outline: none / 0" did not work 
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus) 
 
         self.context_menu_dic = { 
             'Play': {'icon': br.icon.start},
