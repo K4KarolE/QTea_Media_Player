@@ -23,12 +23,13 @@ from .class_bridge import br
 from .class_data import cv
 from .class_skins import sk
 from .func_coll import (
-    inactive_track_font_style,
     add_new_list_item,
     add_queue_window_list_widgets_header,
     get_playlist_details_from_queue_tab_list,
     get_playlist_details_from_search_tab_list,
+    inactive_track_font_style,
     move_window_to_middle_of_current_screen,
+    set_vertical_scrollbar_style_settings_and_queue_search_window,
     update_playing_playlist_vars_and_widgets
     )
 from .list_widget_queue_tab import MyQueueListWidget
@@ -96,7 +97,7 @@ class MyQueueAndSearchWindow(QWidget):
                             "top: 0.3em;"
                             "}"
                         )
-        
+
         ''' 
         #################
             QUEUE TAB
@@ -116,33 +117,8 @@ class MyQueueAndSearchWindow(QWidget):
                             "width: 0px;"
                             "}"
                         )
-        
-        scroll_bar_duration_ver.setStyleSheet(
-                        "QScrollBar::vertical"
-                                "{"
-                                f"border: none;"
-                                f"background: {sk.row_inactive};"
-                                f"width: {cv.scroll_bar_size}px;"
-                                "}"
-                        "QScrollBar::handle:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: 1px solid {sk.row_inactive_text};"
-                            "min-height: 20px;"
-                            "border-radius: 2px;"
-                            "}"
-                        # up/down arrow surrounding square
-                        "QScrollBar::sub-line:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: none;"
-                            "}"
-                        "QScrollBar::add-line:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: none;"
-                            "}"
-                        )               
+
+        set_vertical_scrollbar_style_settings_and_queue_search_window(scroll_bar_duration_ver)
         
         
         layout = QHBoxLayout()
@@ -256,33 +232,9 @@ class MyQueueAndSearchWindow(QWidget):
                             "width: 0px;"
                             "}"
                         )
-        
-        scroll_bar_search_queue_ver.setStyleSheet(
-                        "QScrollBar::vertical"
-                            "{"
-                            f"border: none;"
-                            f"background: {sk.row_inactive};"
-                            f"width: {cv.scroll_bar_size}px;"
-                            "}"
-                        "QScrollBar::handle:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: 1px solid {sk.row_inactive_text};"
-                            "min-height: 20px;"
-                            "border-radius: 2px;"
-                            "}"
-                        # up/down arrow surrounding square
-                        "QScrollBar::sub-line:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: none;"
-                            "}"
-                        "QScrollBar::add-line:vertical"
-                            "{"
-                            f"background: {sk.row_inactive};"
-                            f"border: none;"
-                            "}"
-                        )
+
+        set_vertical_scrollbar_style_settings_and_queue_search_window(scroll_bar_search_queue_ver)
+
        
         cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item)
         cv.search_title_list_widget.itemDoubleClicked.connect(self.search_play_list_item)

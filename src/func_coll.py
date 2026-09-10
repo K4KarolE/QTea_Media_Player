@@ -1072,3 +1072,63 @@ def open_log_file():
             'ERROR - log file',
             'Was not able to open the log file  '
         )
+
+
+def set_vertical_scrollbar_style_playlists(scrollbar):
+    scrollbar.setStyleSheet(
+        "QScrollBar::vertical"
+            "{"
+            f"border: none;"
+            f"background: {sk.window};"
+            f"width: {cv.scroll_bar_size}px;"
+            "}"
+        "QScrollBar::handle:vertical"
+            "{"
+            f"background: {sk.row_inactive};"
+            f"border: 1px solid {sk.row_inactive_text};"
+            "min-height: 20px;"
+            "border-radius: 2px;"
+            "}"
+        # Up/down arrow surrounding square
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical"
+            "{"
+            f"background: {sk.window};"
+            f"border: none;"
+            "}"
+        # Area of scrollbar above/below of the handle
+        # none or color: avoid checkerboard pattern 
+        "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical"
+            "{"
+            "background: none;"
+            "}"
+    )
+
+
+def set_vertical_scrollbar_style_settings_and_queue_search_window(scrollbar):
+    scrollbar.setStyleSheet(
+        "QScrollBar::vertical"
+            "{"
+            f"border: none;"
+            f"background: {sk.row_inactive};"
+            f"width: {cv.scroll_bar_size}px;"
+            "}"
+        "QScrollBar::handle:vertical"
+            "{"
+            f"background: {sk.row_inactive};"
+            f"border: 1px solid {sk.row_inactive_text};"
+            "min-height: 20px;"
+            "border-radius: 2px;"
+            "}"
+        # up/down arrow surrounding square
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical"
+            "{"
+            f"background: {sk.row_inactive};"
+            f"border: none;"
+            "}"
+        # Area of scrollbar above/below of the handle
+        # none or color: avoid checkerboard pattern 
+        "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical"
+            "{"
+            "background: none;"
+            "}"
+    )

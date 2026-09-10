@@ -27,6 +27,7 @@ from .func_coll import (
     inactive_track_font_style,
     move_window_to_middle_of_current_screen,
     open_log_file,
+    set_vertical_scrollbar_style_settings_and_queue_search_window,
     update_playing_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
@@ -163,44 +164,11 @@ class MySettingsWindow(QWidget):
                                 )
 
 
-        def set_scroll_bar_style(scroll_bar):
-            scroll_bar.setStyleSheet(
-                                    "QScrollBar::vertical"
-                                        "{"
-                                        f"border: none;"
-                                        f"background: {sk.row_inactive};"
-                                        f"width: {cv.scroll_bar_size}px;"
-                                        "}"
-                                    "QScrollBar::handle:vertical"
-                                        "{"
-                                        f"background: {sk.row_inactive};"
-                                        f"border: 1px solid {sk.row_inactive_text};"
-                                        "min-height: 20px;"
-                                        "border-radius: 2px;"
-                                        "}"
-                                    # up/down arrow surrounding square
-                                    "QScrollBar::sub-line:vertical"
-                                        "{"
-                                        f"background: {sk.row_inactive};"
-                                        f"border: none;"
-                                        "}"
-                                    "QScrollBar::add-line:vertical"
-                                        "{"
-                                        f"background: {sk.row_inactive};"
-                                        f"border: none;"
-                                        "}"
-                                    "QScrollBar::horizontal"
-                                        "{"
-                                        "width: 0px;"
-                                        "}"
-                                    )
-
         tabs_dic = {
             'Playlists': {
                 'text': 'Playlists',
                 'scroll_area': tab_playlist.scroll_area,
                 'scroll_bar_ver': '',
-                'scroll_bar_hor': '',
                 'widgets_window': tab_playlist.inner_window,
                 'widgets_window_height': tab_playlist.last_widget_pos_y
             },
@@ -208,7 +176,6 @@ class MySettingsWindow(QWidget):
                 'text': 'General',
                 'scroll_area': tab_general.scroll_area,
                 'scroll_bar_ver': '',
-                'scroll_bar_hor': '',
                 'widgets_window': tab_general.inner_window,
                 'widgets_window_height': tab_general.last_widget_pos_y
             },
@@ -216,7 +183,6 @@ class MySettingsWindow(QWidget):
                 'text': 'Hotkeys',
                 'scroll_area': tab_hotkey.scroll_area,
                 'scroll_bar_ver': '',
-                'scroll_bar_hor': '',
                 'widgets_window': tab_hotkey.inner_window,
                 'widgets_window_height': tab_hotkey.last_widget_pos_y
             },
@@ -224,7 +190,6 @@ class MySettingsWindow(QWidget):
                 'text': 'Skins',
                 'scroll_area': tab_skins.scroll_area,
                 'scroll_bar_ver': '',
-                'scroll_bar_hor': '',
                 'widgets_window': tab_skins.inner_window,
                 'widgets_window_height': tab_skins.last_widget_pos_y
             },
@@ -232,7 +197,6 @@ class MySettingsWindow(QWidget):
                 'text': 'About',
                 'scroll_area': tab_about.scroll_area,
                 'scroll_bar_ver': '',
-                'scroll_bar_hor': '',
                 'widgets_window': tab_about.inner_window,
                 'widgets_window_height': tab_about.last_widget_pos_y
             }
@@ -250,13 +214,13 @@ class MySettingsWindow(QWidget):
             tabs_dic[tab]['widgets_window'].resize(WINDOW_WIDTH, tabs_dic[tab]['widgets_window_height'])
             set_widgets_window_style(tabs_dic[tab]['widgets_window'])
 
+            # Scrollbar - horizontal
+            tabs_dic[tab]['scroll_area'].setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            # Scrollbar - vertical
             tabs_dic[tab]['scroll_bar_ver'] = QScrollBar()
-            set_scroll_bar_style(tabs_dic[tab]['scroll_bar_ver'])
-            tabs_dic[tab]['scroll_bar_hor'] = QScrollBar()
-            set_scroll_bar_style(tabs_dic[tab]['scroll_bar_hor'])
-
+            set_vertical_scrollbar_style_settings_and_queue_search_window(tabs_dic[tab]['scroll_bar_ver'])
+            # Scroll area
             tabs_dic[tab]['scroll_area'].setVerticalScrollBar(tabs_dic[tab]['scroll_bar_ver'])
-            tabs_dic[tab]['scroll_area'].setHorizontalScrollBar(tabs_dic[tab]['scroll_bar_hor'])
             set_scroll_area_style(tabs_dic[tab]['scroll_area'])
 
             tabs_dic[tab]['scroll_area'].setWidget(tabs_dic[tab]['widgets_window'])

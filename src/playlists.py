@@ -23,6 +23,7 @@ from .func_coll import (
     is_track_selection_multiple,
     save_json,
     save_playing_pl_last_track_index,
+    set_vertical_scrollbar_style_playlists,
     update_active_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
@@ -205,9 +206,7 @@ class MyPlaylists(QTabWidget):
     def playlists_creation(self, playlists_list: list):
         for pl in playlists_list:
             scroll_bar_name_ver = QScrollBar()
-            scroll_bar_name_hor = QScrollBar()
             scroll_bar_duration_ver = QScrollBar()
-            scroll_bar_duration_hor = QScrollBar()
 
             scroll_bar_name_ver.valueChanged.connect(scroll_bar_duration_ver.setValue)
             scroll_bar_duration_ver.valueChanged.connect(scroll_bar_name_ver.setValue)
@@ -218,46 +217,9 @@ class MyPlaylists(QTabWidget):
                                 "width: 0px;"
                                 "}"
                             )
-            scroll_bar_name_hor.setStyleSheet(
-                            "QScrollBar::horizontal"
-                                "{"
-                                "height: 0px;"
-                                "}"
-                            )
 
-            scroll_bar_duration_ver.setStyleSheet(
-                            "QScrollBar::vertical"
-                                "{"
-                                f"border: none;"
-                                f"background: {sk.window};"
-                                f"width: {cv.scroll_bar_size}px;"
-                                "}"
-                            "QScrollBar::handle:vertical"
-                                "{"
-                                f"background: {sk.row_inactive};"
-                                f"border: 1px solid {sk.row_inactive_text};"
-                                "min-height: 20px;"
-                                "border-radius: 2px;"
-                                "}"
-                            # up/down arrow surrounding square
-                            "QScrollBar::sub-line:vertical"
-                                "{"
-                                f"background: {sk.window};"
-                                f"border: none;"
-                                "}"
-                            "QScrollBar::add-line:vertical"
-                                "{"
-                                f"background: {sk.window};"
-                                f"border: none;"
-                                "}"
-                            )
+            set_vertical_scrollbar_style_playlists(scroll_bar_duration_ver)
 
-            scroll_bar_duration_hor.setStyleSheet(
-                            "QScrollBar::horizontal"
-                                "{"
-                                "height: 0px;"
-                                "}"
-                            )
 
             ''' LISTS CREATION '''
             ''' Lists -> QHBoxLayout -> Update* existing QFrame already added as a tab 
@@ -267,7 +229,6 @@ class MyPlaylists(QTabWidget):
             cv.playlist_widget_dic[pl]['name_list_widget'] = MyListWidget()
             name_list_widget = cv.playlist_widget_dic[pl]['name_list_widget']
             name_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
-            name_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
             # MOVE TRACK UP / DOWN
             name_list_widget.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
             name_list_widget.model().rowsMoved.connect(lambda: self.drag_and_drop_list_item_action())
@@ -276,13 +237,11 @@ class MyPlaylists(QTabWidget):
             cv.playlist_widget_dic[pl]['queue_list_widget'] = MyListWidget()
             queue_list_widget = cv.playlist_widget_dic[pl]['queue_list_widget']
             queue_list_widget.setVerticalScrollBar(scroll_bar_name_ver)
-            queue_list_widget.setHorizontalScrollBar(scroll_bar_name_hor)
 
 
             cv.playlist_widget_dic[pl]['duration_list_widget'] = MyListWidget()
             duration_list_widget = cv.playlist_widget_dic[pl]['duration_list_widget']
             duration_list_widget.setVerticalScrollBar(scroll_bar_duration_ver)
-            duration_list_widget.setHorizontalScrollBar(scroll_bar_duration_hor)
             duration_list_widget.setFixedWidth(70)
 
 
