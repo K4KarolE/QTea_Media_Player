@@ -23,7 +23,7 @@ from .func_coll import (
     is_track_selection_multiple,
     save_json,
     save_playing_pl_last_track_index,
-    set_vertical_scrollbar_style_playlists,
+    set_vertical_scrollbar_style_default,
     update_active_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
@@ -218,7 +218,7 @@ class MyPlaylists(QTabWidget):
                                 "}"
                             )
 
-            set_vertical_scrollbar_style_playlists(scroll_bar_duration_ver)
+            set_vertical_scrollbar_style_default(scroll_bar_duration_ver)
 
 
             ''' LISTS CREATION '''

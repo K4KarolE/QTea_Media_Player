@@ -29,7 +29,7 @@ from .func_coll import (
     get_playlist_details_from_search_tab_list,
     inactive_track_font_style,
     move_window_to_middle_of_current_screen,
-    set_vertical_scrollbar_style_settings_and_queue_search_window,
+    set_vertical_scrollbar_style_default,
     update_playing_playlist_vars_and_widgets
     )
 from .list_widget_queue_tab import MyQueueListWidget
@@ -118,7 +118,7 @@ class MyQueueAndSearchWindow(QWidget):
                             "}"
                         )
 
-        set_vertical_scrollbar_style_settings_and_queue_search_window(scroll_bar_duration_ver)
+        set_vertical_scrollbar_style_default(scroll_bar_duration_ver)
         
         
         layout = QHBoxLayout()
@@ -233,7 +233,7 @@ class MyQueueAndSearchWindow(QWidget):
                             "}"
                         )
 
-        set_vertical_scrollbar_style_settings_and_queue_search_window(scroll_bar_search_queue_ver)
+        set_vertical_scrollbar_style_default(scroll_bar_search_queue_ver)
 
        
         cv.search_title_list_widget = MySearchListWidget(self.search_play_list_item)

@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
 from .class_bridge import br
 from .class_data import cv
 from .class_skins import sk
+from .func_coll import set_vertical_scrollbar_style_default
 from .func_thumbnail import (
     is_new_thumbnail_generation_necessary,
     is_track_index_inside_playlist,
@@ -30,12 +31,7 @@ class ThumbnailMainWindow(QScrollArea):
         self.timer = QTimer()
         self.timer.timeout.connect(lambda : self.timer_action())
         self.scroll_bar_ver = QScrollBar()
-        self.scroll_bar_ver.setStyleSheet(
-            "QScrollBar::vertical"
-            "{"
-            f"width: {cv.scroll_bar_size}px;"
-            "}"
-            )
+        set_vertical_scrollbar_style_default(self.scroll_bar_ver)
         self.setVerticalScrollBar(self.scroll_bar_ver)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)

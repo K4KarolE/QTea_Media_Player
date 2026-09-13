@@ -27,7 +27,7 @@ from .func_coll import (
     inactive_track_font_style,
     move_window_to_middle_of_current_screen,
     open_log_file,
-    set_vertical_scrollbar_style_settings_and_queue_search_window,
+    set_vertical_scrollbar_style_default,
     update_playing_playlist_vars_and_widgets
     )
 from .func_thumbnail import (
@@ -218,7 +218,7 @@ class MySettingsWindow(QWidget):
             tabs_dic[tab]['scroll_area'].setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             # Scrollbar - vertical
             tabs_dic[tab]['scroll_bar_ver'] = QScrollBar()
-            set_vertical_scrollbar_style_settings_and_queue_search_window(tabs_dic[tab]['scroll_bar_ver'])
+            set_vertical_scrollbar_style_default(tabs_dic[tab]['scroll_bar_ver'])
             # Scroll area
             tabs_dic[tab]['scroll_area'].setVerticalScrollBar(tabs_dic[tab]['scroll_bar_ver'])
             set_scroll_area_style(tabs_dic[tab]['scroll_area'])
