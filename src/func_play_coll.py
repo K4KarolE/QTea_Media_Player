@@ -92,7 +92,6 @@ class PlaysFunc:
             - Start playing
         """
         if self.is_file_available_at_non_playing_playlist(playing_track_index):
-
             """
             PyQt playing the first audio_track of the video by default
             >> reset our variable when playing new track
@@ -148,8 +147,7 @@ class PlaysFunc:
             """
             if self.track_path == self.track_path_previous:
                 if cv.active_db_table == prev_playing_db_table and cv.current_track_index == prev_playing_track_index:
-                    if br.av_player.paused:
-                        br.button_play_pause.click()
+                    br.button_play_pause.click()
                 else:
                     br.av_player.player.setPosition(cv.track_current_duration)
                     update_thumbnail_style_at_play_track()
@@ -351,8 +349,13 @@ class PlaysFunc:
         Workaround:
         Compare the default and the delayed positions of the player, if same >> player stuck at the current position
         >> pause and play the media >> media is playing
+
+        br.av_player.is_end_of_media:
+        Get its true value in the "av_player / media_status_changed_action()" function
+        Used here to avoid the "Media status: Loaded media" signal unnecessarily triggered at the end of media
+        >> play_track_second_part() >> if_player_stuck_workaround() scenario
         """
-        if self.player_start_position == br.av_player.player.position():
+        if self.player_start_position == br.av_player.player.position() and not br.av_player.is_end_of_media:
             br.av_player.player.pause()
             logger_sum("Media player stuck workaround")
             br.av_player.player.play()
