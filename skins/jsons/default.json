@@ -65,7 +65,7 @@
   "buttons_settings_font": "#808080",
   "buttons_settings_pressed_bg": "#287dcc",
   "window_settings": "#efefef",
-  "window_settings_inner_window": "#f9f9f9",
+  "window_settings_inner_window": "#ffffff",
   "window_settings_inner_window_border": "#c2c2c2",
   "window_settings_line_edit": "#ffffff",
   "window_settings_line_edit_text": "#000000",
