@@ -371,8 +371,8 @@ class Skins:
                 thumbnail_widget_playing_border = highlight
                 thumbnail_widget_playing_text = highlighted_text
 
-                thumbnail_widget_queue = text
-                thumbnail_widget_queue_text = base
+                thumbnail_widget_queue = "#7D7D7D"
+                thumbnail_widget_queue_text = text
 
                 """ WIN - PLAYLIST ROWS - DARK """
                 row_inactive = mid
@@ -381,8 +381,8 @@ class Skins:
                 row_selected_text = base
                 row_playing = highlight
                 row_playing_text = highlighted_text
-                row_queued = text
-                row_queued_text = base
+                row_queued = "#595959"
+                row_queued_text = text
 
                 """ WIN - SLIDERS - DARK """
                 slider_duration_groove = mid
