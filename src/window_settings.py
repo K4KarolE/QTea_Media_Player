@@ -249,6 +249,11 @@ class MySettingsWindow(QWidget):
                                      f"background: {sk.row_inactive};"
                                      f"color: {sk.row_inactive_text};"
                                      "}"
+                                "QListView::item:hover" # after roll-down - menu
+                                    "{"
+                                    f"background: {sk.row_playing};"
+                                    f"color: {sk.row_playing_text};"
+                                    "}"
                                 "QListView::item"  # after roll-down - menu
                                      "{"
                                     f"background: {sk.row_inactive};"
@@ -259,6 +264,10 @@ class MySettingsWindow(QWidget):
                                      f"background: {sk.row_playing};"
                                      f"color: {sk.row_playing_text};"
                                      "}"
+                                "QAbstractItemView" # after roll-down - selected
+                                    "{"
+                                    "outline: 0px;" 
+                                    "}" 
                                    )
 
         def save_action():
