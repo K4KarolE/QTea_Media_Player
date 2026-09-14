@@ -33,7 +33,6 @@ class ThumbnailMainWindow(QScrollArea):
         self.scroll_bar_ver = QScrollBar()
         set_vertical_scrollbar_style_default(self.scroll_bar_ver)
         self.setVerticalScrollBar(self.scroll_bar_ver)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.widgets_window = None
 
