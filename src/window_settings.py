@@ -226,6 +226,11 @@ class MySettingsWindow(QWidget):
             tabs_dic[tab]['scroll_area'].setWidget(tabs_dic[tab]['widgets_window'])
             tabs.addTab(tabs_dic[tab]['scroll_area'], tabs_dic[tab]['text'])
 
+            # Skins tab widgets window height almost identical with the available space height
+            # >> no vertical scrollbar needed
+            if tab == 'Skins':
+                tabs_dic[tab]['scroll_area'].setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
         """
         UNDER TABS SECTION
         Combo box + button
