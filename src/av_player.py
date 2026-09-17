@@ -91,6 +91,8 @@ class AVPlayer(QWidget):
         self.audio_device_menu_title = f'Audio Device  ({cv.audio_output_device_rotate})'
         self.subtitle_track_menu_title = f'Subtitle  ({cv.subtitle_tracks_rotate})'
         self.full_screen_menu_title = f'Full Screen ({cv.full_screen_toggle})'
+        self.window_size_title = 'Window Size'
+        self.window_size_percentage_list = [40, 30, 20, 10, 5, -5, -10, -20, -30, -40]
         # CONTEXT MENU
         # The "Play/Pause" context menu ('Temp_play_pause_title' in the dic.) title and icon are generated in the
         # "eventFilter()" below, depend on the current track's playing state
@@ -123,6 +125,11 @@ class AVPlayer(QWidget):
                 'menu_sub': '',
                 'screens': [],
                 'screens_pos_x': []
+            },
+            f'{self.window_size_title}': {
+                'icon': None,
+                'menu_sub': '',
+                'size_options_title_list': []
             },
             'Quit': {'icon': br.icon.quit},
         }
@@ -177,7 +184,7 @@ class AVPlayer(QWidget):
                         else:
                             self.context_menu_dic[menu_title]['menu_sub'] = menu.addMenu(menu_title)
                         # SEPARATOR
-                        if menu_title.split()[0] in ['Next', 'Minimal', 'Full']:
+                        if menu_title.split()[0] in ['Next', 'Minimal', 'Window']:
                             menu.addSeparator()
 
 
@@ -254,6 +261,27 @@ class AVPlayer(QWidget):
 
                     counter +=1
 
+                """
+                WINDOW SIZE
+                Able to change the window size via hotkeys too (src / window_main)
+                Where applicable, the hotkey info added to the size_title >> size_options_title_list
+                Why not to use an only positive window_size_percentage_list and 
+                add the +, - scenarios in the same time:
+                    The window_size_percentage_list and the size_options_title_list
+                    would not match in the context_menu_clicked()
+                """
+                for size_perc in self.window_size_percentage_list:
+                    if size_perc > 0:
+                        size_title = f'+ {size_perc}%'
+                        if size_perc == br.window.new_window_size_diff_percent:
+                            size_title = f'{size_title}  ({cv.increase_window_size})'
+                    else:
+                        size_title = f'- {abs(size_perc)}%'
+                        if size_perc == -br.window.new_window_size_diff_percent:
+                            size_title = f'{size_title}  ({cv.decrease_window_size})'
+                    qaction_to_add = QAction(size_title, self)
+                    self.context_menu_dic[self.window_size_title]['menu_sub'].addAction(qaction_to_add)
+                    self.context_menu_dic[self.window_size_title]['size_options_title_list'].append(size_title)
 
                 menu.triggered[QAction].connect(self.context_menu_clicked)
                 menu.exec(event.globalPos())
@@ -302,6 +330,7 @@ class AVPlayer(QWidget):
         audio_devices_list = self.context_menu_dic[self.audio_device_menu_title]['audio_devices']
         subtitle_tracks_list = self.context_menu_dic[self.subtitle_track_menu_title]['subtitle_tracks']
         screens_list = self.context_menu_dic[self.full_screen_menu_title]['screens']
+        size_options_title_list = self.context_menu_dic[self.window_size_title]['size_options_title_list']
 
         if q.text() in ['Play', 'Pause']:
             br.button_play_pause.button_play_pause_clicked()
@@ -370,7 +399,12 @@ class AVPlayer(QWidget):
             screens_list.clear()
             self.full_screen_to_screen_toggle()
 
-        elif q.text() == list(self.context_menu_dic)[12]:
+        elif q.text() in size_options_title_list:
+            size_selected_index = size_options_title_list.index(q.text())
+            size_selected = self.window_size_percentage_list[size_selected_index]
+            br.window.change_window_size(size_selected)
+
+        elif q.text() == list(self.context_menu_dic)[13]:
             sys.exit()
 
 
