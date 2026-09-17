@@ -33,7 +33,7 @@ class MyWindow(QWidget):
             self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.hotkeys_creation()
         self.move_window_to_middle()
-        self.new_window_size_diff_percent = 0.05
+        self.new_window_size_diff_percent = 10
         """
         It looks like the below restriction has no affect on Linux, just on Windows
         Avoid to use it, so on Windows, the "duration_sum_widg" and the "button_speaker"
@@ -90,8 +90,8 @@ class MyWindow(QWidget):
         'search_window': lambda: br.window_queue_and_search.show_search_tab(),
         'minimal_interface_toggle': lambda: toggle_minimal_interface(),
         'remove_black_bars_around_video': lambda: br.av_player.resize_window_height_to_match_video_res_ratio(),
-        'increase_window_size': lambda: self.change_window_size(True),
-        'decrease_window_size': lambda: self.change_window_size(False)
+        'increase_window_size': lambda: self.change_window_size(self.new_window_size_diff_percent),
+        'decrease_window_size': lambda: self.change_window_size(-self.new_window_size_diff_percent)
         }
 
         for index, hotkey in enumerate(cv.hotkeys_list):
@@ -275,22 +275,29 @@ class MyWindow(QWidget):
             br.button_toggle_playlist.button_toggle_playlist_clicked()
 
 
-    def change_window_size(self, is_increase=False):
-        if is_increase: ratio = 1 + self.new_window_size_diff_percent
-        else: ratio = 1 - self.new_window_size_diff_percent
+    def change_window_size(self, window_size_change_percent: int):
+        ratio = 1 + window_size_change_percent / 100
         new_width = int(self.width() * ratio)
-        # POSITION ADJUSTMENT
-        width_diff = new_width - self.width()
-        new_pos_x = int(self.pos().x() - width_diff / 2)
-        self.move(new_pos_x, self.pos().y())
-        # RESIZE
-        # NO BLACK BARS AROUND VIDEO
-        if cv.minimal_interface_enabled or not br.av_player.playlist_visible:
-            self.resize(new_width, cv.window_height)
-            br.av_player.resize_window_height_to_match_video_res_ratio()
-        # WITH BLACK BARS
-        else:
-            self.resize(new_width, int(self.height() * ratio))
+        if new_width < cv.window_min_width:
+            # Window already has the min. size
+            if cv.window_min_width == self.width():
+                return
+            # Would shoot under the min. size >> set to the min. size
+            if cv.window_min_width < self.width():
+                new_width = self.width()
+        if new_width >= cv.window_min_width:
+            # POSITION ADJUSTMENT
+            width_diff = new_width - self.width()
+            new_pos_x = int(self.pos().x() - width_diff / 2)
+            self.move(new_pos_x, self.pos().y())
+            # RESIZE
+            # NO BLACK BARS AROUND VIDEO
+            if cv.minimal_interface_enabled or not br.av_player.playlist_visible:
+                self.resize(new_width, cv.window_height)
+                br.av_player.resize_window_height_to_match_video_res_ratio()
+            # WITH BLACK BARS
+            else:
+                self.resize(new_width, int(self.height() * ratio))
 
 
     def window_size_toggle_action(self):
