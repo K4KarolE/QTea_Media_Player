@@ -670,15 +670,10 @@ class AVPlayer(QWidget):
             self.player.play()
             self.base_played = True
             logger_sum('Base has been played - App is running - sum')
-            if cv.play_at_startup:
-                if not cv.active_pl_tracks_count:
-                    self.player.stop()
-                    br.play_slider.setEnabled(False)
-                cv.ignore_loaded_media_signal = True
+            if cv.play_at_startup and cv.active_pl_tracks_count:
+                logger_sum('Last media starts playing')
+                br.play_funcs.play_track()
                 self.base_played_end_of_media_signal_ignored = True
-                if cv.active_pl_tracks_count:
-                    logger_sum('Last media starts playing')
-                    br.play_funcs.play_track()
             # Playlists creation in 3 rounds - more info in the "src / playlists"
             br.playlists_all.playlists_second_and_third_round_content_creation()
 
